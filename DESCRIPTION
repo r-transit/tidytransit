@@ -1,0 +1,18 @@
+Package: gtfsr
+Type: Package
+Title: Working with GTFS (General Transit Feed Specification) feeds in R
+Version: 0.1.0
+Author: Elaine McVey
+Maintainer: Elaine McVey <elaine.mcvey@transloc.com>
+Description: Provides API wrappers for popular public GTFS feed sharing sites, reads feed data into a gtfs data object, validates data quality, provides convenience functions for common tasks.
+License: GPL
+LazyData: TRUE
+Imports:
+  dplyr,
+  tidyr,
+  readr,
+  lubridate,
+  ggplot2
+Suggests:
+    testthat
+RoxygenNote: 5.0.1
