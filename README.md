@@ -25,6 +25,8 @@ How to use it
 
 ### Reading feed data from an API
 
+Request an [API key from Transitfeeds.com using your github account](http://transitfeeds.com/api/keys). 
+
 ### Validate data quality
 
 ### Common Tasks
