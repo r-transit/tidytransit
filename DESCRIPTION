@@ -12,7 +12,8 @@ Imports:
   tidyr,
   readr,
   lubridate,
-  ggplot2
+  ggplot2,
+  httr
 Suggests:
     testthat
 RoxygenNote: 5.0.1
