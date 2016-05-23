@@ -21,7 +21,7 @@ validate_files_provided <- function(feed) {
   all_spec_files <- c(all_req_files, all_opt_files)
   
   # Get the names of all the dfs in the list for a feed
-  feed_names <- names(feed)
+  feed_names <- names(feed[[1]])
   
   # Strip the _df from the names to get to file components
   feed_names_file <- gsub('_df', '', feed_names)
@@ -37,7 +37,7 @@ validate_files_provided <- function(feed) {
   
   prov_df <- prov_df %>%
     mutate(provided_status = ifelse(!(file %in% feed_names_file), 'no',
-                                    ifelse(nrow(feed[paste0(file, '_df')][[1]]) == 0, 'empty',
+                                    ifelse(sapply(feed[[1]], dim)[2,] == 0, 'empty',
                                            'yes')))
   return(prov_df)
   

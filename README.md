@@ -18,7 +18,7 @@ You can install this package from GitHub using the devtools package:
     if (!require(devtools)) {
         install.packages('devtools')
     }
-    devtools::install_github('ropenscilabs/gtfsr')
+    devtools::install_github('ropenscilabs/ggforce')
 
 How to use it
 -------------
