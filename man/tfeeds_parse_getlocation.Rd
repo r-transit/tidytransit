@@ -7,7 +7,7 @@
 tfeeds_parse_getlocation(req)
 }
 \arguments{
-\item{req}{Response to getLocation GET}
+\item{req}{Response to getLocation httr::GET}
 }
 \value{
 Dataframe of locations with id, descriptions, and lat/lng

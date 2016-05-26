@@ -4,15 +4,25 @@
 ## It might be useful to abstract some of these things into functions
 #############
 
-source('R/get_gtfs.R')
-source('R/read_gtfs.R')
-source('R/validate_gtfs.R')
+# source('R/get_gtfs.R')
+# source('R/read_gtfs.R')
+# source('R/validate_gtfs.R')
 
-library(tidyr)
+# library(tidyr)
 
-# Would need to load results first
-#attach('rdata/all_feeds.rda')
+# # Would need to load results first
+# attach('rdata/all_feeds.rda')
 
+
+# Get location and feed metadata ------------------------------------------
+
+loc_df <- get_locations()
+
+feedlist_df <- get_feedlist()
+
+new_feedlist_df <- filter_feedlist(feedlist_df)
+
+# validation? ------------------------------------------------
 all_req_files <- c('agency', 'stops', 'routes', 'trips', 'stop_times', 'calendar')
 all_opt_files <- c('calendar_dates', 'fare_attributes', 'fare_rules', 'shapes', 'frequencies', 'transfers', 'feed_info')
 all_spec_files <- c(all_req_files, all_opt_files)
@@ -92,7 +102,7 @@ validation_missing <- lapply(val_list, function(x) {
   } else {
     missing_df <- x$validate_df %>% filter(validation_status != 'ok')
     return(missing_df)
-  } 
+  }
 })
 
 validation_all <- lapply(val_list, function(x) {
@@ -101,7 +111,7 @@ validation_all <- lapply(val_list, function(x) {
   } else {
     all_df <- x$validate_df
     return(all_df)
-  } 
+  }
 })
 
 req_both_df <- data_frame(files = req_files, fields = req_fields)
@@ -137,7 +147,7 @@ stops_df <- data_frame()
 for (i in 1:length(stops_ll)) {
   temp_df <- stops_ll[[i]]
   temp_df$short_name <- names(stops_ll)[i]
-  temp_df <- temp_df %>% rename(latitude = stop_lat, longitude = stop_lon) 
+  temp_df <- temp_df %>% rename(latitude = stop_lat, longitude = stop_lon)
   temp_df$source <- 'GTFS'
   stops_df <- bind_rows(stops_df, temp_df)
 }

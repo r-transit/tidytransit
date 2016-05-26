@@ -12,17 +12,17 @@
 
 # Setup -------------------------------------------------------------------
 
-library(readr)
-library(httr)
-library(dplyr)
+# library(readr)
+# library(httr)
+# library(dplyr)
 
 # my_transit_feeds_key <- readLines("transitfeeds_api_key.txt")
-# 
+#
 # warn_for_status(
-#   r <- GET('http://api.transitfeeds.com/v1/getFeeds', query = list(key = my_transit_feeds_key))
+#   r <- httr::GET('http://api.transitfeeds.com/v1/getFeeds', query = list(key = my_transit_feeds_key))
 # )
 #
-# content_r <- content(r)
+# content_r <- httr::content(r)
 #
 # # ids <- sapply(content_r$results$feeds
 
@@ -33,8 +33,8 @@ library(dplyr)
 # https://cran.r-project.org/web/packages/httr/vignettes/api-packages.html
 
 #' Check HTTP status; stop if failure
-#'
-#' @param req The result of a GET
+#' @import httr dplyr magrittr stringr
+#' @param req The result of a httr::GET
 #'
 #' @export
 
@@ -47,14 +47,14 @@ tfeeds_check <- function(req) {
 
 #' Parse content as text
 #'
-#' @param req The result of a GET
+#' @param req The result of a httr::GET
 #'
-#' @return Content parsed as text
+#' @return content parsed as text
 #'
 #' @export
 
 tfeeds_text <- function(req) {
-  parsed_content <- content(req, as = "text")
+  parsed_content <- httr::content(req, as = "text")
   if (identical(parsed_content, "")) stop("No output to parse", call. = FALSE)
   parsed_content
 }
@@ -75,10 +75,17 @@ has_key <- function() {
   !identical(tfeeds_key(), "")
 }
 
+#' Parse a gtfs feed list
+#' 
+#' @param req The result of a GET 
+#' 
+#' @return data_frame of feeds
+#' 
+#' @export
 tfeeds_parse_getfeedlist <- function(req) {
 
   # parse content
-  parsed_content <- content(req)
+  parsed_content <- httr::content(req)
 
   # check that parsing produced output
   if (identical(parsed_content, "")) stop("No output to parse", call. = FALSE)
@@ -119,7 +126,7 @@ tfeeds_parse_getfeedlist <- function(req) {
 
 #' Extract location dataframe from transitfeeds getLocation API
 #'
-#' @param req Response to getLocation GET
+#' @param req Response to getLocation httr::GET
 #'
 #' @return Dataframe of locations with id, descriptions, and lat/lng
 #'
@@ -128,7 +135,7 @@ tfeeds_parse_getfeedlist <- function(req) {
 tfeeds_parse_getlocation <- function(req) {
 
   # parse content
-  parsed_content <- content(req)
+  parsed_content <- httr::content(req)
 
   # check that parsing produced output
   if (identical(parsed_content, "")) stop("No output to parse", call. = FALSE)
@@ -152,13 +159,13 @@ tfeeds_parse_getlocation <- function(req) {
 #' @param version Version of API as character that can be appended as part of path, defaults to v1
 #' @param key API key, defaults to tfeeds_key()
 #'
-#' @return Result of GET
+#' @return Result of httr::GET
 #'
 #' @details See http://transitfeeds.com/api/ for available API calls
 #'
 #' @export
 
-tfeeds_GET <- function(path, query, ..., version = 'v1/', key = tfeeds_key()) {
+tfeeds_get <- function(path, query, ..., version = 'v1/', key = tfeeds_key()) {
 
   if (missing(query)) {
     my_query <- list(key = key)
@@ -166,7 +173,7 @@ tfeeds_GET <- function(path, query, ..., version = 'v1/', key = tfeeds_key()) {
     my_query <- c(query, list(key = key))
   }
 
-  req <- GET('http://api.transitfeeds.com/', path = paste0(version, path), query = my_query)
+  req <- httr::GET('http://api.transitfeeds.com/', path = paste0(version, path), query = my_query)
 
   tfeeds_check(req)
 
@@ -182,7 +189,7 @@ tfeeds_GET <- function(path, query, ..., version = 'v1/', key = tfeeds_key()) {
 
 get_locations <- function() {
 
-  req <- tfeeds_GET("getLocations")
+  req <- tfeeds_get("getLocations")
 
   tfeeds_parse_getlocation(req)
 
@@ -190,7 +197,7 @@ get_locations <- function() {
 
 #' Get list of available feeds from transitfeeds API
 #'
-#' @return Result of GET
+#' @return Result of httr::GET
 #'
 #' @export
 
@@ -202,13 +209,13 @@ get_feedlist <- function(location_id) {
 
   # Submit the appropriate response based on the arguments
   if (missing(location_id)) {
-    req <- tfeeds_GET("getFeeds", query = list(limit = max_limit))
+    req <- tfeeds_get("getFeeds", query = list(limit = max_limit))
   } else {
-    req <- tfeeds_GET("getFeeds", query = list(location = location_id, limit = max_limit)) ## add location to query string
+    req <- tfeeds_get("getFeeds", query = list(location = location_id, limit = max_limit)) ## add location to query string
   }
 
   # Determine whether the max limit is truncating the desired results
-  content_req <- content(req)
+  content_req <- httr::content(req)
   total_results <- content_req$results$total
 
   # If the results are truncated by the max limit, run multiple times
@@ -224,7 +231,7 @@ get_feedlist <- function(location_id) {
       # throw an error if I'm wrong
       if (!missing(location_id)) stop('Location-specific queries with more than 100 responses are unsupported.')
 
-      sub_req <- tfeeds_GET("getFeeds", query = list(limit = max_limit, page = i))
+      sub_req <- tfeeds_get("getFeeds", query = list(limit = max_limit, page = i))
 
       sub_req_df <- tfeeds_parse_getfeedlist(sub_req)
 
@@ -245,19 +252,22 @@ get_feedlist <- function(location_id) {
 #' Download a zipped GTFS feed file from a url
 #'
 #' @param url Character URL of GTFS feed.
-#' @param dir Folder into which to put zipped file
+#' @param path <character> Folder into which to put zipped file. If NULL, then save a tempfile
 #'
 #' @return File path
 #'
 #' @export
 
-get_feed <- function(url, dir = 'temp') {
+get_feed <- function(url, path=NULL) {
 
-  # generate a temporary file path
-  temp <- paste0(dir, '/', 'gtfs_zip.zip')
+  # check if url links to a zip file
+  if(!grepl('\\.zip$', basename(url))) stop(sprintf("url must link to a zip file. link '%s' is invalid.", url))
 
-  # get the zipped file containing the GTFS feed data
-  GET(url, write_disk(temp, overwrite = TRUE))
+  # generate a temporary file path if no path is specified
+  if(is.null(path)) temp <- tempfile(fileext = ".zip") else temp <- file.path(path, 'gtfs_zip.zip')
+
+  # Get gtfs zip
+  download.file(url, temp)
 
   # return the temp path - for unzipping
   temp

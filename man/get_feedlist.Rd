@@ -7,7 +7,7 @@
 get_feedlist(location_id)
 }
 \value{
-Result of GET
+Result of httr::GET
 }
 \description{
 Get list of available feeds from transitfeeds API

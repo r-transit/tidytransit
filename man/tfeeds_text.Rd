@@ -7,10 +7,10 @@
 tfeeds_text(req)
 }
 \arguments{
-\item{req}{The result of a GET}
+\item{req}{The result of a httr::GET}
 }
 \value{
-Content parsed as text
+content parsed as text
 }
 \description{
 Parse content as text

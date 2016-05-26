@@ -18,14 +18,15 @@ You can install this package from GitHub using the devtools package:
     if (!require(devtools)) {
         install.packages('devtools')
     }
-    devtools::install_github('ropenscilabs/ggforce')
+    devtools::install_github('ropenscilabs/gtfsr')
 
 How to use it
 -------------
 
 ### Reading feed data from an API
 
-Request an [API key from Transitfeeds.com using your github account](http://transitfeeds.com/api/keys). 
+Request an [API key from Transitfeeds.com using your github
+account](http://transitfeeds.com/api/keys).
 
 ### Validate data quality
 

@@ -1,91 +1,124 @@
 # Purpose -----------------------------------------------------------------
 
 # Functions to read in GTFS data
-# These should collectively allow a user to 
+# These should collectively allow a user to
 # - unzip GTFS data from a local file
 # - validate that the content of the zipped file is a GTFS feed
 # - read the data into an object of class gtfs
 
 #' Unzip GTFS file and delete zip
-#' 
-#' @param path File path of zipped file
-#' @param delete_zip Logical, whether to delete the zipped file after extraction.  Deletes by default.
-#' 
+#'
+#' @param file path to zipped file
+#' @param delete_zip <boolean> whether to delete the zipped file after extraction.  Deletes by default.
+#' @param move_path <character> full file path to desire new location
+#'
+#' @return file path to directory with gtfs .txt files
 #' @export
 
-unzip_gtfs <- function(path, delete_zip = TRUE) {
-  
-  #TODO: give option to move zip file to another folder instead of deleting
-  
-  ex_dir <- strsplit(path, '/')[[1]][1]
-  
-  all_files <- list.files(ex_dir, full.names = TRUE)
-  if (!identical(all_files, path)) stop(paste0('No files other than zipped GTFS should be in ', ex_dir, ' directory pre-extraction.'))
-  
-  #TODO: if this fails, maybe don't delete the file (failure can be a warning)
-  unzip(path, exdir = ex_dir)
-  
-  if (delete_zip) file.remove(path)
-  
+unzip_gtfs <- function(file, delete_zip = FALSE, move_path = NULL) {
+
+  # set file path based on options
+  if(is.null(move_path)) f <- file else f <- move_path
+  f <- normalizePath(f)
+
+  if(!is.null(move_path)) {
+    if(dir.exists(move_path)) stop(sprintf('%s must be a full file path, not a directory path (e.g. "full/path/to/filename.zip")', move_path))
+    file.copy(file, move_path, overwrite=TRUE)
+  }
+
+  # create extraction folder
+  ex_dir <- file.path(dirname(f), strsplit(basename(f), "\\.")[[1]][1])
+  if(!dir.exists(ex_dir)) dir.create(ex_dir) else stop('extraction folder already exists.')
+
+  unzip(f, exdir = ex_dir)
+
+  if(delete_zip) file.remove(f)
+
+  message(sprintf("unzipped the following files to directory '%s'", ex_dir))
+  list.files(ex_dir) %>% print
+
+  return(ex_dir)
+
 }
 
-#' Function to read all files into dataframes
-#' 
-#' @param file_path Character file path
-
-
-read_sub_gtfs <- function(file_path, prefix = 'data/gtfs/', assign_envir = .GlobalEnv) {
-  
-  split_path <- strsplit(file_path, '/')
-  file_name <- split_path[[1]][length(split_path[[1]])]
-  
-  df_name <- gsub('.txt', '', file_name)
-  df_name <- paste0(df_name, '_df')
-  
-  print(paste0('Reading ', file_name))
-  
-  new_df <- read_csv(file_path)
-  
-  #TODO: take an environment argument with global as default?
-  assign(df_name, new_df, envir = assign_envir)
-  
-}
 
 # Read in feed ------------------------------------------------------------
 
 #' Put GTFS text file contents into objects in memory and delete files
-#' 
-#' @param path Path to folder into which files were extracted.
+#'
+#' @param exdir path to folder into which files were extracted.
 #' @param delete_files Logical, whether to delete the files after extraction.  Deletes by default.
-#' 
+#'
 #' @export
 
-read_gtfs <- function(path, delete_files = TRUE) {
-  
-  #TODO: clean up path if it's to zip file instead of folder?
-  
-  all_files <- list.files(path, full.names = TRUE)
+read_gtfs <- function(exdir, delete_files = TRUE) {
+
+  if(!dir.exists(exdir)) stop('Not a valid directory.')
+
+  all_files <- list.files(exdir, full.names = TRUE)
   is_txt <- grepl(pattern = '.txt', x = all_files)
   all_txt <- all_files[is_txt]
-  
+
+  if(!any(grepl('agency.txt', all_files))) stop("Required file 'agency.txt' not found. Abort.")
+
   func_envir <- environment()
-  
+
   lapply(all_files, function(x) read_sub_gtfs(x, assign_envir = func_envir))
-  
+
   ls_envir <- ls(envir = func_envir)
-  
-  # print('Everything in my function environment')
-  # print(ls_envir)
-  
+
   df_list <- ls_envir[grepl(pattern = '_df', x = ls_envir)]
-  
+
   gtfs_list <- list(mget(df_list, envir = func_envir))
-  
+
   # print('Everything df in my function environment')
   # print(df_list)
-  
+
   if (delete_files) file.remove(all_files)
-  
+
   gtfs_list
-  
+
+}
+
+#' Function to read all files into dataframes
+#'
+#' @param file_path Character file path
+
+read_sub_gtfs <- function(file_path, assign_envir = .GlobalEnv) {
+
+  split_path <- strsplit(file_path, '/')
+  file_name <- split_path[[1]][length(split_path[[1]])]
+
+  df_name <- gsub('.txt', '', file_name)
+  df_name <- paste0(df_name, '_df')
+
+  print(paste0('Reading ', file_name))
+
+  # need a better parser for stop times
+  if(df_name == "stop_times") {
+    new_df <- parse_stop_times(file_path)
+  } else new_df <- readr::read_csv(file_path)
+
+  assign(df_name, new_df, envir = assign_envir)
+
+}
+
+#' Function to better read in stop_times.txt, which often fails
+#'
+#' @param file_path <character> file path
+#'
+parse_stop_times <- function(file_path) {
+
+  ## define stop_times.txt variables and types
+  stop_times_vars <- c('trip_id', 'arrival_time', 'departure_time', 'stop_id', 'stop_sequence', 'stop_headsign', 'pickup_type', 'drop_off_type', 'shape_dist_traveled', 'timepoint')
+  ## types are defined by readr (see https://github.com/hadley/readr/blob/master/vignettes/column-types.Rmd)
+  stop_times_vars_type <- c('c', 'c', 'c', 'c', 'i', 'c', 'i', 'i', 'd', 'i')
+
+  small_df <- readr::read_csv(file_path, col_types) # get a small df to find how many cols are needed
+
+  types_string <- paste(stop_times_vars_type, collapse = "")
+  stop_times_df <- readr::read_csv(file_path, col_types)
+
+  # get small frame to extract columns
+
 }

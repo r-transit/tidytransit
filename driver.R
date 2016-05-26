@@ -1,9 +1,9 @@
 
 # Setup -------------------------------------------------------------------
 
-source('R/get_gtfs.R')
-source('R/read_gtfs.R')
-source('R/validate_gtfs.R')
+# source('R/get_gtfs.R')
+# source('R/read_gtfs.R')
+# source('R/validate_gtfs.R')
 
 # Get location and feed metadata ------------------------------------------
 
@@ -16,24 +16,23 @@ new_feedlist_df <- filter_feedlist(feedlist_df)
 
 # Take one URL through the process of getting all data into an obj --------
 
-feed <- get_feed(feedlist_df$url_d[1]) # need to add a check that this url is a zip and act accordingly
+f <- get_feed(feedlist_df$url_d[1]) # need to add a check that this url is a zip and act accordingly
 
-out <- unzip_gtfs(path = feed)
+zip_extract_dir <- unzip_gtfs(file = f)
 
-data_list <- read_gtfs(path = strsplit(feed, '/')[[1]][1])
-
+data_list <- read_gtfs(exdir = zip_extract_dir)
 
 
 # Put the workflow into a single function ---------------------------------
 
 feed_flow <- function(url) {
-  
+
   path <- get_feed(url)
-  
+
   unzip_gtfs(path)
-  
+
   read_gtfs(path = strsplit(path, '/')[[1]][1])
-  
+
 }
 
 
@@ -42,17 +41,17 @@ feed_flow <- function(url) {
 has_component <- function(one_gtfs, component) {
 # browser()
   one_list <- unlist(one_gtfs[1], recursive = FALSE)
-  
+
   list_names <- names(one_list)
-  
+
   df_name <- paste0(component, '_df')
-  
-  has_component <- ifelse(!(df_name %in% list_names), 'no', 
-                          ifelse(nrow(one_list[df_name][[1]]) == 0, 'empty', 
+
+  has_component <- ifelse(!(df_name %in% list_names), 'no',
+                          ifelse(nrow(one_list[df_name][[1]]) == 0, 'empty',
                                  'yes'))
-  
+
   has_component
-  
+
 }
 
 
@@ -68,7 +67,7 @@ new_feedlist_df <- new_feedlist_df %>%
 
 new_feedlist_df <- new_feedlist_df %>%
   filter(is_USA)
-  
+
 # Punting to for loop -----------------------------------------------------
 
 # list all the possible files
@@ -88,19 +87,19 @@ all_feeds <- list()
 # problems: some are FTP (code now skips these, but should handle this)
 # one has a subfolder after unzipping (http://www.theride.org/google/google_transit.zip)
 for (i in 1:nrow(new_feedlist_df)) {
-  
+
   if (grepl('ftp', new_feedlist_df$url_d[i])) next
-  
+
   gtfs_list <- feed_flow(new_feedlist_df$url_d[i])
-  
+
   all_feeds <- c(all_feeds, gtfs_list)
-  
+
   for (j in has_colnames) {
-    
+
     new_feedlist_df[i, j] <- has_component(gtfs_list, gsub('has_', '', j))
-    
+
   }
-  
+
   print(paste0('Finished number ', i, ' for ', new_feedlist_df$t[i]))
 
 }
