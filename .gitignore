@@ -4,4 +4,7 @@
 .Ruserdata
 transitfeeds_api_key.txt
 packrat/lib*/
+packrat/*
 inst/doc
+.gitignore
+gtfsr-opensci.Rproj
