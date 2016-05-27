@@ -53,6 +53,7 @@ unzip_gtfs <- function(file, delete_zip = FALSE, move_path = NULL) {
 
 read_gtfs <- function(exdir, delete_files = TRUE) {
 
+  exdir <- normalizePath(exdir)
   if(!dir.exists(exdir)) stop('Not a valid directory.')
 
   all_files <- list.files(exdir, full.names = TRUE)
@@ -95,7 +96,7 @@ read_sub_gtfs <- function(file_path, assign_envir = .GlobalEnv) {
   print(paste0('Reading ', file_name))
 
   # need a better parser for stop times
-  if(df_name == "stop_times") {
+  if(df_name == "stop_times_df") {
     new_df <- parse_stop_times(file_path)
   } else new_df <- readr::read_csv(file_path)
 
@@ -114,11 +115,11 @@ parse_stop_times <- function(file_path) {
   ## types are defined by readr (see https://github.com/hadley/readr/blob/master/vignettes/column-types.Rmd)
   stop_times_vars_type <- c('c', 'c', 'c', 'c', 'i', 'c', 'i', 'i', 'd', 'i')
 
-  small_df <- readr::read_csv(file_path, col_types) # get a small df to find how many cols are needed
+  small_df <- readr::read_csv(file_path, n_max = 10) # get a small df to find how many cols are needed
+  indx <- stop_times_vars %in% names(small_df)
+  types_string <- paste(stop_times_vars_type[indx], collapse = "")
+  stop_times_df <- readr::read_csv(file_path, col_types = types_string)
+  stop_times_df
 
-  types_string <- paste(stop_times_vars_type, collapse = "")
-  stop_times_df <- readr::read_csv(file_path, col_types)
-
-  # get small frame to extract columns
 
 }

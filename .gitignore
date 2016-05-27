@@ -3,3 +3,5 @@
 .RData
 .Ruserdata
 transitfeeds_api_key.txt
+packrat/lib*/
+inst/doc
