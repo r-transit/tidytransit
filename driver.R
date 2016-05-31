@@ -20,7 +20,7 @@ f <- get_feed(feedlist_df$url_d[1]) # need to add a check that this url is a zip
 
 zip_extract_dir <- unzip_gtfs(file = f)
 
-data_list <- read_gtfs(exdir = zip_extract_dir)
+data_list <- read_gtfs(exdir = zip_extract_dir, FALSE)
 
 
 # Put the workflow into a single function ---------------------------------

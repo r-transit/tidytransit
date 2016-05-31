@@ -62,22 +62,22 @@ read_gtfs <- function(exdir, delete_files = TRUE) {
 
   if(!any(grepl('agency.txt', all_files))) stop("Required file 'agency.txt' not found. Abort.")
 
-  func_envir <- environment()
+  # something_df <- dplyr::data_frame(a = 1:5)
 
-  lapply(all_files, function(x) read_sub_gtfs(x, assign_envir = func_envir))
+  exec_env <- environment()
 
-  ls_envir <- ls(envir = func_envir)
+  lapply(all_files, function(x) read_sub_gtfs(x, assign_envir = exec_env))
+
+  ls_envir <- ls(envir = exec_env)
 
   df_list <- ls_envir[grepl(pattern = '_df', x = ls_envir)]
 
-  gtfs_list <- list(mget(df_list, envir = func_envir))
+  gtfs_list <- list(mget(df_list, envir = exec_env))
 
   # print('Everything df in my function environment')
   # print(df_list)
 
   if (delete_files) file.remove(all_files)
-
-  gtfs_list
 
 }
 
@@ -97,7 +97,7 @@ read_sub_gtfs <- function(file_path, assign_envir = .GlobalEnv) {
 
   # need a better parser for stop times
   if(df_name == "stop_times_df") {
-    new_df <- parse_stop_times(file_path)
+    new_df <- suppressWarnings(parse_stop_times(file_path)) # will have warning even though we fix problem
   } else new_df <- readr::read_csv(file_path)
 
   assign(df_name, new_df, envir = assign_envir)
@@ -107,19 +107,27 @@ read_sub_gtfs <- function(file_path, assign_envir = .GlobalEnv) {
 #' Function to better read in stop_times.txt, which often fails
 #'
 #' @param file_path <character> file path
-#'
-parse_stop_times <- function(file_path) {
+#' @param all_char <logical> default FALSE. temporary variable. option to import all stop time data as character.
 
-  ## define stop_times.txt variables and types
-  stop_times_vars <- c('trip_id', 'arrival_time', 'departure_time', 'stop_id', 'stop_sequence', 'stop_headsign', 'pickup_type', 'drop_off_type', 'shape_dist_traveled', 'timepoint')
-  ## types are defined by readr (see https://github.com/hadley/readr/blob/master/vignettes/column-types.Rmd)
-  stop_times_vars_type <- c('c', 'c', 'c', 'c', 'i', 'c', 'i', 'i', 'd', 'i')
+parse_stop_times <- function(file_path, all_char = FALSE) {
 
-  small_df <- readr::read_csv(file_path, n_max = 10) # get a small df to find how many cols are needed
-  indx <- stop_times_vars %in% names(small_df)
-  types_string <- paste(stop_times_vars_type[indx], collapse = "")
-  stop_times_df <- readr::read_csv(file_path, col_types = types_string)
-  stop_times_df
+  if(all_char) {
+    # ALL CHARACTER
+    small_df <- readr::read_csv(file_path, n_max = 10) # get a small df to find how many cols are needed
+    ## types are defined by readr (see https://github.com/hadley/readr/blob/master/vignettes/column-types.Rmd)
+    types_string <- rep('c', dim(small_df)[2]) %>% paste(collapse = "") # input all as character
+    stop_times_df <- readr::read_csv(file_path, col_types = types_string)
+    stop_times_df
+  } else {
+    ## define stop_times.txt variables and types
+    stop_times_vars <- c('trip_id', 'arrival_time', 'departure_time', 'stop_id', 'stop_sequence', 'stop_headsign', 'pickup_type', 'drop_off_type', 'shape_dist_traveled', 'timepoint')
+    ## types are defined by readr (see https://github.com/hadley/readr/blob/master/vignettes/column-types.Rmd)
+    stop_times_vars_type <- c('c', 'c', 'c', 'c', 'i', 'c', 'i', 'i', 'd', 'i')
 
-
+    small_df <- readr::read_csv(file_path, n_max = 10) # get a small df to find how many cols are needed
+    indx <- stop_times_vars %in% names(small_df)
+    types_string <- paste(stop_times_vars_type[indx], collapse = "")
+    stop_times_df <- readr::read_csv(file_path, col_types = types_string)
+    stop_times_df
+  }
 }
