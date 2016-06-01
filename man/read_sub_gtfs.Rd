@@ -4,7 +4,7 @@
 \alias{read_sub_gtfs}
 \title{Function to read all files into dataframes}
 \usage{
-read_sub_gtfs(file_path, prefix = "data/gtfs/", assign_envir = .GlobalEnv)
+read_sub_gtfs(file_path, assign_envir = .GlobalEnv)
 }
 \arguments{
 \item{file_path}{Character file path}

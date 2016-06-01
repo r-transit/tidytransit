@@ -9,9 +9,9 @@ unzip_gtfs(file, delete_zip = FALSE, move_path = NULL)
 \arguments{
 \item{file}{path to zipped file}
 
-\item{delete_zip}{<boolean> whether to delete the zipped file after extraction.  Deletes by default.}
+\item{delete_zip}{Boolean. whether to delete the zipped file after extraction.  Deletes by default.}
 
-\item{move_path}{<character> full file path to desire new location}
+\item{move_path}{Character. full file path to desire new location}
 }
 \value{
 file path to directory with gtfs .txt files

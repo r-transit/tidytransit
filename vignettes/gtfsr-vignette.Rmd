@@ -1,58 +1,50 @@
+
 ---
-title: "Vignette Title"
-author: "Vignette Author"
+title: "Getting GTFS Data and Mapping with GTFSr"
+author: "Danton Noriega <danton@transloc.com>"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Using GTFSr}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
+## Getting data from GTFS Transit Feeds
 
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
+### 1. Get an GTFS API key
 
-## Vignette Info
+This package can get data from a user-specified URL and is also able to get GTFS data from the [TransitFeeds API](http://transitfeeds.com/api/). This vignette will focus on the case where GTFS data is extracted from the TransitFeed API. Below are the steps needed to get a API key (note: requires a GitHub account), including a YouTube (click the GIF to see the YouTube video) that visually guides you through the steps.
 
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
+1. *Go to [http://transitfeeds.com/](http://transitfeeds.com/)*
+2. *Click* "Sign in with GitHub" *in the top-right corner.*
+	- If it is your first time visiting the site, it will ask you to sign in (and likely every time if you do not have cookies enabled).
+3. *Once signed in, click your profile icon in the top-right and select* "API Keys" *from the drop-down menu.*
+	- Your GitHub profile icon and username replaces "Sign in with GitHub".
+4. *Fill in* "Enter a description" *and then click the* "Create Key" *button*.
+5. *Copy your new API Key to your clipboard.*
 
-## Styles
+[![vid-gif](https://j.gifs.com/kRNVY5.gif)](https://youtu.be/ufM67FoIMho)
 
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
 
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
 
-## Figures
+### 2. Use `gtfsr` package to download feed list
 
-The figure sizes have been customised so that you can easily put two images side-by-side. 
+First things first, load the `gtfsr` package and set your key to access the TransitFeeds API. This example also using the `dplyr` package to manage dataframes and `magrittr` for piping.
 
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+```{r setup, warning=TRUE, message=FALSE, echo=TRUE, eval=TRUE}
+library(gtfsr)
+library(magrittr)
+library(dplyr)
+
+set_api_key('2ec1ae29-b8c2-4a03-b96e-126d585233f9') # input your API key here
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
+### Getting full list available GTFS feeds
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
+With a valid API key loaded, you can easily get the full list of GTFS feeds using the `get_feedlist` function.
 
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
-
-## More Examples
-
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
+```{r feedlist, warning=TRUE, message=TRUE, echo=TRUE, eval=TRUE}
+feedlist_df <- get_feedlist()
+feedlist_df %>% slice(1:5)
 ```
-
-Also a quote using `>`:
-
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))

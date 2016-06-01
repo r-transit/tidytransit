@@ -10,7 +10,7 @@ tfeeds_parse_getfeedlist(req)
 \item{req}{The result of a GET}
 }
 \value{
-data_frame of feeds
+Dataframe of feeds
 }
 \description{
 Parse a gtfs feed list

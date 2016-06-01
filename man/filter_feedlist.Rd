@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_gtfs.R
 \name{filter_feedlist}
 \alias{filter_feedlist}
-\title{Filter a feedlist for just downloadable results}
+\title{Filter a feedlist to include only valid urls (ending in .zip)}
 \usage{
 filter_feedlist(feedlist_df)
 }
@@ -13,6 +13,6 @@ filter_feedlist(feedlist_df)
 A dataframe of feed metadata for all feeds in input that are downloadable
 }
 \description{
-Filter a feedlist for just downloadable results
+Filter a feedlist to include only valid urls (ending in .zip)
 }
 

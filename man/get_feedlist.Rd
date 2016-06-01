@@ -6,6 +6,9 @@
 \usage{
 get_feedlist(location_id)
 }
+\arguments{
+\item{Integer.}{The location ID (see column "id" in results of get_locations()) of desired agency.}
+}
 \value{
 Result of httr::GET
 }

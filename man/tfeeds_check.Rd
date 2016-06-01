@@ -7,7 +7,7 @@
 tfeeds_check(req)
 }
 \arguments{
-\item{req}{The result of a httr::GET}
+\item{req}{The result of an httr::GET}
 }
 \description{
 Check HTTP status; stop if failure

@@ -9,7 +9,7 @@ get_feed(url, path = NULL)
 \arguments{
 \item{url}{Character URL of GTFS feed.}
 
-\item{path}{<character> Folder into which to put zipped file. If NULL, then save a tempfile}
+\item{path}{Character. Folder into which to put zipped file. If NULL, then save a tempfile}
 }
 \value{
 File path

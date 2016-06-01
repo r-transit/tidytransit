@@ -8,3 +8,4 @@ packrat/*
 inst/doc
 .gitignore
 gtfsr-opensci.Rproj
+vignettes/get-api-key.mp4

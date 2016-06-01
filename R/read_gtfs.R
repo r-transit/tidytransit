@@ -9,8 +9,8 @@
 #' Unzip GTFS file and delete zip
 #'
 #' @param file path to zipped file
-#' @param delete_zip <boolean> whether to delete the zipped file after extraction.  Deletes by default.
-#' @param move_path <character> full file path to desire new location
+#' @param delete_zip Boolean. whether to delete the zipped file after extraction.  Deletes by default.
+#' @param move_path Character. full file path to desire new location
 #'
 #' @return file path to directory with gtfs .txt files
 #' @export
@@ -60,13 +60,17 @@ read_gtfs <- function(exdir, delete_files = TRUE) {
   is_txt <- grepl(pattern = '.txt', x = all_files)
   all_txt <- all_files[is_txt]
 
-  if(!any(grepl('agency.txt', all_files))) stop("Required file 'agency.txt' not found. Abort.")
+  if(!any(grepl('agency.txt', all_files))) {
+    message("\nRequired file 'agency.txt' not found. NULL is returned.\n\n")
+    return(NULL)
+  }
 
   # something_df <- dplyr::data_frame(a = 1:5)
 
   exec_env <- environment()
 
   lapply(all_files, function(x) read_sub_gtfs(x, assign_envir = exec_env))
+  message("\n")
 
   ls_envir <- ls(envir = exec_env)
 
@@ -78,6 +82,8 @@ read_gtfs <- function(exdir, delete_files = TRUE) {
   # print(df_list)
 
   if (delete_files) file.remove(all_files)
+  
+  gtfs_list
 
 }
 
@@ -93,7 +99,7 @@ read_sub_gtfs <- function(file_path, assign_envir = .GlobalEnv) {
   df_name <- gsub('.txt', '', file_name)
   df_name <- paste0(df_name, '_df')
 
-  print(paste0('Reading ', file_name))
+  message(paste0('Reading ', file_name))
 
   # need a better parser for stop times
   if(df_name == "stop_times_df") {
@@ -106,8 +112,8 @@ read_sub_gtfs <- function(file_path, assign_envir = .GlobalEnv) {
 
 #' Function to better read in stop_times.txt, which often fails
 #'
-#' @param file_path <character> file path
-#' @param all_char <logical> default FALSE. temporary variable. option to import all stop time data as character.
+#' @param file_path Character. file path
+#' @param all_char Boolean. default FALSE. temporary variable. option to import all stop time data as character.
 
 parse_stop_times <- function(file_path, all_char = FALSE) {
 

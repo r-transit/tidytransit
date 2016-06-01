@@ -10,23 +10,6 @@
 # - download the feed from a url as a zip
 
 
-# Setup -------------------------------------------------------------------
-
-# library(readr)
-# library(httr)
-# library(dplyr)
-
-# my_transit_feeds_key <- readLines("transitfeeds_api_key.txt")
-#
-# warn_for_status(
-#   r <- httr::GET('http://api.transitfeeds.com/v1/getFeeds', query = list(key = my_transit_feeds_key))
-# )
-#
-# content_r <- httr::content(r)
-#
-# # ids <- sapply(content_r$results$feeds
-
-
 
 # Best practice approach --------------------------------------------------
 
@@ -34,7 +17,7 @@
 
 #' Check HTTP status; stop if failure
 #' @import httr dplyr magrittr stringr
-#' @param req The result of a httr::GET
+#' @param req The result of an httr::GET
 #'
 #' @export
 
@@ -59,10 +42,24 @@ tfeeds_text <- function(req) {
   parsed_content
 }
 
-#' Store API key in a function
+#' Set API key for recall
+#' @param key Character. API key.
+#' @export
+set_api_key <- function(key = NULL) {
+  stopifnot(nchar(key) == 36, is.character(key))
+  valid_api_key <- grepl('[[:alnum:]]{8}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{12}', key)
+  if(!valid_api_key) {
+    stop(sprintf("API key '%s' is invalid. API keys are 36 characters long with pattern XXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.", key))
+  }
+  if(!exists('.gtfs_api_key')) .gtfs_api_key <<- new.env(parent=emptyenv()) # create new key envir
+  .gtfs_api_key$key <<- key
+}
 
-tfeeds_key <- function() {
-  '3d5d789c-1019-4235-b83f-9797167cbb67'
+#' Get API key
+#' @export
+get_api_key <- function() {
+  stopifnot(has_key())
+  .gtfs_api_key$key
 }
 
 #' Make sure API key string is not empty
@@ -72,15 +69,19 @@ tfeeds_key <- function() {
 #' @export
 
 has_key <- function() {
-  !identical(tfeeds_key(), "")
+  if(!exists('.gtfs_api_key')) stop("API not found. Please set your API key using function 'set_api_key'")
+  valid_api_key <- grepl('[[:alnum:]]{8}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{12}', .gtfs_api_key$key)
+  if(!valid_api_key) {
+    stop(sprintf("API key '%s' is invalid. API keys are 36 characters long with pattern XXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX. Please set your API key using function 'set_api_key'", .gtfs_api_key$key))
+  } else valid_api_key
 }
 
 #' Parse a gtfs feed list
-#' 
-#' @param req The result of a GET 
-#' 
-#' @return data_frame of feeds
-#' 
+#'
+#' @param req The result of a GET
+#'
+#' @return Dataframe of feeds
+#'
 #' @export
 tfeeds_parse_getfeedlist <- function(req) {
 
@@ -118,7 +119,7 @@ tfeeds_parse_getfeedlist <- function(req) {
   })
 
   # extract data into a dataframe
-  feeds_df <- bind_rows(feeds_flat)
+  feeds_df <-dplyr::bind_rows(feeds_flat)
 
   feeds_df
 
@@ -147,7 +148,7 @@ tfeeds_parse_getlocation <- function(req) {
   identical(parsed_content$results, 'locations')
 
   # extract location data into a dataframe
-  loc_df <- bind_rows(parsed_content$results$locations)
+  loc_df <-dplyr::bind_rows(parsed_content$results$locations)
 
   loc_df
 
@@ -157,7 +158,7 @@ tfeeds_parse_getlocation <- function(req) {
 #'
 #' @param path Character containing the name of the API call (ex. getFeeds)
 #' @param version Version of API as character that can be appended as part of path, defaults to v1
-#' @param key API key, defaults to tfeeds_key()
+#' @param key API key, defaults to get_api_key()
 #'
 #' @return Result of httr::GET
 #'
@@ -165,7 +166,7 @@ tfeeds_parse_getlocation <- function(req) {
 #'
 #' @export
 
-tfeeds_get <- function(path, query, ..., version = 'v1/', key = tfeeds_key()) {
+tfeeds_get <- function(path, query, ..., version = 'v1/', key = if(has_key()) get_api_key()) {
 
   if (missing(query)) {
     my_query <- list(key = key)
@@ -196,40 +197,51 @@ get_locations <- function() {
 }
 
 #' Get list of available feeds from transitfeeds API
-#'
+#' @param Integer. The location ID (see column "id" in results of get_locations()) of desired agency.
 #' @return Result of httr::GET
 #'
 #' @export
 
-get_feedlist <- function(location_id) {
+get_feedlist <- function(location_ids) {
 
   #TODO: Generalize query to allow for multiple parameters depending on what's provided
 
   max_limit <- 100 # 100 is the max limit
 
   # Submit the appropriate response based on the arguments
-  if (missing(location_id)) {
+  ## import all locations if missing 'location_ids'
+  if (missing(location_ids)) {
     req <- tfeeds_get("getFeeds", query = list(limit = max_limit))
-  } else {
-    req <- tfeeds_get("getFeeds", query = list(location = location_id, limit = max_limit)) ## add location to query string
-  }
+    # Determine whether the max limit is truncating the desired results
+    content_req <- httr::content(req)
+    total_results <- content_req$results$total
 
-  # Determine whether the max limit is truncating the desired results
-  content_req <- httr::content(req)
-  total_results <- content_req$results$total
+  ## if not missing, import specific locations
+  } else {
+
+    stopifnot(is.numeric(location_ids)) # must be indexed by numeric IDs
+
+    req <- location_ids %>% lapply( . , function(x) tfeeds_get("getFeeds", query = list(location = x, limit = max_limit)))
+    content_req <- req %>% lapply(. %>% httr::content(.))
+    total_results <- content_req %>%
+      lapply(. %>% '[['('results') %>%  '['('total')) %>%
+      unlist %>%
+      sum
+  }
 
   # If the results are truncated by the max limit, run multiple times
   if (total_results > max_limit) {
 
     response_cycles <- ceiling(total_results / max_limit)
 
-    req_df <- data_frame()
+    req_df <- dplyr::data_frame()
 
     for (i in 1:response_cycles) {
 
-      # assuming with a location_id the max_limit won't be a problem
+      # assuming with a location_ids the max_limit won't be a problem
       # throw an error if I'm wrong
-      if (!missing(location_id)) stop('Location-specific queries with more than 100 responses are unsupported.')
+      ## TODO: I (Danton) think I can make this work but will leave for later
+      if (!missing(location_ids)) stop('Location-specific queries with more than 100 responses are unsupported.')
 
       sub_req <- tfeeds_get("getFeeds", query = list(limit = max_limit, page = i))
 
@@ -241,7 +253,13 @@ get_feedlist <- function(location_id) {
 
   } else {
 
-    req_df <- tfeeds_parse_getfeedlist(req)
+    if (missing(location_ids)) {
+      req_df <- tfeeds_parse_getfeedlist(req)
+    } else {
+      req_df <- req %>%
+        lapply(. %>% tfeeds_parse_getfeedlist) %>%
+        dplyr::rbind_all(.)
+    }
 
   }
 
@@ -249,10 +267,11 @@ get_feedlist <- function(location_id) {
 
 }
 
+
 #' Download a zipped GTFS feed file from a url
 #'
 #' @param url Character URL of GTFS feed.
-#' @param path <character> Folder into which to put zipped file. If NULL, then save a tempfile
+#' @param path Character. Folder into which to put zipped file. If NULL, then save a tempfile
 #'
 #' @return File path
 #'
@@ -261,7 +280,10 @@ get_feedlist <- function(location_id) {
 get_feed <- function(url, path=NULL) {
 
   # check if url links to a zip file
-  if(!grepl('\\.zip$', basename(url))) stop(sprintf("url must link to a zip file. link '%s' is invalid.", url))
+  if(!grepl('\\.zip$', basename(url))) {
+    sprintf("Link '%s' is invalid; url must link to a zip file. NULL was returned.", url) %>% warning
+    return(NULL)
+  }
 
   # generate a temporary file path if no path is specified
   if(is.null(path)) temp <- tempfile(fileext = ".zip") else temp <- file.path(path, 'gtfs_zip.zip')
@@ -270,11 +292,11 @@ get_feed <- function(url, path=NULL) {
   download.file(url, temp)
 
   # return the temp path - for unzipping
-  temp
+  return(temp)
 
 }
 
-#' Filter a feedlist for just downloadable results
+#' Filter a feedlist to include only valid urls (ending in .zip)
 #'
 #' @param feedlist_df A dataframe of feed metadata such as output from get_feedlist
 #'
@@ -287,11 +309,30 @@ filter_feedlist <- function(feedlist_df) {
   if (!is.data.frame(feedlist_df)) stop('Invalid feedlist_df input.  Must be a dataframe.')
   if (!('url_d' %in% names(feedlist_df))) stop('No valid URLs found - expected url_d column in feedlist_df.')
 
-  print(paste0(sum(is.na(feedlist_df$url_d)), ' feeds did not provide downloadable URLs of ', nrow(feedlist_df), ' feeds provided.'))
+  zip_indx <- feedlist_df$url_d %>% sapply(. %>% basename %>% grepl('\\.zip$', .), USE.NAMES = FALSE)
+  message(paste0(sum(!zip_indx), ' feeds did not provide downloadable URLs of ', nrow(feedlist_df), ' feeds provided. ', sum(zip_indx), ' returned.'))
 
-  feedlist_df <- feedlist_df %>%
-    filter(!is.na(url_d))
+  feedlist_df <- feedlist_df %>% slice(which(zip_indx))
 
   return(feedlist_df)
+
+}
+
+
+#' Get a Dataframes of GTFS data.
+#'
+#' @param path Character. url link to zip file
+#'
+#' @return Dataframes of GTFS data.
+#'
+#' @export
+
+get_gtfs <- function(url) {
+
+  path <- get_feed(url)
+
+  zip_dir <- unzip_gtfs(path)
+
+  read_gtfs(zip_dir)
 
 }

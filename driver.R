@@ -1,9 +1,7 @@
-
-# Setup -------------------------------------------------------------------
-
-# source('R/get_gtfs.R')
-# source('R/read_gtfs.R')
-# source('R/validate_gtfs.R')
+library(gtfsr)
+library(magrittr)
+library(dplyr)
+library(stringr)
 
 # Get location and feed metadata ------------------------------------------
 
@@ -11,7 +9,7 @@ loc_df <- get_locations()
 
 feedlist_df <- get_feedlist()
 
-new_feedlist_df <- filter_feedlist(feedlist_df)
+feedlist_df <- filter_feedlist(feedlist_df)
 
 
 # Take one URL through the process of getting all data into an obj --------
@@ -22,6 +20,8 @@ zip_extract_dir <- unzip_gtfs(file = f)
 
 data_list <- read_gtfs(exdir = zip_extract_dir, FALSE)
 
+data_list <- feedlist_df$url_d[1:5] %>% lapply(. %>% get_gtfs)
+
 
 # Put the workflow into a single function ---------------------------------
 
@@ -29,9 +29,9 @@ feed_flow <- function(url) {
 
   path <- get_feed(url)
 
-  unzip_gtfs(path)
+  zip_dir <- unzip_gtfs(path)
 
-  read_gtfs(path = strsplit(path, '/')[[1]][1])
+  read_gtfs(zip_dir) 
 
 }
 
