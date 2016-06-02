@@ -42,9 +42,26 @@ set_api_key('2ec1ae29-b8c2-4a03-b96e-126d585233f9') # input your API key here
 
 ### Getting full list available GTFS feeds
 
-With a valid API key loaded, you can easily get the full list of GTFS feeds using the `get_feedlist` function.
+With a valid API key loaded, you can easily get the full list of GTFS feeds using the `get_feedlist` function. What we care most about are the feed GTFS data urls contained in column `url_d` of the feed list. We output the first 10 GTFS data urls after getting the full feed list.
 
 ```{r feedlist, warning=TRUE, message=TRUE, echo=TRUE, eval=TRUE}
-feedlist_df <- get_feedlist()
-feedlist_df %>% slice(1:5)
+feedlist_df <- get_feedlist() # create a dataframe of all feeds
+feedlist_df %>% select(url_d) %>% slice(1:10) # show urls to GTFS data from first 5 feeds
+```
+
+If we want only the data for a specific location (or locations), we can get then search the locations feed and find the IDs of interest. Assume we are interested in getting all the GTFS data from *Australian* feeds (i.e. we search .
+
+
+```{r get_locations, warning=TRUE, message=TRUE, echo=TRUE, eval=TRUE}
+locations_df <- get_locations()
+#################################################################################
+# LEFT OFF HERE ----------------------------------------------------------
+#################################################################################
+## get australian feeds
+subset_df <- locations_df %>%
+    filter(grepl('australia', t, ignore.case = TRUE)) %>% # filter out locations with "australia" in name
+    select(id, t)
+subset_df
+aussie_ids <- subset_df %>% select(id)
+aussie_ids
 ```

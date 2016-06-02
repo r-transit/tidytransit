@@ -219,7 +219,21 @@ get_feedlist <- function(location_ids) {
   ## if not missing, import specific locations
   } else {
 
-    stopifnot(is.numeric(location_ids)) # must be indexed by numeric IDs
+    # check if single column of data was inputed. if so, convert to vector; error otherwise.
+    if(!is.null(dim(location_ids))) {
+      if(dim(location_ids)[2] == 1) {
+        location_ids <- unlist(location_ids)
+      } else {
+        stop('Please input a integer vector or single column of integer location IDs.')
+      }
+    }
+
+    # check if vector is numeric, if so, convert to integer.
+    if(is.numeric(location_ids)) {
+      location_ids <- as.integer(location_ids)
+    } else {
+      stop("Must provide a numeric (or integer) vector.") # must be indexed by numeric IDs
+    }
 
     req <- location_ids %>% lapply( . , function(x) tfeeds_get("getFeeds", query = list(location = x, limit = max_limit)))
     content_req <- req %>% lapply(. %>% httr::content(.))
