@@ -2,17 +2,14 @@
 % Please edit documentation in R/get_gtfs.R
 \name{get_feedlist}
 \alias{get_feedlist}
-\title{Get list of available feeds from transitfeeds API}
+\title{Get list of all available feeds from transitfeeds API}
 \usage{
-get_feedlist(location_id)
-}
-\arguments{
-\item{Integer.}{The location ID (see column "id" in results of get_locations()) of desired agency.}
+get_feedlist()
 }
 \value{
 Result of httr::GET
 }
 \description{
-Get list of available feeds from transitfeeds API
+Get list of all available feeds from transitfeeds API
 }
 

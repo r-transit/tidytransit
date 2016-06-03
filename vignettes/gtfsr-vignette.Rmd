@@ -1,11 +1,11 @@
 
 ---
-title: "Getting GTFS Data and Mapping with GTFSr"
+title: "Getting GTFS Data and Mapping with gtfsr"
 author: "Danton Noriega <danton@transloc.com>"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Using GTFSr}
+  %\VignetteIndexEntry{Using gtfsr}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -33,35 +33,51 @@ This package can get data from a user-specified URL and is also able to get GTFS
 First things first, load the `gtfsr` package and set your key to access the TransitFeeds API. This example also using the `dplyr` package to manage dataframes and `magrittr` for piping.
 
 ```{r setup, warning=TRUE, message=FALSE, echo=TRUE, eval=TRUE}
+
 library(gtfsr)
 library(magrittr)
 library(dplyr)
+options(dplyr.width = Inf) # I like to see all the columns
 
 set_api_key('2ec1ae29-b8c2-4a03-b96e-126d585233f9') # input your API key here
+
 ```
 
 ### Getting full list available GTFS feeds
 
-With a valid API key loaded, you can easily get the full list of GTFS feeds using the `get_feedlist` function. What we care most about are the feed GTFS data urls contained in column `url_d` of the feed list. We output the first 10 GTFS data urls after getting the full feed list.
+With a valid API key loaded, you can easily get the full list of GTFS feeds using the `get_feedlist` function. What we care most about are the feed GTFS data urls contained in column `url_d` of the feed list. Since we are interested in acquiring the GTFS data (not just the feedlist), we can use the `filter_feedlist` function to return a dataframe containing only valid feed urls.
 
 ```{r feedlist, warning=TRUE, message=TRUE, echo=TRUE, eval=TRUE}
+
 feedlist_df <- get_feedlist() # create a dataframe of all feeds
-feedlist_df %>% select(url_d) %>% slice(1:10) # show urls to GTFS data from first 5 feeds
+feedlist_df <- feedlist_df %>% filter_feedlist # filter the feedlist
+feedlist_df %>% select(url_d) %>% head(5) # show first 5 feed urls
+
 ```
 
-If we want only the data for a specific location (or locations), we can get then search the locations feed and find the IDs of interest. Assume we are interested in getting all the GTFS data from *Australian* feeds (i.e. we search .
+If we want only the data for a specific location (or locations), we can get then search the feedlist for feeds of interest.
+
+Assume we are interested in getting all the GTFS data from *Australian* feeds (i.e. we search for location names for the word 'australia'). We can match Australian agencies by name (filter on `loc_t`) and extract the corresponding url feeds (select `url_d`).
 
 
-```{r get_locations, warning=TRUE, message=TRUE, echo=TRUE, eval=TRUE}
-locations_df <- get_locations()
-#################################################################################
-# LEFT OFF HERE ----------------------------------------------------------
-#################################################################################
+
+
+```{r aussie, warning=TRUE, message=TRUE, echo=TRUE, eval=TRUE}
+
 ## get australian feeds
-subset_df <- locations_df %>%
-    filter(grepl('australia', t, ignore.case = TRUE)) %>% # filter out locations with "australia" in name
-    select(id, t)
-subset_df
-aussie_ids <- subset_df %>% select(id)
-aussie_ids
+aussie_df <- feedlist_df %>%
+    filter(grepl('australia', loc_t, ignore.case = TRUE)) # filter out locations with "australia" in name
+aussie_df %>% select(loc_t) %>% head(5) # look at location names
+aussie_urls <- aussie_df %>% select(url_d) # get aussie urls
+
 ```
+
+Once we have the urls for the feeds of interest, we can download and extract all the GTFS data into a data list (aka a list of data frames) using the `get_gtfs` data. To save time, we will only download 5 feeds (`slice(6:10)`)
+
+```{r get_gtfs, warning=FALSE, message=FALSE, echo=FALSE, eval=TRUE}
+
+data_list <- aussie_urls %>% slice(6:10) %>% get_gtfs
+
+```
+
+

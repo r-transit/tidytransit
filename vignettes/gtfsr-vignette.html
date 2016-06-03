@@ -13,7 +13,7 @@
 
 <meta name="date" content="2016-06-02" />
 
-<title>Getting GTFS Data and Mapping with GTFSr</title>
+<title>Getting GTFS Data and Mapping with gtfsr</title>
 
 
 
@@ -68,7 +68,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="fluid-row" id="header">
 
 
-<h1 class="title">Getting GTFS Data and Mapping with GTFSr</h1>
+<h1 class="title">Getting GTFS Data and Mapping with gtfsr</h1>
 <h4 class="author"><em>Danton Noriega <a href="mailto:danton@transloc.com">danton@transloc.com</a></em></h4>
 <h4 class="date"><em>2016-06-02</em></h4>
 
@@ -101,6 +101,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(gtfsr)
 <span class="kw">library</span>(magrittr)
 <span class="kw">library</span>(dplyr)
+<span class="kw">options</span>(<span class="dt">dplyr.width =</span> <span class="ot">Inf</span>) <span class="co"># I like to see all the columns</span>
 
 <span class="kw">set_api_key</span>(<span class="st">'2ec1ae29-b8c2-4a03-b96e-126d585233f9'</span>) <span class="co"># input your API key here</span></code></pre></div>
 </div>
@@ -108,30 +109,32 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h3>Getting full list available GTFS feeds</h3>
 <p>With a valid API key loaded, you can easily get the full list of GTFS feeds using the <code>get_feedlist</code> function. What we care most about are the feed GTFS data urls contained in column <code>url_d</code> of the feed list. We output the first 10 GTFS data urls after getting the full feed list.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">feedlist_df &lt;-<span class="st"> </span><span class="kw">get_feedlist</span>() <span class="co"># create a dataframe of all feeds</span>
-feedlist_df %&gt;%<span class="st"> </span><span class="kw">select</span>(url_d) %&gt;%<span class="st"> </span><span class="kw">slice</span>(<span class="dv">1</span>:<span class="dv">10</span>) <span class="co"># get urls to GTFS data from first 5 feeds</span></code></pre></div>
-<pre><code>## Source: local data frame [10 x 1]
+feedlist_df %&gt;%<span class="st"> </span><span class="kw">select</span>(url_d) %&gt;%<span class="st"> </span><span class="kw">head</span>(<span class="dv">5</span>) <span class="co"># show first 5 feed urls</span></code></pre></div>
+<pre><code>## Source: local data frame [5 x 1]
 ## 
-##                                                                          url_d
-##                                                                          (chr)
-## 1   http://corporate.sunrail.com/wp-content/uploads/2016/05/google_transit.zip
-## 2                                                                           NA
-## 3         http://data.trilliumtransit.com/gtfs/westcat-ca-us/westcat-ca-us.zip
-## 4       http://data.trilliumtransit.com/gtfs/vineyard-ma-us/vineyard-ma-us.zip
-## 5  http://data.trilliumtransit.com/gtfs/eldoradotransit-ca-us/eldoradotransit-
-## 6  http://data.trilliumtransit.com/gtfs/paloverde_valley-ca-us/paloverde_valle
-## 7       http://data.trilliumtransit.com/gtfs/gorgewet-wa-us/gorgewet-wa-us.zip
-## 8                 https://gitlab.com/LACMTA/gtfs_rail/raw/master/gtfs_rail.zip
-## 9                 http://oregon-gtfs.com/gtfs_data/mcacs-or-us/mcacs-or-us.zip
-## 10 http://data.trilliumtransit.com/gtfs/petalumatransit-petaluma-ca-us/petalum</code></pre>
-<p>If we want only the data for a specific location (or locations), we can get then search the locations feed and find the IDs of interest. Assume we are interested in getting all the GTFS data from <em>Australian</em> feeds (i.e. we search .</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">locations_df &lt;-<span class="st"> </span><span class="kw">get_locations</span>()
-#################################################################################
-<span class="co"># LEFT OFF HERE ----------------------------------------------------------</span>
-#################################################################################
-## get australian feeds
-subset_df &lt;-<span class="st"> </span>locations_df %&gt;%
-<span class="st">    </span><span class="kw">filter</span>(<span class="kw">grepl</span>(<span class="st">'australia'</span>, t, <span class="dt">ignore.case =</span> <span class="ot">TRUE</span>)) %&gt;%
-<span class="st">    </span><span class="kw">select</span>(id, t)</code></pre></div>
+##                                                                                  url_d
+##                                                                                  (chr)
+## 1           http://corporate.sunrail.com/wp-content/uploads/2016/05/google_transit.zip
+## 2                                                                                   NA
+## 3                 http://data.trilliumtransit.com/gtfs/westcat-ca-us/westcat-ca-us.zip
+## 4               http://data.trilliumtransit.com/gtfs/vineyard-ma-us/vineyard-ma-us.zip
+## 5 http://data.trilliumtransit.com/gtfs/eldoradotransit-ca-us/eldoradotransit-ca-us.zip</code></pre>
+<p>If we want only the data for a specific location (or locations), we can get then search the feedlist for feeds of interest.</p>
+<p>Assume we are interested in getting all the GTFS data from <em>Australian</em> feeds (i.e. we search for location names for the word ‘australia’). We can match Australian agencies by name (filter on <code>loc_t</code>) and extract the corresponding url feeds (select <code>url_d</code>).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## get australian feeds
+aussie_df &lt;-<span class="st"> </span>feedlist_df %&gt;%
+<span class="st">    </span><span class="kw">filter</span>(<span class="kw">grepl</span>(<span class="st">'australia'</span>, loc_t, <span class="dt">ignore.case =</span> <span class="ot">TRUE</span>)) <span class="co"># filter out locations with &quot;australia&quot; in name</span>
+aussie_df %&gt;%<span class="st"> </span><span class="kw">select</span>(loc_t) %&gt;%<span class="st"> </span><span class="kw">head</span>(<span class="dv">5</span>) <span class="co"># look at location names</span></code></pre></div>
+<pre><code>## Source: local data frame [5 x 1]
+## 
+##                              loc_t
+##                              (chr)
+## 1 Alice Springs NT 0870, Australia
+## 2             Darwin NT, Australia
+## 3         Melbourne VIC, Australia
+## 4       Burnie TAS 7320, Australia
+## 5        Launceston TAS, Australia</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aussie_urls &lt;-<span class="st"> </span>aussie_df %&gt;%<span class="st"> </span><span class="kw">select</span>(url_d) <span class="co"># get aussie urls</span></code></pre></div>
 </div>
 </div>
 
