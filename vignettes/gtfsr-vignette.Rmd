@@ -72,11 +72,12 @@ aussie_urls <- aussie_df %>% select(url_d) # get aussie urls
 
 ```
 
-Once we have the urls for the feeds of interest, we can download and extract all the GTFS data into a data list (aka a list of data frames) using the `get_gtfs` data. To save time, we will only download 5 feeds (`slice(6:10)`)
+Once we have the urls for the feeds of interest, we can download and extract all the GTFS data into a data list (aka a list of data frames) using the `get_gtfs` data. To save time, we will only download 2 feeds (`slice(8:9)`)
 
 ```{r get_gtfs, warning=FALSE, message=FALSE, echo=FALSE, eval=TRUE}
 
-data_list <- aussie_urls %>% slice(6:10) %>% get_gtfs
+data_list <- aussie_urls %>% slice(8:9) %>% get_gtfs
+data_list_probs <- aussie_urls %>% slice(8:9) %>% get_gtfs(problems=TRUE)
 
 ```
 

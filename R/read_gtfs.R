@@ -46,12 +46,13 @@ unzip_gtfs <- function(file, delete_zip = FALSE, move_path = NULL) {
 
 #' Put GTFS text file contents into objects in memory and delete files
 #'
-#' @param exdir path to folder into which files were extracted.
+#' @param exdir Character. Path to folder into which files were extracted.
 #' @param delete_files Logical, whether to delete the files after extraction.  Deletes by default.
+#' @param problems Logical (default is FALSE). Option whether to return a dataframe of problems
 #'
 #' @export
 
-read_gtfs <- function(exdir, delete_files = TRUE) {
+read_gtfs <- function(exdir, delete_files = TRUE, problems = FALSE) {
 
   exdir <- normalizePath(exdir)
   if(!dir.exists(exdir)) stop('Not a valid directory.')
@@ -69,14 +70,21 @@ read_gtfs <- function(exdir, delete_files = TRUE) {
 
   exec_env <- environment()
 
-  lapply(all_files, function(x) read_sub_gtfs(x, assign_envir = exec_env))
+  lapply(all_files, function(x) read_sub_gtfs(x, assign_envir = exec_env, problems = problems))
   message("\n")
+  if(!problems) {
+    message('NOTE: Parsing errors and warnings while importing data are suppressed but can be extracted by setting the `problems` option to TRUE (problems = TRUE).')
+    message("\n")
+  } else {
+    message('NOTE: dataframe return is of PROBLEM values.')
+    message("\n")
+  }
 
   ls_envir <- ls(envir = exec_env)
 
   df_list <- ls_envir[grepl(pattern = '_df', x = ls_envir)]
 
-  gtfs_list <- list(mget(df_list, envir = exec_env))
+  gtfs_list <- mget(df_list, envir = exec_env)
 
   # print('Everything df in my function environment')
   # print(df_list)
@@ -90,8 +98,10 @@ read_gtfs <- function(exdir, delete_files = TRUE) {
 #' Function to read all files into dataframes
 #'
 #' @param file_path Character file path
+#' @param assign_envir Environment Object. Option of where to assign dataframes.
+#' @param problems Logical (default is FALSE). Option whether to return a dataframe of problems
 
-read_sub_gtfs <- function(file_path, assign_envir = .GlobalEnv) {
+read_sub_gtfs <- function(file_path, assign_envir, problems = FALSE) {
 
   split_path <- strsplit(file_path, '/')
   file_name <- split_path[[1]][length(split_path[[1]])]
@@ -101,8 +111,8 @@ read_sub_gtfs <- function(file_path, assign_envir = .GlobalEnv) {
 
   message(paste0('Reading ', file_name))
 
-  # new_df <- suppressWarnings(parse_gtfs(prefix, file_path)) # will have warning even though we fix problem
-  new_df <- parse_gtfs(prefix, file_path) # will have warning even though we fix problem
+  new_df <- suppressWarnings(parse_gtfs(prefix, file_path, problems)) # will have warning even though we fix problem
+  # new_df <- parse_gtfs(prefix, file_path) # will have warning even though we fix problem
 
   assign(df_name, new_df, envir = assign_envir)
 
@@ -112,16 +122,22 @@ read_sub_gtfs <- function(file_path, assign_envir = .GlobalEnv) {
 #'
 #' @param prefix Character. gtfs file prefix (e.g. 'agency', 'stop_times', etc.)
 #' @param file_path Character. file path
+#' @param problems Logical (default is FALSE). Option whether to return a dataframe of problems
 
-parse_gtfs <- function(prefix, file_path) {
+parse_gtfs <- function(prefix, file_path, problems = FALSE) {
 
   ## get correct meta data using file prefix (e.g. 'agency', 'stop_times')
   meta <- get_gtfs_meta()[[prefix]]
   small_df <- readr::read_csv(file_path, n_max = 10) # get a small df to find how many cols are needed
   indx <- meta$field %in% names(small_df)
   types_string <- paste(meta$coltype[indx], collapse = "")
-  df <- readr::read_csv(file_path, col_types = types_string, col_names = meta$field[indx])
-  df
+  if(problems) {
+    df <- readr::problems(readr::read_csv(file_path, col_types = types_string, col_names = meta$field[indx], skip = 1L))
+  } else {
+    df <- readr::read_csv(file_path, col_types = types_string, col_names = meta$field[indx], skip = 1L)
+  }
+
+  return(df)
 
 }
 

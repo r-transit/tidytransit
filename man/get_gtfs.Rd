@@ -4,7 +4,7 @@
 \alias{get_gtfs}
 \title{Get a Dataframes of GTFS data.}
 \usage{
-get_gtfs(urls, timeout = 10)
+get_gtfs(urls, timeout = 10, ...)
 }
 \arguments{
 \item{path}{Character. url link to zip file}

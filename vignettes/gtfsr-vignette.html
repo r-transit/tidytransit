@@ -11,7 +11,7 @@
 
 <meta name="author" content="Danton Noriega danton@transloc.com" />
 
-<meta name="date" content="2016-06-02" />
+<meta name="date" content="2016-06-03" />
 
 <title>Getting GTFS Data and Mapping with gtfsr</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title">Getting GTFS Data and Mapping with gtfsr</h1>
 <h4 class="author"><em>Danton Noriega <a href="mailto:danton@transloc.com">danton@transloc.com</a></em></h4>
-<h4 class="date"><em>2016-06-02</em></h4>
+<h4 class="date"><em>2016-06-03</em></h4>
 
 </div>
 
@@ -107,18 +107,20 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="getting-full-list-available-gtfs-feeds" class="section level3">
 <h3>Getting full list available GTFS feeds</h3>
-<p>With a valid API key loaded, you can easily get the full list of GTFS feeds using the <code>get_feedlist</code> function. What we care most about are the feed GTFS data urls contained in column <code>url_d</code> of the feed list. We output the first 10 GTFS data urls after getting the full feed list.</p>
+<p>With a valid API key loaded, you can easily get the full list of GTFS feeds using the <code>get_feedlist</code> function. What we care most about are the feed GTFS data urls contained in column <code>url_d</code> of the feed list. Since we are interested in acquiring the GTFS data (not just the feedlist), we can use the <code>filter_feedlist</code> function to return a dataframe containing only valid feed urls.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">feedlist_df &lt;-<span class="st"> </span><span class="kw">get_feedlist</span>() <span class="co"># create a dataframe of all feeds</span>
-feedlist_df %&gt;%<span class="st"> </span><span class="kw">select</span>(url_d) %&gt;%<span class="st"> </span><span class="kw">head</span>(<span class="dv">5</span>) <span class="co"># show first 5 feed urls</span></code></pre></div>
+feedlist_df &lt;-<span class="st"> </span>feedlist_df %&gt;%<span class="st"> </span>filter_feedlist <span class="co"># filter the feedlist</span></code></pre></div>
+<pre><code>## 198 feeds did not provide downloadable URLs of 648 feeds provided. 450 returned.</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">feedlist_df %&gt;%<span class="st"> </span><span class="kw">select</span>(url_d) %&gt;%<span class="st"> </span><span class="kw">head</span>(<span class="dv">5</span>) <span class="co"># show first 5 feed urls</span></code></pre></div>
 <pre><code>## Source: local data frame [5 x 1]
 ## 
-##                                                                                  url_d
-##                                                                                  (chr)
-## 1           http://corporate.sunrail.com/wp-content/uploads/2016/05/google_transit.zip
-## 2                                                                                   NA
-## 3                 http://data.trilliumtransit.com/gtfs/westcat-ca-us/westcat-ca-us.zip
-## 4               http://data.trilliumtransit.com/gtfs/vineyard-ma-us/vineyard-ma-us.zip
-## 5 http://data.trilliumtransit.com/gtfs/eldoradotransit-ca-us/eldoradotransit-ca-us.zip</code></pre>
+##                                                                                    url_d
+##                                                                                    (chr)
+## 1             http://corporate.sunrail.com/wp-content/uploads/2016/05/google_transit.zip
+## 2                   http://data.trilliumtransit.com/gtfs/westcat-ca-us/westcat-ca-us.zip
+## 3                 http://data.trilliumtransit.com/gtfs/vineyard-ma-us/vineyard-ma-us.zip
+## 4   http://data.trilliumtransit.com/gtfs/eldoradotransit-ca-us/eldoradotransit-ca-us.zip
+## 5 http://data.trilliumtransit.com/gtfs/paloverde_valley-ca-us/paloverde_valley-ca-us.zip</code></pre>
 <p>If we want only the data for a specific location (or locations), we can get then search the feedlist for feeds of interest.</p>
 <p>Assume we are interested in getting all the GTFS data from <em>Australian</em> feeds (i.e. we search for location names for the word ‘australia’). We can match Australian agencies by name (filter on <code>loc_t</code>) and extract the corresponding url feeds (select <code>url_d</code>).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## get australian feeds
@@ -127,14 +129,18 @@ aussie_df &lt;-<span class="st"> </span>feedlist_df %&gt;%
 aussie_df %&gt;%<span class="st"> </span><span class="kw">select</span>(loc_t) %&gt;%<span class="st"> </span><span class="kw">head</span>(<span class="dv">5</span>) <span class="co"># look at location names</span></code></pre></div>
 <pre><code>## Source: local data frame [5 x 1]
 ## 
-##                              loc_t
-##                              (chr)
-## 1 Alice Springs NT 0870, Australia
-## 2             Darwin NT, Australia
-## 3         Melbourne VIC, Australia
-## 4       Burnie TAS 7320, Australia
-## 5        Launceston TAS, Australia</code></pre>
+##                        loc_t
+##                        (chr)
+## 1   Melbourne VIC, Australia
+## 2 Burnie TAS 7320, Australia
+## 3  Launceston TAS, Australia
+## 4      Hobart TAS, Australia
+## 5        Perth WA, Australia</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aussie_urls &lt;-<span class="st"> </span>aussie_df %&gt;%<span class="st"> </span><span class="kw">select</span>(url_d) <span class="co"># get aussie urls</span></code></pre></div>
+<p>Once we have the urls for the feeds of interest, we can download and extract all the GTFS data into a data list (aka a list of data frames) using the <code>get_gtfs</code> data. To save time, we will only download 2 feeds (<code>slice(6:7)</code>)</p>
+<pre><code>## [1] &quot;agency.txt&quot;         &quot;calendar.txt&quot;       &quot;calendar_dates.txt&quot;
+## [4] &quot;feed_info.txt&quot;      &quot;routes.txt&quot;         &quot;shapes.txt&quot;        
+## [7] &quot;stop_times.txt&quot;     &quot;stops.txt&quot;          &quot;trips.txt&quot;</code></pre>
 </div>
 </div>
 

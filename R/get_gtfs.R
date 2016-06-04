@@ -19,15 +19,20 @@
 #'
 #' @export
 
-get_gtfs <- function(urls, timeout=10) {
+get_gtfs <- function(urls, timeout=10, ...) {
 
-  feed_flow <- function(url) {
+  feed_flow <- function(url, ...) {
     path <- get_feed(url = url)
 
     zip_dir <- unzip_gtfs(path)
 
-    read_gtfs(zip_dir)
+    inputs <- list(...)
+    if(all(!is.null(inputs$problems), is.logical(inputs$problems))) {
+      read_gtfs(zip_dir, problems = inputs$problems)
+    } else read_gtfs(zip_dir)
+
   }
+
 
   old_timeout <- options()$timeout
   options(timeout=timeout)
@@ -41,7 +46,7 @@ get_gtfs <- function(urls, timeout=10) {
     }
   }
 
-  data_list <- urls %>% lapply(. %>% feed_flow)
+  data_list <- urls %>% lapply(. %>% feed_flow(...))
   options(timeout=old_timeout)
   return(data_list)
 
