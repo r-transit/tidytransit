@@ -73,7 +73,7 @@ read_gtfs <- function(exdir, delete_files = TRUE, problems = FALSE) {
   lapply(all_files, function(x) read_sub_gtfs(x, assign_envir = exec_env, problems = problems))
   message("\n")
   if(!problems) {
-    message('NOTE: Parsing errors and warnings while importing data are suppressed but can be extracted by setting the `problems` option to TRUE (problems = TRUE).')
+    message('NOTE: Parsing errors and warnings while importing data can be extracted by setting the `problems` option to TRUE (problems = TRUE).')
     message("\n")
   } else {
     message('NOTE: dataframe return is of PROBLEM values.')
@@ -111,7 +111,7 @@ read_sub_gtfs <- function(file_path, assign_envir, problems = FALSE) {
 
   message(paste0('Reading ', file_name))
 
-  new_df <- suppressWarnings(parse_gtfs(prefix, file_path, problems)) # will have warning even though we fix problem
+  new_df <- parse_gtfs(prefix, file_path, problems) # will have warning even though we fix problem
   # new_df <- parse_gtfs(prefix, file_path) # will have warning even though we fix problem
 
   assign(df_name, new_df, envir = assign_envir)
@@ -128,13 +128,19 @@ parse_gtfs <- function(prefix, file_path, problems = FALSE) {
 
   ## get correct meta data using file prefix (e.g. 'agency', 'stop_times')
   meta <- get_gtfs_meta()[[prefix]]
-  small_df <- readr::read_csv(file_path, n_max = 10) # get a small df to find how many cols are needed
-  indx <- meta$field %in% names(small_df)
-  types_string <- paste(meta$coltype[indx], collapse = "")
+  small_df <- suppressWarnings(readr::read_csv(file_path, n_max = 10)) # get a small df to find how many cols are needed
+  ## get correct coltype, if possible
+  coltypes <- rep('c', dim(small_df)[2]) # create 'c' as coltype defaults
+  names(coltypes) <- names(small_df)
+  indx <- match(names(coltypes), meta$field)  # indx from valid cols in meta$field. NAs will return for invalid cols
+  ## !is.na(indx) = valid col in 'coltype' found in meta$field
+  ## indx[!is.na(indx)] = location in 'meta$coltype' where corresponding type is found
+  coltypes[!is.na(indx)] <- meta$coltype[indx[!is.na(indx)]] # valid cols found in small_df
+  coltypes <- coltypes %>% paste(collapse = "")
   if(problems) {
-    df <- readr::problems(readr::read_csv(file_path, col_types = types_string, col_names = meta$field[indx], skip = 1L))
+    df <- readr::problems(readr::read_csv(file_path, col_types = coltypes))
   } else {
-    df <- readr::read_csv(file_path, col_types = types_string, col_names = meta$field[indx], skip = 1L)
+    df <- readr::read_csv(file_path, col_types = coltypes)
   }
 
   return(df)

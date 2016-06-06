@@ -10,9 +10,10 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-## Getting data from GTFS Transit Feeds
-
-### 1. Get an GTFS API key
+```{r init, warning=FALSE, message=FALSE, echo=FALSE, eval=TRUE}
+knitr::opts_chunk$set(cache=TRUE, tidy=TRUE)
+```
+## 1. Get an GTFS API key
 
 This package can get data from a user-specified URL and is also able to get GTFS data from the [TransitFeeds API](http://transitfeeds.com/api/). This vignette will focus on the case where GTFS data is extracted from the TransitFeed API. Below are the steps needed to get a API key (note: requires a GitHub account), including a YouTube (click the GIF to see the YouTube video) that visually guides you through the steps.
 
@@ -28,7 +29,7 @@ This package can get data from a user-specified URL and is also able to get GTFS
 
 
 
-### 2. Use `gtfsr` package to download feed list
+## 2. Use `gtfsr` package to download feed list
 
 First things first, load the `gtfsr` package and set your key to access the TransitFeeds API. This example also using the `dplyr` package to manage dataframes and `magrittr` for piping.
 
@@ -60,6 +61,7 @@ If we want only the data for a specific location (or locations), we can get then
 Assume we are interested in getting all the GTFS data from *Australian* feeds (i.e. we search for location names for the word 'australia'). We can match Australian agencies by name (filter on `loc_t`) and extract the corresponding url feeds (select `url_d`).
 
 
+### Subsetting the GTFS feedlist (Example)
 
 
 ```{r aussie, warning=TRUE, message=TRUE, echo=TRUE, eval=TRUE}
@@ -72,13 +74,55 @@ aussie_urls <- aussie_df %>% select(url_d) # get aussie urls
 
 ```
 
-Once we have the urls for the feeds of interest, we can download and extract all the GTFS data into a data list (aka a list of data frames) using the `get_gtfs` data. To save time, we will only download 2 feeds (`slice(8:9)`)
+Once we have the urls for the feeds of interest, we can download and extract all the GTFS data into a data list (aka a list of data frames) using the `get_gtfs` data. To save time, we will only download 2 feeds (`slice(8:9)`). The output is suppressed because of how verbose it is.
 
-```{r get_gtfs, warning=FALSE, message=FALSE, echo=FALSE, eval=TRUE}
+```{r get_gtfs, warning=FALSE, message=FALSE, echo=TRUE, eval=FALSE}
 
 data_list <- aussie_urls %>% slice(8:9) %>% get_gtfs
-data_list_probs <- aussie_urls %>% slice(8:9) %>% get_gtfs(problems=TRUE)
 
 ```
+
+### Inspect Parsing Warnings During Process
+
+During the import of the any feed url, you will see the following message:
+
+```
+NOTE: Parsing errors and warnings while importing data can be extracted by setting the `problems` option to TRUE (problems = TRUE).
+```
+
+This output was suppressed in the last section to save space given how verbose it is. But the highlighted `NOTE` explains that *if one observes an error or warning during the import process*, one can use the `problems = TRUE` option (`FALSE` by default), which allows you to extract a problems dataframe.
+
+As an example, let's extract the data and problems dataframes for the 44th url of `feedlist_df`.
+
+```{r problems, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, results='hide'}
+url <- feedlist_df %>% slice(44) %>% select(url_d)
+data_list1 <- url %>% get_gtfs
+prob_list1 <- url %>% get_gtfs(problems = TRUE)
+```
+
+If you look at the output created when creating the `data_list1` object, you should see output that looks like this...
+
+```
+...
+Warning: 2 parsing failures.
+row col   expected    actual
+  3  -- 10 columns 1 columns
+  4  -- 10 columns 1 columns
+...
+```
+
+These error are mostly due to the fact that empty rows were added to the end of the text file. But assume we don't know that. It is therefore prudent to extract the problems dataframe to keep a record of potential problems. Let's compare the `calendar_df` dataframe from each list.
+
+
+```{r title, echo=TRUE, eval=TRUE}
+data_list1[[1]]$calendar_df
+prob_list1[[1]]$calendar_df
+```
+
+
+
+
+
+
 
 
