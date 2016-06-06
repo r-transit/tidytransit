@@ -21,7 +21,7 @@ validate_files_provided <- function(feed) {
   all_spec_files <- c(all_req_files, all_opt_files)
 
   # Get the names of all the dfs in the list for a feed
-  feed_names <- names(feed[[1]])
+  feed_names <- names(feed)
 
   # Strip the _df from the names to get to file components
   feed_names_file <- gsub('_df', '', feed_names)
@@ -37,7 +37,7 @@ validate_files_provided <- function(feed) {
 
   prov_df <- prov_df %>%
     mutate(provided_status = ifelse(!(file %in% feed_names_file), 'no',
-                                    ifelse(sapply(feed[[1]], dim)[2,] == 0, 'empty',
+                                    ifelse(sapply(feed, dim)[2,] == 0, 'empty',
                                            'yes')))
   return(prov_df)
 
@@ -59,7 +59,7 @@ make_var_val <- function() {
   all_df <- dplyr::bind_rows(agency_df, stops_df, routes_df, trips_df, stop_times_df, calendar_df, calendar_dates_df,
                       fare_attributes_df, fare_rules_df, shapes_df, frequencies_df, transfers_df, feed_info_df)
 
-  return(all_df[, c('file', 'field', 'spec')])
+  return(all_df)
 
 }
 
@@ -112,15 +112,15 @@ validate_vars_provided <- function(val_files, feed) {
   }
 
   # Join file level data with variable level data - for files that were provided
-  vars_df <- left_join(val_files_df, spec_vars_df)
+  vars_df <- suppressMessages(left_join(val_files_df, spec_vars_df))
 
   val_vars_df <- dplyr::data_frame()
 
-  val_files <- val_files_df$file
-  val_files_df <- paste0(val_files, '_df')
+  val_cols <- val_files_df$file
+  val_cols_df <- paste0(val_cols, '_df')
 
   # List variables provided for each file and join to determine field_provided
-  for (j in val_files_df) {
+  for (j in val_cols_df) {
 
     temp_df <- feed[[j]]
     temp_names <- names(temp_df)
@@ -141,7 +141,7 @@ validate_vars_provided <- function(val_files, feed) {
   }
 
   # Join observed field provided status with spec info
-  all_df <- full_join(vars_df, val_vars_df)
+  all_df <- suppressMessages(full_join(vars_df, val_vars_df))
 
   orig_rows <- nrow(all_df)
 

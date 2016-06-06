@@ -31,7 +31,7 @@ This package can get data from a user-specified URL and is also able to get GTFS
 
 ## 2. Use `gtfsr` package to download feed list
 
-First things first, load the `gtfsr` package and set your key to access the TransitFeeds API. This example also using the `dplyr` package to manage dataframes and `magrittr` for piping.
+First things first, load the `gtfsr` package and set your key to access the TransitFeeds API. This example also using the `dplyr` package to manage data frames and `magrittr` for piping.
 
 ```{r setup, warning=TRUE, message=FALSE, echo=TRUE, eval=TRUE}
 
@@ -46,11 +46,11 @@ set_api_key('2ec1ae29-b8c2-4a03-b96e-126d585233f9') # input your API key here
 
 ### Getting full list available GTFS feeds
 
-With a valid API key loaded, you can easily get the full list of GTFS feeds using the `get_feedlist` function. What we care most about are the feed GTFS data urls contained in column `url_d` of the feed list. Since we are interested in acquiring the GTFS data (not just the feedlist), we can use the `filter_feedlist` function to return a dataframe containing only valid feed urls.
+With a valid API key loaded, you can easily get the full list of GTFS feeds using the `get_feedlist` function. What we care most about are the feed GTFS data urls contained in column `url_d` of the feed list. Since we are interested in acquiring the GTFS data (not just the feedlist), we can use the `filter_feedlist` function to return a data frame containing only valid feed urls.
 
 ```{r feedlist, warning=TRUE, message=TRUE, echo=TRUE, eval=TRUE}
 
-feedlist_df <- get_feedlist() # create a dataframe of all feeds
+feedlist_df <- get_feedlist() # create a data frame of all feeds
 feedlist_df <- feedlist_df %>% filter_feedlist # filter the feedlist
 feedlist_df %>% select(url_d) %>% head(5) # show first 5 feed urls
 
@@ -90,9 +90,9 @@ During the import of the any feed url, you will see the following message:
 NOTE: Parsing errors and warnings while importing data can be extracted by setting the `problems` option to TRUE (problems = TRUE).
 ```
 
-This output was suppressed in the last section to save space given how verbose it is. But the highlighted `NOTE` explains that *if one observes an error or warning during the import process*, one can use the `problems = TRUE` option (`FALSE` by default), which allows you to extract a problems dataframe.
+This output was suppressed in the last section to save space given how verbose it is. But the highlighted `NOTE` explains that *if one observes an error or warning during the import process*, one can use the `problems = TRUE` option (`FALSE` by default), which allows you to extract a problems data frame.
 
-As an example, let's extract the data and problems dataframes for the 44th url of `feedlist_df`.
+As an example, let's extract the data and problems data frames for the 44th url of `feedlist_df`.
 
 ```{r problems, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, results='hide'}
 url <- feedlist_df %>% slice(44) %>% select(url_d)
@@ -111,13 +111,15 @@ row col   expected    actual
 ...
 ```
 
-These error are mostly due to the fact that empty rows were added to the end of the text file. But assume we don't know that. It is therefore prudent to extract the problems dataframe to keep a record of potential problems. Let's compare the `calendar_df` dataframe from each list.
+To understand the problem, let's compare one of the data frames with problems to what was imported. In this example, we select `calendar_df`.
 
 
 ```{r title, echo=TRUE, eval=TRUE}
 data_list1[[1]]$calendar_df
 prob_list1[[1]]$calendar_df
 ```
+
+From inspecting the output, it appears the problems (at least for `calendar_df`) stem from the possibility that empty rows were added to the end of the original text file. Not a big deal and easily fixed. But we leave such specific fixes to the user to correct.
 
 
 
