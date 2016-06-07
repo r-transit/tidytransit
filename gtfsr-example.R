@@ -4,7 +4,7 @@
 devtools::install_github('ropenscilabs/gtfsr', build_vignette = TRUE)
 
 ## see the vignette
-browseVignette('gtfsr')
+browseVignettes('gtfsr')
 
 # gtfsr vignette code ------------------------------------------------
 library(gtfsr)
