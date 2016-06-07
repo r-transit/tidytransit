@@ -192,7 +192,7 @@ validate_feed <- function(feed, return_feed = TRUE) {
 
   if (length(feed) == 0) {
     warning('Empty feed.')
-    return()
+    return(NULL)
   }
 
   print(feed$agency_df$agency_name)
@@ -205,7 +205,8 @@ validate_feed <- function(feed, return_feed = TRUE) {
                         all_req_fields = !('field_missing' %in% all_df$validation_status),
                         validate_df = all_df)
 
-  feed <- c(feed, validate = list(validate_list))
+  # update feed attributes with validation data
+  attributes(feed) <- append(attributes(feed), list(validate = validate_list))
 
   if (return_feed) {
     return(feed)

@@ -48,11 +48,10 @@ unzip_gtfs <- function(file, delete_zip = FALSE, move_path = NULL) {
 #'
 #' @param exdir Character. Path to folder into which files were extracted.
 #' @param delete_files Logical, whether to delete the files after extraction.  Deletes by default.
-#' @param problems Logical (default is FALSE). Option whether to return a dataframe of problems
 #'
 #' @export
 
-read_gtfs <- function(exdir, delete_files = TRUE, problems = FALSE) {
+read_gtfs <- function(exdir, delete_files = TRUE) {
 
   exdir <- normalizePath(exdir)
   if(!dir.exists(exdir)) stop('Not a valid directory.')
@@ -70,15 +69,10 @@ read_gtfs <- function(exdir, delete_files = TRUE, problems = FALSE) {
 
   exec_env <- environment()
 
-  lapply(all_files, function(x) read_sub_gtfs(x, assign_envir = exec_env, problems = problems))
+  lapply(all_files, function(x) read_sub_gtfs(x, assign_envir = exec_env))
   message("\n")
-  if(!problems) {
-    message('NOTE: Parsing errors and warnings while importing data can be extracted by setting the `problems` option to TRUE (problems = TRUE).')
-    message("\n")
-  } else {
-    message('NOTE: dataframe return is of PROBLEM values.')
-    message("\n")
-  }
+  message('NOTE: Parsing errors and warnings while importing data can be extracted from any given dataframe with `attr(df, "problems")`.')
+  message("\n")
 
   ls_envir <- ls(envir = exec_env)
 
@@ -99,9 +93,8 @@ read_gtfs <- function(exdir, delete_files = TRUE, problems = FALSE) {
 #'
 #' @param file_path Character file path
 #' @param assign_envir Environment Object. Option of where to assign dataframes.
-#' @param problems Logical (default is FALSE). Option whether to return a dataframe of problems
 
-read_sub_gtfs <- function(file_path, assign_envir, problems = FALSE) {
+read_sub_gtfs <- function(file_path, assign_envir) {
 
   split_path <- strsplit(file_path, '/')
   file_name <- split_path[[1]][length(split_path[[1]])]
@@ -111,7 +104,7 @@ read_sub_gtfs <- function(file_path, assign_envir, problems = FALSE) {
 
   message(paste0('Reading ', file_name))
 
-  new_df <- parse_gtfs(prefix, file_path, problems) # will have warning even though we fix problem
+  new_df <- parse_gtfs(prefix, file_path) # will have warning even though we fix problem
   # new_df <- parse_gtfs(prefix, file_path) # will have warning even though we fix problem
 
   assign(df_name, new_df, envir = assign_envir)
@@ -122,28 +115,29 @@ read_sub_gtfs <- function(file_path, assign_envir, problems = FALSE) {
 #'
 #' @param prefix Character. gtfs file prefix (e.g. 'agency', 'stop_times', etc.)
 #' @param file_path Character. file path
-#' @param problems Logical (default is FALSE). Option whether to return a dataframe of problems
 
-parse_gtfs <- function(prefix, file_path, problems = FALSE) {
+parse_gtfs <- function(prefix, file_path) {
 
-  ## get correct meta data using file prefix (e.g. 'agency', 'stop_times')
-  meta <- get_gtfs_meta()[[prefix]]
-  small_df <- suppressWarnings(readr::read_csv(file_path, n_max = 10)) # get a small df to find how many cols are needed
-  ## get correct coltype, if possible
-  coltypes <- rep('c', dim(small_df)[2]) # create 'c' as coltype defaults
-  names(coltypes) <- names(small_df)
-  indx <- match(names(coltypes), meta$field)  # indx from valid cols in meta$field. NAs will return for invalid cols
-  ## !is.na(indx) = valid col in 'coltype' found in meta$field
-  ## indx[!is.na(indx)] = location in 'meta$coltype' where corresponding type is found
-  coltypes[!is.na(indx)] <- meta$coltype[indx[!is.na(indx)]] # valid cols found in small_df
-  coltypes <- coltypes %>% paste(collapse = "")
-  if(problems) {
-    df <- readr::problems(readr::read_csv(file_path, col_types = coltypes))
-  } else {
+  # only parse if file has any data, NULL o/w
+  if(file.size(file_path) > 0) {
+
+    ## get correct meta data using file prefix (e.g. 'agency', 'stop_times')
+    meta <- get_gtfs_meta()[[prefix]]
+    small_df <- suppressWarnings(readr::read_csv(file_path, n_max = 10)) # get a small df to find how many cols are needed
+    ## get correct coltype, if possible
+    coltypes <- rep('c', dim(small_df)[2]) # create 'c' as coltype defaults
+    names(coltypes) <- names(small_df)
+    indx <- match(names(coltypes), meta$field)  # indx from valid cols in meta$field. NAs will return for invalid cols
+    ## !is.na(indx) = valid col in 'coltype' found in meta$field
+    ## indx[!is.na(indx)] = location in 'meta$coltype' where corresponding type is found
+    coltypes[!is.na(indx)] <- meta$coltype[indx[!is.na(indx)]] # valid cols found in small_df
+    coltypes <- coltypes %>% paste(collapse = "")
     df <- readr::read_csv(file_path, col_types = coltypes)
-  }
+    probs <- readr::problems(readr::read_csv(file_path, col_types = coltypes))
+    if(dim(probs)[1] > 0) attributes(df) <- append(attributes(df), list(problems = probs))
 
-  return(df)
+    return(df)
+  } else return(NULL)
 
 }
 

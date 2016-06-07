@@ -2,10 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
-transitfeeds_api_key.txt
-packrat/lib*/
-packrat/*
 inst/doc
 .gitignore
 gtfsr-opensci.Rproj
-vignettes/get-api-key.mp4
+packrat/lib*/
+.Rprofile

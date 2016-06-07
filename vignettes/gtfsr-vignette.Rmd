@@ -87,17 +87,16 @@ data_list <- aussie_urls %>% slice(8:9) %>% get_gtfs
 During the import of the any feed url, you will see the following message:
 
 ```
-NOTE: Parsing errors and warnings while importing data can be extracted by setting the `problems` option to TRUE (problems = TRUE).
+NOTE: Parsing errors and warnings while importing data can be extracted from any given data frame with `attr(df, "problems")`.
 ```
 
-This output was suppressed in the last section to save space given how verbose it is. But the highlighted `NOTE` explains that *if one observes an error or warning during the import process*, one can use the `problems = TRUE` option (`FALSE` by default), which allows you to extract a problems data frame.
+This output was suppressed in the last section to save space given how verbose it is. But the highlighted `NOTE` explains that *if one observes an error or warning during the import process*, one can extract a data frame of problems, which is stored as an attribute for any data frame that had a warning output.
 
 As an example, let's extract the data and problems data frames for the 44th url of `feedlist_df`.
 
 ```{r problems, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, results='hide'}
 url <- feedlist_df %>% slice(44) %>% select(url_d)
 data_list1 <- url %>% get_gtfs
-prob_list1 <- url %>% get_gtfs(problems = TRUE)
 ```
 
 If you look at the output created when creating the `data_list1` object, you should see output that looks like this...
@@ -111,15 +110,17 @@ row col   expected    actual
 ...
 ```
 
-To understand the problem, let's compare one of the data frames with problems to what was imported. In this example, we select `calendar_df`.
+To understand the problem, let's extract the data frame `calendar_df`. Recall that `get_gtfs` returns a list where each element of the list is a set of data frames.
 
 
 ```{r title, echo=TRUE, eval=TRUE}
-data_list1[[1]]$calendar_df
-prob_list1[[1]]$calendar_df
+df <- data_list1[[1]]$calendar_df # extract `calendar_df` from the 1st list element (there's only one)
+df
+attr(df, 'problems')
+
 ```
 
-From inspecting the output, it appears the problems (at least for `calendar_df`) stem from the possibility that empty rows were added to the end of the original text file. Not a big deal and easily fixed. But we leave such specific fixes to the user to correct.
+From inspecting the output from `attr(df, 'problems')` and comparing it to just `df`, it appears the problems (at least for this particular `calendar_df`) stem from the possibility that empty rows were added to the end of the original text file. Not a big deal and easily fixed. But we leave such specific fixes to the user to correct.
 
 
 

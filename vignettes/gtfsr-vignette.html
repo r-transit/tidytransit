@@ -11,7 +11,7 @@
 
 <meta name="author" content="Danton Noriega danton@transloc.com" />
 
-<meta name="date" content="2016-06-06" />
+<meta name="date" content="2016-06-07" />
 
 <title>Getting GTFS Data and Mapping with gtfsr</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title">Getting GTFS Data and Mapping with gtfsr</h1>
 <h4 class="author"><em>Danton Noriega <a href="mailto:danton@transloc.com">danton@transloc.com</a></em></h4>
-<h4 class="date"><em>2016-06-06</em></h4>
+<h4 class="date"><em>2016-06-07</em></h4>
 
 </div>
 
@@ -95,7 +95,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="use-gtfsr-package-to-download-feed-list" class="section level2">
 <h2>2. Use <code>gtfsr</code> package to download feed list</h2>
-<p>First things first, load the <code>gtfsr</code> package and set your key to access the TransitFeeds API. This example also using the <code>dplyr</code> package to manage dataframes and <code>magrittr</code> for piping.</p>
+<p>First things first, load the <code>gtfsr</code> package and set your key to access the TransitFeeds API. This example also using the <code>dplyr</code> package to manage data frames and <code>magrittr</code> for piping.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(gtfsr)
 <span class="kw">library</span>(magrittr)
 <span class="kw">library</span>(dplyr)
@@ -104,20 +104,20 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">set_api_key</span>(<span class="st">&quot;2ec1ae29-b8c2-4a03-b96e-126d585233f9&quot;</span>)  <span class="co"># input your API key here</span></code></pre></div>
 <div id="getting-full-list-available-gtfs-feeds" class="section level3">
 <h3>Getting full list available GTFS feeds</h3>
-<p>With a valid API key loaded, you can easily get the full list of GTFS feeds using the <code>get_feedlist</code> function. What we care most about are the feed GTFS data urls contained in column <code>url_d</code> of the feed list. Since we are interested in acquiring the GTFS data (not just the feedlist), we can use the <code>filter_feedlist</code> function to return a dataframe containing only valid feed urls.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">feedlist_df &lt;-<span class="st"> </span><span class="kw">get_feedlist</span>()  <span class="co"># create a dataframe of all feeds</span>
+<p>With a valid API key loaded, you can easily get the full list of GTFS feeds using the <code>get_feedlist</code> function. What we care most about are the feed GTFS data urls contained in column <code>url_d</code> of the feed list. Since we are interested in acquiring the GTFS data (not just the feedlist), we can use the <code>filter_feedlist</code> function to return a data frame containing only valid feed urls.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">feedlist_df &lt;-<span class="st"> </span><span class="kw">get_feedlist</span>()  <span class="co"># create a data frame of all feeds</span>
 feedlist_df &lt;-<span class="st"> </span>feedlist_df %&gt;%<span class="st"> </span>filter_feedlist  <span class="co"># filter the feedlist</span></code></pre></div>
 <pre><code>## 198 feeds did not provide downloadable URLs of 648 feeds provided. 450 returned.</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">feedlist_df %&gt;%<span class="st"> </span><span class="kw">select</span>(url_d) %&gt;%<span class="st"> </span><span class="kw">head</span>(<span class="dv">5</span>)  <span class="co"># show first 5 feed urls</span></code></pre></div>
 <pre><code>## Source: local data frame [5 x 1]
 ## 
-##                                                                                    url_d
-##                                                                                    (chr)
-## 1             http://corporate.sunrail.com/wp-content/uploads/2016/05/google_transit.zip
-## 2                   http://data.trilliumtransit.com/gtfs/westcat-ca-us/westcat-ca-us.zip
-## 3                 http://data.trilliumtransit.com/gtfs/vineyard-ma-us/vineyard-ma-us.zip
-## 4   http://data.trilliumtransit.com/gtfs/eldoradotransit-ca-us/eldoradotransit-ca-us.zip
-## 5 http://data.trilliumtransit.com/gtfs/paloverde_valley-ca-us/paloverde_valley-ca-us.zip</code></pre>
+##                                                                         url_d
+##                                                                         (chr)
+## 1  http://corporate.sunrail.com/wp-content/uploads/2016/05/google_transit.zip
+## 2        http://data.trilliumtransit.com/gtfs/westcat-ca-us/westcat-ca-us.zip
+## 3      http://data.trilliumtransit.com/gtfs/vineyard-ma-us/vineyard-ma-us.zip
+## 4 http://data.trilliumtransit.com/gtfs/eldoradotransit-ca-us/eldoradotransit-
+## 5 http://data.trilliumtransit.com/gtfs/paloverde_valley-ca-us/paloverde_valle</code></pre>
 <p>If we want only the data for a specific location (or locations), we can get then search the feedlist for feeds of interest.</p>
 <p>Assume we are interested in getting all the GTFS data from <em>Australian</em> feeds (i.e. we search for location names for the word ‘australia’). We can match Australian agencies by name (filter on <code>loc_t</code>) and extract the corresponding url feeds (select <code>url_d</code>).</p>
 </div>
@@ -142,12 +142,11 @@ aussie_df %&gt;%<span class="st"> </span><span class="kw">select</span>(loc_t) %
 <div id="inspect-parsing-warnings-during-process" class="section level3">
 <h3>Inspect Parsing Warnings During Process</h3>
 <p>During the import of the any feed url, you will see the following message:</p>
-<pre><code>NOTE: Parsing errors and warnings while importing data can be extracted by setting the `problems` option to TRUE (problems = TRUE).</code></pre>
-<p>This output was suppressed in the last section to save space given how verbose it is. But the highlighted <code>NOTE</code> explains that <em>if one observes an error or warning during the import process</em>, one can use the <code>problems = TRUE</code> option (<code>FALSE</code> by default), which allows you to extract a problems dataframe.</p>
-<p>As an example, let’s extract the data and problems dataframes for the 44th url of <code>feedlist_df</code>.</p>
+<pre><code>NOTE: Parsing errors and warnings while importing data can be extracted from any given data frame with `attr(df, &quot;problems&quot;)`.</code></pre>
+<p>This output was suppressed in the last section to save space given how verbose it is. But the highlighted <code>NOTE</code> explains that <em>if one observes an error or warning during the import process</em>, one can extract a data frame of problems, which is stored as an attribute for any data frame that had a warning output.</p>
+<p>As an example, let’s extract the data and problems data frames for the 44th url of <code>feedlist_df</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">url &lt;-<span class="st"> </span>feedlist_df %&gt;%<span class="st"> </span><span class="kw">slice</span>(<span class="dv">44</span>) %&gt;%<span class="st"> </span><span class="kw">select</span>(url_d)
-data_list1 &lt;-<span class="st"> </span>url %&gt;%<span class="st"> </span>get_gtfs
-prob_list1 &lt;-<span class="st"> </span>url %&gt;%<span class="st"> </span><span class="kw">get_gtfs</span>(<span class="dt">problems =</span> <span class="ot">TRUE</span>)</code></pre></div>
+data_list1 &lt;-<span class="st"> </span>url %&gt;%<span class="st"> </span>get_gtfs</code></pre></div>
 <p>If you look at the output created when creating the <code>data_list1</code> object, you should see output that looks like this…</p>
 <pre><code>...
 Warning: 2 parsing failures.
@@ -155,8 +154,9 @@ row col   expected    actual
   3  -- 10 columns 1 columns
   4  -- 10 columns 1 columns
 ...</code></pre>
-<p>These error are mostly due to the fact that empty rows were added to the end of the text file. But assume we don’t know that. It is therefore prudent to extract the problems dataframe to keep a record of potential problems. Let’s compare the <code>calendar_df</code> dataframe from each list.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data_list1[[<span class="dv">1</span>]]$calendar_df</code></pre></div>
+<p>To understand the problem, let’s extract the data frame <code>calendar_df</code>. Recall that <code>get_gtfs</code> returns a list where each element of the list is a set of data frames.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df &lt;-<span class="st"> </span>data_list1[[<span class="dv">1</span>]]$calendar_df  <span class="co"># extract `calendar_df` from the 1st list element (there's only one)</span>
+df</code></pre></div>
 <pre><code>## Source: local data frame [4 x 10]
 ## 
 ##   service_id monday tuesday wednesday thursday friday saturday sunday
@@ -165,19 +165,15 @@ row col   expected    actual
 ## 2   Saturday      0       0         0        0      0        1      0
 ## 3         NA     NA      NA        NA       NA     NA       NA     NA
 ## 4         NA     NA      NA        NA       NA     NA       NA     NA
-##   start_date end_date
-##        (chr)    (chr)
-## 1   20151215 20161231
-## 2   20151215 20161231
-## 3         NA       NA
-## 4         NA       NA</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">prob_list1[[<span class="dv">1</span>]]$calendar_df</code></pre></div>
+## Variables not shown: start_date (chr), end_date (chr)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attr</span>(df, <span class="st">&quot;problems&quot;</span>)</code></pre></div>
 <pre><code>## Source: local data frame [2 x 4]
 ## 
 ##     row   col   expected    actual
 ##   (int) (chr)      (chr)     (chr)
 ## 1     3    NA 10 columns 1 columns
 ## 2     4    NA 10 columns 1 columns</code></pre>
+<p>From inspecting the output from <code>attr(df, 'problems')</code> and comparing it to just <code>df</code>, it appears the problems (at least for this particular <code>calendar_df</code>) stem from the possibility that empty rows were added to the end of the original text file. Not a big deal and easily fixed. But we leave such specific fixes to the user to correct.</p>
 </div>
 </div>
 

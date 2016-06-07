@@ -4,14 +4,12 @@
 \alias{read_gtfs}
 \title{Put GTFS text file contents into objects in memory and delete files}
 \usage{
-read_gtfs(exdir, delete_files = TRUE, problems = FALSE)
+read_gtfs(exdir, delete_files = TRUE)
 }
 \arguments{
 \item{exdir}{Character. Path to folder into which files were extracted.}
 
 \item{delete_files}{Logical, whether to delete the files after extraction.  Deletes by default.}
-
-\item{problems}{Logical (default is FALSE). Option whether to return a dataframe of problems}
 }
 \description{
 Put GTFS text file contents into objects in memory and delete files

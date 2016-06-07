@@ -4,92 +4,17 @@
 ## It might be useful to abstract some of these things into functions
 #############
 
-# source('R/get_gtfs.R')
-# source('R/read_gtfs.R')
-# source('R/validate_gtfs.R')
-
-# library(tidyr)
-
-# # Would need to load results first
-# attach('rdata/all_feeds.rda')
-
-
 # Get location and feed metadata ------------------------------------------
 
-loc_df <- get_locations()
+set_api_key('2ec1ae29-b8c2-4a03-b96e-126d585233f9') # input your API key here
 
 feedlist_df <- get_feedlist()
 
 new_feedlist_df <- filter_feedlist(feedlist_df)
 
-# validation? ------------------------------------------------
-all_req_files <- c('agency', 'stops', 'routes', 'trips', 'stop_times', 'calendar')
-all_opt_files <- c('calendar_dates', 'fare_attributes', 'fare_rules', 'shapes', 'frequencies', 'transfers', 'feed_info')
-all_spec_files <- c(all_req_files, all_opt_files)
-
-has_colnames <- paste0('has_', all_spec_files)
-req_colnames <- paste0('has_', all_req_files)
-opt_colnames <- paste0('has_', all_opt_files)
-
-result_df <- new_feedlist_df[, c('id', 't', 'loc_t', has_colnames)]
-
-long_result_df <- result_df %>%
-  filter(!is.na(has_agency)) %>% # these must not have downloaded
-  gather(key = 'file', value = 'file_provided', has_agency:has_feed_info) %>%
-  mutate(is_required = file %in% req_colnames) %>%
-  mutate(file = gsub('has_', '', file))
-
-summary_req_df <- long_result_df %>%
-  filter(is_required) %>%
-  group_by(id, t, loc_t) %>%
-  summarize(n_req = sum(file_provided == 'yes')) %>%
-  mutate(says_gtfs = grepl(pattern = 'GTFS', x = t))
-
-summary_req_gtfs_df <- summary_req_df %>%
-  filter(says_gtfs)
-
-req_0 <- summary_req_df$id[summary_req_df$n_req == 0]
-
-summary_file_df <- long_result_df %>%
-  mutate(says_gtfs = grepl(pattern = 'GTFS', x = t)) %>%
-  filter(!(id %in% req_0)) %>%
-  mutate(n_agencies = n_distinct(id)) %>%
-  group_by(n_agencies, is_required, file, file_provided) %>%
-  summarize(n_files = n()) %>%
-  mutate(pct_agencies = round(100 * n_files/n_agencies, 0))
-
-# This answers the question: what percent of agencies provide each file type?
-summary_provided_df <- summary_file_df %>%
-  ungroup() %>%
-  select(file, is_required, file_provided, pct_agencies) %>%
-  mutate(file_provided = paste0('pct_', file_provided)) %>%
-  spread(file_provided, value = pct_agencies, fill = 0) %>%
-  arrange(desc(is_required))
-
-
-
-# How many agencies per feed? ---------------------------------------------
-
-# This is all that have feeds with contents, but some may not be GTFS
-num_agencies <- unlist(sapply(all_feeds, function(x) nrow(x$agency_df)))
-
-numa_df <- data_frame(num_agencies_per_feed = num_agencies)
-summary_numag_df <- numa_df %>%
-  group_by(num_agencies_per_feed) %>%
-  summarize(n_feeds = n()) %>%
-  mutate(pct_feeds = round(100 * n_feeds / sum(n_feeds), 1))
-
-
-# How many routes and stops per feed? -------------------------------------
-
-num_stops_df <- data_frame(num_stops = unlist(sapply(all_feeds, function(x) n_distinct(x$stops_df$stop_id))))
-
-num_routes_df <- data_frame(num_routes = unlist(sapply(all_feeds, function(x) n_distinct(x$routes_df$route_id))))
-
+all_feeds <- new_feedlist_df$url_d[1:5] %>% get_gtfs
 
 # Validation --------------------------------------------------------------
-
-sub_feeds <- all_feeds[1:10]
 
 val_list <- lapply(all_feeds, function(x) validate_feed(x, return_feed = FALSE))
 
@@ -151,5 +76,72 @@ for (i in 1:length(stops_ll)) {
   temp_df$source <- 'GTFS'
   stops_df <- bind_rows(stops_df, temp_df)
 }
+
+
+
+
+# # validation? ------------------------------------------------
+# all_req_files <- c('agency', 'stops', 'routes', 'trips', 'stop_times', 'calendar')
+# all_opt_files <- c('calendar_dates', 'fare_attributes', 'fare_rules', 'shapes', 'frequencies', 'transfers', 'feed_info')
+# all_spec_files <- c(all_req_files, all_opt_files)
+
+# has_colnames <- paste0('has_', all_spec_files)
+# req_colnames <- paste0('has_', all_req_files)
+# opt_colnames <- paste0('has_', all_opt_files)
+
+# result_df <- new_feedlist_df[, c('id', 't', 'loc_t', has_colnames)]
+
+# long_result_df <- result_df %>%
+#   filter(!is.na(has_agency)) %>% # these must not have downloaded
+#   gather(key = 'file', value = 'file_provided', has_agency:has_feed_info) %>%
+#   mutate(is_required = file %in% req_colnames) %>%
+#   mutate(file = gsub('has_', '', file))
+
+# summary_req_df <- long_result_df %>%
+#   filter(is_required) %>%
+#   group_by(id, t, loc_t) %>%
+#   summarize(n_req = sum(file_provided == 'yes')) %>%
+#   mutate(says_gtfs = grepl(pattern = 'GTFS', x = t))
+
+# summary_req_gtfs_df <- summary_req_df %>%
+#   filter(says_gtfs)
+
+# req_0 <- summary_req_df$id[summary_req_df$n_req == 0]
+
+# summary_file_df <- long_result_df %>%
+#   mutate(says_gtfs = grepl(pattern = 'GTFS', x = t)) %>%
+#   filter(!(id %in% req_0)) %>%
+#   mutate(n_agencies = n_distinct(id)) %>%
+#   group_by(n_agencies, is_required, file, file_provided) %>%
+#   summarize(n_files = n()) %>%
+#   mutate(pct_agencies = round(100 * n_files/n_agencies, 0))
+
+# # This answers the question: what percent of agencies provide each file type?
+# summary_provided_df <- summary_file_df %>%
+#   ungroup() %>%
+#   select(file, is_required, file_provided, pct_agencies) %>%
+#   mutate(file_provided = paste0('pct_', file_provided)) %>%
+#   spread(file_provided, value = pct_agencies, fill = 0) %>%
+#   arrange(desc(is_required))
+
+
+
+# # How many agencies per feed? ---------------------------------------------
+
+# # This is all that have feeds with contents, but some may not be GTFS
+# num_agencies <- unlist(sapply(all_feeds, function(x) nrow(x$agency_df)))
+
+# numa_df <- data_frame(num_agencies_per_feed = num_agencies)
+# summary_numag_df <- numa_df %>%
+#   group_by(num_agencies_per_feed) %>%
+#   summarize(n_feeds = n()) %>%
+#   mutate(pct_feeds = round(100 * n_feeds / sum(n_feeds), 1))
+
+
+# # How many routes and stops per feed? -------------------------------------
+
+# num_stops_df <- data_frame(num_stops = unlist(sapply(all_feeds, function(x) n_distinct(x$stops_df$stop_id))))
+
+# num_routes_df <- data_frame(num_routes = unlist(sapply(all_feeds, function(x) n_distinct(x$routes_df$route_id))))
 
 

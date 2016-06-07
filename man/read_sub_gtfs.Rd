@@ -4,14 +4,12 @@
 \alias{read_sub_gtfs}
 \title{Function to read all files into dataframes}
 \usage{
-read_sub_gtfs(file_path, assign_envir, problems = FALSE)
+read_sub_gtfs(file_path, assign_envir)
 }
 \arguments{
 \item{file_path}{Character file path}
 
 \item{assign_envir}{Environment Object. Option of where to assign dataframes.}
-
-\item{problems}{Logical (default is FALSE). Option whether to return a dataframe of problems}
 }
 \description{
 Function to read all files into dataframes

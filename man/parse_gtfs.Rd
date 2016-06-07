@@ -4,14 +4,12 @@
 \alias{parse_gtfs}
 \title{Function to better read in GTFS txt files}
 \usage{
-parse_gtfs(prefix, file_path, problems = FALSE)
+parse_gtfs(prefix, file_path)
 }
 \arguments{
 \item{prefix}{Character. gtfs file prefix (e.g. 'agency', 'stop_times', etc.)}
 
 \item{file_path}{Character. file path}
-
-\item{problems}{Logical (default is FALSE). Option whether to return a dataframe of problems}
 }
 \description{
 Function to better read in GTFS txt files
