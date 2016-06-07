@@ -1,8 +1,12 @@
-# gtfsr-example.R
+# gtfsr-example.R -- contains just the code of the gtfsr vignette
 
 ## install
 devtools::install_github('ropenscilabs/gtfsr', build_vignette = TRUE)
 
+## see the vignette
+browseVignette('gtfsr')
+
+# gtfsr vignette code ------------------------------------------------
 library(gtfsr)
 library(magrittr)
 library(dplyr)
