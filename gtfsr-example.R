@@ -1,12 +1,13 @@
 # gtfsr-example.R
 
+## install
+devtools::install_github('ropenscilabs/gtfsr')
+
 library(gtfsr)
 library(magrittr)
 library(dplyr)
 options(dplyr.width = Inf) # I like to see all the columns
 
-## install
-devtools::install_github('ropenscilabs/gtfsr')
 
 ## set api key and get full list of GTFS Feeds
 set_api_key('2ec1ae29-b8c2-4a03-b96e-126d585233f9') # input your API key here
