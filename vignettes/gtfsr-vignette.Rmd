@@ -11,7 +11,7 @@ vignette: >
 ---
 
 ```{r init, warning=FALSE, message=FALSE, echo=FALSE, eval=TRUE}
-knitr::opts_chunk$set(cache=TRUE, tidy=TRUE)
+knitr::opts_chunk$set(cache=TRUE, tidy=TRUE, collapse = TRUE, comment = "#>")
 ```
 ## 1. Get an GTFS API key
 

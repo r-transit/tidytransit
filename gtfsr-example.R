@@ -1,7 +1,7 @@
 # gtfsr-example.R
 
 ## install
-devtools::install_github('ropenscilabs/gtfsr')
+devtools::install_github('ropenscilabs/gtfsr', build_vignette = TRUE)
 
 library(gtfsr)
 library(magrittr)
