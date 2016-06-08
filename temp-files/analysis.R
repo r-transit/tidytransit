@@ -4,6 +4,8 @@
 ## It might be useful to abstract some of these things into functions
 #############
 
+library(magrittr)
+library(dplyr)
 # Get location and feed metadata ------------------------------------------
 
 set_api_key('2ec1ae29-b8c2-4a03-b96e-126d585233f9') # input your API key here
@@ -37,6 +39,12 @@ validation_all <- lapply(val_list, function(x) {
     all_df <- x$validate_df
     return(all_df)
   }
+})
+
+notok_pct <- lapply(validation_all, function(x) {
+  a <- ifelse(sum(x$validation_status != 'ok') > 0, sum(x$validation_status != 'ok')/dim(x)[1] * 100, 0)
+  b <- sum(x$validation_status != 'ok')
+  return(c(a, b))
 })
 
 req_both_df <- data_frame(files = req_files, fields = req_fields)

@@ -4,7 +4,7 @@
 # These should collectively allow a user to
 # - unzip GTFS data from a local file
 # - validate that the content of the zipped file is a GTFS feed
-# - read the data into an object of class gtfs
+# - read the data into an object
 
 #' Unzip GTFS file and delete zip
 #'
@@ -80,12 +80,10 @@ read_gtfs <- function(exdir, delete_files = TRUE) {
 
   gtfs_list <- mget(df_list, envir = exec_env)
 
-  # print('Everything df in my function environment')
-  # print(df_list)
-
   if (delete_files) file.remove(all_files)
 
-  gtfs_list
+  class(gtfs_list) <- 'gtfs'
+  return(gtfs_list)
 
 }
 
@@ -105,7 +103,6 @@ read_sub_gtfs <- function(file_path, assign_envir) {
   message(paste0('Reading ', file_name))
 
   new_df <- parse_gtfs(prefix, file_path) # will have warning even though we fix problem
-  # new_df <- parse_gtfs(prefix, file_path) # will have warning even though we fix problem
 
   assign(df_name, new_df, envir = assign_envir)
 
