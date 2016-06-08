@@ -4,12 +4,14 @@
 \alias{get_feed}
 \title{Download a zipped GTFS feed file from a url}
 \usage{
-get_feed(url, path = NULL)
+get_feed(url, path = NULL, quiet = FALSE)
 }
 \arguments{
 \item{url}{Character URL of GTFS feed.}
 
 \item{path}{Character. Folder into which to put zipped file. If NULL, then save a tempfile}
+
+\item{quiet}{Boolean. Whether to see file download progress. FALSE by default.}
 }
 \value{
 File path

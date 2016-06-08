@@ -53,6 +53,7 @@ make_var_val <- function() {
     x <- paste0(n, '_df')
     df <- as.data.frame(get(n, envir = get_gtfs_meta()), stringsAsFactors=FALSE) %>% tbl_df
     df$file <- n
+    assign(x, NULL) # NULL out first
     assign(x, df)
   }
 
@@ -66,7 +67,7 @@ make_var_val <- function() {
 #' Validate variables provided vs spec
 #'
 #' @param val_files The dataframe output of validate_files_provided for a single feed
-#' @param feed A GTFS list object with components agency_df, etc.
+#' @param gtfs_obj A GTFS list object with components agency_df, etc.
 #'
 #' @return Dataframe with one record per file x column (columns in spec + any extra provided),
 #'         with file and field specs and file and field provided statuses
@@ -77,11 +78,11 @@ validate_vars_provided <- function(val_files, gtfs_obj) {
 
   # Generate the df of files and fields per the GTFS spec
   spec_vars_df <- make_var_val() %>%
-    rename(field_spec = spec)
+    rename(field_spec = 'spec')
 
   # Keep just the files that are provided for this gtfs_obj, or that are required
   val_files_df <- val_files %>%
-    rename(file_spec = spec, file_provided_status = provided_status) %>%
+    rename(file_spec = 'spec', file_provided_status = 'provided_status') %>%
     filter(file_provided_status == 'yes' | file_spec == 'req')
 
 

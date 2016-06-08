@@ -1,25 +1,22 @@
 #' Get a Dataframes of GTFS data.
 #'
-#' @param path Character. url link to zip file
+#' @param urls Character. url link to zip file
+#' @param quiet Boolean. Whether to see file download progress and files extract. FALSE by default.
 #'
 #' @return Dataframes of GTFS data.
 #'
 #' @export
 
-import_gtfs <- function(urls, timeout=10) {
+import_gtfs <- function(urls, quiet = FALSE) {
 
   feed_flow <- function(url) {
-    path <- get_feed(url = url)
+    path <- get_feed(url = url, quiet = quiet)
 
-    zip_dir <- unzip_gtfs(path)
+    zip_dir <- unzip_gtfs_files(zipfile = path, quiet = quiet)
 
     read_gtfs(zip_dir)
 
   }
-
-
-  old_timeout <- options()$timeout
-  options(timeout=timeout)
 
   # check if single column of data was inputed. if so, convert to vector; error otherwise.
   if(!is.null(dim(urls))) {
@@ -31,7 +28,6 @@ import_gtfs <- function(urls, timeout=10) {
   }
 
   data_list <- urls %>% lapply(. %>% feed_flow)
-  options(timeout=old_timeout)
   return(data_list)
 
 }

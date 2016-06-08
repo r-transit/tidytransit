@@ -4,10 +4,12 @@
 \alias{import_gtfs}
 \title{Get a Dataframes of GTFS data.}
 \usage{
-import_gtfs(urls, timeout = 10)
+import_gtfs(urls, quiet = FALSE)
 }
 \arguments{
-\item{path}{Character. url link to zip file}
+\item{urls}{Character. url link to zip file}
+
+\item{quiet}{Boolean. Whether to see file download progress and files extract. FALSE by default.}
 }
 \value{
 Dataframes of GTFS data.

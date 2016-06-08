@@ -18,7 +18,7 @@ all_feeds <- new_feedlist_df$url_d[1:5] %>% import_gtfs
 
 # Validation --------------------------------------------------------------
 
-val_list <- lapply(all_feeds, function(x) validate_feed(x, return_feed = FALSE))
+val_list <- lapply(all_feeds, function(x) validate_gtfs_structure(x, return_gtfs_obj = FALSE))
 
 req_files <- unlist(sapply(val_list, function(x) x$all_req_files))
 req_fields <- unlist(sapply(val_list, function(x) x$all_req_fields))
@@ -55,7 +55,7 @@ req_both_df %>%
   ungroup() %>%
   mutate(pct = round(100 * n/sum(n)))
 
-lapply(all_feeds, function(x) validate_feed(x, return_feed = FALSE))
+lapply(all_feeds, function(x) validate_gtfs_structure(x, return_gtfs_obj = FALSE))
 
 
 # Get stop locations  --------------------------------------------------

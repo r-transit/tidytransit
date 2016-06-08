@@ -3,7 +3,7 @@ Type: Package
 Title: Working with GTFS (General Transit Feed Specification) feeds in R
 Version: 0.1.0
 Authors@R: as.person(c(
-    "Elaine McVey <elaine.mcvey@transloc.com> [aut, cre]", 
+    "Elaine McVey <elaine.mcvey@transloc.com> [aut, cre]",
     "Dnaton Noriega-Goodwin <danton@transloc.com> [aut]"
   ))
 Description: Provides API wrappers for popular public GTFS feed sharing sites, reads feed data into a gtfs data object, validates data quality, provides convenience functions for common tasks.
@@ -15,7 +15,9 @@ Imports:
     readr,
     lubridate,
     ggplot2,
-    httr
+    httr,
+    magrittr,
+    stringr
 Suggests:
     testthat,
     knitr,

@@ -16,8 +16,6 @@
 
 get_feedlist <- function() {
 
-  #TODO: Generalize query to allow for multiple parameters depending on what's provided
-
   max_limit <- 100 # 100 is the max limit
 
   # get the full feedlist
@@ -54,12 +52,15 @@ get_feedlist <- function() {
 #'
 #' @param url Character URL of GTFS feed.
 #' @param path Character. Folder into which to put zipped file. If NULL, then save a tempfile
+#' @param quiet Boolean. Whether to see file download progress. FALSE by default.
 #'
 #' @return File path
 #'
 #' @export
 
-get_feed <- function(url, path=NULL) {
+get_feed <- function(url, path=NULL, quiet=FALSE) {
+
+  stopifnot(length(url) == 1)
 
   # check if single element of dataframe was inputed. if so, convert to single value; error otherwise.
   if(!is.null(dim(url))) {
@@ -79,8 +80,15 @@ get_feed <- function(url, path=NULL) {
   # generate a temporary file path if no path is specified
   if(is.null(path)) temp <- tempfile(fileext = ".zip") else temp <- file.path(path, 'gtfs_zip.zip')
 
-  # Get gtfs zip
-  download.file(url, temp)
+  r <- httr::GET(url)
+
+  # Get gtfs zip if url can be reach
+  if(httr::status_code(r) == 200) {
+    download.file(url, temp, quiet = quiet)
+  } else {
+    sprintf("Link '%s' cannot be reached. NULL was returned.", url) %>% warning
+    return(NULL)
+  }
 
   # return the temp path - for unzipping
   return(temp)
@@ -166,7 +174,7 @@ set_api_key <- function(key = NULL) {
     stop(sprintf("API key '%s' is invalid. API keys are 36 characters long with pattern XXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.", key))
   }
   if(!exists('.gtfs_api_key')) .gtfs_api_key <<- new.env(parent=emptyenv()) # create new key envir
-  .gtfs_api_key$key <<- key
+  .gtfs_api_key$key <- key
 }
 
 #' Get API key
@@ -183,10 +191,13 @@ get_api_key <- function() {
 #' @export
 
 has_key <- function() {
+
   if(!exists('.gtfs_api_key')) stop("API not found. Please set your API key using function 'set_api_key'")
-  valid_api_key <- grepl('[[:alnum:]]{8}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{12}', .gtfs_api_key$key)
+  assign('api_key', get('key', .gtfs_api_key))
+
+  valid_api_key <- grepl('[[:alnum:]]{8}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{12}', api_key)
   if(!valid_api_key) {
-    stop(sprintf("API key '%s' is invalid. API keys are 36 characters long with pattern XXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX. Please set your API key using function 'set_api_key'", .gtfs_api_key$key))
+    stop(sprintf("API key '%s' is invalid. API keys are 36 characters long with pattern XXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX. Please set your API key using function 'set_api_key'", api_key))
   } else valid_api_key
 }
 
@@ -270,7 +281,8 @@ tfeeds_parse_getlocation <- function(req) {
 
 #' Set up GET for transitfeeds API
 #'
-#' @param path Character containing the name of the API call (ex. getFeeds)
+#' @param path Character. Contains the name of the API call (ex. getFeeds)
+#' @param query Character. Other query strings.
 #' @param version Version of API as character that can be appended as part of path, defaults to v1
 #' @param key API key, defaults to get_api_key()
 #'

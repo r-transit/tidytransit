@@ -8,7 +8,9 @@ tfeeds_get(path, query, ..., version = "v1/", key = if (has_key())
   get_api_key())
 }
 \arguments{
-\item{path}{Character containing the name of the API call (ex. getFeeds)}
+\item{path}{Character. Contains the name of the API call (ex. getFeeds)}
+
+\item{query}{Character. Other query strings.}
 
 \item{version}{Version of API as character that can be appended as part of path, defaults to v1}
 
