@@ -74,11 +74,11 @@ aussie_urls <- aussie_df %>% select(url_d) # get aussie urls
 
 ```
 
-Once we have the urls for the feeds of interest, we can download and extract all the GTFS data into a data list (aka a list of data frames) using the `get_gtfs` data. To save time, we will only download 2 feeds (`slice(8:9)`). The output is suppressed because of how verbose it is.
+Once we have the urls for the feeds of interest, we can download and extract all the GTFS data into a data list (aka a list of data frames) using the `import_gtfs` data. To save time, we will only download 2 feeds (`slice(8:9)`). The output is suppressed because of how verbose it is.
 
-```{r get_gtfs, warning=FALSE, message=FALSE, echo=TRUE, eval=FALSE}
+```{r import_gtfs, warning=FALSE, message=FALSE, echo=TRUE, eval=FALSE}
 
-data_list <- aussie_urls %>% slice(8:9) %>% get_gtfs
+data_list <- aussie_urls %>% slice(8:9) %>% import_gtfs
 
 ```
 
@@ -96,7 +96,7 @@ As an example, let's extract the data and problems data frames for the 44th url 
 
 ```{r problems, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, results='hide'}
 url <- feedlist_df %>% slice(44) %>% select(url_d)
-data_list1 <- url %>% get_gtfs
+data_list1 <- url %>% import_gtfs
 ```
 
 If you look at the output created when creating the `data_list1` object, you should see output that looks like this...
@@ -110,7 +110,7 @@ row col   expected    actual
 ...
 ```
 
-To understand the problem, let's extract the data frame `calendar_df`. Recall that `get_gtfs` returns a list where each element of the list is a set of data frames.
+To understand the problem, let's extract the data frame `calendar_df`. Recall that `import_gtfs` returns a list where each element of the list is a set of data frames.
 
 
 ```{r title, echo=TRUE, eval=TRUE}

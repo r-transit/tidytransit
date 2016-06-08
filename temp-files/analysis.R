@@ -41,7 +41,7 @@ validation_all <- lapply(val_list, function(x) {
   }
 })
 
-notok_pct <- lapply(validation_all, function(x) {
+not_ok_pct <- lapply(validation_all, function(x) {
   a <- ifelse(sum(x$validation_status != 'ok') > 0, sum(x$validation_status != 'ok')/dim(x)[1] * 100, 0)
   b <- sum(x$validation_status != 'ok')
   return(c(a, b))

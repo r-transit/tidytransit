@@ -25,11 +25,11 @@ aussie_df <- feedlist_df %>%
     filter(grepl('australia', loc_t, ignore.case = TRUE)) # filter out locations with "australia" in name
 aussie_df %>% select(loc_t) %>% head(5) # look at location names
 aussie_urls <- aussie_df %>% select(url_d) # get aussie urls
-data_list <- aussie_urls %>% slice(8:9) %>% get_gtfs
+data_list <- aussie_urls %>% slice(8:9) %>% import_gtfs
 
 ## how to extract 'problems'
 url <- feedlist_df %>% slice(44) %>% select(url_d)
-data_list1 <- url %>% get_gtfs
+data_list1 <- url %>% import_gtfs
 
 df <- data_list1[[1]]$calendar_df # extract `calendar_df` from the 1st list element (there's only one)
 df
