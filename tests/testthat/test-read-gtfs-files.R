@@ -26,7 +26,7 @@ read_gtfs2 <- function(file_path, delete_files) {
 }
 
 # unzip_gtfs_files()
-test_that('can download, extract a GTFS zip file to temp or user-specified path from user-specified URL', {
+test_that('Download, extract a GTFS zip file to temp or user-specified path from user-specified URL', {
 
 	url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
 	zip <- get_feed2(url)
@@ -49,7 +49,7 @@ test_that('can download, extract a GTFS zip file to temp or user-specified path 
 })
 
 # read_gtfs()
-test_that('read GTFS file from unzipped folder', {
+test_that('Read GTFS file from unzipped folder', {
 
 	url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
 	zip <- get_feed2(url)
@@ -69,7 +69,7 @@ test_that('read GTFS file from unzipped folder', {
 })
 
 # parse_gtfs()
-test_that('check how we are parsing files', {
+test_that('Check if/how we are parsing files', {
 
 	url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
 	zip <- get_feed2(url)
