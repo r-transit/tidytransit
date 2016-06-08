@@ -6,22 +6,22 @@
 # - get a summary of data quality for a gtfs class object with various categories/levels of importance
 # - save data quality metadata in a structured way
 
-#' For a single feed list object, check provided files
+#' For a single GTFS list object, check provided files
 #'
-#' @param feed A GTFS feed list object with components agency_df, etc.
+#' @param gtfs_obj A GTFS list object with components agency_df, etc.
 #'
 #' @return Dataframe will one row for all required and optional files per spec, plus one row for any other files provided (file),
 #'         with an indication of these categories (spec), and a yes/no/empty status (provided_status)
 
-validate_files_provided <- function(feed) {
+validate_files_provided <- function(gtfs_obj) {
 
   # Per spec, these are the required and optional files
   all_req_files <- c('agency', 'stops', 'routes', 'trips', 'stop_times', 'calendar')
   all_opt_files <- c('calendar_dates', 'fare_attributes', 'fare_rules', 'shapes', 'frequencies', 'transfers', 'feed_info')
   all_spec_files <- c(all_req_files, all_opt_files)
 
-  # Get the names of all the dfs in the list for a feed
-  feed_names <- names(feed)
+  # Get the names of all the dfs in the list for a gtfs_obj
+  feed_names <- names(gtfs_obj)
 
   # Strip the _df from the names to get to file components
   feed_names_file <- gsub('_df', '', feed_names)
@@ -37,7 +37,7 @@ validate_files_provided <- function(feed) {
 
   prov_df <- prov_df %>%
     mutate(provided_status = ifelse(!(file %in% feed_names_file), 'no',
-                                    ifelse(sapply(feed, dim)[2,] == 0, 'empty',
+                                    ifelse(sapply(gtfs_obj, dim)[2,] == 0, 'empty',
                                            'yes')))
   return(prov_df)
 
@@ -66,20 +66,20 @@ make_var_val <- function() {
 #' Validate variables provided vs spec
 #'
 #' @param val_files The dataframe output of validate_files_provided for a single feed
-#' @param feed A GTFS feed list object with components agency_df, etc.
+#' @param feed A GTFS list object with components agency_df, etc.
 #'
 #' @return Dataframe with one record per file x column (columns in spec + any extra provided),
 #'         with file and field specs and file and field provided statuses
 #'
 #' @export
 
-validate_vars_provided <- function(val_files, feed) {
+validate_vars_provided <- function(val_files, gtfs_obj) {
 
   # Generate the df of files and fields per the GTFS spec
   spec_vars_df <- make_var_val() %>%
     rename(field_spec = spec)
 
-  # Keep just the files that are provided for this feed, or that are required
+  # Keep just the files that are provided for this gtfs_obj, or that are required
   val_files_df <- val_files %>%
     rename(file_spec = spec, file_provided_status = provided_status) %>%
     filter(file_provided_status == 'yes' | file_spec == 'req')
@@ -98,7 +98,7 @@ validate_vars_provided <- function(val_files, feed) {
 
     for (i in extra_files_df) {
 
-      temp_df <- feed[[i]]
+      temp_df <- gtfs_obj[[i]]
       temp_names <- names(temp_df)
 
       temp_vars_df <- data_frame(file = rep(gsub('_df', '', i), length(temp_names)), field = temp_names, field_spec = rep('ext', length(temp_names)))
@@ -122,7 +122,7 @@ validate_vars_provided <- function(val_files, feed) {
   # List variables provided for each file and join to determine field_provided
   for (j in val_cols_df) {
 
-    temp_df <- feed[[j]]
+    temp_df <- gtfs_obj[[j]]
     temp_names <- names(temp_df)
 
     # Handle the case where a required file is missing
@@ -178,38 +178,38 @@ validate_vars_provided <- function(val_files, feed) {
 
 }
 
-#' Create validation list for a feed
+#' Create validation list for a gtfs_obj. It provides an overview of the structure of all files that were imported.
 #'
-#' @param feed A GTFS feed list object with components agency_df, etc.
-#' @param return_feed If TRUE, returns feed list with validate appended (true by default),
+#' @param gtfs_obj A GTFS list object with components agency_df, etc.
+#' @param return_gtfs_obj If TRUE, returns gtfs_obj list with validate appended (true by default),
 #'                    if FALSE, returns validate list only
 #'
-#' @return A feed list object with $validate added to the end of the list, or just validate list
+#' @return A gtfs_obj list object with $validate added to the end of the list, or just validate list
 #'
 #' @export
 
-validate_feed <- function(feed, return_feed = TRUE) {
+validate_gtfs_structure <- function(gtfs_obj, return_gtfs_obj = TRUE) {
 
-  if (length(feed) == 0) {
-    warning('Empty feed.')
+  if (length(gtfs_obj) == 0) {
+    warning('Empty gtfs_obj.')
     return(NULL)
   }
 
-  print(feed$agency_df$agency_name)
+  print(gtfs_obj$agency_df$agency_name)
 
-  prov_df <- validate_files_provided(feed = feed)
+  prov_df <- validate_files_provided(gtfs_obj = gtfs_obj)
 
-  all_df <- validate_vars_provided(prov_df, feed = feed)
+  all_df <- validate_vars_provided(prov_df, gtfs_obj = gtfs_obj)
 
   validate_list <- list(all_req_files = !('file_missing' %in% all_df$validation_status),
                         all_req_fields = !('field_missing' %in% all_df$validation_status),
                         validate_df = all_df)
 
-  # update feed attributes with validation data
-  attributes(feed) <- append(attributes(feed), list(validate = validate_list))
+  # update gtfs_obj attributes with validation data
+  attributes(gtfs_obj) <- append(attributes(gtfs_obj), list(validate = validate_list))
 
-  if (return_feed) {
-    return(feed)
+  if (return_gtfs_obj) {
+    return(gtfs_obj)
   } else {
     return(validate_list)
   }

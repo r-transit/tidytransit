@@ -2,18 +2,18 @@
 % Please edit documentation in R/validate-gtfs.R
 \name{validate_files_provided}
 \alias{validate_files_provided}
-\title{For a single feed list object, check provided files}
+\title{For a single GTFS list object, check provided files}
 \usage{
-validate_files_provided(feed)
+validate_files_provided(gtfs_obj)
 }
 \arguments{
-\item{feed}{A GTFS feed list object with components agency_df, etc.}
+\item{gtfs_obj}{A GTFS list object with components agency_df, etc.}
 }
 \value{
 Dataframe will one row for all required and optional files per spec, plus one row for any other files provided (file),
         with an indication of these categories (spec), and a yes/no/empty status (provided_status)
 }
 \description{
-For a single feed list object, check provided files
+For a single GTFS list object, check provided files
 }
 

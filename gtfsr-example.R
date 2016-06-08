@@ -1,10 +1,11 @@
 # gtfsr-example.R -- contains just the code of the gtfsr vignette
 
 ## install
-devtools::install_github('ropenscilabs/gtfsr', build_vignette = TRUE)
+# devtools::install_github('ropenscilabs/gtfsr', build_vignette = TRUE)
+devtools::install_github('ropenscilabs/gtfsr')
 
 ## see the vignette
-browseVignettes('gtfsr')
+# browseVignettes('gtfsr')
 
 # gtfsr vignette code ------------------------------------------------
 library(gtfsr)

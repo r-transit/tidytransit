@@ -4,12 +4,12 @@
 \alias{validate_vars_provided}
 \title{Validate variables provided vs spec}
 \usage{
-validate_vars_provided(val_files, feed)
+validate_vars_provided(val_files, gtfs_obj)
 }
 \arguments{
 \item{val_files}{The dataframe output of validate_files_provided for a single feed}
 
-\item{feed}{A GTFS feed list object with components agency_df, etc.}
+\item{feed}{A GTFS list object with components agency_df, etc.}
 }
 \value{
 Dataframe with one record per file x column (columns in spec + any extra provided),

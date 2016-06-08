@@ -14,7 +14,7 @@ feedlist_df <- get_feedlist()
 
 new_feedlist_df <- filter_feedlist(feedlist_df)
 
-all_feeds <- new_feedlist_df$url_d[1:5] %>% get_gtfs
+all_feeds <- new_feedlist_df$url_d[1:5] %>% import_gtfs
 
 # Validation --------------------------------------------------------------
 
