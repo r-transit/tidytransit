@@ -8,6 +8,7 @@ rmfolder <- function(folder) {
 
 #' Used to check if a url is valid
 #' @param url Character. URL.
+
 valid_url <- function(url) {
 	connecting <- function(url) {
 		r <- httr::GET(url)
@@ -21,3 +22,7 @@ valid_url <- function(url) {
 	if(all(cond1, cond2, cond3)) TRUE else FALSE
 
 }
+
+current.env <- environment
+enclosing.env <- parent.env # better language
+calling.env <- parent.frame

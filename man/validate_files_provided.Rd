@@ -10,8 +10,7 @@ validate_files_provided(gtfs_obj)
 \item{gtfs_obj}{A GTFS list object with components agency_df, etc.}
 }
 \value{
-Dataframe will one row for all required and optional files per spec, plus one row for any other files provided (file),
-        with an indication of these categories (spec), and a yes/no/empty status (provided_status)
+Dataframe will one row for all required and optional files per spec, plus one row for any other files provided (file), with an indication of these categories (spec), and a yes/no/empty status (provided_status)
 }
 \description{
 For a single GTFS list object, check provided files

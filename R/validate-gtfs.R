@@ -10,8 +10,7 @@
 #'
 #' @param gtfs_obj A GTFS list object with components agency_df, etc.
 #'
-#' @return Dataframe will one row for all required and optional files per spec, plus one row for any other files provided (file),
-#'         with an indication of these categories (spec), and a yes/no/empty status (provided_status)
+#' @return Dataframe will one row for all required and optional files per spec, plus one row for any other files provided (file), with an indication of these categories (spec), and a yes/no/empty status (provided_status)
 
 validate_files_provided <- function(gtfs_obj) {
 

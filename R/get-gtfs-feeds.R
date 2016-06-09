@@ -9,7 +9,9 @@
 # - get a df of feeds (either by location or complete) with urls
 # - download the feed from a url as a zip
 
+
 #' Get list of all available feeds from transitfeeds API
+#' @import httr dplyr magrittr stringr
 #' @return Result of httr::GET
 #'
 #' @export
@@ -46,7 +48,6 @@ get_feedlist <- function() {
   return(req_df)
 
 }
-
 
 #' Download a zipped GTFS feed file from a url
 #'
@@ -135,12 +136,77 @@ get_locations <- function() {
 
 }
 
+# API Keys ------------------------------------------------
+
+#' Tools to get, set, or check for API key
+#' @param value Character. A TransitFeed API Key.
+
+tools_api_key <- function(value = NULL) {
+  key = value
+
+  get = function() key
+  set = function(x) key <<- x
+  has = function() if(is.null(key)) FALSE else TRUE
+  clear = function() key <<- NULL
+  list(get = get, set = set, has = has, clear = clear)
+
+}
+
+# Assign the tools function environment
+gtfs_api_key <- tools_api_key()
+
+# Clear the API key.
+clear_api_key <- gtfs_api_key$clear
+
+#' Set API key for recall
+#' @param key Character. API key.
+#' @export
+
+set_api_key <- function(key = NULL) {
+  stopifnot(nchar(key) == 36, is.character(key))
+  valid_api_key <- grepl('[[:alnum:]]{8}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{12}', key)
+  if(!valid_api_key) {
+    stop(sprintf("API key '%s' is invalid. API keys are 36 characters long with pattern XXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.", key))
+  }
+
+  gtfs_api_key$set(key)
+
+}
+
+#' Get API key
+#' @export
+
+get_api_key <- function() {
+  if(!gtfs_api_key$has()) stop("API key not found. Please set your API key using function 'set_api_key()'")
+
+  gtfs_api_key$get()
+}
+
+
+#' Make sure API key string is not empty
+#'
+#' @return logical TRUE if key is not empty
+#'
+#' @export
+
+has_api_key <- function() {
+
+  if(!gtfs_api_key$has()) stop("API Key not found. Please set your API key using function 'set_api_key()'.")
+
+  api_key <- gtfs_api_key$get()
+
+  valid_api_key <- grepl('[[:alnum:]]{8}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{12}', api_key)
+  if(!valid_api_key) {
+    stop(sprintf("API key '%s' is invalid. API keys are 36 characters long with pattern XXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX. Please set your API key using function 'set_api_key()'", api_key))
+  } else valid_api_key
+}
+
+
 # Best practice approach --------------------------------------------------
 
 # https://cran.r-project.org/web/packages/httr/vignettes/api-packages.html
 
 #' Check HTTP status; stop if failure
-#' @import httr dplyr magrittr stringr
 #' @param req The result of an httr::GET
 #'
 #' @export
@@ -164,43 +230,6 @@ tfeeds_text <- function(req) {
   parsed_content <- httr::content(req, as = "text")
   if (identical(parsed_content, "")) stop("No output to parse", call. = FALSE)
   parsed_content
-}
-
-#' Set API key for recall
-#' @param key Character. API key.
-#' @export
-set_api_key <- function(key = NULL) {
-  stopifnot(nchar(key) == 36, is.character(key))
-  valid_api_key <- grepl('[[:alnum:]]{8}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{12}', key)
-  if(!valid_api_key) {
-    stop(sprintf("API key '%s' is invalid. API keys are 36 characters long with pattern XXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.", key))
-  }
-  if(!exists('.gtfs_api_key')) .gtfs_api_key <<- new.env(parent=emptyenv()) # create new key envir
-  .gtfs_api_key$key <- key
-}
-
-#' Get API key
-#' @export
-get_api_key <- function() {
-  stopifnot(has_key())
-  .gtfs_api_key$key
-}
-
-#' Make sure API key string is not empty
-#'
-#' @return logical TRUE if key is not empty
-#'
-#' @export
-
-has_key <- function() {
-
-  if(!exists('.gtfs_api_key')) stop("API not found. Please set your API key using function 'set_api_key'")
-  assign('api_key', get('key', .gtfs_api_key))
-
-  valid_api_key <- grepl('[[:alnum:]]{8}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{12}', api_key)
-  if(!valid_api_key) {
-    stop(sprintf("API key '%s' is invalid. API keys are 36 characters long with pattern XXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX. Please set your API key using function 'set_api_key'", api_key))
-  } else valid_api_key
 }
 
 #' Parse a gtfs feed list
@@ -286,7 +315,7 @@ tfeeds_parse_getlocation <- function(req) {
 #' @param path Character. Contains the name of the API call (ex. getFeeds)
 #' @param query Character. Other query strings.
 #' @param version Version of API as character that can be appended as part of path, defaults to v1
-#' @param key API key, defaults to get_api_key()
+#' @param key API key, defaults to gtfs_api_key
 #'
 #' @return Result of httr::GET
 #'
@@ -294,7 +323,7 @@ tfeeds_parse_getlocation <- function(req) {
 #'
 #' @export
 
-tfeeds_get <- function(path, query, ..., version = 'v1/', key = if(has_key()) get_api_key()) {
+tfeeds_get <- function(path, query, ..., version = 'v1/', key = if(has_api_key()) gtfs_api_key$get()) {
 
   if (missing(query)) {
     my_query <- list(key = key)

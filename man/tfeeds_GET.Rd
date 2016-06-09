@@ -4,8 +4,8 @@
 \alias{tfeeds_get}
 \title{Set up GET for transitfeeds API}
 \usage{
-tfeeds_get(path, query, ..., version = "v1/", key = if (has_key())
-  get_api_key())
+tfeeds_get(path, query, ..., version = "v1/", key = if (has_api_key())
+  gtfs_api_key$get())
 }
 \arguments{
 \item{path}{Character. Contains the name of the API call (ex. getFeeds)}
@@ -14,7 +14,7 @@ tfeeds_get(path, query, ..., version = "v1/", key = if (has_key())
 
 \item{version}{Version of API as character that can be appended as part of path, defaults to v1}
 
-\item{key}{API key, defaults to get_api_key()}
+\item{key}{API key, defaults to gtfs_api_key}
 }
 \value{
 Result of httr::GET
