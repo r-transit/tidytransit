@@ -22,7 +22,3 @@ valid_url <- function(url) {
 	if(all(cond1, cond2, cond3)) TRUE else FALSE
 
 }
-
-current.env <- environment
-enclosing.env <- parent.env # better language
-calling.env <- parent.frame

@@ -11,14 +11,10 @@ License: GPL
 LazyData: TRUE
 Imports:
     dplyr,
-    tidyr,
     readr,
-    lubridate,
-    ggplot2,
     httr,
     magrittr,
-    stringr,
-    memoise
+    stringr
 Suggests:
     testthat,
     knitr,
