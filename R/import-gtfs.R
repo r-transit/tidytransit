@@ -10,12 +10,14 @@
 import_gtfs <- function(urls, quiet = FALSE) {
 
   feed_flow <- function(url) {
+
     path <- get_feed(url = url, quiet = quiet)
 
-    zip_dir <- unzip_gtfs_files(zipfile = path, quiet = quiet)
+    if(is.null(path)) return(NULL) else {
+      zip_dir <- unzip_gtfs_files(zipfile = path, quiet = quiet)
+    }
 
-    read_gtfs(zip_dir)
-
+    read_gtfs(zip_dir, quiet = quiet)
   }
 
   # check if single column of data was inputed. if so, convert to vector; error otherwise.

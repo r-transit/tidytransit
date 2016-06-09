@@ -23,14 +23,16 @@ unzip_gtfs_files <- function(zipfile, delete_zip = FALSE, move_path = NULL, quie
   f <- normalizePath(f)
 
   if(!is.null(move_path)) {
-    if(dir.exists(move_path)) stop(sprintf('%s must be a full file path, not a directory path (e.g. "full/path/to/filename.zip")', move_path))
+    if(dir.exists(move_path)) {
+      if(!quiet) stop(sprintf('%s must be a full file path, not a directory path (e.g. "full/path/to/filename.zip")', move_path))
+    }
     file.copy(zipfile, move_path, overwrite=TRUE)
   }
 
   # create extraction folder
   ex_dir <- file.path(dirname(f), strsplit(basename(f), "\\.")[[1]][1])
   if(!dir.exists(ex_dir)) dir.create(ex_dir) else {
-    warning('Extraction folder already exists. Overwriting.')
+    if(!quiet) warning('Extraction folder already exists. Overwriting.')
     rmfolder(ex_dir)
     dir.create(ex_dir)
   }
@@ -39,8 +41,11 @@ unzip_gtfs_files <- function(zipfile, delete_zip = FALSE, move_path = NULL, quie
 
   if(delete_zip) file.remove(f)
 
-  message(sprintf("unzipped the following files to directory '%s'", ex_dir))
-  if(quiet) list.files(ex_dir) %>% print
+
+  if(!quiet) {
+    message(sprintf("unzipped the following files to directory '%s'", ex_dir))
+    list.files(ex_dir) %>% print
+  }
 
   return(ex_dir)
 
@@ -53,10 +58,11 @@ unzip_gtfs_files <- function(zipfile, delete_zip = FALSE, move_path = NULL, quie
 #'
 #' @param exdir Character. Path to folder into which files were extracted.
 #' @param delete_files Logical, whether to delete the files after extraction.  Deletes by default.
+#' @param quiet Boolean. Whether to output messages and files found in folder.
 #'
 #' @export
 
-read_gtfs <- function(exdir, delete_files = TRUE) {
+read_gtfs <- function(exdir, delete_files = TRUE, quiet = FALSE) {
 
   exdir <- normalizePath(exdir)
   if(!dir.exists(exdir)) stop('Not a valid directory.')
@@ -66,7 +72,7 @@ read_gtfs <- function(exdir, delete_files = TRUE) {
   all_txt <- all_files[is_txt]
 
   if(!any(grepl('agency.txt', all_files))) {
-    message("\nRequired file 'agency.txt' not found. NULL is returned.\n\n")
+    if(!quiet) message("\nRequired file 'agency.txt' not found. NULL is returned.\n\n")
     return(NULL)
   }
 
@@ -74,10 +80,13 @@ read_gtfs <- function(exdir, delete_files = TRUE) {
 
   exec_env <- environment()
 
-  lapply(all_files, function(x) read_sub_gtfs(x, assign_envir = exec_env))
+  lapply(all_files, function(x) read_sub_gtfs(x, assign_envir = exec_env, quiet = quiet))
   message("\n")
-  message('NOTE: Parsing errors and warnings while importing data can be extracted from any given dataframe with `attr(df, "problems")`.')
-  message("\n")
+
+  if(!quiet) {
+    message('NOTE: Parsing errors and warnings while importing data can be extracted from any given dataframe with `attr(df, "problems")`.')
+    message("\n")
+  }
 
   ls_envir <- ls(envir = exec_env)
 
@@ -99,8 +108,10 @@ read_gtfs <- function(exdir, delete_files = TRUE) {
 #'
 #' @param file_path Character file path
 #' @param assign_envir Environment Object. Option of where to assign dataframes.
+#' @param quiet Boolean. Whether to output messages and files found in folder.
 
-read_sub_gtfs <- function(file_path, assign_envir) {
+
+read_sub_gtfs <- function(file_path, assign_envir, quiet = FALSE) {
 
   split_path <- strsplit(file_path, '/')
   file_name <- split_path[[1]][length(split_path[[1]])]
@@ -108,9 +119,10 @@ read_sub_gtfs <- function(file_path, assign_envir) {
   prefix <- gsub('.txt', '', file_name)
   df_name <- paste0(prefix, '_df')
 
-  message(paste0('Reading ', file_name))
+  if(!quiet) message(paste0('Reading ', file_name))
 
-  new_df <- parse_gtfs(prefix, file_path) # will have warning even though we fix problem
+  new_df <- parse_gtfs(prefix, file_path, quiet = quiet) # will have warning even though we fix problem
+
 
   assign(df_name, new_df, envir = assign_envir)
 
@@ -120,8 +132,9 @@ read_sub_gtfs <- function(file_path, assign_envir) {
 #'
 #' @param prefix Character. gtfs file prefix (e.g. 'agency', 'stop_times', etc.)
 #' @param file_path Character. file path
-
-parse_gtfs <- function(prefix, file_path) {
+#' @param quiet Boolean. Whether to output messages and files found in folder.
+#'
+parse_gtfs <- function(prefix, file_path, quiet = FALSE) {
 
   # only parse if file has any data, NULL o/w
   stopifnot(!is.na(file.size(file_path)))
@@ -138,8 +151,15 @@ parse_gtfs <- function(prefix, file_path) {
     ## indx[!is.na(indx)] = location in 'meta$coltype' where corresponding type is found
     coltypes[!is.na(indx)] <- meta$coltype[indx[!is.na(indx)]] # valid cols found in small_df
     coltypes <- coltypes %>% paste(collapse = "")
-    df <- readr::read_csv(file_path, col_types = coltypes)
-    probs <- readr::problems(readr::read_csv(file_path, col_types = coltypes))
+
+    if(!quiet) {
+      df <- readr::read_csv(file_path, col_types = coltypes)
+      probs <- readr::problems(readr::read_csv(file_path, col_types = coltypes))
+    } else {
+      df <- suppressWarnings(readr::read_csv(file_path, col_types = coltypes))
+      probs <- suppressWarnings(readr::problems(readr::read_csv(file_path, col_types = coltypes)))
+    }
+
     if(dim(probs)[1] > 0) attributes(df) <- append(attributes(df), list(problems = probs))
 
     return(df)

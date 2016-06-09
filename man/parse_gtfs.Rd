@@ -4,12 +4,14 @@
 \alias{parse_gtfs}
 \title{Function to better read in GTFS txt files}
 \usage{
-parse_gtfs(prefix, file_path)
+parse_gtfs(prefix, file_path, quiet = FALSE)
 }
 \arguments{
 \item{prefix}{Character. gtfs file prefix (e.g. 'agency', 'stop_times', etc.)}
 
 \item{file_path}{Character. file path}
+
+\item{quiet}{Boolean. Whether to output messages and files found in folder.}
 }
 \description{
 Function to better read in GTFS txt files

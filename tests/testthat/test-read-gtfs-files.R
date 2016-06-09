@@ -18,11 +18,11 @@ get_feed2 <- function(url, path = NULL) {
 }
 
 unzip_gtfs_files2 <- function(zip, delete_zip = FALSE) {
-	suppressMessages(suppressWarnings(unzip_gtfs_files(zip, delete_zip = delete_zip)))
+	suppressMessages(suppressWarnings(unzip_gtfs_files(zip, delete_zip = delete_zip, quiet = TRUE)))
 }
 
 read_gtfs2 <- function(file_path, delete_files) {
-	suppressMessages(suppressWarnings(read_gtfs(file_path, delete_files)))
+	suppressMessages(suppressWarnings(read_gtfs(file_path, delete_files, quiet = TRUE)))
 }
 
 # unzip_gtfs_files()
@@ -49,14 +49,13 @@ test_that('Download, extract a GTFS zip file to temp or user-specified path from
 })
 
 # read_gtfs()
-test_that('Read GTFS file from unzipped folder', {
+test_that('Reading GTFS files from unzipped folder', {
 
 	url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
 	zip <- get_feed2(url)
-	folder <- unzip_gtfs_files(zip)
+	folder <- unzip_gtfs_files2(zip)
 	files <- list.files(folder, full.names = TRUE)
 
-	expect_type(read_gtfs2(folder, delete_files = FALSE), 'list')
 	expect_is(read_gtfs2(folder, delete_files = FALSE), 'gtfs')
 
 	file.remove(files[1]) # remove agency.txt

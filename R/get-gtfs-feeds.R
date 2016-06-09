@@ -72,8 +72,10 @@ get_feed <- function(url, path=NULL, quiet=FALSE) {
   }
 
   # check if url links to a zip file
-  if(!grepl('\\.zip$', basename(url))) {
-    sprintf("Link '%s' is invalid; url must link to a zip file. NULL was returned.", url) %>% warning
+  if(!valid_url(url)) {
+    if(!quiet) {
+      sprintf("Link '%s' is invalid; url must link to a zip file and connect. NULL was returned.", url) %>% warning
+    }
     return(NULL)
   }
 
@@ -109,7 +111,7 @@ filter_feedlist <- function(feedlist_df) {
   if (!('url_d' %in% names(feedlist_df))) stop('No valid URLs found - expected url_d column in feedlist_df.')
 
   zip_indx <- feedlist_df$url_d %>% sapply(. %>% basename %>% grepl('\\.zip$', .), USE.NAMES = FALSE)
-  message(paste0(sum(!zip_indx), ' feeds did not provide downloadable URLs of ', nrow(feedlist_df), ' feeds provided. ', sum(zip_indx), ' returned.'))
+  message(paste0(sum(!zip_indx), ' feeds did not provide downloadable zip file URLs of ', nrow(feedlist_df), ' feeds provided. ', sum(zip_indx), ' returned.'))
 
   feedlist_df <- feedlist_df %>% slice(which(zip_indx))
 
