@@ -17,8 +17,8 @@ get_feed2 <- function(url, path = NULL) {
 	get_feed(url, path = path, quiet = TRUE)
 }
 
-unzip_gtfs_files2 <- function(zip, delete_zip = FALSE) {
-	suppressMessages(suppressWarnings(unzip_gtfs_files(zip, delete_zip = delete_zip, quiet = TRUE)))
+unzip_gtfs_files2 <- function(zip, delete_zip = FALSE, quiet = TRUE) {
+	suppressMessages(suppressWarnings(unzip_gtfs_files(zip, delete_zip = delete_zip, quiet = quiet)))
 }
 
 read_gtfs2 <- function(file_path, delete_files) {
@@ -33,18 +33,14 @@ test_that('Download, extract a GTFS zip file to temp or user-specified path from
 
 	# non-specified path
 	expect_true(dir.exists(unzip_gtfs_files2(zip))) # unzips to folder
-	expect_warning(unzip_gtfs_files(zip)) # folder already warning
+	expect_warning(unzip_gtfs_files(zip, quiet=TRUE)) # folder already warning
 
 	# specified path
 	dir <- tempdir()
 	zip <- get_feed2(url, path = dir)
 	expect_true(file.exists(zip)) # zip file is found
 	expect_true(dir.exists(unzip_gtfs_files2(zip))) # unzips to folder
-	expect_warning(unzip_gtfs_files(zip)) # folder already exists warning
-
-	# valid path check
-	path <- "#!:D"
-	expect_error(get_feed2(url, path = path)) # invalid path
+	expect_warning(unzip_gtfs_files(zip, quiet = TRUE)) # folder already exists warning
 
 })
 

@@ -6,13 +6,15 @@
 # - get a summary of data quality for a gtfs class object with various categories/levels of importance
 # - save data quality metadata in a structured way
 
-#' For a single GTFS list object, check provided files
+#' For a single 'gtfs' class object, check provided files
 #'
-#' @param gtfs_obj A GTFS list object with components agency_df, etc.
+#' @param gtfs_obj A 'gtfs' class object with components agency_df, etc.
 #'
 #' @return Dataframe will one row for all required and optional files per spec, plus one row for any other files provided (file), with an indication of these categories (spec), and a yes/no/empty status (provided_status)
 
 validate_files_provided <- function(gtfs_obj) {
+
+  stopifnot(class(gtfs_obj) == 'gtfs')
 
   # Per spec, these are the required and optional files
   all_req_files <- c('agency', 'stops', 'routes', 'trips', 'stop_times', 'calendar')
@@ -30,12 +32,12 @@ validate_files_provided <- function(gtfs_obj) {
 
   all_files <- c(all_spec_files, extra_files)
 
-  prov_df <- data_frame(file = all_files, spec = c(rep('req', times = length(all_req_files)),
+  prov_df <- dplyr::data_frame(file = all_files, spec = c(rep('req', times = length(all_req_files)),
                                                    rep('opt', times = length(all_opt_files)),
                                                    rep('ext', times = length(extra_files))))
 
   prov_df <- prov_df %>%
-    mutate(provided_status = ifelse(!(file %in% feed_names_file), 'no',
+    dplyr::mutate(provided_status = ifelse(!(file %in% feed_names_file), 'no',
                                     ifelse(sapply(gtfs_obj, dim)[2,] == 0, 'empty',
                                            'yes')))
   return(prov_df)
@@ -66,7 +68,7 @@ make_var_val <- function() {
 #' Validate variables provided vs spec
 #'
 #' @param val_files The dataframe output of validate_files_provided for a single feed
-#' @param gtfs_obj A GTFS list object with components agency_df, etc.
+#' @param gtfs_obj A 'gtfs' class object with components agency_df, etc.
 #'
 #' @return Dataframe with one record per file x column (columns in spec + any extra provided),
 #'         with file and field specs and file and field provided statuses
@@ -75,19 +77,19 @@ make_var_val <- function() {
 
 validate_vars_provided <- function(val_files, gtfs_obj) {
 
+  stopifnot(class(gtfs_obj) == 'gtfs', any(class(val_files) == 'tbl_df'))
+
   # Generate the df of files and fields per the GTFS spec
   spec_vars_df <- make_var_val() %>%
-    rename(field_spec = 'spec')
+    dplyr::rename(field_spec = spec)
 
-  # Keep just the files that are provided for this gtfs_obj, or that are required
+  # the files that are provided for this gtfs_obj
   val_files_df <- val_files %>%
-    rename(file_spec = 'spec', file_provided_status = 'provided_status') %>%
-    filter(file_provided_status == 'yes' | file_spec == 'req')
+    dplyr::rename(file_spec = spec, file_provided_status = provided_status)
 
 
   # Separately store any extra files and get their variables (since these aren't in spec_vars_df)
-  extra_files_df <- val_files_df %>%
-    filter(file_spec == 'ext')
+  extra_files_df <- val_files_df %>% dplyr::filter(file_spec == 'ext')
 
   # For extra files provided, get all file names and add them into spec_vars_df
   if (nrow(extra_files_df) > 0) {
@@ -101,7 +103,8 @@ validate_vars_provided <- function(val_files, gtfs_obj) {
       temp_df <- gtfs_obj[[i]]
       temp_names <- names(temp_df)
 
-      temp_vars_df <- data_frame(file = rep(gsub('_df', '', i), length(temp_names)), field = temp_names, field_spec = rep('ext', length(temp_names)))
+      # create dataframe of names
+      temp_vars_df <- dplyr::data_frame(file = rep(gsub('_df', '', i), length(temp_names)), field = temp_names, field_spec = 'ext')
 
       extra_vars_df <- dplyr::bind_rows(extra_vars_df, temp_vars_df)
 
@@ -111,8 +114,10 @@ validate_vars_provided <- function(val_files, gtfs_obj) {
 
   }
 
+  spec_vars_df <- spec_vars_df %>% dplyr::select(field, field_spec, file)
+
   # Join file level data with variable level data - for files that were provided
-  vars_df <- suppressMessages(left_join(val_files_df, spec_vars_df))
+  vars_df <- suppressMessages(dplyr::left_join(val_files_df, spec_vars_df))
 
   val_vars_df <- dplyr::data_frame()
 
@@ -127,21 +132,20 @@ validate_vars_provided <- function(val_files, gtfs_obj) {
 
     # Handle the case where a required file is missing
     if (is.null(temp_df) || is.null(temp_names) || all(is.na(temp_names))) {
-      temp_vars_df <- data_frame(file = gsub('_df', '', j), field = NA, field_provided_status = 'none')
+      temp_vars_df <- dplyr::data_frame(file = gsub('_df', '', j), field = NA, field_provided_status = 'none')
     } else {
       provided_status <- temp_df %>%
-        summarize_each(funs(is_empty = all(is.na(.))))
+        dplyr::summarize_each(dplyr::funs(is_empty = all(is.na(.))))
 
-      temp_vars_df <- data_frame(file = rep(gsub('_df', '', j), length(temp_names)), field = temp_names, field_provided_status = ifelse(provided_status, 'empty', 'yes'))
+      temp_vars_df <- dplyr::data_frame(file = rep(gsub('_df', '', j), length(temp_names)), field = temp_names, field_provided_status = ifelse(provided_status, 'empty', 'yes'))
     }
-
 
     val_vars_df <- dplyr::bind_rows(val_vars_df, temp_vars_df)
 
   }
 
   # Join observed field provided status with spec info
-  all_df <- suppressMessages(full_join(vars_df, val_vars_df))
+  all_df <- suppressMessages(dplyr::full_join(vars_df, val_vars_df))
 
   orig_rows <- nrow(all_df)
 
@@ -149,15 +153,15 @@ validate_vars_provided <- function(val_files, gtfs_obj) {
 
   # 1) Extra fields provided in spec files
   sub_all_df <- all_df %>%
-    filter(!is.na(field_spec))
+    dplyr::filter(!is.na(field_spec))
 
   case1_df <- all_df %>%
-    filter(is.na(field_spec))
+    dplyr::filter(is.na(field_spec))
 
   case1_df <- case1_df %>%
-    mutate(field_spec = 'ext') %>%
-    group_by(file) %>%
-    mutate(file_spec = unique(sub_all_df$file_spec[sub_all_df$file == unique(file)]),
+    dplyr::mutate(field_spec = 'ext') %>%
+    dplyr::group_by(file) %>%
+    dplyr::mutate(file_spec = unique(sub_all_df$file_spec[sub_all_df$file == unique(file)]),
            file_provided_status = unique(sub_all_df$file_provided_status[sub_all_df$file == unique(file)]))
 
 
@@ -170,9 +174,19 @@ validate_vars_provided <- function(val_files, gtfs_obj) {
 
   # Check overall status for required files/fields
   all_df <- all_df %>%
-    mutate(validation_status = ifelse(file_spec == 'req' & file_provided_status != 'yes',
-                                      'file_missing', ifelse(field_spec == 'req' & field_provided_status != 'yes',
-                                                             'field_missing', 'ok')))
+    dplyr::mutate(validation_status = 'ok') # default ok
+
+  all_df <- all_df %>%
+    dplyr::mutate(validation_details = NA) %>% # default to NA
+    dplyr::mutate(validation_details = replace(validation_details, file_provided_status != 'yes' & file_spec == 'opt', 'missing_opt_file')) %>% # optional file missing
+    dplyr::mutate(validation_details = replace(validation_details, file_provided_status != 'yes' & file_spec == 'req', 'missing_req_file')) %>% # req file missing
+    dplyr::mutate(validation_details = replace(validation_details, file_provided_status == 'yes' & field_spec == 'req' & field_provided_status != 'yes', 'missing_req_field')) %>%
+    dplyr::mutate(validation_details = replace(validation_details, file_provided_status == 'yes' & field_spec == 'opt' & field_provided_status != 'yes', 'missing_opt_field'))
+
+
+  all_df <- all_df %>%
+    dplyr::mutate(validation_status = replace(validation_status, grepl('req', validation_details), 'problem'))
+
 
   return(all_df)
 
@@ -181,29 +195,44 @@ validate_vars_provided <- function(val_files, gtfs_obj) {
 #' Create validation list for a gtfs_obj. It provides an overview of the structure of all files that were imported.
 #'
 #' @param gtfs_obj A GTFS list object with components agency_df, etc.
-#' @param return_gtfs_obj If TRUE, returns gtfs_obj list with validate appended (true by default),
+#' @param return_gtfs_obj Boolean. If TRUE, returns gtfs_obj list with a 'validate' attribute appended (TRUE by default),
 #'                    if FALSE, returns validate list only
+#' @param quiet Boolean. Option to suppress any messages, prints, etc
 #'
-#' @return A gtfs_obj list object with $validate added to the end of the list, or just validate list
+#' @return A gtfs_obj list object with attribute 'validate' or just a list containing validation data
 #'
 #' @export
 
-validate_gtfs_structure <- function(gtfs_obj, return_gtfs_obj = TRUE) {
+validate_gtfs_structure <- function(gtfs_obj, return_gtfs_obj = TRUE, quiet = FALSE) {
 
   if (length(gtfs_obj) == 0) {
     warning('Empty gtfs_obj.')
     return(NULL)
   }
 
-  print(gtfs_obj$agency_df$agency_name)
+  if(!quiet) message(gtfs_obj$agency_df$agency_name)
 
   prov_df <- validate_files_provided(gtfs_obj = gtfs_obj)
 
   all_df <- validate_vars_provided(prov_df, gtfs_obj = gtfs_obj)
 
-  validate_list <- list(all_req_files = !('file_missing' %in% all_df$validation_status),
-                        all_req_fields = !('field_missing' %in% all_df$validation_status),
+  validate_list <- list(all_req_files = !('missing_req_file' %in% all_df$validation_details),
+                        all_req_fields = !('missing_req_field' %in% all_df$validation_details),
                         validate_df = all_df)
+
+  # get subset of problem files
+  if(!validate_list$all_req_files) {
+      validate_list$problem_files <- all_df %>%
+        dplyr::filter(validation_details == "missing_req_file") %>%
+        dplyr::select(file, file_spec, file_provided_status)
+  }
+
+  # get subset of problem fields
+  if(!validate_list$all_req_fields) {
+      validate_list$problem_fields <- all_df %>%
+        dplyr::filter(validation_details == "missing_req_field") %>%
+        dplyr::select(file, file_spec, field, field_provided_status)
+  }
 
   # update gtfs_obj attributes with validation data
   attributes(gtfs_obj) <- append(attributes(gtfs_obj), list(validate = validate_list))

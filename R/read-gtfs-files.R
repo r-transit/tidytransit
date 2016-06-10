@@ -24,7 +24,7 @@ unzip_gtfs_files <- function(zipfile, delete_zip = FALSE, move_path = NULL, quie
 
   if(!is.null(move_path)) {
     if(dir.exists(move_path)) {
-      if(!quiet) stop(sprintf('%s must be a full file path, not a directory path (e.g. "full/path/to/filename.zip")', move_path))
+      stop(sprintf('%s must be a full file path, not a directory path (e.g. "full/path/to/filename.zip")', move_path))
     }
     file.copy(zipfile, move_path, overwrite=TRUE)
   }
@@ -32,7 +32,7 @@ unzip_gtfs_files <- function(zipfile, delete_zip = FALSE, move_path = NULL, quie
   # create extraction folder
   ex_dir <- file.path(dirname(f), strsplit(basename(f), "\\.")[[1]][1])
   if(!dir.exists(ex_dir)) dir.create(ex_dir) else {
-    if(!quiet) warning('Extraction folder already exists. Overwriting.')
+    warning('Extraction folder already exists. Overwriting.')
     rmfolder(ex_dir)
     dir.create(ex_dir)
   }
@@ -81,9 +81,9 @@ read_gtfs <- function(exdir, delete_files = TRUE, quiet = FALSE) {
   exec_env <- environment()
 
   lapply(all_files, function(x) read_sub_gtfs(x, assign_envir = exec_env, quiet = quiet))
-  message("\n")
 
   if(!quiet) {
+    message("\n")
     message('NOTE: Parsing errors and warnings while importing data can be extracted from any given dataframe with `attr(df, "problems")`.')
     message("\n")
   }

@@ -3,13 +3,13 @@
 \docType{data}
 \name{problems}
 \alias{problems}
-\title{Define problems environment}
-\format{An object of class \code{environment} of length 0.}
+\title{Assign function environment to 'problems'}
+\format{An object of class \code{list} of length 30.}
 \usage{
 problems
 }
 \description{
-Define problems environment
+Assign function environment to 'problems'
 }
 \keyword{datasets}
 
