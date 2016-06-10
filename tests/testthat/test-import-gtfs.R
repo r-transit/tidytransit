@@ -13,10 +13,6 @@ check_url <- function() {
   }
 }
 
-import_gtfs2 <- function(url, path = NULL) {
-	import_gtfs(url, quiet = TRUE)
-}
-
 # unzip_gtfs_files()
 test_that('Import a GTFS object from URL', {
 
