@@ -4,10 +4,12 @@
 \alias{import_gtfs}
 \title{Get a Dataframes of GTFS data.}
 \usage{
-import_gtfs(urls, quiet = FALSE)
+import_gtfs(paths, local = FALSE, quiet = FALSE)
 }
 \arguments{
-\item{urls}{Character. url link to zip file}
+\item{paths}{Character. url links to zip files OR paths to local zip files. if to local path, then option `local` must be set to TRUE.}
+
+\item{local}{Boolean. If the paths are searching locally or not. Default is FALSE (that is, urls).}
 
 \item{quiet}{Boolean. Whether to see file download progress and files extract. FALSE by default.}
 }

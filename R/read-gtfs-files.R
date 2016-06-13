@@ -117,6 +117,7 @@ read_sub_gtfs <- function(file_path, assign_envir, quiet = FALSE) {
   file_name <- split_path[[1]][length(split_path[[1]])]
 
   prefix <- gsub('.txt', '', file_name)
+  prefix <- gsub('\\-|\\.', '_', prefix)
   df_name <- paste0(prefix, '_df')
 
   if(!quiet) message(paste0('Reading ', file_name))

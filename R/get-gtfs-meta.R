@@ -82,10 +82,10 @@ get_gtfs_meta <- function() {
 
   # frequencies
   assign("frequencies", list())
-  frequencies$field <- c('trip_id', 'start_time', 'end_time', 'headway_sec', 'exact_times')
+  frequencies$field <- c('trip_id', 'start_time', 'end_time', 'headway_secs', 'exact_times')
   frequencies$spec <- c('req', 'req', 'req', 'req', 'opt')
   frequencies$coltype <- rep('c', length(frequencies$field))
-  frequencies$coltype[frequencies$field %in% c('headway_sec')] <- 'd'
+  frequencies$coltype[frequencies$field %in% c('headway_secs')] <- 'd'
   frequencies$coltype[frequencies$field %in% c('exact_times')] <- 'i'
 
   # transfers

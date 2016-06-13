@@ -1,13 +1,14 @@
 #' Get a Dataframes of GTFS data.
 #'
-#' @param urls Character. url link to zip file
+#' @param paths Character. url links to zip files OR paths to local zip files. if to local path, then option `local` must be set to TRUE.
+#' @param local Boolean. If the paths are searching locally or not. Default is FALSE (that is, urls).
 #' @param quiet Boolean. Whether to see file download progress and files extract. FALSE by default.
 #'
 #' @return Dataframes of GTFS data.
 #'
 #' @export
 
-import_gtfs <- function(urls, quiet = FALSE) {
+import_gtfs <- function(paths, local = FALSE, quiet = FALSE) {
 
   feed_flow <- function(url) {
 
@@ -21,15 +22,21 @@ import_gtfs <- function(urls, quiet = FALSE) {
   }
 
   # check if single column of data was inputed. if so, convert to vector; error otherwise.
-  if(!is.null(dim(urls))) {
-    if(dim(urls)[2] == 1) {
-      urls <- unlist(urls, use.names = FALSE)
+  if(!is.null(dim(paths))) {
+    if(dim(paths)[2] == 1) {
+      paths <- unlist(paths, use.names = FALSE)
     } else {
       stop('Please input a vector or single column of data.')
     }
   }
 
-  data_list <- urls %>% lapply(. %>% feed_flow)
-  return(data_list)
+  if(local) {
+    paths <- paths %>% sapply(. %>% normalizePath)
+    data_list <- paths %>% lapply(. %>% unzip_gtfs_files(quiet=quiet) %>% read_gtfs(quiet=quiet))
+  } else {
+    data_list <- paths %>% lapply(. %>% feed_flow)
+  }
+
+  if(length(data_list) > 1) return(data_list) else data_list[[1]]
 
 }

@@ -43,12 +43,6 @@ test_that('Validate files and variables of a GTFS object', {
 	expect_true(all(sapply(gtfs_list, class) == rep('gtfs', n)))
 	expect_true(all(sapply(val_list, class) == rep('list', n)))
 
-	expect_identical(
-		gtfs_list %>%
-			sapply( . %>%
-				attr(which='validate') %>%
-				magrittr::extract('all_req_files') %>%
-				names), rep('all_req_files', n)) # check if we find 'all_req_files' across all data frames
 
 	x <- c("tbl_df", "tbl", "data.frame")
 	expect_identical(
@@ -58,16 +52,22 @@ test_that('Validate files and variables of a GTFS object', {
 				magrittr::extract2('validate_df') %>%
 				class), matrix(x, n, length(x))) # check that validate_df is a data.frame
 
-	expect_is(
-		gtfs_list %>%
+	x <- matrix('logical', 3, n)
+	mat <- gtfs_list %>%
 			sapply( . %>%
 				attr(which='validate') %>%
-				magrittr::extract2('all_req_files')), 'logical') # check 'all_req_files' is logical
+				extract(1:3) %>%
+				sapply(. %>% class))
+	dimnames(mat) <- NULL
+	expect_identical(mat, x) # check first 3 fields are logical
 
-	expect_is(
-		gtfs_list %>%
+	x <- c("all_req_files", "all_req_fields_in_req_files", "all_req_fields_in_opt_files",
+"validate_df")
+	mat <- gtfs_list %>%
 			sapply( . %>%
 				attr(which='validate') %>%
-				magrittr::extract2('all_req_fields')), 'logical') # check 'all_req_fields' is logical
+				extract(x) %>%
+				names)
+	expect_identical(mat, matrix(rep(x, n), length(x), n)) # check that it has required names
 
 })

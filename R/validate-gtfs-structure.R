@@ -185,7 +185,7 @@ validate_vars_provided <- function(val_files, gtfs_obj) {
 
 
   all_df <- all_df %>%
-    dplyr::mutate(validation_status = replace(validation_status, grepl('req', validation_details), 'problem'))
+    dplyr::mutate(validation_status = replace(validation_status, grepl('req_files', validation_details), 'problem'))
 
 
   return(all_df)
@@ -216,22 +216,34 @@ validate_gtfs_structure <- function(gtfs_obj, return_gtfs_obj = TRUE, quiet = FA
 
   all_df <- validate_vars_provided(prov_df, gtfs_obj = gtfs_obj)
 
-  validate_list <- list(all_req_files = !('missing_req_file' %in% all_df$validation_details),
-                        all_req_fields = !('missing_req_field' %in% all_df$validation_details),
+  probs_subset <- all_df %>% filter(validation_status == 'problem') # subset of only problems
+
+  ok_subset <- all_df %>% filter(validation_status != 'problem') # subset of ok values
+
+  validate_list <- list(all_req_files = !('missing_req_file' %in% probs_subset$validation_details),
+                        all_req_fields_in_req_files = !('missing_req_field' %in% probs_subset$validation_details),
+                        all_req_fields_in_opt_files = !('missing_req_field' %in% ok_subset$validation_details),
                         validate_df = all_df)
 
-  # get subset of problem files
+  # get subset of problem req files
   if(!validate_list$all_req_files) {
-      validate_list$problem_files <- all_df %>%
-        dplyr::filter(validation_details == "missing_req_file") %>%
-        dplyr::select(file, file_spec, file_provided_status)
+      validate_list$problem_req_files <- prob_subset %>%
+        dplyr::filter(grepl('missing_req_*', validation_details))%>%
+        dplyr::select(file, file_spec, file_provided_status, field, field_spec, field_provided_status)
   }
 
-  # get subset of problem fields
-  if(!validate_list$all_req_fields) {
-      validate_list$problem_fields <- all_df %>%
-        dplyr::filter(validation_details == "missing_req_field") %>%
-        dplyr::select(file, file_spec, field, field_provided_status)
+  # get subset of problem req files
+  if(any(!validate_list$all_req_fields_in_req_files, !validate_list$all_req_fields_in_opt_files)) {
+      validate_list$problem_opt_files <- ok_subset %>%
+        dplyr::filter(grepl('missing_req_*', validation_details)) %>%
+        dplyr::select(file, file_spec, file_provided_status, field, field_spec, field_provided_status)
+  }
+
+  # get subset of extra files
+  if('ext' %in% all_df$file_spec) {
+      validate_list$extra_files <- all_df %>%
+        dplyr::filter(grepl('ext', file_spec)) %>%
+        dplyr::select(file, file_spec, file_provided_status, field, field_spec, field_provided_status)
   }
 
   # update gtfs_obj attributes with validation data

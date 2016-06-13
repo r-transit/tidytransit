@@ -14,7 +14,8 @@ Imports:
     readr,
     httr,
     magrittr,
-    stringr
+    stringr,
+    leaflet
 Suggests:
     testthat,
     knitr,

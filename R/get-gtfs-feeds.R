@@ -11,7 +11,7 @@
 
 
 #' Get list of all available feeds from transitfeeds API
-#' @import httr dplyr magrittr stringr
+#' @import httr dplyr magrittr stringr leaflet
 #' @return Result of httr::GET
 #'
 #' @export
@@ -75,7 +75,8 @@ get_feed <- function(url, path=NULL, quiet=FALSE) {
   # check if url links to a zip file
   if(!valid_url(url)) {
     if(!quiet) {
-      sprintf("Link '%s' is invalid; url must link to a zip file and connect. NULL was returned.", url) %>% warning
+      warn <- sprintf("Link '%s' is invalid; url must link to a zip file and connect. NULL was returned.", url)
+      warning(warn)
     }
     return(NULL)
   }
@@ -89,7 +90,8 @@ get_feed <- function(url, path=NULL, quiet=FALSE) {
   if(httr::status_code(r) == 200) {
     download.file(url, temp, quiet = quiet)
   } else {
-    sprintf("Link '%s' cannot be reached. NULL was returned.", url) %>% warning
+    warn <- sprintf("Link '%s' cannot be reached. NULL was returned.", url)
+    warning(warn)
     return(NULL)
   }
 
