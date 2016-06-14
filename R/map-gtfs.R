@@ -99,11 +99,12 @@ map_gtfs_all_stops_in_route <- function(gtfs_obj, route_id) {
 #'
 #' @param gtfs_obj A GTFS list object with components agency_df, etc.
 #' @param route_id Character. A single ID for a route of interest.
+#' @param include_stops Boolean. Whether to layer on stops to the route shape. Default is TRUE.
 #'
 #' @return Leaflet map object with all stop lat/long values plotted for a route.
 #' @export
 
-map_gtfs_all_stops_in_route <- function(gtfs_obj, route_id) {
+map_gtfs_shape_of_route <- function(gtfs_obj, route_id, include_stops = TRUE) {
 
 	stopifnot(class(gtfs_obj) == 'gtfs', !is.null(gtfs_obj$stops_df), !is.null(gtfs_obj$routes_df))
 
@@ -121,19 +122,6 @@ map_gtfs_all_stops_in_route <- function(gtfs_obj, route_id) {
 		stop(s)
 	}
 
-
-	# extract vector of all trips matching route_id
-	trip_ids <- gtfs_obj$trips_df %>%
-		dplyr::slice(which(route_id %in% id)) %>%
-		dplyr::select(trip_id) %>%
-		magrittr::extract2(1)
-
-	if(dim(trips)[1] == 0) {
-		s <- "No trips for Route ID '%s' were found. NULL is returned" %>% sprintf(id)
-		stop(s)
-	}
-
-
 	gtfsroutes <- gtfs_obj$routes_df %>%
 		dplyr::slice(which(route_id %in% id))
 
@@ -145,19 +133,6 @@ map_gtfs_all_stops_in_route <- function(gtfs_obj, route_id) {
 	# extract all shapes for given shape ids
 	gtfsshape <- gtfs_obj$shapes_df %>%
 		dplyr::slice(which(shape_id %in% shape_ids))
-
-	# extract all possible stops across all trips for given route
-	possible_stops <- gtfs_obj$stop_times_df %>%
-		dplyr::slice(which(trip_id %in% trip_ids)) %>%
-		dplyr::select(stop_id) %>%
-		unique %>%
-		extract2(1)
-
-	stops <- gtfs_obj$stops_df %>%
-		dplyr::slice(which(stop_id %in% possible_stops)) %>%
-		dplyr::select(stop_name, stop_lat, stop_lon) %>%
-		dplyr::rename(name = stop_name, lat = stop_lat, lng = stop_lon)
-
 
 	# code was taken from `stplanr::gtfs2sldf` (package::function)
 	sp_lines <- (gtfsshape %>% dplyr::rename(lat = shape_pt_lat, lon = shape_pt_lon) %>%
@@ -179,21 +154,52 @@ map_gtfs_all_stops_in_route <- function(gtfs_obj, route_id) {
 
   gtfslines <- sp::SpatialLinesDataFrame(sp_lines, data = df) %>% gSimplify(.00001)
 
+
+  if(include_stops) {
+
+	  # extract vector of all trips matching route_id
+		trip_ids <- gtfs_obj$trips_df %>%
+			dplyr::slice(which(route_id %in% id)) %>%
+			dplyr::select(trip_id) %>%
+			magrittr::extract2(1)
+
+		if(dim(trips)[1] == 0) {
+			s <- "No trips for Route ID '%s' were found. NULL is returned" %>% sprintf(id)
+			stop(s)
+		}
+
+		# extract all possible stops across all trips for given route
+		possible_stops <- gtfs_obj$stop_times_df %>%
+			dplyr::slice(which(trip_id %in% trip_ids)) %>%
+			dplyr::select(stop_id) %>%
+			unique %>%
+			extract2(1)
+
+		stops <- gtfs_obj$stops_df %>%
+			dplyr::slice(which(stop_id %in% possible_stops)) %>%
+			dplyr::select(stop_name, stop_lat, stop_lon) %>%
+			dplyr::rename(name = stop_name, lat = stop_lat, lng = stop_lon)
+  }
+
   m <- gtfslines %>%
   	leaflet::leaflet() %>%
   	leaflet::addTiles() %>%
-  	leaflet::addPolylines(color = 'blue') %>%
-  	leaflet::addCircleMarkers(
-			popup = stops$name,
-			color = 'red',
-			radius = 4,
-	    stroke = TRUE,
-	    fillOpacity = 0.7,
-			lat = stops$lat,
-			lng = stops$lng) %>%
-		leaflet::addLegend(colors = c('red', 'blue'), labels = c("Stops", "Route"))
-	m
+  	leaflet::addPolylines(color = 'blue')
+
+	if(include_stops) {
+		m %>%
+			leaflet::addCircleMarkers(
+				popup = stops$name,
+				color = 'red',
+				radius = 4,
+		    stroke = TRUE,
+		    fillOpacity = 0.7,
+				lat = stops$lat,
+				lng = stops$lng) %>%
+			leaflet::addLegend(colors = c('red', 'blue'), labels = c("Stops", "Route"))
+	} else {
+		m %>%
+			leaflet::addLegend(colors = c('blue'), labels = c("Route"))
+	}
 
 }
-
-

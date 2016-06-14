@@ -235,6 +235,19 @@ Now, we can quickly map the stop using the function `map_gtfs_stop()`.
 map_gtfs_stop(gtfs_obj = duke_gtfs_obj, stop_id = west_chapel_id)
 ```
 
+Now, we can quickly map the stop using the function `map_gtfs_all_stops_in_route()`.
+
+```{r duke-map1, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE}
+map_gtfs_all_stops_in_route(gtfs_obj = duke_gtfs_obj, stop_id = west_chapel_id)
+```
+
+
+Now, we can quickly map the stop using the function `map_gtfs_shape_of_route()`.
+
+```{r duke-map2, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE}
+map_gtfs_shape_of_route(gtfs_obj = duke_gtfs_obj, stop_id = west_chapel_id)
+```
+
 
 
 
