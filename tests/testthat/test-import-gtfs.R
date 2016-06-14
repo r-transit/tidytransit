@@ -13,7 +13,7 @@ check_url <- function() {
   }
 }
 
-# unzip_gtfs_files()
+#import_gtfs()
 test_that('Import a GTFS object from URL', {
 
 	url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"

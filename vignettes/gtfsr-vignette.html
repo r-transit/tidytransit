@@ -103,19 +103,21 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>First things first, load the <code>gtfsr</code> package and set your key to access the TransitFeeds API. This example also using the <code>dplyr</code> package to manage data frames and <code>magrittr</code> for piping.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">
 <span class="co"># library(gtfsr)</span>
-devtools::<span class="kw">load_all</span>(<span class="st">&quot;/Users/danton/GitHub/gtfsr-opensci&quot;</span>)
+devtools::<span class="kw">install_github</span>(<span class="st">&quot;ropenscilabs/gtfsr&quot;</span>)
+<span class="kw">library</span>(gtfsr)
 <span class="kw">library</span>(magrittr)
 <span class="kw">library</span>(dplyr)
 <span class="kw">options</span>(<span class="dt">dplyr.width =</span> <span class="ot">Inf</span>) <span class="co"># I like to see all the columns</span>
 
 <span class="kw">set_api_key</span>(<span class="st">'2ec1ae29-b8c2-4a03-b96e-126d585233f9'</span>) <span class="co"># input your API key here</span></code></pre></div>
-<div id="getting-full-list-available-gtfs-feeds" class="section level3">
-<h3>Getting full list available GTFS feeds</h3>
+<div id="getting-full-list-of-available-gtfs-feeds" class="section level3">
+<h3>Getting full list of available GTFS feeds</h3>
 <p>With a valid API key loaded, you can easily get the full list of GTFS feeds using the <code>get_feedlist</code> function. What we care most about are the feed GTFS data urls contained in column <code>url_d</code> of the feed list. Since we are interested in acquiring the GTFS data (not just the feedlist), we can use the <code>filter_feedlist</code> function to return a data frame containing only valid feed urls.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">
-feedlist_df &lt;-<span class="st"> </span><span class="kw">get_feedlist</span>() <span class="co"># create a data frame of all feeds</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">feedlist_df &lt;-<span class="st"> </span><span class="kw">get_feedlist</span>() <span class="co"># create a data frame of all feeds</span>
+
 feedlist_df &lt;-<span class="st"> </span>feedlist_df %&gt;%<span class="st"> </span>filter_feedlist <span class="co"># filter the feedlist</span>
 <span class="co">#&gt; 198 feeds did not provide downloadable zip file URLs of 648 feeds provided. 450 returned.</span>
+
 feedlist_df %&gt;%<span class="st"> </span><span class="kw">select</span>(url_d) %&gt;%<span class="st"> </span><span class="kw">head</span>(<span class="dv">5</span>) <span class="co"># show first 5 feed urls</span>
 <span class="co">#&gt; Source: local data frame [5 x 1]</span>
 <span class="co">#&gt; </span>
@@ -129,12 +131,12 @@ feedlist_df %&gt;%<span class="st"> </span><span class="kw">select</span>(url_d)
 <p>If we want only the data for a specific location (or locations), we can get then search the feedlist for feeds of interest.</p>
 <p>Assume we are interested in getting all the GTFS data from <em>Australian</em> feeds (i.e. we search for location names for the word ‘australia’). We can match Australian agencies by name (filter on <code>loc_t</code>) and extract the corresponding url feeds (select <code>url_d</code>).</p>
 </div>
-<div id="subsetting-the-gtfs-feedlist-example" class="section level3">
-<h3>Subsetting the GTFS feedlist (Example)</h3>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">
-## get australian feeds
+<div id="subsetting-the-gtfs-feedlist" class="section level3">
+<h3>Subsetting the GTFS feedlist</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## get australian feeds
 aussie_df &lt;-<span class="st"> </span>feedlist_df %&gt;%
 <span class="st">    </span><span class="kw">filter</span>(<span class="kw">grepl</span>(<span class="st">'australia'</span>, loc_t, <span class="dt">ignore.case =</span> <span class="ot">TRUE</span>)) <span class="co"># filter out locations with &quot;australia&quot; in name</span>
+
 aussie_df %&gt;%<span class="st"> </span><span class="kw">select</span>(loc_t) %&gt;%<span class="st"> </span><span class="kw">head</span>(<span class="dv">5</span>) <span class="co"># look at location names</span>
 <span class="co">#&gt; Source: local data frame [5 x 1]</span>
 <span class="co">#&gt; </span>
@@ -145,18 +147,19 @@ aussie_df %&gt;%<span class="st"> </span><span class="kw">select</span>(loc_t) %
 <span class="co">#&gt; 3  Launceston TAS, Australia</span>
 <span class="co">#&gt; 4      Hobart TAS, Australia</span>
 <span class="co">#&gt; 5        Perth WA, Australia</span>
+
 aussie_urls &lt;-<span class="st"> </span>aussie_df %&gt;%<span class="st"> </span><span class="kw">select</span>(url_d) <span class="co"># get aussie urls</span></code></pre></div>
-<p>Once we have the urls for the feeds of interest, we can download and extract all the GTFS data into a list of <code>gtfs</code> objects using the <code>import_gtfs</code> data. To save time, we will only download 2 feeds (<code>slice(8:9)</code>). The output is suppressed because of how verbose it is.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">
-gtfs_objs &lt;-<span class="st"> </span>aussie_urls %&gt;%<span class="st"> </span><span class="kw">slice</span>(<span class="dv">8</span>:<span class="dv">9</span>) %&gt;%<span class="st"> </span>import_gtfs</code></pre></div>
+<p>Once we have the urls for the feeds of interest, we can download and extract all the GTFS data into a list of <code>gtfs</code> objects using the <code>import_gtfs</code> data.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gtfs_objs &lt;-<span class="st"> </span>aussie_urls %&gt;%<span class="st"> </span><span class="kw">slice</span>(<span class="dv">8</span>:<span class="dv">9</span>) %&gt;%<span class="st"> </span>import_gtfs</code></pre></div>
 </div>
-<div id="inspect-parsing-warnings-during-process" class="section level3">
-<h3>Inspect Parsing Warnings During Process</h3>
+<div id="inspecting-parsing-errorswarnings" class="section level3">
+<h3>Inspecting Parsing Errors/Warnings</h3>
 <p>During the import of the any feed url, you will see the following message:</p>
 <pre><code>NOTE: Parsing errors and warnings while importing data can be extracted from any given data frame with `attr(df, &quot;problems&quot;)`.</code></pre>
 <p>This output was suppressed in the last section to save space given how verbose it is. But the highlighted <code>NOTE</code> explains that <em>if one observes an error or warning during the import process</em>, one can extract a data frame of problems, which is stored as an attribute for any data frame contained within any <code>gtfs</code> object that had a warning output.</p>
 <p>As an example, let’s extract the data and problems data frames for the 44th url of <code>feedlist_df</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">url &lt;-<span class="st"> </span>feedlist_df %&gt;%<span class="st"> </span><span class="kw">slice</span>(<span class="dv">44</span>) %&gt;%<span class="st"> </span><span class="kw">select</span>(url_d)
+
 gtfs_obj &lt;-<span class="st"> </span>url %&gt;%<span class="st"> </span>import_gtfs</code></pre></div>
 <p>If you look at the output when creating the <code>gtfs_obj</code> object, you should see output that looks like this…</p>
 <pre><code>...
@@ -165,9 +168,10 @@ row col   expected    actual
   3  -- 10 columns 1 columns
   4  -- 10 columns 1 columns
 ...</code></pre>
-<p>To understand the problem, let’s extract the data frame <code>calendar_df</code>. Recall that <code>import_gtfs</code> returns a list where each element of the list is a set of data frames.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># extract `calendar_df` from the 1st list element (there's only one)</span>
+<p>To understand the problem, let’s extract the data frame <code>calendar_df</code>. Recall that <code>import_gtfs</code> returns either a single <code>gtfs</code> object (if one url is provided) or a list of <code>gtfs</code> objects. Each <code>gtfs</code> object is just a list of data frames.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># extract `calendar_df` from gtfs_obj</span>
 df &lt;-<span class="st"> </span>gtfs_obj$calendar_df
+
 df
 <span class="co">#&gt; Source: local data frame [4 x 10]</span>
 <span class="co">#&gt; </span>
@@ -183,6 +187,7 @@ df
 <span class="co">#&gt; 2   20151215 20161231</span>
 <span class="co">#&gt; 3         NA       NA</span>
 <span class="co">#&gt; 4         NA       NA</span>
+
 <span class="kw">attr</span>(df, <span class="st">'problems'</span>)
 <span class="co">#&gt; Source: local data frame [2 x 4]</span>
 <span class="co">#&gt; </span>
@@ -190,14 +195,14 @@ df
 <span class="co">#&gt;   (int) (chr)      (chr)     (chr)</span>
 <span class="co">#&gt; 1     3    NA 10 columns 1 columns</span>
 <span class="co">#&gt; 2     4    NA 10 columns 1 columns</span></code></pre></div>
-<p>From inspecting the output from <code>attr(df, 'problems')</code> and comparing it to just <code>df</code>, it appears the problems (at least for this particular <code>calendar_df</code>) stem from the possibility that empty rows were added to the end of the original text file. Not a big deal and easily fixed. But we leave such specific fixes to the user to correct.</p>
+<p>From inspecting the output from <code>attr(df, 'problems')</code> and comparing it to just <code>df</code>, it appears the problems (at least for this particular <code>calendar_df</code>) stem from the empty rows added to the end of the original text file. Not a big deal and easily fixed. But we leave such specific fixes to the user to correct.</p>
 </div>
 </div>
 <div id="validating-the-file-and-fields-structure-of-a-gtfs-feed" class="section level2">
 <h2>3. Validating the file and fields structure of a GTFS feed</h2>
 <p>GTFS feeds contain numerous <em>required</em> and <em>optional</em> files. And within each of these files, there are also <em>required</em> and <em>optional</em> fields (variables). (For more detailed information, please see Google’s <a href="https://developers.google.com/transit/gtfs/reference">GTFS Feed Specification Reference</a>.)</p>
 <p>After one has successfully downloaded and unpacked a transit feed, there is no guarantee that it satisfies the requirements of a valid GTFS feed. For example, an unpacked directory may contain all the properly named text files (e.g. <code>agency.txt</code>, <code>stops.txt</code>, etc), but it could be that within each text file there is no data or that some of the required fields (or variables) (e.g. <code>stop_id</code>) are missing.</p>
-<p>The <code>gtfsr</code> package can quickly check the file and field structure of a GTFS feed and inform you if all required files and fields have been found, are non-empty, and additional informationa about optional files and fields. The function is called <code>validate_gtfs_structure()</code>. It inputs an object of class <code>gtfs</code> (the output of functions <code>import_gtfs()</code> or <code>read_gtfs()</code>) and, by default, attaches a <code>validate</code> attribute (i.e. <code>attr(gtfs_obj, 'validate')</code>) to the <code>gtfs</code> object. There is also the option to return only the validation information (<code>return_gtfs_obj = FALSE</code>).</p>
+<p>The <code>gtfsr</code> package can quickly check the file and field structure of a GTFS feed and inform you if all required files and fields have been found. Additional information about optional files and fields is also provided. The function is called <code>validate_gtfs_structure()</code>. It inputs an object of class <code>gtfs</code> (the output of functions <code>import_gtfs()</code> or <code>read_gtfs()</code>) and, by default, attaches a <code>validate</code> attribute (i.e. <code>attr(gtfs_obj, 'validate')</code>) to the <code>gtfs</code> object. This <code>validate</code> attribute is just a list of validation information. Set the option <code>return_gtfs_obj = FALSE</code> if you only want this validation list.</p>
 <p>Let’s take a look at an example, using transit feed data from agencies in Durham, NC, USA.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nc &lt;-<span class="st"> </span>feedlist_df %&gt;%
 <span class="st">    </span><span class="kw">filter</span>(<span class="kw">grepl</span>(<span class="st">'NC, USA'</span>, loc_t, <span class="dt">ignore.case=</span><span class="ot">TRUE</span>)) <span class="co"># get NC agencies</span>
@@ -206,7 +211,7 @@ durham_urls &lt;-<span class="st"> </span>nc %&gt;%
 <span class="st">    </span><span class="kw">filter</span>(<span class="kw">grepl</span>(<span class="st">'durham'</span>, loc_t, <span class="dt">ignore.case=</span><span class="ot">TRUE</span>)) %&gt;%
 <span class="st">    </span><span class="kw">select</span>(url_d) <span class="co"># get durham urls</span>
 
-gtfs_objs &lt;-<span class="st"> </span>durham_urls %&gt;%<span class="st"> </span><span class="kw">import_gtfs</span>(<span class="dt">quiet=</span><span class="ot">TRUE</span>) <span class="co"># quietly extract a gtfs_objs</span>
+gtfs_objs &lt;-<span class="st"> </span>durham_urls %&gt;%<span class="st"> </span><span class="kw">import_gtfs</span>(<span class="dt">quiet=</span><span class="ot">TRUE</span>) <span class="co"># quietly import</span>
 
 <span class="kw">sapply</span>(gtfs_objs, class) <span class="co"># verify that each object of is a `gtfs` object</span>
 <span class="co">#&gt; [1] &quot;gtfs&quot; &quot;gtfs&quot; &quot;gtfs&quot;</span>
@@ -240,18 +245,17 @@ validate_list_direct &lt;-<span class="st"> </span><span class="kw">lapply</span
 <p>Taking a closer look, we can see that all 3 Durham agencies provide all required files and they contain all required fields. However, all 3 Durham agencies provided <em>optional files</em> that are missing <em>required fields</em>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">validate_list_attr %&gt;%<span class="st"> </span><span class="kw">sapply</span>(. %&gt;%<span class="st"> </span><span class="kw">extract2</span>(<span class="st">'all_req_files'</span>))
 <span class="co">#&gt; [1] TRUE TRUE TRUE</span>
+
 validate_list_attr %&gt;%<span class="st"> </span><span class="kw">sapply</span>(. %&gt;%<span class="st"> </span><span class="kw">extract2</span>(<span class="st">'all_req_fields_in_req_files'</span>))
 <span class="co">#&gt; [1] TRUE TRUE TRUE</span>
+
 validate_list_attr %&gt;%<span class="st"> </span><span class="kw">sapply</span>(. %&gt;%<span class="st"> </span><span class="kw">extract2</span>(<span class="st">'all_req_fields_in_opt_files'</span>))
 <span class="co">#&gt; [1] FALSE FALSE FALSE</span>
 
 <span class="co"># OR, without piping</span>
-<span class="kw">sapply</span>(validate_list_attr, <span class="st">'[['</span>, <span class="st">'all_req_files'</span>)
-<span class="co">#&gt; [1] TRUE TRUE TRUE</span>
-<span class="kw">sapply</span>(validate_list_attr, <span class="st">'[['</span>, <span class="st">'all_req_fields_in_req_files'</span>)
-<span class="co">#&gt; [1] TRUE TRUE TRUE</span>
-<span class="kw">sapply</span>(validate_list_attr, <span class="st">'[['</span>, <span class="st">'all_req_fields_in_opt_files'</span>)
-<span class="co">#&gt; [1] FALSE FALSE FALSE</span></code></pre></div>
+<span class="co"># sapply(validate_list_attr, '[[', 'all_req_files')</span>
+<span class="co"># sapply(validate_list_attr, '[[', 'all_req_fields_in_req_files')</span>
+<span class="co"># sapply(validate_list_attr, '[[', 'all_req_fields_in_opt_files')</span></code></pre></div>
 <p>We can get more detail about the problematic optional files by extracting the element <code>problem_opt_fields</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># extract the `problem_opt_files` from the validation list</span>
 validate_list_attr[[<span class="dv">3</span>]]$problem_opt_files
@@ -274,11 +278,11 @@ validate_list_attr[[<span class="dv">3</span>]]$problem_opt_files
 <p>We can see that the optional <code>frequencies.txt</code> file was provided but all of the <em>required fields</em> were empty.</p>
 <p>It is important to recall that most GTFS feed files and fields are <strong>optional</strong>. Therefore, while useful to know any potential problems with optional files provided by a given feed, we can still proceed with doing interesting analyses as long as we have all the required files and fields.</p>
 </div>
-<div id="mapping-stops-using-gtfsr-and-the-leaflet-package" class="section level2">
-<h2>4. Mapping stops using <code>gtfsr</code> and the <code>leaflet</code> package</h2>
-<p>Let’s try mapping stops for a bus route popular with Duke University students—the <em>C1 East-West Loop</em>. This route bounces between Duke’s East and West campus. The <em>C1</em> idles at one of the busiest stop at Duke—the “West Campus Chapel” stop.</p>
-<p>This bus stop is located in front of Duke University’s iconic gothic Chapel and is the starting point for most folks visiting Duke’s campus.</p>
-<p>First, let’s extract a <code>gtfs</code> object for Duke University.</p>
+<div id="mapping-stops-and-routes-using-gtfsr" class="section level2">
+<h2>4. Mapping stops and routes using <code>gtfsr</code></h2>
+<p>The <code>gtfsr</code> has mapping functions—wrapped around functions from the <code>sp</code> and <code>leaflet</code> packages—designed to help users quickly map GTFS feed spatial data. These functions input <code>gtfs</code> objects and then map the desired datum or data.</p>
+<p>Let’s try mapping a stop from a bus route popular with Duke University students—the <em>C1 East-West Loop</em>. This route bounces between Duke’s East and West campus. The <em>C1</em> idles at one of the busiest stops at Duke—the “West Campus Chapel” stop. (This bus stop is located in front of Duke University’s iconic gothic Chapel, Duke’s most famous landmark.)</p>
+<p>First, let’s extract a <code>gtfs</code> object for Duke University’s transit feed.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nc &lt;-<span class="st"> </span>feedlist_df %&gt;%
 <span class="st">    </span><span class="kw">filter</span>(<span class="kw">grepl</span>(<span class="st">'NC, USA'</span>, loc_t, <span class="dt">ignore.case=</span><span class="ot">TRUE</span>)) <span class="co"># get NC agencies</span>
 
@@ -288,16 +292,27 @@ duke_gtfs_obj &lt;-<span class="st"> </span>nc %&gt;%
 <span class="st">    </span><span class="kw">import_gtfs</span>(<span class="dt">quiet=</span><span class="ot">TRUE</span>)     <span class="co"># suppress import messages and prints</span></code></pre></div>
 <p>Next, we need to find the ID of the “West Campus Chapel” stop. We can search the required field <code>stop_name</code> for something that matches with a clever combination of <code>dplyr::slice</code> plus <code>which</code> and `<code>grepl</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># look for west chapel stop</span>
-west_chapel_id &lt;-<span class="st"> </span>duke_gtfs_obj[[<span class="st">'stops_df'</span>]] %&gt;%
+west_chapel_stop_id &lt;-<span class="st"> </span>duke_gtfs_obj[[<span class="st">'stops_df'</span>]] %&gt;%
 <span class="st">    </span><span class="kw">slice</span>(<span class="kw">which</span>(<span class="kw">grepl</span>(<span class="st">'west campus chapel'</span>, stop_name, <span class="dt">ignore.case=</span><span class="ot">TRUE</span>))) %&gt;%
 <span class="st">    </span><span class="kw">extract2</span>(<span class="st">'stop_id'</span>) <span class="co"># extract just the stop_id</span>
 
-west_chapel_id
+west_chapel_stop_id
 <span class="co">#&gt; [1] &quot;778070&quot;</span></code></pre></div>
 <p>Now, we can quickly map the stop using the function <code>map_gtfs_stop()</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">map_gtfs_stop</span>(<span class="dt">gtfs_obj =</span> duke_gtfs_obj, <span class="dt">stop_id =</span> west_chapel_id)</code></pre></div>
-<div id="htmlwidget-6030" style="width:700.8px;height:480px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-6030">{"x":{"calls":[{"method":"addTiles","args":["http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"maxNativeZoom":null,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"continuousWorld":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":null,"unloadInvisibleTiles":null,"updateWhenIdle":null,"detectRetina":false,"reuseTiles":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap\u003c/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA\u003c/a>"}]},{"method":"addMarkers","args":[36.00095887,-78.93826431,null,null,null,{"clickable":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},"West Campus Chapel",null,null]}],"limits":{"lat":[36.00095887,36.00095887],"lng":[-78.93826431,-78.93826431]}},"evals":[],"jsHooks":[]}</script>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">map_gtfs_stop</span>(<span class="dt">gtfs_obj =</span> duke_gtfs_obj, <span class="dt">stop_id =</span> west_chapel_stop_id)</code></pre></div>
+<div id="htmlwidget-8453" style="width:700.8px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-8453">{"x":{"calls":[{"method":"addTiles","args":["http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"maxNativeZoom":null,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"continuousWorld":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":null,"unloadInvisibleTiles":null,"updateWhenIdle":null,"detectRetina":false,"reuseTiles":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap\u003c/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA\u003c/a>"}]},{"method":"addMarkers","args":[36.00095887,-78.93826431,null,null,null,{"clickable":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},"West Campus Chapel",null,null]}],"limits":{"lat":[36.00095887,36.00095887],"lng":[-78.93826431,-78.93826431]}},"evals":[],"jsHooks":[]}</script>
+<p>Next, let’s map out all the stops and shape for the popular bus route <em>C1 East-West Loop</em>. We first find the route before mapping all the stops using <code>map_gtfs_route_stops()</code> and the shape using <code>map_gtfs_route_shape()</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">C1_route_id &lt;-<span class="st"> </span>duke_gtfs_obj[[<span class="st">'routes_df'</span>]] %&gt;%
+<span class="st">    </span><span class="kw">slice</span>(<span class="kw">which</span>(<span class="kw">grepl</span>(<span class="st">'C1'</span>, route_short_name, <span class="dt">ignore.case=</span><span class="ot">TRUE</span>))) %&gt;%<span class="st"> </span><span class="co"># search for &quot;C1&quot;</span>
+<span class="st">    </span><span class="kw">extract2</span>(<span class="st">'route_id'</span>) <span class="co"># extract just the datum in route_id</span>
+
+<span class="kw">map_gtfs_route_stops</span>(<span class="dt">gtfs_obj =</span> duke_gtfs_obj, <span class="dt">route_id =</span> C1_route_id) <span class="co"># map all stops along route</span></code></pre></div>
+<div id="htmlwidget-8513" style="width:700.8px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-8513">{"x":{"calls":[{"method":"addTiles","args":["http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"maxNativeZoom":null,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"continuousWorld":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":null,"unloadInvisibleTiles":null,"updateWhenIdle":null,"detectRetina":false,"reuseTiles":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap\u003c/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA\u003c/a>"}]},{"method":"addCircleMarkers","args":[[36.00000452,36.00597733,36.0000208,36.00025943,36.00501836,36.00268779,35.9990711964,35.99982,36.000144,36.0002805555556,36.00095887,35.99900167,36.0008631,36.0010281,36.00284195,35.99996911],[-78.9232148,-78.91471769,-78.930376,-78.92674563,-78.91607113,-78.91766669,-78.9336665494,-78.928503,-78.930839,-78.9262944444445,-78.93826431,-78.93336191,-78.9187967,-78.9189362,-78.9174354,-78.92355181],4,null,null,{"lineCap":null,"lineJoin":null,"clickable":true,"pointerEvents":null,"className":"","stroke":true,"color":"red","weight":5,"opacity":0.5,"fill":true,"fillColor":"red","fillOpacity":0.7,"dashArray":null},null,null,["Campus Dr at Swift Avenue (Westbound)","East Campus Quad","Campus Dr at Anderson St (Eastbound)","Campus Dr at Nasher (Westbound)","Gilbert-Addoms Westbound","Campus Dr at Maxwell St (Westbound)","Campus Dr at Admissions (Westbound)","Campus Dr at Nasher (Eastbound)","Campus Dr at Anderson St (Westbound)","Campus Dr at Central Campus (Eastbound)","West Campus Chapel","Campus Drive At Chapel Circle Eastbound","Campus Dr at Laundry Bldg (Eastbound)","Campus Dr at Laundry Bldg (Westbound)","Campus Dr at Maxwell Ave Eastbound","Campus Dr at Swift Avenue (Eastbound)"]]},{"method":"addLegend","args":[{"colors":["red"],"labels":["Stops"],"na_color":null,"na_label":"NA","opacity":0.5,"position":"topright","type":"unknown","title":null,"extra":null,"layerId":null,"className":"info legend"}]}],"limits":{"lat":[35.99900167,36.00597733],"lng":[-78.93826431,-78.91471769]}},"evals":[],"jsHooks":[]}</script>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">map_gtfs_route_shape</span>(<span class="dt">gtfs_obj =</span> duke_gtfs_obj, <span class="dt">route_id =</span> C1_route_id) <span class="co"># map route shape with stops</span></code></pre></div>
+<div id="htmlwidget-4162" style="width:700.8px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4162">{"x":{"calls":[{"method":"addTiles","args":["http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"maxNativeZoom":null,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"continuousWorld":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":null,"unloadInvisibleTiles":null,"updateWhenIdle":null,"detectRetina":false,"reuseTiles":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap\u003c/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA\u003c/a>"}]},{"method":"addPolylines","args":[[[{"lng":[-78.914718,-78.914505,-78.91436,-78.914375,-78.91439,-78.914535,-78.914703,-78.914779,-78.91481,-78.915069,-78.915481,-78.915641,-78.915802,-78.915863,-78.915901,-78.916,-78.9169469,-78.91763833,-78.91841251,-78.918869,-78.919227,-78.919548,-78.919937,-78.920188,-78.920402,-78.920761,-78.920921,-78.921089,-78.921607,-78.924255,-78.925216,-78.925651,-78.925964,-78.92617,-78.926734,-78.927658,-78.928024,-78.928367,-78.928901,-78.93013233,-78.93052671,-78.93083149,-78.93104554,-78.931945,-78.932434,-78.9328,-78.933273,-78.933685,-78.933837,-78.93386,-78.933906,-78.934028,-78.934158,-78.934242,-78.936416,-78.937515,-78.937492,-78.9375,-78.937553,-78.938034,-78.938087,-78.938194],"lat":[36.006027,36.006,36.005916,36.005405,36.005344,36.005214,36.005168,36.005176,36.005161,36.005275,36.005298,36.005283,36.00521,36.005165,36.00513,36.004974,36.00366947,36.00267148,36.00148123,36.000957,36.000579,36.000305,36.000015,35.99987,35.999774,35.999683,35.999649,35.999637,35.999649,36.000175,36.00035,36.000385,36.00037,36.000343,36.000217,35.999969,35.999908,35.999881,35.999885,36.00003012,36.0001043,36.00009151,36.00004068,35.999637,35.99937,35.999195,35.999065,35.999019,35.999038,35.999088,35.999134,35.999179,35.99916,35.999088,36.000091,36.000621,36.000659,36.000755,36.000823,36.001033,36.001014,36.000915]}],[{"lng":[-78.914718,-78.914505,-78.91436,-78.914375,-78.91439,-78.914535,-78.914703,-78.914779,-78.91481,-78.915069,-78.915481,-78.915641,-78.915802,-78.915863,-78.915901,-78.916,-78.9169469,-78.91763833,-78.91841251,-78.918869,-78.919227,-78.919548,-78.919937,-78.920188,-78.920402,-78.920761,-78.920921,-78.921089,-78.921607,-78.924255,-78.925216,-78.925651,-78.925964,-78.92617,-78.926734,-78.927658,-78.928024,-78.928367,-78.928901,-78.93013233,-78.93052671,-78.93083149,-78.93104554,-78.931945,-78.932434,-78.9328,-78.933273,-78.933685,-78.933837,-78.93386,-78.933906,-78.934028,-78.934158,-78.934242,-78.936416,-78.937515,-78.937492,-78.9375,-78.937553,-78.938034,-78.938087,-78.938179,-78.938224,-78.938217,-78.938194,-78.937759,-78.937629,-78.937515,-78.936416,-78.934242,-78.934272,-78.934272,-78.934265,-78.934234,-78.93412,-78.934043,-78.933975,-78.933906,-78.93386,-78.933837,-78.933837,-78.933685,-78.933273,-78.9328,-78.932434,-78.931945,-78.93119,-78.930953,-78.930747,-78.930305,-78.9289,-78.928364,-78.928022,-78.927656,-78.92629355,-78.92630696,-78.925964,-78.925651,-78.925216,-78.924255,-78.921607,-78.921089,-78.920921,-78.920761,-78.920402,-78.920188,-78.919937,-78.919548,-78.919227,-78.918876,-78.91834597,-78.91788031,-78.91749105,-78.91743741,-78.91701143,-78.9164889,-78.91633732,-78.91607446,-78.91592162,-78.91568514,-78.915069,-78.9151,-78.915077,-78.915008,-78.914924,-78.914787,-78.914718],"lat":[36.006027,36.006,36.005916,36.005405,36.005344,36.005214,36.005168,36.005176,36.005161,36.005275,36.005298,36.005283,36.00521,36.005165,36.00513,36.004974,36.00366947,36.00267148,36.00148123,36.000957,36.000579,36.000305,36.000015,35.99987,35.999774,35.999683,35.999649,35.999637,35.999649,36.000175,36.00035,36.000385,36.00037,36.000343,36.000217,35.999969,35.999908,35.999881,35.999885,36.00003012,36.0001043,36.00009151,36.00004068,35.999637,35.99937,35.999195,35.999065,35.999019,35.999038,35.999088,35.999134,35.999179,35.99916,35.999088,36.000091,36.000621,36.000659,36.000755,36.000823,36.001033,36.001014,36.000938,36.000862,36.000782,36.000724,36.000534,36.000537,36.000621,36.000091,35.999088,35.999031,35.998996,35.998947,35.998897,35.998832,35.998825,35.998836,35.99887,35.998916,35.998973,35.999038,35.999019,35.999065,35.999195,35.99937,35.999637,35.999965,36.000022,36.000045,36.00006,35.999885,35.999882,35.999908,35.999968,36.00031636,36.00030985,36.00037,36.000385,36.00035,36.000175,35.999649,35.999637,35.999649,35.999683,35.999774,35.99987,36.000015,36.000305,36.000579,36.000946,36.00157866,36.00224604,36.00286085,36.00288255,36.00360392,36.00429924,36.00445983,36.00487262,36.00515211,36.00527308,36.005275,36.005329,36.00592,36.005977,36.006008,36.006031,36.006027]}]],null,null,{"lineCap":null,"lineJoin":null,"clickable":true,"pointerEvents":null,"className":"","stroke":true,"color":"blue","weight":5,"opacity":0.5,"fill":false,"fillColor":"blue","fillOpacity":0.2,"dashArray":null,"smoothFactor":1,"noClip":false},null]},{"method":"addCircleMarkers","args":[[36.00000452,36.00597733,36.0000208,36.00025943,36.00501836,36.00268779,35.9990711964,35.99982,36.000144,36.0002805555556,36.00095887,35.99900167,36.0008631,36.0010281,36.00284195,35.99996911],[-78.9232148,-78.91471769,-78.930376,-78.92674563,-78.91607113,-78.91766669,-78.9336665494,-78.928503,-78.930839,-78.9262944444445,-78.93826431,-78.93336191,-78.9187967,-78.9189362,-78.9174354,-78.92355181],4,null,null,{"lineCap":null,"lineJoin":null,"clickable":true,"pointerEvents":null,"className":"","stroke":true,"color":"red","weight":5,"opacity":0.5,"fill":true,"fillColor":"red","fillOpacity":0.7,"dashArray":null},null,null,["Campus Dr at Swift Avenue (Westbound)","East Campus Quad","Campus Dr at Anderson St (Eastbound)","Campus Dr at Nasher (Westbound)","Gilbert-Addoms Westbound","Campus Dr at Maxwell St (Westbound)","Campus Dr at Admissions (Westbound)","Campus Dr at Nasher (Eastbound)","Campus Dr at Anderson St (Westbound)","Campus Dr at Central Campus (Eastbound)","West Campus Chapel","Campus Drive At Chapel Circle Eastbound","Campus Dr at Laundry Bldg (Eastbound)","Campus Dr at Laundry Bldg (Westbound)","Campus Dr at Maxwell Ave Eastbound","Campus Dr at Swift Avenue (Eastbound)"]]},{"method":"addLegend","args":[{"colors":["red","blue"],"labels":["Stops","Route"],"na_color":null,"na_label":"NA","opacity":0.5,"position":"topright","type":"unknown","title":null,"extra":null,"layerId":null,"className":"info legend"}]}],"limits":{"lat":[35.998825,36.006031],"lng":[-78.93826431,-78.91436]}},"evals":[],"jsHooks":[]}</script>
 </div>
 
 

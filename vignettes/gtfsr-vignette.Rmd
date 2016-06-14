@@ -11,7 +11,7 @@ vignette: >
 ---
 
 ```{r init, warning=FALSE, message=FALSE, echo=FALSE, eval=TRUE}
-knitr::opts_chunk$set(cache=FALSE, tidy=FALSE, collapse = TRUE, comment = "#>",
+knitr::opts_chunk$set(cache=TRUE, tidy=FALSE, collapse = TRUE, comment = "#>",
     fig.width=7.3, fig.height=5)
 ```
 ## 1. Get an GTFS API key
@@ -44,19 +44,18 @@ library(dplyr)
 options(dplyr.width = Inf) # I like to see all the columns
 
 set_api_key('2ec1ae29-b8c2-4a03-b96e-126d585233f9') # input your API key here
-
 ```
 
-### Getting full list available GTFS feeds
+### Getting full list of available GTFS feeds
 
 With a valid API key loaded, you can easily get the full list of GTFS feeds using the `get_feedlist` function. What we care most about are the feed GTFS data urls contained in column `url_d` of the feed list. Since we are interested in acquiring the GTFS data (not just the feedlist), we can use the `filter_feedlist` function to return a data frame containing only valid feed urls.
 
 ```{r feedlist, warning=TRUE, message=TRUE, echo=TRUE, eval=TRUE}
-
 feedlist_df <- get_feedlist() # create a data frame of all feeds
-feedlist_df <- feedlist_df %>% filter_feedlist # filter the feedlist
-feedlist_df %>% select(url_d) %>% head(5) # show first 5 feed urls
 
+feedlist_df <- feedlist_df %>% filter_feedlist # filter the feedlist
+
+feedlist_df %>% select(url_d) %>% head(5) # show first 5 feed urls
 ```
 
 If we want only the data for a specific location (or locations), we can get then search the feedlist for feeds of interest.
@@ -64,28 +63,26 @@ If we want only the data for a specific location (or locations), we can get then
 Assume we are interested in getting all the GTFS data from *Australian* feeds (i.e. we search for location names for the word 'australia'). We can match Australian agencies by name (filter on `loc_t`) and extract the corresponding url feeds (select `url_d`).
 
 
-### Subsetting the GTFS feedlist (Example)
+### Subsetting the GTFS feedlist
 
 
 ```{r aussie, warning=TRUE, message=TRUE, echo=TRUE, eval=TRUE}
-
 ## get australian feeds
 aussie_df <- feedlist_df %>%
     filter(grepl('australia', loc_t, ignore.case = TRUE)) # filter out locations with "australia" in name
-aussie_df %>% select(loc_t) %>% head(5) # look at location names
-aussie_urls <- aussie_df %>% select(url_d) # get aussie urls
 
+aussie_df %>% select(loc_t) %>% head(5) # look at location names
+
+aussie_urls <- aussie_df %>% select(url_d) # get aussie urls
 ```
 
-Once we have the urls for the feeds of interest, we can download and extract all the GTFS data into a list of `gtfs` objects using the `import_gtfs` data. To save time, we will only download 2 feeds (`slice(8:9)`). The output is suppressed because of how verbose it is.
+Once we have the urls for the feeds of interest, we can download and extract all the GTFS data into a list of `gtfs` objects using the `import_gtfs` data.
 
 ```{r import_gtfs, warning=FALSE, message=FALSE, echo=TRUE, eval=FALSE}
-
 gtfs_objs <- aussie_urls %>% slice(8:9) %>% import_gtfs
-
 ```
 
-### Inspect Parsing Warnings During Process
+### Inspecting Parsing Errors/Warnings
 
 During the import of the any feed url, you will see the following message:
 
@@ -99,6 +96,7 @@ As an example, let's extract the data and problems data frames for the 44th url 
 
 ```{r problems, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, results='hide'}
 url <- feedlist_df %>% slice(44) %>% select(url_d)
+
 gtfs_obj <- url %>% import_gtfs
 ```
 
@@ -113,17 +111,19 @@ row col   expected    actual
 ...
 ```
 
-To understand the problem, let's extract the data frame `calendar_df`. Recall that `import_gtfs` returns a list where each element of the list is a set of data frames.
+To understand the problem, let's extract the data frame `calendar_df`. Recall that `import_gtfs` returns either a single `gtfs` object (if one url is provided) or a list of `gtfs` objects. Each `gtfs` object is just a list of data frames.
 
 
 ```{r calendar, echo=TRUE, eval=TRUE}
-# extract `calendar_df` from the 1st list element (there's only one)
+# extract `calendar_df` from gtfs_obj
 df <- gtfs_obj$calendar_df
+
 df
+
 attr(df, 'problems')
 ```
 
-From inspecting the output from `attr(df, 'problems')` and comparing it to just `df`, it appears the problems (at least for this particular `calendar_df`) stem from the possibility that empty rows were added to the end of the original text file. Not a big deal and easily fixed. But we leave such specific fixes to the user to correct.
+From inspecting the output from `attr(df, 'problems')` and comparing it to just `df`, it appears the problems (at least for this particular `calendar_df`) stem from the empty rows added to the end of the original text file. Not a big deal and easily fixed. But we leave such specific fixes to the user to correct.
 
 
 
@@ -133,7 +133,7 @@ GTFS feeds contain numerous *required* and *optional* files. And within each of 
 
 After one has successfully downloaded and unpacked a transit feed, there is no guarantee that it satisfies the requirements of a valid GTFS feed. For example, an unpacked directory may contain all the properly named text files (e.g. `agency.txt`, `stops.txt`, etc), but it could be that within each text file there is no data or that some of the required fields (or variables) (e.g. `stop_id`) are missing.
 
-The `gtfsr` package can quickly check the file and field structure of a GTFS feed and inform you if all required files and fields have been found, are non-empty, and additional informationa about optional files and fields. The function is called `validate_gtfs_structure()`. It inputs an object of class `gtfs` (the output of functions `import_gtfs()` or `read_gtfs()`) and, by default, attaches a `validate` attribute (i.e. `attr(gtfs_obj, 'validate')`) to the `gtfs` object. There is also the option to return only the validation information (`return_gtfs_obj = FALSE`).
+The `gtfsr` package can quickly check the file and field structure of a GTFS feed and inform you if all required files and fields have been found. Additional information about optional files and fields is also provided. The function is called `validate_gtfs_structure()`. It inputs an object of class `gtfs` (the output of functions `import_gtfs()` or `read_gtfs()`) and, by default, attaches a `validate` attribute (i.e. `attr(gtfs_obj, 'validate')`) to the `gtfs` object. This `validate` attribute is just a list of validation information. Set the option `return_gtfs_obj = FALSE` if you only want this validation list.
 
 Let's take a look at an example, using transit feed data from agencies in Durham, NC, USA.
 
@@ -146,7 +146,7 @@ durham_urls <- nc %>%
     filter(grepl('durham', loc_t, ignore.case=TRUE)) %>%
     select(url_d) # get durham urls
 
-gtfs_objs <- durham_urls %>% import_gtfs(quiet=TRUE) # quietly extract a gtfs_objs
+gtfs_objs <- durham_urls %>% import_gtfs(quiet=TRUE) # quietly import
 
 sapply(gtfs_objs, class) # verify that each object of is a `gtfs` object
 
@@ -181,13 +181,15 @@ Taking a closer look, we can see that all 3 Durham agencies provide all required
 
 ```{r durham-validate1, include=TRUE}
 validate_list_attr %>% sapply(. %>% extract2('all_req_files'))
+
 validate_list_attr %>% sapply(. %>% extract2('all_req_fields_in_req_files'))
+
 validate_list_attr %>% sapply(. %>% extract2('all_req_fields_in_opt_files'))
 
 # OR, without piping
-sapply(validate_list_attr, '[[', 'all_req_files')
-sapply(validate_list_attr, '[[', 'all_req_fields_in_req_files')
-sapply(validate_list_attr, '[[', 'all_req_fields_in_opt_files')
+# sapply(validate_list_attr, '[[', 'all_req_files')
+# sapply(validate_list_attr, '[[', 'all_req_fields_in_req_files')
+# sapply(validate_list_attr, '[[', 'all_req_fields_in_opt_files')
 ```
 
 We can get more detail about the problematic optional files by extracting the element `problem_opt_fields`.
@@ -201,13 +203,13 @@ We can see that the optional `frequencies.txt` file was provided but all of the 
 
 It is important to recall that most GTFS feed files and fields are **optional**. Therefore, while useful to know any potential problems with optional files provided by a given feed, we can still proceed with doing interesting analyses as long as we have all the required files and fields.
 
-## 4. Mapping stops using `gtfsr` and the `leaflet` package
+## 4. Mapping stops and routes using `gtfsr`
 
-Let's try mapping stops for a bus route popular with Duke University students---the *C1 East-West Loop*. This route bounces between Duke's East and West campus. The *C1* idles at one of the busiest stop at Duke---the "West Campus Chapel" stop.
+The `gtfsr` has mapping functions---wrapped around functions from the `sp` and `leaflet` packages---designed to help users quickly map GTFS feed spatial data. These functions input `gtfs` objects and then map the desired datum or data.
 
-This bus stop is located in front of Duke University's iconic gothic Chapel and is the starting point for most folks visiting Duke's campus.
+Let's try mapping a stop from a bus route popular with Duke University students---the *C1 East-West Loop*. This route bounces between Duke's East and West campus. The *C1* idles at one of the busiest stops at Duke---the "West Campus Chapel" stop. (This bus stop is located in front of Duke University's iconic gothic Chapel, Duke's most famous landmark.)
 
-First, let's extract a `gtfs` object for Duke University.
+First, let's extract a `gtfs` object for Duke University's transit feed.
 
 ```{r duke-extract, include=TRUE}
 nc <- feedlist_df %>%
@@ -243,9 +245,8 @@ C1_route_id <- duke_gtfs_obj[['routes_df']] %>%
     slice(which(grepl('C1', route_short_name, ignore.case=TRUE))) %>% # search for "C1"
     extract2('route_id') # extract just the datum in route_id
 
-map_gtfs_route_stops(gtfs_obj = duke_gtfs_obj, route_id = C1_route_id)
-
-map_gtfs_route_shape(gtfs_obj = duke_gtfs_obj, route_id = C1_route_id)
+map_gtfs_route_stops(gtfs_obj = duke_gtfs_obj, route_id = C1_route_id) # map all stops along route
+map_gtfs_route_shape(gtfs_obj = duke_gtfs_obj, route_id = C1_route_id) # map route shape with stops
 ```
 
 
