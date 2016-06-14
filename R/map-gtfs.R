@@ -23,9 +23,8 @@ map_gtfs_stop <- function(gtfs_obj, stop_id) {
 		dplyr::slice(which(stop_id %in% id))
 
 	if(dim(df)[1] == 0) {
-		warn <- "Stop '%s' was not found. NULL is returned" %>% sprintf(id)
-		warning(warn)
-		return(NULL)
+		s <- "Stop '%s' was not found." %>% sprintf(id)
+		stop(s)
 	}
 
 	stop <- df %>%
@@ -62,9 +61,8 @@ map_gtfs_route_stops <- function(gtfs_obj, route_id) {
 		magrittr::extract2(1)
 
 	if(length(trip_ids) == 0) {
-		warn <- "No trips for Route ID '%s' were found. NULL is returned" %>% sprintf(id)
-		warning(warn)
-		return(NULL)
+		s <- "No trips for Route ID '%s' were found." %>% sprintf(id)
+		stop(s)
 	}
 
 	# extract all possible stops across all trips for given route
@@ -120,7 +118,7 @@ map_gtfs_route_shape <- function(gtfs_obj, route_id, include_stops = TRUE) {
 		unique
 
 	if(length(shape_ids) == 0) {
-		s <- "No shapes for Route ID '%s' were found. NULL is returned" %>% sprintf(id)
+		s <- "No shapes for Route ID '%s' were found." %>% sprintf(id)
 		stop(s)
 	}
 
@@ -166,7 +164,7 @@ map_gtfs_route_shape <- function(gtfs_obj, route_id, include_stops = TRUE) {
 			magrittr::extract2(1)
 
 		if(length(trip_ids) == 0) {
-			s <- "No trips for Route ID '%s' were found. NULL is returned" %>% sprintf(id)
+			s <- "No trips for Route ID '%s' were found." %>% sprintf(id)
 			stop(s)
 		}
 

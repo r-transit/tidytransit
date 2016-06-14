@@ -24,8 +24,7 @@ test_that('Import a GTFS object from URL', {
 	# non-specified path
 	x <- df %>% import_gtfs(quiet=TRUE) %>% sapply(. %>% is.null %>% magrittr::not(.)) %>% sum
 	expect_true(x == 1) # unzips to folder
-	expect_is(url %>% import_gtfs(quiet = TRUE), 'list') # should return 'list' object
-	expect_is(url %>% import_gtfs(quiet = TRUE) %>% '[['(1), 'gtfs') # each non-null list element should be 'gtfs' class
+	expect_is(url %>% import_gtfs(quiet = TRUE), 'gtfs') # should return 'list' object
 	expect_warning(not_zip %>% import_gtfs) # not zip file warning
 
 	# valid path check

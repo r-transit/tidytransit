@@ -2,7 +2,7 @@ library(gtfsr)
 context('Mapping GTFS objects')
 
 not_working <- function() {
-	url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
+	url <- "http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip"
 	r <- httr::GET(url)
 	r$status_code != 200
 }
@@ -16,18 +16,36 @@ check_url <- function() {
 # gtfs_map_*()
 test_that('Mapping single stops and routes', {
 
-	url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
-	zip <- get_feed(url, quiet=TRUE)
+	url <- "http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip"
+	gtfs_obj <- url %>% import_gtfs(quiet=TRUE)
 
-	# non-specified path
-	expect_true(dir.exists(unzip_gtfs_files2(zip))) # unzips to folder
-	expect_warning(unzip_gtfs_files(zip, quiet=TRUE)) # folder already warning
+	yes_stop_id <- "778070"
+	not_stop_id1 <- 12345
+	not_stop_id2 <- "SUPBRO"
 
-	# specified path
-	dir <- tempdir()
-	zip <- get_feed2(url, path = dir)
-	expect_true(file.exists(zip)) # zip file is found
-	expect_true(dir.exists(unzip_gtfs_files2(zip))) # unzips to folder
-	expect_warning(unzip_gtfs_files(zip, quiet = TRUE)) # folder already exists warning
+	yes_route_id <- "1693"
+	not_route_id1 <- 12345
+	not_route_id2 <- "SUPBRO"
+
+	# map_gtfs_stop()
+	expect_is(map_gtfs_stop(gtfs_obj, yes_stop_id), 'leaflet') # leaflet check
+	expect_error(map_gtfs_stop(gtfs_obj, stop_id = not_stop_id1))
+	expect_error(map_gtfs_stop(gtfs_obj, stop_id = not_stop_id2))
+	expect_error(map_gtfs_stop(gtfs_obj = 1234, stop_id = not_stop_id1))
+	expect_error(map_gtfs_stop(gtfs_obj = 1234, stop_id = not_stop_id2))
+
+	# map_gtfs_route_stops()
+	expect_is(map_gtfs_route_stops(gtfs_obj, yes_route_id), 'leaflet') # leaflet check
+	expect_error(map_gtfs_route_stops(gtfs_obj, route_id = not_route_id1))
+	expect_error(map_gtfs_route_stops(gtfs_obj, route_id = not_route_id2))
+	expect_error(map_gtfs_route_stops(gtfs_obj = 1234, route_id = not_route_id1))
+	expect_error(map_gtfs_route_stops(gtfs_obj = 1234, route_id = not_route_id2))
+
+	# map_gtfs_route_shape()
+	expect_is(map_gtfs_route_shape(gtfs_obj, yes_route_id), 'leaflet') # leaflet check
+	expect_error(map_gtfs_route_shape(gtfs_obj, route_id = not_route_id1))
+	expect_error(map_gtfs_route_shape(gtfs_obj, route_id = not_route_id2))
+	expect_error(map_gtfs_route_shape(gtfs_obj = 1234, route_id = not_route_id1))
+	expect_error(map_gtfs_route_shape(gtfs_obj = 1234, route_id = not_route_id2))
 
 })

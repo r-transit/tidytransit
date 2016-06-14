@@ -24,4 +24,5 @@ valid_url <- function(url) {
 }
 
 #' Define magrittr pipe
+#' @export
 `%>%` <- magrittr::`%>%`
