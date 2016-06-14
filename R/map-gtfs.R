@@ -35,7 +35,7 @@ map_gtfs_stop <- function(gtfs_obj, stop_id) {
 	m <- stop %>%
 		leaflet::leaflet() %>%
 		leaflet::addTiles() %>%
-		leaflet::addMarkers(popup = stop$name, lat = stp$lat, lng = stop$lng)
+		leaflet::addMarkers(popup = stop$name, lat = stop$lat, lng = stop$lng)
 	m
 
 }
@@ -48,7 +48,7 @@ map_gtfs_stop <- function(gtfs_obj, stop_id) {
 #' @return Leaflet map object with all stop lat/long values plotted for a route.
 #' @export
 
-map_gtfs_all_stops_in_route <- function(gtfs_obj, route_id) {
+map_gtfs_route_stops <- function(gtfs_obj, route_id) {
 
 	stopifnot(class(gtfs_obj) == 'gtfs', !is.null(gtfs_obj$stops_df), !is.null(gtfs_obj$routes_df))
 
@@ -104,7 +104,7 @@ map_gtfs_all_stops_in_route <- function(gtfs_obj, route_id) {
 #' @return Leaflet map object with all stop lat/long values plotted for a route.
 #' @export
 
-map_gtfs_shape_of_route <- function(gtfs_obj, route_id, include_stops = TRUE) {
+map_gtfs_route_shape <- function(gtfs_obj, route_id, include_stops = TRUE) {
 
 	stopifnot(class(gtfs_obj) == 'gtfs', !is.null(gtfs_obj$stops_df), !is.null(gtfs_obj$routes_df))
 
