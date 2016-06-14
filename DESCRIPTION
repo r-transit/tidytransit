@@ -15,7 +15,8 @@ Imports:
     httr,
     magrittr,
     stringr,
-    leaflet
+    leaflet,
+    stplanr
 Suggests:
     testthat,
     knitr,
