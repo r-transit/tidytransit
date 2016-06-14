@@ -53,6 +53,7 @@ map_gtfs_route_stops <- function(gtfs_obj, route_id) {
 	stopifnot(class(gtfs_obj) == 'gtfs', !is.null(gtfs_obj$stops_df), !is.null(gtfs_obj$routes_df))
 
 	id <- route_id
+	rm('route_id')
 
 	# extract vector of all trips matching route_id
 	trip_ids <- gtfs_obj$trips_df %>%
@@ -60,7 +61,7 @@ map_gtfs_route_stops <- function(gtfs_obj, route_id) {
 		dplyr::select(trip_id) %>%
 		magrittr::extract2(1)
 
-	if(dim(trips)[1] == 0) {
+	if(length(trip_ids) == 0) {
 		warn <- "No trips for Route ID '%s' were found. NULL is returned" %>% sprintf(id)
 		warning(warn)
 		return(NULL)
@@ -71,7 +72,7 @@ map_gtfs_route_stops <- function(gtfs_obj, route_id) {
 		dplyr::slice(which(trip_id %in% trip_ids)) %>%
 		dplyr::select(stop_id) %>%
 		unique %>%
-		extract2(1)
+		magrittr::extract2(1)
 
 	stops <- gtfs_obj$stops_df %>%
 		dplyr::slice(which(stop_id %in% possible_stops)) %>%
@@ -109,6 +110,7 @@ map_gtfs_route_shape <- function(gtfs_obj, route_id, include_stops = TRUE) {
 	stopifnot(class(gtfs_obj) == 'gtfs', !is.null(gtfs_obj$stops_df), !is.null(gtfs_obj$routes_df))
 
 	id <- route_id
+	rm('route_id')
 
 	# extract vector of all trips matching route_id
 	shape_ids <- gtfs_obj$trips_df %>%
@@ -117,7 +119,7 @@ map_gtfs_route_shape <- function(gtfs_obj, route_id, include_stops = TRUE) {
 		magrittr::extract2(1) %>%
 		unique
 
-	if(dim(shape_ids)[1] == 0) {
+	if(length(shape_ids) == 0) {
 		s <- "No shapes for Route ID '%s' were found. NULL is returned" %>% sprintf(id)
 		stop(s)
 	}
@@ -152,7 +154,7 @@ map_gtfs_route_shape <- function(gtfs_obj, route_id, include_stops = TRUE) {
             dplyr::do_("`rownames<-`(.,.$shape_id)") %>%
             as.data.frame
 
-  gtfslines <- sp::SpatialLinesDataFrame(sp_lines, data = df) %>% gSimplify(.00001)
+  gtfslines <- sp::SpatialLinesDataFrame(sp_lines, data = df) %>% rgeos::gSimplify(.00001)
 
 
   if(include_stops) {
@@ -163,7 +165,7 @@ map_gtfs_route_shape <- function(gtfs_obj, route_id, include_stops = TRUE) {
 			dplyr::select(trip_id) %>%
 			magrittr::extract2(1)
 
-		if(dim(trips)[1] == 0) {
+		if(length(trip_ids) == 0) {
 			s <- "No trips for Route ID '%s' were found. NULL is returned" %>% sprintf(id)
 			stop(s)
 		}
@@ -173,7 +175,7 @@ map_gtfs_route_shape <- function(gtfs_obj, route_id, include_stops = TRUE) {
 			dplyr::slice(which(trip_id %in% trip_ids)) %>%
 			dplyr::select(stop_id) %>%
 			unique %>%
-			extract2(1)
+			magrittr::extract2(1)
 
 		stops <- gtfs_obj$stops_df %>%
 			dplyr::slice(which(stop_id %in% possible_stops)) %>%
