@@ -2,9 +2,12 @@ library(gtfsr)
 context('Mapping GTFS objects')
 
 not_working <- function() {
-	url <- "http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip"
-	r <- httr::GET(url)
-	r$status_code != 200
+	url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
+	connecting <- function(url) {
+		r <- base::try(httr::GET(url, httr::timeout(3)))
+		if(!assertthat::is.error(r)) r$status_code == 200 else FALSE
+	}
+	connecting(url)
 }
 
 check_url <- function() {

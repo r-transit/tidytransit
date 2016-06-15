@@ -35,8 +35,6 @@ First things first, load the `gtfsr` package and set your key to access the Tran
 
 ```{r setup, warning=TRUE, message=FALSE, echo=TRUE, eval=TRUE}
 
-# library(gtfsr)
-devtools::install_github("ropenscilabs/gtfsr")
 library(gtfsr)
 library(magrittr)
 library(dplyr)
@@ -128,7 +126,7 @@ From inspecting the output from `attr(df, 'problems')` and comparing it to just 
 
 ## 3. Validating the file and fields structure of a GTFS feed
 
-GTFS feeds contain numerous *required* and *optional* files. And within each of these files, there are also *required* and *optional* fields (variables). (For more detailed information, please see Google's [GTFS Feed Specification Reference](https://developers.google.com/transit/gtfs/reference).)
+GTFS feeds contain numerous *required* and *optional* files. And within each of these files, there are also *required* and *optional* fields (variables). (For more detailed information, please see Google's [GTFS Feed Specification Reference](https://developers.google.com/transit/gtfs/reference). Information on non-standard GTFS files---specifically `timetables-new.txt` and `timetable_stop_order-new.txt`---can be found at the [GTFS-to-HTML repo](https://github.com/brendannee/gtfs-to-html).
 
 After one has successfully downloaded and unpacked a transit feed, there is no guarantee that it satisfies the requirements of a valid GTFS feed. For example, an unpacked directory may contain all the properly named text files (e.g. `agency.txt`, `stops.txt`, etc), but it could be that within each text file there is no data or that some of the required fields (or variables) (e.g. `stop_id`) are missing.
 

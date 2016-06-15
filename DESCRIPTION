@@ -15,6 +15,7 @@ Imports:
     httr,
     magrittr,
     stringr,
+    assertthat,
     leaflet,
     sp,
     rgeos

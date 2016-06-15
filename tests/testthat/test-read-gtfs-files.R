@@ -3,8 +3,11 @@ context('Reading GTFS files/zip directory')
 
 not_working <- function() {
 	url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
-	r <- httr::GET(url)
-	r$status_code != 200
+	connecting <- function(url) {
+		r <- base::try(httr::GET(url, httr::timeout(3)))
+		if(!assertthat::is.error(r)) r$status_code == 200 else FALSE
+	}
+	connecting(url)
 }
 
 check_url <- function() {
@@ -53,9 +56,6 @@ test_that('Reading GTFS files from unzipped folder', {
 	files <- list.files(folder, full.names = TRUE)
 
 	expect_is(read_gtfs2(folder, delete_files = FALSE), 'gtfs')
-
-	file.remove(files[1]) # remove agency.txt
-	expect_null(read_gtfs2(folder)) # no 'agency.txt' found, returns NULL
 
 	# valid path check
 	path <- "#!:D"

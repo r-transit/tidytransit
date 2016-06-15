@@ -73,10 +73,12 @@ get_feed <- function(url, path=NULL, quiet=FALSE) {
   }
 
   # check if url links to a zip file
-  if(!valid_url(url)) {
+  valid <- valid_url(url)
+  if(!all(valid)) {
     if(!quiet) {
-      warn <- sprintf("Link '%s' is invalid; url must link to a zip file and connect. NULL was returned.", url)
-      warning(warn)
+      warn1 <- sprintf("Link '%s' is invalid; failed to connect. NULL was returned.", url)
+      warn2 <- sprintf("Link '%s' is invalid; URL must link to a zip file. NULL was returned.", url)
+      warning(c(warn1, warn2)[!valid])
     }
     return(NULL)
   }
@@ -88,7 +90,12 @@ get_feed <- function(url, path=NULL, quiet=FALSE) {
 
   # Get gtfs zip if url can be reach
   if(httr::status_code(r) == 200) {
-    download.file(url, temp, quiet = quiet)
+    check <- try(utils::download.file(url, temp, quiet = quiet), silent=TRUE)
+    if(check %>% assertthat::is.error()) {
+      warn <- sprintf("Link '%s' failed to download. NULL was returned.", url)
+      warning(warn)
+      return(NULL)
+    }
   } else {
     warn <- sprintf("Link '%s' cannot be reached. NULL was returned.", url)
     warning(warn)

@@ -11,14 +11,13 @@ rmfolder <- function(folder) {
 
 valid_url <- function(url) {
 	connecting <- function(url) {
-		r <- httr::GET(url)
-		r$status_code == 200
+		r <- base::try(httr::GET(url, httr::timeout(3)), silent = TRUE)
+		if(!assertthat::is.error(r)) r$status_code == 200 else FALSE
 	}
 
 	cond1 <- connecting(url) # can connect
-	cond2 <- grepl('^http.*zip$', url, ignore.case = TRUE) # full url
-	cond3 <- grepl('\\.zip$', basename(url)) # valid zip file
+	cond2 <- grepl('\\.zip$', basename(url)) # valid zip file
 
-	if(all(cond1, cond2, cond3)) TRUE else FALSE
+	return(c(cond1, cond2))
 
 }

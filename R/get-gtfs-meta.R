@@ -102,6 +102,29 @@ get_gtfs_meta <- function() {
   feed_info$coltype <- rep('c', length(feed_info$field))
   feed_info$coltype[feed_info$field %in% c('exception_type')] <- 'i'
 
+  # timetables
+  assign("timetables", list())
+  timetables$field <- c("timetable_id", "route_id", "direction_id", "start_date", "end_date", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "route_label", "service_notes", "direction_label", "orientation")
+  timetables$spec <- rep('req', length(timetables$field))
+  timetables$spec[timetables$field %in% c("route_label", "service_notes", "direction_label", "orientation")] <- 'opt'
+  timetables$coltype <- rep('c', length(timetables$field))
+  timetables$coltype[timetables$field %in% c("direction_id", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday")] <- 'i'
+
+  # timetable_stop_order
+  assign("timetable_stop_order", list())
+  timetable_stop_order$field <- c("timetable_id", "stop_id", "stop_sequence", "stop_name", "connected_routes")
+  timetable_stop_order$spec <- rep('req', length(timetable_stop_order$field))
+  timetable_stop_order$spec[timetable_stop_order$field %in% c("stop_name", "connected_routes")] <- 'opt'
+  timetable_stop_order$coltype <- rep('c', length(timetable_stop_order$field))
+  timetable_stop_order$coltype[timetable_stop_order$field %in% c("stop_sequence")] <- 'i'
+
+  # route_directions
+  assign("route_directions", list())
+  route_directions$field <- c("route_id", "direction_id", "direction_name")
+  route_directions$spec <- rep('req', length(route_directions$field))
+  route_directions$coltype <- rep('c', length(route_directions$field))
+  route_directions$coltype[route_directions$field %in% c("direction_id")] <- 'i'
+
   environment()
 
 }

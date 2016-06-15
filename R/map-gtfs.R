@@ -136,18 +136,18 @@ map_gtfs_route_shape <- function(gtfs_obj, route_id, include_stops = TRUE) {
 
 	# code was taken from `stplanr::gtfs2sldf` (package::function)
 	sp_lines <- (gtfsshape %>% dplyr::rename(lat = shape_pt_lat, lon = shape_pt_lon) %>%
-		dplyr::group_by_(~shape_id) %>%
-    dplyr::arrange_(~shape_pt_sequence) %>% dplyr::do_(gtfsline = "sp::Lines(sp::Line(as.matrix(.[,c('lon','lat')])),unique(.$shape_id))") %>%
+		dplyr::group_by(shape_id) %>%
+    dplyr::arrange(shape_pt_sequence) %>% dplyr::do_(gtfsline = "sp::Lines(sp::Line(as.matrix(.[,c('lon','lat')])),unique(.$shape_id))") %>%
     dplyr::ungroup() %>% dplyr::do_(gtfsline = "sp::SpatialLines(.[[2]], proj4string = sp::CRS('+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs'))")) %>%
 		magrittr::extract2('gtfsline') %>%
 		magrittr::extract2(1)
 
 	df <- gtfstrips %>% dplyr::inner_join(gtfsroutes) %>%
-            dplyr::distinct_(~route_id, ~shape_id, ~route_short_name,
-                ~route_long_name, ~route_desc, ~route_type, ~route_color,
-                ~route_text_color, ~agency_id) %>% dplyr::select_(~route_id,
-            ~shape_id, ~route_short_name, ~route_long_name, ~route_desc,
-            ~route_type, ~route_color, ~route_text_color, ~agency_id) %>%
+            dplyr::distinct(route_id, shape_id, route_short_name,
+                route_long_name, route_desc, route_type, route_color,
+                route_text_color, agency_id) %>% dplyr::select(route_id,
+            shape_id, route_short_name, route_long_name, route_desc,
+            route_type, route_color, route_text_color, agency_id) %>%
             dplyr::inner_join(gtfsagency) %>%
             dplyr::do_("`rownames<-`(.,.$shape_id)") %>%
             as.data.frame
@@ -201,5 +201,20 @@ map_gtfs_route_shape <- function(gtfs_obj, route_id, include_stops = TRUE) {
 		m %>%
 			leaflet::addLegend(colors = c('blue'), labels = c("Route"))
 	}
+
+}
+
+
+#' map all routes for an agency
+#'
+#' @param gtfs_obj A GTFS list object with components agency_df, etc.
+#' @param agency_id Character. Provide the ID of the agency whose routes are being mapped.
+#'
+#' @return Leaflet map object with all routes plotted for given agency ID.
+#' @export
+
+map_gtfs_agency_routes <- function(gtfs_obj, agency_id) {
+
+	# TODO
 
 }

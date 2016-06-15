@@ -14,9 +14,15 @@ import_gtfs <- function(paths, local = FALSE, quiet = FALSE) {
 
     path <- get_feed(url = url, quiet = quiet)
 
-    if(is.null(path)) return(NULL) else {
-      zip_dir <- unzip_gtfs_files(zipfile = path, quiet = quiet)
+    # check path
+    check <- try(normalizePath(path), silent = TRUE)
+    if(assertthat::is.error(check)) {
+      warn <- 'Invalid file path. NULL is returned.'
+      if(!quiet) warning(warn)
+      return(NULL)
     }
+
+    zip_dir <- unzip_gtfs_files(zipfile = path, quiet = quiet)
 
     read_gtfs(zip_dir, quiet = quiet)
   }

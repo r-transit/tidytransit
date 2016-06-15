@@ -3,8 +3,11 @@ context('Importing a GTFS object')
 
 not_working <- function() {
 	url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
-	r <- httr::GET(url)
-	r$status_code != 200
+	connecting <- function(url) {
+		r <- base::try(httr::GET(url, httr::timeout(3)))
+		if(!assertthat::is.error(r)) r$status_code == 200 else FALSE
+	}
+	connecting(url)
 }
 
 check_url <- function() {
@@ -29,6 +32,6 @@ test_that('Import a GTFS object from URL', {
 
 	# valid path check
 	path <- "#!:D"
-	expect_error(path %>% import_gtfs) # invalid path
+	expect_warning(path %>% import_gtfs) # invalid path
 
 })

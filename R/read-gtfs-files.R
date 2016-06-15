@@ -20,6 +20,14 @@ unzip_gtfs_files <- function(zipfile, delete_zip = FALSE, move_path = NULL, quie
 
   # set file path based on options
   if(is.null(move_path)) f <- zipfile else f <- move_path
+
+  # check path
+  if(try(path.expand(f), silent = TRUE) %>% assertthat::is.error()) {
+    warn <- 'Invalid file path. NULL is returned.'
+    warning(warn)
+    return(NULL)
+  }
+
   f <- normalizePath(f)
 
   if(!is.null(move_path)) {
@@ -37,14 +45,15 @@ unzip_gtfs_files <- function(zipfile, delete_zip = FALSE, move_path = NULL, quie
     dir.create(ex_dir)
   }
 
-  unzip(f, exdir = ex_dir)
+  utils::unzip(f, exdir = ex_dir)
 
   if(delete_zip) file.remove(f)
 
 
   if(!quiet) {
-    message(sprintf("unzipped the following files to directory '%s'", ex_dir))
+    message(sprintf("Unzipped the following files to directory '%s'...", ex_dir))
     list.files(ex_dir) %>% print
+    message('...done.\n\n')
   }
 
   return(ex_dir)
@@ -64,19 +73,17 @@ unzip_gtfs_files <- function(zipfile, delete_zip = FALSE, move_path = NULL, quie
 
 read_gtfs <- function(exdir, delete_files = TRUE, quiet = FALSE) {
 
-  exdir <- normalizePath(exdir)
-  if(!dir.exists(exdir)) stop('Not a valid directory.')
+  # check path
+  check <- try(normalizePath(exdir), silent=TRUE)
+  if(assertthat::is.error(check)) {
+    warn <- 'Invalid file path. NULL is returned.'
+    if(!quiet) warning(warn)
+    return(NULL)
+  }
 
   all_files <- list.files(exdir, full.names = TRUE)
   is_txt <- grepl(pattern = '.txt', x = all_files)
   all_txt <- all_files[is_txt]
-
-  if(!any(grepl('agency.txt', all_files))) {
-    if(!quiet) message("\nRequired file 'agency.txt' not found. NULL is returned.\n\n")
-    return(NULL)
-  }
-
-  # something_df <- dplyr::data_frame(a = 1:5)
 
   exec_env <- environment()
 
@@ -110,13 +117,12 @@ read_gtfs <- function(exdir, delete_files = TRUE, quiet = FALSE) {
 #' @param assign_envir Environment Object. Option of where to assign dataframes.
 #' @param quiet Boolean. Whether to output messages and files found in folder.
 
-
 read_sub_gtfs <- function(file_path, assign_envir, quiet = FALSE) {
 
   split_path <- strsplit(file_path, '/')
   file_name <- split_path[[1]][length(split_path[[1]])]
 
-  prefix <- gsub('.txt', '', file_name)
+  prefix <- gsub('.txt|-new', '', file_name) # suffix '.*-new.txt' comes from trillium data
   prefix <- gsub('\\-|\\.', '_', prefix)
   df_name <- paste0(prefix, '_df')
 

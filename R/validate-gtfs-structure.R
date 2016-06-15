@@ -18,7 +18,7 @@ validate_files_provided <- function(gtfs_obj) {
 
   # Per spec, these are the required and optional files
   all_req_files <- c('agency', 'stops', 'routes', 'trips', 'stop_times', 'calendar')
-  all_opt_files <- c('calendar_dates', 'fare_attributes', 'fare_rules', 'shapes', 'frequencies', 'transfers', 'feed_info')
+  all_opt_files <- c('calendar_dates', 'fare_attributes', 'fare_rules', 'shapes', 'frequencies', 'transfers', 'feed_info', 'timetables', 'timetable_stop_order', 'route_directions')
   all_spec_files <- c(all_req_files, all_opt_files)
 
   # Get the names of all the dfs in the list for a gtfs_obj
@@ -48,15 +48,13 @@ validate_files_provided <- function(gtfs_obj) {
 
 make_var_val <- function() {
 
-  for(n in ls(get_gtfs_meta())) {
-    x <- paste0(n, '_df')
-    df <- as.data.frame(get(n, envir = get_gtfs_meta()), stringsAsFactors=FALSE) %>% dplyr::tbl_df(.)
-    df$file <- n
-    assign(x, NULL) # NULL out first
-    assign(x, df)
-  }
+  nms <- get_gtfs_meta() %>% names # get names of each envir element
 
-  all_df <- dplyr::bind_rows(agency_df, stops_df, routes_df, trips_df, stop_times_df, calendar_df, calendar_dates_df, fare_attributes_df, fare_rules_df, shapes_df, frequencies_df, transfers_df, feed_info_df)
+  all_df <- get_gtfs_meta() %>%
+    lapply(. %>% as.data.frame(stringsAsFactors=FALSE) %>% dplyr::tbl_df(.)) # convert list data to tbl_df
+
+  all_df <- mapply(function(x,y) dplyr::mutate(.data=x, file = y), x = all_df, y = nms, SIMPLIFY=FALSE) %>%
+    dplyr::bind_rows() # assign new variable 'file' to each tbl_df based on names
 
   return(all_df)
 
