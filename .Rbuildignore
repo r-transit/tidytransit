@@ -4,3 +4,4 @@
 ^\.Rprofile$
 ^beta/
 ^temp-files/
+^vignettes/*_cache/
