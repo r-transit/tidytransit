@@ -22,7 +22,3 @@ valid_url <- function(url) {
 	if(all(cond1, cond2, cond3)) TRUE else FALSE
 
 }
-
-#' Define magrittr pipe
-#' @export
-`%>%` <- magrittr::`%>%`
