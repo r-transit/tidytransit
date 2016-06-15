@@ -11,7 +11,7 @@
 
 
 #' Get list of all available feeds from transitfeeds API
-#' @import httr dplyr magrittr stringr leaflet
+#' @importFrom  magrittr "%>%"
 #' @return Result of httr::GET
 #'
 #' @export
@@ -116,7 +116,7 @@ filter_feedlist <- function(feedlist_df) {
   zip_indx <- feedlist_df$url_d %>% sapply(. %>% basename %>% grepl('\\.zip$', .), USE.NAMES = FALSE)
   message(paste0(sum(!zip_indx), ' feeds did not provide downloadable zip file URLs of ', nrow(feedlist_df), ' feeds provided. ', sum(zip_indx), ' returned.'))
 
-  feedlist_df <- feedlist_df %>% slice(which(zip_indx))
+  feedlist_df <- feedlist_df %>% dplyr::slice(which(zip_indx))
 
   return(feedlist_df)
 

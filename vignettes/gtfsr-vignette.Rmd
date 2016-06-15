@@ -234,13 +234,13 @@ west_chapel_stop_id
 
 Now, we can quickly map the stop using the function `map_gtfs_stop()`.
 
-```{r duke-map, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE}
+```{r duke-map, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, cache=FALSE}
 map_gtfs_stop(gtfs_obj = duke_gtfs_obj, stop_id = west_chapel_stop_id)
 ```
 
 Next, let's map out all the stops and shape for the popular bus route *C1 East-West Loop*. We first find the route before mapping all the stops using `map_gtfs_route_stops()` and the shape using `map_gtfs_route_shape()`.
 
-```{r duke-map1, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE}
+```{r duke-map1, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, cache=FALSE}
 C1_route_id <- duke_gtfs_obj[['routes_df']] %>%
     slice(which(grepl('C1', route_short_name, ignore.case=TRUE))) %>% # search for "C1"
     extract2('route_id') # extract just the datum in route_id

@@ -32,9 +32,7 @@ validate_files_provided <- function(gtfs_obj) {
 
   all_files <- c(all_spec_files, extra_files)
 
-  prov_df <- dplyr::data_frame(file = all_files, spec = c(rep('req', times = length(all_req_files)),
-                                                   rep('opt', times = length(all_opt_files)),
-                                                   rep('ext', times = length(extra_files))))
+  prov_df <- dplyr::data_frame(file = all_files, spec = c(rep('req', times = length(all_req_files)), rep('opt', times = length(all_opt_files)), rep('ext', times = length(extra_files))))
 
   prov_df <- prov_df %>%
     dplyr::mutate(provided_status = ifelse(!(file %in% feed_names_file), 'no',
@@ -52,14 +50,13 @@ make_var_val <- function() {
 
   for(n in ls(get_gtfs_meta())) {
     x <- paste0(n, '_df')
-    df <- as.data.frame(get(n, envir = get_gtfs_meta()), stringsAsFactors=FALSE) %>% tbl_df
+    df <- as.data.frame(get(n, envir = get_gtfs_meta()), stringsAsFactors=FALSE) %>% dplyr::tbl_df(.)
     df$file <- n
     assign(x, NULL) # NULL out first
     assign(x, df)
   }
 
-  all_df <- dplyr::bind_rows(agency_df, stops_df, routes_df, trips_df, stop_times_df, calendar_df, calendar_dates_df,
-                      fare_attributes_df, fare_rules_df, shapes_df, frequencies_df, transfers_df, feed_info_df)
+  all_df <- dplyr::bind_rows(agency_df, stops_df, routes_df, trips_df, stop_times_df, calendar_df, calendar_dates_df, fare_attributes_df, fare_rules_df, shapes_df, frequencies_df, transfers_df, feed_info_df)
 
   return(all_df)
 
@@ -216,9 +213,9 @@ validate_gtfs_structure <- function(gtfs_obj, return_gtfs_obj = TRUE, quiet = FA
 
   all_df <- validate_vars_provided(prov_df, gtfs_obj = gtfs_obj)
 
-  probs_subset <- all_df %>% filter(validation_status == 'problem') # subset of only problems
+  probs_subset <- all_df %>% dplyr::filter(validation_status == 'problem') # subset of only problems
 
-  ok_subset <- all_df %>% filter(validation_status != 'problem') # subset of ok values
+  ok_subset <- all_df %>% dplyr::filter(validation_status != 'problem') # subset of ok values
 
   validate_list <- list(all_req_files = !('missing_req_file' %in% probs_subset$validation_details),
                         all_req_fields_in_req_files = !('missing_req_field' %in% probs_subset$validation_details),

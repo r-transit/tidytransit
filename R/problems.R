@@ -4,7 +4,8 @@
 # - these "problems" are inspired (stolen) from those in the transitfeed python program by Google
 
 #' Define new_problems environment, which contains functions used in validating GTFS data.
-new_problems <- function(gtfs_obj = NULL) {
+
+new_problems <- function() {
 
 	unrecognized_column = function() {
 

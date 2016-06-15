@@ -56,7 +56,7 @@ test_that('Validate files and variables of a GTFS object', {
 	mat <- gtfs_list %>%
 			sapply( . %>%
 				attr(which='validate') %>%
-				extract(1:3) %>%
+				magrittr::extract(1:3) %>%
 				sapply(. %>% class))
 	dimnames(mat) <- NULL
 	expect_identical(mat, x) # check first 3 fields are logical
@@ -66,7 +66,7 @@ test_that('Validate files and variables of a GTFS object', {
 	mat <- gtfs_list %>%
 			sapply( . %>%
 				attr(which='validate') %>%
-				extract(x) %>%
+				magrittr::extract(x) %>%
 				names)
 	expect_identical(mat, matrix(rep(x, n), length(x), n)) # check that it has required names
 
