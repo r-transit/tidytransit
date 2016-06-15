@@ -10,4 +10,6 @@ packrat/lib*/
 vignettes/*_cache/
 R/.Rapp.history
 vignettes/gtfsr-vignette.html
-
+beta/
+driver.R
+temp-files/

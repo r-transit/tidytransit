@@ -318,6 +318,7 @@ tfeeds_parse_getlocation <- function(req) {
 #' @param query Character. Other query strings.
 #' @param version Version of API as character that can be appended as part of path, defaults to v1
 #' @param key API key, defaults to gtfs_api_key
+#' @param ... any httr::GET options to pass-through
 #'
 #' @return Result of httr::GET
 #'

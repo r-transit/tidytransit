@@ -5,3 +5,4 @@
 ^beta/
 ^temp-files/
 ^vignettes/*_cache/
+^*.R
