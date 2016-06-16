@@ -12,7 +12,6 @@
 
 #' Get list of all available feeds from transitfeeds API
 #' @importFrom  magrittr "%>%"
-#' @importFrom  htmltools htmlEscape
 #' @return Result of httr::GET
 #'
 #' @export
