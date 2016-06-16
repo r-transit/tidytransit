@@ -12,6 +12,7 @@
 
 #' Get list of all available feeds from transitfeeds API
 #' @importFrom  magrittr "%>%"
+#' @importFrom  htmltools htmlEscape
 #' @return Result of httr::GET
 #'
 #' @export
@@ -74,11 +75,10 @@ get_feed <- function(url, path=NULL, quiet=FALSE) {
 
   # check if url links to a zip file
   valid <- valid_url(url)
-  if(!all(valid)) {
+  if(!valid) {
     if(!quiet) {
       warn1 <- sprintf("Link '%s' is invalid; failed to connect. NULL was returned.", url)
-      warn2 <- sprintf("Link '%s' is invalid; URL must link to a zip file. NULL was returned.", url)
-      warning(c(warn1, warn2)[!valid])
+      warning(warn1)
     }
     return(NULL)
   }
@@ -107,28 +107,39 @@ get_feed <- function(url, path=NULL, quiet=FALSE) {
 
 }
 
-#' Filter a feedlist to include only valid urls (ending in .zip)
+#' Filter a feedlist to include only valid urls (ending in .zip and connect)
 #'
 #' @param feedlist_df A dataframe of feed metadata such as output from get_feedlist
+#' @param test_url Boolean. Whether to test if the url connects or not. FALSE by default (can take a while).
 #'
 #' @return A dataframe of feed metadata for all feeds in input that are downloadable
 #'
 #' @export
 
-filter_feedlist <- function(feedlist_df) {
+filter_feedlist <- function(feedlist_df, test_url = FALSE) {
 
   if (!is.data.frame(feedlist_df)) stop('Invalid feedlist_df input.  Must be a dataframe.')
   if (!('url_d' %in% names(feedlist_df))) stop('No valid URLs found - expected url_d column in feedlist_df.')
 
-  zip_indx <- feedlist_df$url_d %>% sapply(. %>% basename %>% grepl('\\.zip$', .), USE.NAMES = FALSE)
-  message(paste0(sum(!zip_indx), ' feeds did not provide downloadable zip file URLs of ', nrow(feedlist_df), ' feeds provided. ', sum(zip_indx), ' returned.'))
+  indx <- feedlist_df$url_d %>%
+    sapply(. %>% valid_url(test_url = test_url) %>% all, USE.NAMES = FALSE)
+  message(
+    paste0(
+      sum(!indx),
+      ' of ',
+      nrow(feedlist_df),
+      ' feeds did not provide valid URLs. ',
+      sum(indx),
+      ' returned.'
+    )
+  )
 
-  feedlist_df <- feedlist_df %>% dplyr::slice(which(zip_indx))
+  feedlist_df <- feedlist_df %>%
+    dplyr::slice(which(indx))
 
   return(feedlist_df)
 
 }
-
 
 
 #' Get all locations available from the transitfeeds API (getLocations)

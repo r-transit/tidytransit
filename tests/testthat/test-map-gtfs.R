@@ -51,4 +51,11 @@ test_that('Mapping single stops and routes', {
 	expect_error(map_gtfs_route_shape(gtfs_obj = 1234, route_id = not_route_id1))
 	expect_error(map_gtfs_route_shape(gtfs_obj = 1234, route_id = not_route_id2))
 
+	# map_gtfs_agency_routes()
+	expect_is(map_gtfs_agency_routes(gtfs_obj, 240), 'leaflet') # leaflet check
+	expect_error(map_gtfs_agency_routes(gtfs_obj, agency_id = not_route_id1))
+	expect_error(map_gtfs_agency_routes(gtfs_obj, agency_id = not_route_id2))
+	expect_error(map_gtfs_agency_routes(gtfs_obj = 1234, agency_id = not_route_id1))
+	expect_error(map_gtfs_agency_routes(gtfs_obj = 1234, route_id = not_route_id2))
+
 })

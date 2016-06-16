@@ -43,6 +43,13 @@ import_gtfs <- function(paths, local = FALSE, quiet = FALSE) {
     data_list <- paths %>% lapply(. %>% feed_flow)
   }
 
+  # show note, which is suppressed in read_gtfs
+  if(!quiet) {
+    message("\n")
+    message('NOTE: Parsing errors and warnings while importing data can be extracted from any given dataframe with `attr(df, "problems")`.')
+    message("\n")
+  }
+
   if(length(data_list) > 1) return(data_list) else data_list[[1]]
 
 }

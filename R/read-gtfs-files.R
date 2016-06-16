@@ -53,7 +53,6 @@ unzip_gtfs_files <- function(zipfile, delete_zip = FALSE, move_path = NULL, quie
   if(!quiet) {
     message(sprintf("Unzipped the following files to directory '%s'...", ex_dir))
     list.files(ex_dir) %>% print
-    message('...done.\n\n')
   }
 
   return(ex_dir)
@@ -89,12 +88,6 @@ read_gtfs <- function(exdir, delete_files = TRUE, quiet = FALSE) {
 
   lapply(all_files, function(x) read_sub_gtfs(x, assign_envir = exec_env, quiet = quiet))
 
-  if(!quiet) {
-    message("\n")
-    message('NOTE: Parsing errors and warnings while importing data can be extracted from any given dataframe with `attr(df, "problems")`.')
-    message("\n")
-  }
-
   ls_envir <- ls(envir = exec_env)
 
   df_list <- ls_envir[grepl(pattern = '_df', x = ls_envir)]
@@ -105,6 +98,9 @@ read_gtfs <- function(exdir, delete_files = TRUE, quiet = FALSE) {
     file.remove(all_files)
     file.remove(exdir)
   }
+
+  if(!quiet) message('...done.\n\n')
+
 
   class(gtfs_list) <- 'gtfs'
   return(gtfs_list)

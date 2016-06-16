@@ -11,7 +11,7 @@ vignette: >
 ---
 
 ```{r init, warning=FALSE, message=FALSE, echo=FALSE, eval=TRUE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width=7.3, fig.height=5)
+knitr::opts_chunk$set(collapse = TRUE, cache=FALSE, comment = "#>", fig.width=7.3, fig.height=5)
 ```
 ## 1. Get an GTFS API key
 
@@ -34,7 +34,6 @@ This package can get data from a user-specified URL and is also able to get GTFS
 First things first, load the `gtfsr` package and set your key to access the TransitFeeds API. This example also using the `dplyr` package to manage data frames and `magrittr` for piping.
 
 ```{r setup, warning=TRUE, message=FALSE, echo=TRUE, eval=TRUE}
-
 library(gtfsr)
 library(magrittr)
 library(dplyr)
@@ -43,9 +42,12 @@ options(dplyr.width = Inf) # I like to see all the columns
 set_api_key('2ec1ae29-b8c2-4a03-b96e-126d585233f9') # input your API key here
 ```
 
+
 ### Getting full list of available GTFS feeds
 
-With a valid API key loaded, you can easily get the full list of GTFS feeds using the `get_feedlist` function. What we care most about are the feed GTFS data urls contained in column `url_d` of the feed list. Since we are interested in acquiring the GTFS data (not just the feedlist), we can use the `filter_feedlist` function to return a data frame containing only valid feed urls.
+With a valid API key loaded, you can easily get the full list of GTFS feeds using the `get_feedlist` function. What we care most about are the feed GTFS data urls contained in column `url_d` of the feed list. Since we are interested in acquiring the GTFS data (not just the feedlist), we can use the `filter_feedlist()` function to return a data frame containing only valid feed urls.
+
+_By default, `filter_feedlist()` only checks to make sure each links starts with *http://*. To check the link is actually working, use option `test_url = TRUE`. But beware, this can take a while!_
 
 ```{r feedlist, warning=TRUE, message=TRUE, echo=TRUE, eval=TRUE}
 feedlist_df <- get_feedlist() # create a data frame of all feeds
@@ -89,10 +91,10 @@ NOTE: Parsing errors and warnings while importing data can be extracted from any
 
 This output was suppressed in the last section to save space given how verbose it is. But the highlighted `NOTE` explains that *if one observes an error or warning during the import process*, one can extract a data frame of problems, which is stored as an attribute for any data frame contained within any `gtfs` object that had a warning output.
 
-As an example, let's extract the data and problems data frames for the 44th url of `feedlist_df`.
+As an example, let's extract the data and problems data frames for the 38th url of `feedlist_df`.
 
 ```{r problems, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, results='hide'}
-url <- feedlist_df %>% slice(44) %>% select(url_d)
+url <- feedlist_df %>% slice(38) %>% select(url_d)
 
 gtfs_obj <- url %>% import_gtfs
 ```
@@ -101,6 +103,7 @@ If you look at the output when creating the `gtfs_obj` object, you should see ou
 
 ```
 ...
+Reading calendar.txt
 Warning: 2 parsing failures.
 row col   expected    actual
   3  -- 10 columns 1 columns
@@ -246,10 +249,13 @@ map_gtfs_route_stops(gtfs_obj = duke_gtfs_obj, route_id = C1_route_id) # map all
 map_gtfs_route_shape(gtfs_obj = duke_gtfs_obj, route_id = C1_route_id) # map route shape with stops
 ```
 
+Finally, we can get visualize all of the routes that make up Duke University's Transit system using `map_gtfs_agency_routes`. Duke University Transit system is made of only one agency (agency `r duke_gtfs_obj$agency_df$agency_id`).
 
+```{r duke-map2, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, cache=FALSE}
+duke_agency_id <- duke_gtfs_obj[['agency_df']]$agency_id
 
-
-
+map_gtfs_agency_routes(gtfs_obj = duke_gtfs_obj, agency_id = duke_agency_id) # map all routes of agency
+```
 
 
 

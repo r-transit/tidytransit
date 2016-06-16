@@ -2,17 +2,19 @@
 % Please edit documentation in R/get-gtfs-feeds.R
 \name{filter_feedlist}
 \alias{filter_feedlist}
-\title{Filter a feedlist to include only valid urls (ending in .zip)}
+\title{Filter a feedlist to include only valid urls (ending in .zip and connect)}
 \usage{
-filter_feedlist(feedlist_df)
+filter_feedlist(feedlist_df, test_url = FALSE)
 }
 \arguments{
 \item{feedlist_df}{A dataframe of feed metadata such as output from get_feedlist}
+
+\item{test_url}{Boolean. Whether to test if the url connects or not. FALSE by default (can take a while).}
 }
 \value{
 A dataframe of feed metadata for all feeds in input that are downloadable
 }
 \description{
-Filter a feedlist to include only valid urls (ending in .zip)
+Filter a feedlist to include only valid urls (ending in .zip and connect)
 }
 
