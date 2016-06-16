@@ -47,7 +47,7 @@ set_api_key('2ec1ae29-b8c2-4a03-b96e-126d585233f9') # input your API key here
 
 With a valid API key loaded, you can easily get the full list of GTFS feeds using the `get_feedlist` function. What we care most about are the feed GTFS data urls contained in column `url_d` of the feed list. Since we are interested in acquiring the GTFS data (not just the feedlist), we can use the `filter_feedlist()` function to return a data frame containing only valid feed urls.
 
-_By default, `filter_feedlist()` only checks to make sure each links starts with *http://*. To check the link is actually working, use option `test_url = TRUE`. But beware, this can take a while!_
+_By default, `filter_feedlist()` only checks to make sure each links starts with *http[s]://*. To check the link is actually working, use option `test_url = TRUE`. But beware, this can take a while!_
 
 ```{r feedlist, warning=TRUE, message=TRUE, echo=TRUE, eval=TRUE}
 feedlist_df <- get_feedlist() # create a data frame of all feeds

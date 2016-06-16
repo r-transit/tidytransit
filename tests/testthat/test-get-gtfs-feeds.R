@@ -18,7 +18,7 @@ check_url <- function() {
 
 get_feed2 <- function(url, path = NULL) get_feed(url, path = path, quiet = TRUE)
 
-filter_feedlist2 <- function(df) suppressMessages(filter_feedlist(df))
+filter_feedlist2 <- function(df) suppressMessages(filter_feedlist(df, test_url = TRUE))
 
 # get_feed()
 test_that('Only one URL imported and is valid', {

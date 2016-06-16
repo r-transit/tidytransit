@@ -27,7 +27,7 @@ valid_url <- function(url, timeout = 5, test_url = TRUE, quiet = TRUE) {
 		}
 	}
 
-	url_cond1 <- grepl('http://.*', url) # valid zip file
+	url_cond1 <- grepl('http[s]?://.*', url) # valid zip file
 
 	# if valid zip file, test to see if anything connects
 	if(test_url) {
