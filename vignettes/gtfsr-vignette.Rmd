@@ -205,11 +205,11 @@ It is important to recall that most GTFS feed files and fields are **optional**.
 
 ## 4. Mapping stops and routes using `gtfsr`
 
-The `gtfsr` has mapping functions---wrapped around functions from the `sp` and `leaflet` packages---designed to help users quickly map GTFS feed spatial data. These functions input `gtfs` objects and then map the desired datum or data.
+The `gtfsr` has mapping functions designed to help users quickly map spatial data that is found within most GTFS feeds. These functions input `gtfs` objects and then map the desired datum or data (stop, route, route networks).
 
 Let's try mapping a stop from a bus route popular with Duke University students---the *C1 East-West Loop*. This route bounces between Duke's East and West campus. The *C1* idles at one of the busiest stops at Duke---the "West Campus Chapel" stop. (This bus stop is located in front of Duke University's iconic gothic Chapel, Duke's most famous landmark.)
 
-First, let's extract a `gtfs` object for Duke University's transit feed.
+First, let's convert Duke University's GTFS transit feed into a `gtfs` object.
 
 ```{r duke-extract, include=TRUE}
 nc <- feedlist_df %>%
@@ -221,7 +221,7 @@ duke_gtfs_obj <- nc %>%
     import_gtfs(quiet=TRUE)     # suppress import messages and prints
 ```
 
-Next, we need to find the ID of the "West Campus Chapel" stop. We can search the required field `stop_name` for something that matches with a clever combination of `dplyr::slice` plus `which` and ``grepl`.
+Next, we search for the the "West Campus Chapel" stop. We can search the required field `stop_name` for something that matches with a clever combination of `dplyr::slice` plus `which` and `grepl`.
 
 ```{r duke-match, include=TRUE}
 # look for west chapel stop
@@ -238,7 +238,7 @@ Now, we can quickly map the stop using the function `map_gtfs_stop()`.
 map_gtfs_stop(gtfs_obj = duke_gtfs_obj, stop_id = west_chapel_stop_id)
 ```
 
-Next, let's map out all the stops and shape for the popular bus route *C1 East-West Loop*. We first find the route before mapping all the stops using `map_gtfs_route_stops()` and the shape using `map_gtfs_route_shape()`.
+Let's go further and map out all stops and the shape of the popular *C1 East-West Loop* bus route. We need only find the `route_id` before mapping all the stops using `map_gtfs_route_stops()` and the shape using `map_gtfs_route_shape()`.
 
 ```{r duke-map1, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, cache=FALSE}
 C1_route_id <- duke_gtfs_obj[['routes_df']] %>%
@@ -249,12 +249,13 @@ map_gtfs_route_stops(gtfs_obj = duke_gtfs_obj, route_id = C1_route_id) # map all
 map_gtfs_route_shape(gtfs_obj = duke_gtfs_obj, route_id = C1_route_id) # map route shape with stops
 ```
 
-Finally, we can get visualize all of the routes that make up Duke University's Transit system using `map_gtfs_agency_routes`. Duke University Transit system is made of only one agency (agency `r duke_gtfs_obj$agency_df$agency_id`).
+Finally, we can get visualize all of the routes that make up Duke University's Transit system using `map_gtfs_agency_routes`. Duke University Transit system is made of only one agency (`agency_id = ``r duke_gtfs_obj$agency_df$agency_id`). If desired, we can also add every stop for every route in the network by using option `include_stops = TRUE` (this option is `FALSE` by default).
 
 ```{r duke-map2, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, cache=FALSE}
 duke_agency_id <- duke_gtfs_obj[['agency_df']]$agency_id
 
 map_gtfs_agency_routes(gtfs_obj = duke_gtfs_obj, agency_id = duke_agency_id) # map all routes of agency
+map_gtfs_agency_routes(gtfs_obj = duke_gtfs_obj, agency_id = duke_agency_id, include_stops = TRUE) # map all routes of agency with stops
 ```
 
 
