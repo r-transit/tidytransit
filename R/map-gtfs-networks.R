@@ -192,7 +192,7 @@ map_gtfs_agency_routes <- function(gtfs_obj, agency_id, include_stops = FALSE) {
 	  stops <- get_agency_stops(gtfs_obj, agency_id = id)
 	  stops %<>% dplyr::left_join(route_colors_df, by = 'route_id')
 
-	  m %>% leaflet::addCircleMarkers(
+	  m %<>% leaflet::addCircleMarkers(
 			popup = stops$stop_name,
 			radius = 4,
 	    stroke = TRUE,
