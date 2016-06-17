@@ -156,6 +156,20 @@ map_gtfs_route_shape <- function(gtfs_obj, route_id, include_stops = TRUE) {
 
   gtfslines <- sp::SpatialLinesDataFrame(sp_lines, data = df) %>% rgeos::gSimplify(.00001)
 
+  # get agency name
+  agency <- gtfs_obj$routes_df %>%
+  	dplyr::slice(which(route_id %in% id)) %>%
+  	magrittr::extract2('agency_id')
+
+  agency_name <- gtfs_obj$agency_df %>%
+		dplyr::slice(which(agency_id %in% agency)) %>%
+  	magrittr::extract2('agency_name')
+
+  # get route short name
+  route_name <- gtfs_obj$routes_df %>%
+  	dplyr::slice(which(route_id %in% id)) %>%
+  	magrittr::extract2('route_short_name')
+
   if(include_stops) {
 
 	  # extract vector of all trips matching route_id
@@ -185,17 +199,9 @@ map_gtfs_route_shape <- function(gtfs_obj, route_id, include_stops = TRUE) {
   m <- gtfslines %>%
   	leaflet::leaflet() %>%
   	leaflet::addTiles() %>%
-  	leaflet::addPolylines(color = 'blue')
-
-  # get agency name
-  agency <- gtfs_obj$routes_df %>%
-  	dplyr::slice(which(route_id %in% id)) %>%
-  	magrittr::extract2('agency_id')
-
-  agency_name <- gtfs_obj$agency_df %>%
-		dplyr::slice(which(agency_id %in% agency)) %>%
-  	magrittr::extract2('agency_name')
-
+  	leaflet::addPolylines(
+  		popup = paste("Route", route_name),
+  		color = 'blue')
 
 	if(include_stops) {
 		m %>%
@@ -208,12 +214,12 @@ map_gtfs_route_shape <- function(gtfs_obj, route_id, include_stops = TRUE) {
 				lat = stops$lat,
 				lng = stops$lng) %>%
 			leaflet::addLegend(colors = c('red', 'blue'),
-				labels = c("Stops", "Route"),
+				labels = c("Stops", paste("Route", route_name)),
 				title = stringr::str_to_title(agency_name))
 	} else {
 		m %>%
 			leaflet::addLegend(colors = c('blue'),
-				labels = c("Route"),
+				labels = paste("Route", route_name),
 				title = stringr::str_to_title(agency_name))
 	}
 
