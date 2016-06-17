@@ -4,7 +4,7 @@ context('Getting a GTFS URL')
 not_working <- function() {
 	url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
 	connecting <- function(url) {
-		r <- base::try(httr::GET(url, httr::timeout(3)))
+		r <- base::try(httr::GET(url, httr::timeout(5)))
 		if(!assertthat::is.error(r)) r$status_code == 200 else FALSE
 	}
 	connecting(url)

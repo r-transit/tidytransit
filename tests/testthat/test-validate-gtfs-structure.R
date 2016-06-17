@@ -2,7 +2,7 @@ library(gtfsr)
 context('Meta GTFS Validation')
 
 working <- function(url) {
-	r <- base::try(httr::GET(url, httr::timeout(3)))
+	r <- base::try(httr::GET(url, httr::timeout(5)))
 	if(!assertthat::is.error(r)) r$status_code == 200 else FALSE
 }
 

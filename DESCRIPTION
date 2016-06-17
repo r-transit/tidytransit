@@ -18,7 +18,8 @@ Imports:
     assertthat,
     leaflet,
     sp,
-    rgeos
+    rgeos,
+    scales
 Suggests:
     testthat,
     knitr,
