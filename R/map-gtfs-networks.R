@@ -167,7 +167,8 @@ map_gtfs_agency_routes <- function(gtfs_obj, agency_id, include_stops = FALSE) {
   # get route names corresponding to colors
   popups <- shape_routes_color_df %>%
   	dplyr::slice(match(ids, shape_routes_color_df$shape_id)) %>%
-  	magrittr::extract2('route_id')
+  	magrittr::extract2('route_short_name') %>%
+  	paste("Route", .)
 
   # get agency name
   agency_name <- gtfs_obj$agency_df %>%
