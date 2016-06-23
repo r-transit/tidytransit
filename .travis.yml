@@ -1,6 +1,9 @@
 language: r
 cache: packages
-r_check_args: --no-build-vignettes --no-manual
-r_build_args: --no-build-vignettes --no-manual
+warnings_are_errors: false
+sudo: false
+
+r_check_args: "--no-build-vignettes --no-manual"
+r_build_args: "--no-build-vignettes --no-manual"
 repos:
   CRAN: https://cran.rstudio.com
