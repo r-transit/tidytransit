@@ -1,8 +1,11 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^packrat/
 ^\.Rprofile$
 ^beta/
 ^temp-files/
 ^vignettes/*_cache/
 ^\.travis\.yml$
+^README\.Rmd$
+^README-.*\.png$
+^README.html
+^packrat/
