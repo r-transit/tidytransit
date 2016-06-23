@@ -11,6 +11,7 @@
 #' @param gtfs_obj A 'gtfs' class object with components agency_df, etc.
 #'
 #' @return Dataframe will one row for all required and optional files per spec, plus one row for any other files provided (file), with an indication of these categories (spec), and a yes/no/empty status (provided_status)
+#' @export
 
 validate_files_provided <- function(gtfs_obj) {
 
@@ -43,8 +44,7 @@ validate_files_provided <- function(gtfs_obj) {
 }
 
 #' Create dataframe of GTFS variable spec info
-#'
-#' @export
+#' @noRd
 
 make_var_val <- function() {
 

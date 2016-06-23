@@ -116,6 +116,7 @@ read_gtfs <- function(exdir, delete_files = TRUE, quiet = FALSE) {
 #' @param file_path Character file path
 #' @param assign_envir Environment Object. Option of where to assign dataframes.
 #' @param quiet Boolean. Whether to output messages and files found in folder.
+#' @noRd
 
 read_sub_gtfs <- function(file_path, assign_envir, quiet = FALSE) {
 
@@ -130,7 +131,6 @@ read_sub_gtfs <- function(file_path, assign_envir, quiet = FALSE) {
 
   new_df <- parse_gtfs(prefix, file_path, quiet = quiet) # will have warning even though we fix problem
 
-
   assign(df_name, new_df, envir = assign_envir)
 
 }
@@ -140,7 +140,9 @@ read_sub_gtfs <- function(file_path, assign_envir, quiet = FALSE) {
 #' @param prefix Character. gtfs file prefix (e.g. 'agency', 'stop_times', etc.)
 #' @param file_path Character. file path
 #' @param quiet Boolean. Whether to output messages and files found in folder.
-#'
+#' @return Dataframe of parsed GTFS file.
+#' @noRd
+
 parse_gtfs <- function(prefix, file_path, quiet = FALSE) {
 
   # only parse if file has any data, NULL o/w

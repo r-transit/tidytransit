@@ -1,5 +1,9 @@
 ---
-output: github_document
+output:
+  github_document:
+    html_preview: false
+    toc: true
+    toc_depth: 2
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -9,7 +13,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   cache = FALSE,
   comment = "#>",
-  fig.path = "README-",
+  fig.path = "README/README-",
   fig.width=7.3,
   fig.height=5
 )
@@ -297,3 +301,6 @@ duke_agency_id <- duke_gtfs_obj[['agency_df']]$agency_id
 map_gtfs_agency_routes(gtfs_obj = duke_gtfs_obj, agency_id = duke_agency_id) # map all routes of agency
 map_gtfs_agency_routes(gtfs_obj = duke_gtfs_obj, agency_id = duke_agency_id, include_stops = TRUE) # map all routes of agency with stops
 ```
+
+
+[![ropensci_footer](http://ropensci.org/public_images/github_footer.png)](http://ropensci.org)

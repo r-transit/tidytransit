@@ -172,10 +172,12 @@ tools_api_key <- function(value = NULL) {
 
 }
 
-# Assign the tools function environment
+#' Assign the tools function environment
+#' @noRd
 gtfs_api_key <- tools_api_key()
 
-# Clear the API key.
+#' Clear the API key.
+#' @noRd
 clear_api_key <- gtfs_api_key$clear
 
 #' Set API key for recall
@@ -228,8 +230,6 @@ has_api_key <- function() {
 
 #' Check HTTP status; stop if failure
 #' @param req The result of an httr::GET
-#'
-#' @export
 
 tfeeds_check <- function(req) {
   if (req$status_code < 400) return(invisible())
@@ -244,7 +244,6 @@ tfeeds_check <- function(req) {
 #'
 #' @return content parsed as text
 #'
-#' @export
 
 tfeeds_text <- function(req) {
   parsed_content <- httr::content(req, as = "text")
@@ -257,8 +256,7 @@ tfeeds_text <- function(req) {
 #' @param req The result of a GET
 #'
 #' @return Dataframe of feeds
-#'
-#' @export
+
 tfeeds_parse_getfeedlist <- function(req) {
 
   # parse content
@@ -307,7 +305,6 @@ tfeeds_parse_getfeedlist <- function(req) {
 #'
 #' @return Dataframe of locations with id, descriptions, and lat/lng
 #'
-#' @export
 
 tfeeds_parse_getlocation <- function(req) {
 
@@ -342,7 +339,6 @@ tfeeds_parse_getlocation <- function(req) {
 #'
 #' @details See http://transitfeeds.com/api/ for available API calls
 #'
-#' @export
 
 tfeeds_get <- function(path, query, ..., version = 'v1/', key = if(has_api_key()) gtfs_api_key$get()) {
 

@@ -9,3 +9,4 @@
 ^README-.*\.png$
 ^README.html
 ^packrat/
+^CONDUCT\.md$
