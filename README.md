@@ -3,10 +3,6 @@
     -   [Description](#description)
     -   [Installation](#installation)
     -   [Example Usage (`gtfsr` vignette)](#example-usage-gtfsr-vignette)
-    -   [1. Get an GTFS API key](#get-an-gtfs-api-key)
-    -   [2. Use `gtfsr` package to download feed list](#use-gtfsr-package-to-download-feed-list)
-    -   [3. Validating the file and fields structure of a GTFS feed](#validating-the-file-and-fields-structure-of-a-gtfs-feed)
-    -   [4. Mapping stops and routes using `gtfsr`](#mapping-stops-and-routes-using-gtfsr)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 [![Build Status](https://travis-ci.org/ropenscilabs/gtfsr.svg?branch=master)](https://travis-ci.org/ropenscilabs/gtfsr)
@@ -43,8 +39,7 @@ If you have already installed `gtfsr`, you can get the latest version by running
 Example Usage (`gtfsr` vignette)
 --------------------------------
 
-1. Get an GTFS API key
-----------------------
+### 1. Get an GTFS API key
 
 This package can get data from a user-specified URL and is also able to get GTFS data from the [TransitFeeds API](http://transitfeeds.com/api/). This vignette will focus on the case where GTFS data is extracted from the TransitFeed API. Below are the steps needed to get a API key (note: requires a GitHub account), including a YouTube (click the GIF to see the YouTube video) that visually guides you through the steps.
 
@@ -60,8 +55,7 @@ This package can get data from a user-specified URL and is also able to get GTFS
 
 [![vid-gif](https://j.gifs.com/kRNVY5.gif)](https://youtu.be/ufM67FoIMho)
 
-2. Use `gtfsr` package to download feed list
---------------------------------------------
+### 2. Use `gtfsr` package to download feed list
 
 First things first, load the `gtfsr` package and set your key to access the TransitFeeds API. This example also using the `dplyr` package to manage data frames and `magrittr` for piping.
 
@@ -74,7 +68,7 @@ options(dplyr.width = Inf) # I like to see all the columns
 set_api_key('2ec1ae29-b8c2-4a03-b96e-126d585233f9') # input your API key here
 ```
 
-### Getting full list of available GTFS feeds
+#### Getting full list of available GTFS feeds
 
 With a valid API key loaded, you can easily get the full list of GTFS feeds using the `get_feedlist` function. What we care most about are the feed GTFS data urls contained in column `url_d` of the feed list. Since we are interested in acquiring the GTFS data (not just the feedlist), we can use the `filter_feedlist()` function to return a data frame containing only valid feed urls.
 
@@ -102,10 +96,10 @@ If we want only the data for a specific location (or locations), we can get then
 
 Assume we are interested in getting all the GTFS data from *Australian* feeds (i.e. we search for location names for the word 'australia'). We can match Australian agencies by name (filter on `loc_t`) and extract the corresponding url feeds (select `url_d`).
 
-### Subsetting the GTFS feedlist
+#### Subsetting the GTFS feedlist
 
 ``` r
-## get australian feeds
+### get australian feeds
 aussie_df <- feedlist_df %>%
     filter(grepl('australia', loc_t, ignore.case = TRUE)) # filter out locations with "australia" in name
 
@@ -129,7 +123,7 @@ Once we have the urls for the feeds of interest, we can download and extract all
 gtfs_objs <- aussie_urls %>% slice(8:9) %>% import_gtfs
 ```
 
-### Inspecting Parsing Errors/Warnings
+#### Inspecting Parsing Errors/Warnings
 
 During the import of the any feed url, you will see the following message:
 
@@ -188,8 +182,7 @@ attr(df, 'problems')
 
 From inspecting the output from `attr(df, 'problems')` and comparing it to just `df`, it appears the problems (at least for this particular `calendar_df`) stem from the empty rows added to the end of the original text file. Not a big deal and easily fixed. But we leave such specific fixes to the user to correct.
 
-3. Validating the file and fields structure of a GTFS feed
-----------------------------------------------------------
+### 3. Validating the file and fields structure of a GTFS feed
 
 GTFS feeds contain numerous *required* and *optional* files. And within each of these files, there are also *required* and *optional* fields (variables). (For more detailed information, please see Google's [GTFS Feed Specification Reference](https://developers.google.com/transit/gtfs/reference). Information on non-standard GTFS files---specifically `timetables-new.txt` and `timetable_stop_order-new.txt`---can be found at the [GTFS-to-HTML repo](https://github.com/brendannee/gtfs-to-html).
 
@@ -291,12 +284,11 @@ We can see that the optional `frequencies.txt` file was provided but all of the 
 
 It is important to recall that most GTFS feed files and fields are **optional**. Therefore, while useful to know any potential problems with optional files provided by a given feed, we can still proceed with doing interesting analyses as long as we have all the required files and fields.
 
-4. Mapping stops and routes using `gtfsr`
------------------------------------------
+### 4. Mapping stops and routes using `gtfsr`
 
 The `gtfsr` has mapping functions designed to help users quickly map spatial data that is found within most GTFS feeds. These functions input `gtfs` objects and then map the desired datum or data (stop, route, route networks).
 
-Let's try mapping a stop from a bus route popular with Duke University students---the *C1 East-West Loop*. This route bounces between Duke's East and West campus. The *C1* idles at one of the busiest stops at Duke---the "West Campus Chapel" stop. (This bus stop is located in front of Duke University's iconic gothic Chapel, Duke's most famous landmark.)
+Let's try mapping a stop from a bus route popular with Duke University students---the *C1 East-West Loop*. This route bounces between Duke's East and West campus. The *C1* idles at one of the busiest stops at Duke---the "West Campus Chapel" stop. (This bus stop is located in front of Duke University's iconic Gothic Chapel, Duke's most famous landmark.)
 
 First, let's convert Duke University's GTFS transit feed into a `gtfs` object.
 
@@ -306,7 +298,7 @@ nc <- feedlist_df %>%
 
 duke_gtfs_obj <- nc %>%
     filter(grepl('duke', t, ignore.case=TRUE)) %>%  # note, we search `t` (agency name)
-    select(url_d) %>%   # get duke univeristy feed url
+    select(url_d) %>%   # get duke university feed url
     import_gtfs(quiet=TRUE)     # suppress import messages and prints
 ```
 
