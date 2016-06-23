@@ -49,6 +49,10 @@ unzip_gtfs_files <- function(zipfile, delete_zip = FALSE, move_path = NULL, quie
 
   if(delete_zip) file.remove(f)
 
+  if(length(list.files(ex_dir)) == 0) {
+    warn <- "No files found after decompressing. NULL is returned."
+    return(NULL)
+  }
 
   if(!quiet) {
     message(sprintf("Unzipped the following files to directory '%s'...", ex_dir))
