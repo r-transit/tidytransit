@@ -82,7 +82,7 @@ aussie_df %>% select(loc_t) %>% head(5) # look at location names
 aussie_urls <- aussie_df %>% select(url_d) # get aussie urls
 ```
 
-Once we have the urls for the feeds of interest, we can download and extract all the GTFS data into a list of `gtfs` objects using the `import_gtfs` data.
+Once we have the urls for the feeds of interest, we can download and extract all the GTFS data into a list of `gtfs` objects using the `import_gtfs` function.
 
 ```{r import_gtfs, warning=FALSE, message=FALSE, echo=TRUE, eval=FALSE}
 gtfs_objs <- aussie_urls %>% slice(8:9) %>% import_gtfs
