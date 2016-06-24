@@ -78,18 +78,18 @@ With a valid API key loaded, you can easily get the full list of GTFS feeds usin
 feedlist_df <- get_feedlist() # create a data frame of all feeds
 
 feedlist_df <- feedlist_df %>% filter_feedlist # filter the feedlist
-#> 152 of 648 feeds did not provide valid URLs. 496 returned.
+#> 152 of 649 feeds did not provide valid URLs. 497 returned.
 
 feedlist_df %>% select(url_d) %>% head(5) # show first 5 feed urls
 #> Source: local data frame [5 x 1]
 #> 
-#>                                                                                    url_d
-#>                                                                                    (chr)
-#> 1             http://corporate.sunrail.com/wp-content/uploads/2016/05/google_transit.zip
-#> 2                   http://data.trilliumtransit.com/gtfs/westcat-ca-us/westcat-ca-us.zip
-#> 3   http://data.trilliumtransit.com/gtfs/marthasvineyard-ma-us/marthasvineyard-ma-us.zip
-#> 4   http://data.trilliumtransit.com/gtfs/eldoradotransit-ca-us/eldoradotransit-ca-us.zip
-#> 5 http://data.trilliumtransit.com/gtfs/paloverde_valley-ca-us/paloverde_valley-ca-us.zip
+#>                                                                                  url_d
+#>                                                                                  (chr)
+#> 1       http://data.trilliumtransit.com/gtfs/thousandoaks-ca-us/thousandoaks-ca-us.zip
+#> 2           http://corporate.sunrail.com/wp-content/uploads/2016/05/google_transit.zip
+#> 3                 http://data.trilliumtransit.com/gtfs/westcat-ca-us/westcat-ca-us.zip
+#> 4 http://data.trilliumtransit.com/gtfs/marthasvineyard-ma-us/marthasvineyard-ma-us.zip
+#> 5 http://data.trilliumtransit.com/gtfs/eldoradotransit-ca-us/eldoradotransit-ca-us.zip
 ```
 
 If we want only the data for a specific location (or locations), we can get then search the feedlist for feeds of interest.
