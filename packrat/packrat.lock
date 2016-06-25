@@ -77,9 +77,9 @@ Hash: fd55d5a024f160fc001a5ece1e27782d
 
 Package: dplyr
 Source: CRAN
-Version: 0.4.3
-Hash: e6d3a09516f2018080e4737423aadfa6
-Requires: BH, DBI, R6, Rcpp, assertthat, lazyeval, magrittr
+Version: 0.5.0
+Hash: bdfac738899f1f65b932f4c6f10c2cff
+Requires: BH, DBI, R6, Rcpp, assertthat, lazyeval, magrittr, tibble
 
 Package: evaluate
 Source: CRAN
@@ -254,6 +254,12 @@ Source: CRAN
 Version: 1.0.2
 Hash: 88d5291104227f9dc2e7c7c1d0eb6c74
 Requires: R6, crayon, digest, magrittr, praise
+
+Package: tibble
+Source: CRAN
+Version: 1.0
+Hash: 135bebe37e899e9ebabcfdf74cb86ade
+Requires: Rcpp, assertthat, lazyeval
 
 Package: yaml
 Source: CRAN
