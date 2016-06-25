@@ -9,6 +9,7 @@ Authors@R: as.person(c(
 Description: Provides API wrappers for popular public GTFS feed sharing sites, reads feed data into a gtfs data object, validates data quality, provides convenience functions for common tasks.
 License: GPL
 LazyData: TRUE
+Depends: R (>= 3.2.4)
 Imports:
     dplyr,
     readr,

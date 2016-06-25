@@ -126,7 +126,7 @@ map_gtfs_agency_routes <- function(gtfs_obj, agency_id, include_stops = FALSE) {
 		# get stops data
 	  stops <- get_agency_stops(gtfs_obj, agency_id = agency)
 	  stops %<>%
-	  	dplyr::inner_join(plotting_data$shapes_routes_df, by = 'route_id')
+	  	dplyr::inner_join(plotting_data$routes_colors_df, by = 'route_id')
 
 	  m %<>% leaflet::addCircleMarkers(
 			popup = stops$stop_name,

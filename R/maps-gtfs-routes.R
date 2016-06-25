@@ -145,14 +145,14 @@ get_routes_sldf <- function(gtfs_obj, route_ids, service_ids = NULL) {
 				dplyr::slice(which(service_id %in% service_ids)) %>%
 				dplyr::slice(which(route_id %in% route_ids)) %>%
 				dplyr::select(shape_id, route_id, service_id) %>%
-				dplyr::distinct(., shape_id, route_id) # want only distinct routes
+				dplyr::distinct(., shape_id, route_id, .keep_all = TRUE) # want only distinct routes
 
 		} else {
 
 			shapes_routes_df <- gtfs_obj$trips_df %>%
 				dplyr::slice(which(route_id %in% route_ids)) %>%
 				dplyr::select(shape_id, route_id, service_id) %>%
-				dplyr::distinct(., shape_id, route_id) # want only distinct routes
+				dplyr::distinct(., shape_id, route_id, .keep_all = TRUE) # want only distinct routes
 
 		}
 
