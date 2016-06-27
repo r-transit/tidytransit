@@ -1,7 +1,7 @@
 ---
 output:
-  html_document:
-    keep_md: yes
+  md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 2
 ---
