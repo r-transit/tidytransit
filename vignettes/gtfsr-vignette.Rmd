@@ -16,6 +16,11 @@ knitr::opts_chunk$set(collapse = TRUE, cache=FALSE, comment = "#>", fig.width=7.
 
 # `gtfsr`
 
+`gtfsr` is an R package for easily importing, validating, and mapping transit data that follows the [General Transit Feed Specification (GTFS)](https://developers.google.com/transit/gtfs/) format.
+
+The `gtfsr` package provides functions for converting files following the GTFS format into a single `gtfs` data objects. A `gtfs` object can then be validated for proper data formatting (i.e. if the source data is properly structured and formatted as a GTFS feed) or have any spatial data for stops and routes mapped using `leaflet`. The `gtfsr` package also provides API wrappers for the popular public GTFS feed sharing site [TransitFeeds](https://transitfeeds.com/), allowing users quick, easy access to hundreds of GTFS feeds from within R.
+
+
 ```{r vignette-body, child = 'gtfsr-vignette-body.Rmd'}
 ```
 
