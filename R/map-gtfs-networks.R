@@ -9,7 +9,7 @@
 #' get stops for all routes of an agency
 #'
 #' @param gtfs_obj A GTFS list object with components agency_df, etc.
-#' @param agency_name Character. Provide the name of the agency whose routes are being mapped.
+#' @param agency_name Character. Provide the name of the agency whose routes are being mapped. Default is NULL, which assumes only one agency exists, taking first agency name.
 #'
 #' @return dataframe of route and stop ids for given agency id
 #' @noRd
