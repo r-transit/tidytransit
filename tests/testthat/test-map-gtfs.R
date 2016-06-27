@@ -19,6 +19,7 @@ check_url <- function() {
 
 url <- "http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip"
 gtfs_obj <- url %>% import_gtfs(quiet=TRUE)
+agency_name <- gtfs_obj$agency_df$agency_name
 not_gtfs_obj <- 123
 
 # gtfs_map_*()
@@ -76,14 +77,14 @@ test_that('Mapping one or more routes or full network', {
 	expect_error(map_gtfs_route_shape(not_gtfs_obj, not_route_id2))
 
 	# map_gtfs_agency_routes()
-	expect_is(map_gtfs_agency_routes(gtfs_obj, agency_id = 240), 'leaflet')
-	expect_error(map_gtfs_agency_routes(gtfs_obj, agency_id = not_route_id1))
-	expect_error(map_gtfs_agency_routes(gtfs_obj, agency_id = not_route_id2))
-	expect_error(map_gtfs_agency_routes(not_gtfs_obj, agency_id = not_route_id1))
-	expect_error(map_gtfs_agency_routes(not_gtfs_obj, agency_id = not_route_id2))
+	expect_is(map_gtfs_agency_routes(gtfs_obj, agency_name = agency_name), 'leaflet')
+	expect_error(map_gtfs_agency_routes(gtfs_obj, agency_name = not_route_id1))
+	expect_error(map_gtfs_agency_routes(gtfs_obj, agency_name = not_route_id2))
+	expect_error(map_gtfs_agency_routes(not_gtfs_obj, agency_name = not_route_id1))
+	expect_error(map_gtfs_agency_routes(not_gtfs_obj, agency_name = not_route_id2))
 
 	# add stops should still return leaflet object
-	expect_is(map_gtfs_agency_routes(gtfs_obj, agency_id = 240, TRUE), 'leaflet')
-	expect_error(map_gtfs_agency_routes(gtfs_obj, agency_id = 240, "9"))
+	expect_is(map_gtfs_agency_routes(gtfs_obj, agency_name = agency_name, TRUE), 'leaflet')
+	expect_error(map_gtfs_agency_routes(gtfs_obj, agency_name = agency_name, "9"))
 
 })

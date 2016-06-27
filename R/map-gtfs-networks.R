@@ -9,12 +9,16 @@
 #' get stops for all routes of an agency
 #'
 #' @param gtfs_obj A GTFS list object with components agency_df, etc.
-#' @param agency_ids Character. Provide the IDs one or more agencies whose routes are being mapped.
+#' @param agency_name Character. Provide the name of the agency whose routes are being mapped.
 #'
 #' @return dataframe of route and stop ids for given agency id
 #' @noRd
 
-get_agency_stops <- function(gtfs_obj, agency_ids) {
+get_agency_stops <- function(gtfs_obj, agency_name) {
+
+	# rename agency name
+	agency <- agency_name
+	rm('agency_name')
 
 	stopifnot(class(gtfs_obj) == 'gtfs',
 		!is.null(gtfs_obj$stops_df),
@@ -23,11 +27,23 @@ get_agency_stops <- function(gtfs_obj, agency_ids) {
 		!is.null(gtfs_obj$routes_df))
 
 	# find agency routes
-	route_ids <- gtfs_obj$routes_df %>%
-		dplyr::slice(which(agency_id %in% agency_ids)) %>%
-		dplyr::select(route_id) %>%
-		magrittr::extract2(1) %>%
-		unique
+	if(is.null(gtfs_obj$routes_df$agency_id)) {
+		# if no agency id, then assume all routes belong to agency_name
+		route_ids <- gtfs_obj$routes_df$route_id %>% unique
+	} else {
+
+		# find routes for a given agency
+		agency_ids <- gtfs_obj$agency_df %>%
+			dplyr::slice(which(agency_name %in% agency)) %>%
+			magrittr::extract2(1) %>%
+			unique
+
+		route_ids <- gtfs_obj$routes_df %>%
+			dplyr::slice(which(agency_id %in% agency_ids)) %>%
+			dplyr::select(route_id) %>%
+			magrittr::extract2(1) %>%
+			unique
+	}
 
 	# extract vector of all trips matching route_id
 	trip_ids <- gtfs_obj$trips_df %>%
@@ -37,7 +53,7 @@ get_agency_stops <- function(gtfs_obj, agency_ids) {
 		unique
 
 	if(length(trip_ids) == 0) {
-		s <- "No trips for Route ID '%s' were found." %>% sprintf(agency_ids)
+		s <- "No trips for Route ID '%s' were found." %>% sprintf(agency)
 		stop(s)
 	}
 
@@ -75,13 +91,13 @@ get_agency_stops <- function(gtfs_obj, agency_ids) {
 #' map all routes for an agency
 #'
 #' @param gtfs_obj A GTFS list object with components agency_df, etc.
-#' @param agency_id Character. Provide the ID of the agency whose routes are being mapped.
+#' @param agency_name Character. Provide the name of the agency whose routes are being mapped.
 #' @param include_stops Boolean. Whether to layer on stops to the route shape. Default is FALSE
 #'
 #' @return Leaflet map object with all routes plotted for given agency ID.
 #' @export
 
-map_gtfs_agency_routes <- function(gtfs_obj, agency_id, include_stops = FALSE) {
+map_gtfs_agency_routes <- function(gtfs_obj, agency_name = NULL, include_stops = FALSE) {
 
 	stopifnot(class(gtfs_obj) == 'gtfs',
 		!is.null(gtfs_obj$stops_df),
@@ -89,25 +105,38 @@ map_gtfs_agency_routes <- function(gtfs_obj, agency_id, include_stops = FALSE) {
 		!is.null(gtfs_obj$shapes_df),
 		!is.null(gtfs_obj$trips_df),
 		!is.null(gtfs_obj$routes_df),
-		length(agency_id) == 1,
+		length(agency_name) < 2,
 		is.logical(include_stops))
 
-	agency <- agency_id
-	rm('agency_id')
+	# if agency_name is null, take the first agency_name in gtfs obj
+	if(is.null(agency_name)) {
+		agency <- gtfs_obj$agency_df$agency_name[1]
+	} else {
+		agency <- agency_name
+	}
+
+	rm('agency_name')
 
 	# find agency routes
-	route_ids <- gtfs_obj$routes_df %>%
-		dplyr::slice(which(agency_id %in% agency)) %>%
-		dplyr::select(route_id) %>%
-		magrittr::extract2(1) %>%
-		unique
+	if(is.null(gtfs_obj$routes_df$agency_id)) {
+		# if no agency id, then assume all routes belong to agency_name
+		route_ids <- gtfs_obj$routes_df$route_id %>% unique
+	} else {
+
+		# find routes for a given agency
+		agency_ids <- gtfs_obj$agency_df %>%
+			dplyr::slice(which(agency_name %in% agency)) %>%
+			magrittr::extract2(1) %>%
+			unique
+
+		route_ids <- gtfs_obj$routes_df %>%
+			dplyr::slice(which(agency_id %in% agency_ids)) %>%
+			dplyr::select(route_id) %>%
+			magrittr::extract2(1) %>%
+			unique
+	}
 
 	plotting_data <- get_routes_sldf(gtfs_obj = gtfs_obj, route_ids = route_ids)
-
-  # get agency name
-  agency_name <- gtfs_obj$agency_df %>%
-  	dplyr::slice(which(agency_id %in% agency)) %>%
-  	magrittr::extract2('agency_name')
 
   # create map with shapes
   m <- plotting_data$gtfslines %>%
@@ -120,11 +149,11 @@ map_gtfs_agency_routes <- function(gtfs_obj, agency_id, include_stops = FALSE) {
 		leaflet::addLegend(
 			colors = plotting_data$routes_colors_df$color,
 			labels = paste("Route", plotting_data$routes_colors_df$route_short_name),
-			title = stringr::str_to_title(agency_name))
+			title = stringr::str_to_title(agency))
 
 	if(include_stops) {
 		# get stops data
-	  stops <- get_agency_stops(gtfs_obj, agency_id = agency)
+	  stops <- get_agency_stops(gtfs_obj, agency_name = agency)
 	  stops %<>%
 	  	dplyr::inner_join(plotting_data$routes_colors_df, by = 'route_id')
 

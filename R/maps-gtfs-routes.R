@@ -26,14 +26,25 @@ map_gtfs_route_shape <- function(gtfs_obj, route_ids, service_ids = NULL, includ
 
 	route_ids <- plotting_data$shapes_routes_df$route_id # update route ids
 
-  # get agencies name
-	agencies <- gtfs_obj$routes_df %>%
-		dplyr::slice(which(route_id %in% route_ids)) %>%
-		magrittr::extract2('agency_id')
+  # find agency names from routes
+	if(is.null(gtfs_obj$routes_df$agency_id)) {
+		# if no agency id, then assume all routes belong to agency_name
+		agency <- gtfs_obj$agency_df$agency_name[1]
+	} else {
 
-	agency_name <- gtfs_obj$agency_df %>%
-		dplyr::slice(which(agency_id %in% agencies)) %>%
-		magrittr::extract2('agency_name')
+	  # get agency_name name
+		agency_ids <- gtfs_obj$routes_df %>%
+			dplyr::slice(which(route_id %in% route_ids)) %>%
+			magrittr::extract2('agency_id') %>%
+			unique
+
+		agency <- gtfs_obj$agency_df %>%
+			dplyr::slice(which(agency_id %in% agency_ids)) %>%
+			magrittr::extract2('agency_name')
+
+	}
+
+	agency_lbl <- paste(agency, collapse = " & ")
 
   # create map with shapes
   m <- plotting_data$gtfslines %>%
@@ -46,7 +57,7 @@ map_gtfs_route_shape <- function(gtfs_obj, route_ids, service_ids = NULL, includ
 		leaflet::addLegend(
 			colors = plotting_data$routes_colors_df$color,
 			labels = paste("Route", plotting_data$routes_colors_df$route_short_name),
-			title = stringr::str_to_title(agency_name))
+			title = stringr::str_to_title(agency_lbl))
 
 	if(include_stops) {
 
@@ -70,7 +81,9 @@ map_gtfs_route_shape <- function(gtfs_obj, route_ids, service_ids = NULL, includ
 			dplyr::distinct(stop_id) %>%
 			magrittr::extract2(1)
 
-	  stops <- get_agency_stops(gtfs_obj, agency_id = agencies)
+		stops <- agency %>%
+			lapply(. %>% get_agency_stops(gtfs_obj, agency_name = .)) %>%
+			dplyr::bind_rows()
 	  stops %<>%
 	  	dplyr::inner_join(plotting_data$routes_colors_df, by = 'route_id')
 	  stops %<>%

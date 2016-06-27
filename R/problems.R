@@ -39,7 +39,7 @@ new_problems <- function() {
 
 	}
 
-	invalid_agency_id = function() {
+	invalid_agency_name = function() {
 
 	}
 
@@ -136,7 +136,7 @@ new_problems <- function() {
 				invalid_float_value = invalid_float_value,
 				invalid_non_negative_integer_value = invalid_non_negative_integer_value,
 				duplicate_id = duplicate_id,
-				invalid_agency_id = invalid_agency_id,
+				invalid_agency_name = invalid_agency_name,
 				unused_stop = unused_stop,
 				used_station = used_station,
 				stop_too_far_from_parent_station = stop_too_far_from_parent_station,

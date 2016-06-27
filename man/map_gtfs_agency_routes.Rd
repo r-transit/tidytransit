@@ -4,12 +4,12 @@
 \alias{map_gtfs_agency_routes}
 \title{map all routes for an agency}
 \usage{
-map_gtfs_agency_routes(gtfs_obj, agency_id, include_stops = FALSE)
+map_gtfs_agency_routes(gtfs_obj, agency_name = NULL, include_stops = FALSE)
 }
 \arguments{
 \item{gtfs_obj}{A GTFS list object with components agency_df, etc.}
 
-\item{agency_id}{Character. Provide the ID of the agency whose routes are being mapped.}
+\item{agency_name}{Character. Provide the name of the agency whose routes are being mapped.}
 
 \item{include_stops}{Boolean. Whether to layer on stops to the route shape. Default is FALSE}
 }
