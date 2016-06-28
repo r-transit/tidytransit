@@ -27,7 +27,7 @@ get_agency_stops <- function(gtfs_obj, agency_name) {
 		!is.null(gtfs_obj$routes_df))
 
 	# find agency routes
-	if(is.null(gtfs_obj$routes_df$agency_id)) {
+	if((!"agency_id" %in% gtfs_obj$routes_df)) {
 		# if no agency id, then assume all routes belong to agency_name
 		route_ids <- gtfs_obj$routes_df$route_id %>% unique
 	} else {
@@ -118,7 +118,7 @@ map_gtfs_agency_routes <- function(gtfs_obj, agency_name = NULL, include_stops =
 	rm('agency_name')
 
 	# find agency routes
-	if(is.null(gtfs_obj$routes_df$agency_id)) {
+	if((!"agency_id" %in% gtfs_obj$routes_df)) {
 		# if no agency id, then assume all routes belong to agency_name
 		route_ids <- gtfs_obj$routes_df$route_id %>% unique
 	} else {

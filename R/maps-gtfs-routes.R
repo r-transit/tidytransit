@@ -27,7 +27,7 @@ map_gtfs_route_shape <- function(gtfs_obj, route_ids, service_ids = NULL, includ
 	route_ids <- plotting_data$shapes_routes_df$route_id # update route ids
 
   # find agency names from routes
-	if(is.null(gtfs_obj$routes_df$agency_id)) {
+	if((!"agency_id" %in% gtfs_obj$routes_df)) {
 		# if no agency id, then assume all routes belong to agency_name
 		agency <- gtfs_obj$agency_df$agency_name[1]
 	} else {
