@@ -16,18 +16,19 @@
 
 get_agency_stops <- function(gtfs_obj, agency_name) {
 
-	# rename agency name
-	agency <- agency_name
-	rm('agency_name')
-
 	stopifnot(class(gtfs_obj) == 'gtfs',
 		!is.null(gtfs_obj$stops_df),
 		!is.null(gtfs_obj$stop_times_df),
 		!is.null(gtfs_obj$trips_df),
-		!is.null(gtfs_obj$routes_df))
+		!is.null(gtfs_obj$routes_df),
+		any(is.character(agency_name), is.null(agency_name)))
+
+	# rename agency name
+	agency <- agency_name
+	rm('agency_name')
 
 	# find agency routes
-	if((!"agency_id" %in% gtfs_obj$routes_df)) {
+	if(!"agency_id" %in% names(gtfs_obj$routes_df)) {
 		# if no agency id, then assume all routes belong to agency_name
 		route_ids <- gtfs_obj$routes_df$route_id %>% unique
 	} else {
@@ -106,6 +107,7 @@ map_gtfs_agency_routes <- function(gtfs_obj, agency_name = NULL, include_stops =
 		!is.null(gtfs_obj$trips_df),
 		!is.null(gtfs_obj$routes_df),
 		length(agency_name) < 2,
+		any(is.character(agency_name), is.null(agency_name)),
 		is.logical(include_stops))
 
 	# if agency_name is null, take the first agency_name in gtfs obj
@@ -118,7 +120,7 @@ map_gtfs_agency_routes <- function(gtfs_obj, agency_name = NULL, include_stops =
 	rm('agency_name')
 
 	# find agency routes
-	if((!"agency_id" %in% gtfs_obj$routes_df)) {
+	if(!"agency_id" %in% names(gtfs_obj$routes_df)) {
 		# if no agency id, then assume all routes belong to agency_name
 		route_ids <- gtfs_obj$routes_df$route_id %>% unique
 	} else {
