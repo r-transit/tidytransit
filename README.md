@@ -289,6 +289,8 @@ It is important to recall that most GTFS feed files and fields are **optional**.
 4. Mapping stops and routes using `gtfsr`
 -----------------------------------------
 
+**NOTE:** *Github does not allow javascript. As a result, we use static PNG pictures as placeholders for what are actually interactive `leaflet` maps. If you build the vignette or run the codes in R, these `leaflet` maps should be built automatically.*
+
 The `gtfsr` has mapping functions designed to help users quickly map spatial data that is found within most GTFS feeds. These functions input `gtfs` objects and then map the desired datum or data (stop, route, route networks).
 
 Let's try mapping a stop from a bus route popular with Duke University students---the *C1 East-West Loop*. This route bounces between Duke's East and West campus. The *C1* idles at one of the busiest stops at Duke---the "West Campus Chapel" stop. (This bus stop is located in front of Duke University's iconic gothic Chapel, Duke's most famous landmark.)

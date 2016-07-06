@@ -57,6 +57,12 @@ test_that('Reading GTFS files from unzipped folder', {
 
 	expect_is(read_gtfs2(folder, delete_files = FALSE), 'gtfs')
 
+	# remove required file
+	invisible(file.remove(files[1]))
+	files <- list.files(folder, full.names = TRUE)
+
+	expect_false(class(read_gtfs2(folder, delete_files = FALSE))=='gtfs')
+
 	# valid path check
 	path <- "#!:D"
 	expect_error(read_gtfs2(exdir = path, delete_files = TRUE)) # invalid path

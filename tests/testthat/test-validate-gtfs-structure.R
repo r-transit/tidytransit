@@ -26,9 +26,6 @@ test_that('Validate files and variables of a GTFS object', {
 	prov_dfs <- lapply(gtfs_objs, validate_files_provided)
 	vars_dfs <- mapply(validate_vars_provided, val_files = prov_dfs, gtfs_obj = gtfs_objs, SIMPLIFY = FALSE)
 
-	expect_error(validate_files_provided(gtfs_objs))
-	expect_error(validate_vars_provided(vars_dfs))
-
 	x <- c("file", "spec", "provided_status")
 	expect_identical(sapply(prov_dfs, names), matrix(rep(x, n), length(x), n))
 

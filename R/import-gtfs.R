@@ -24,7 +24,7 @@ import_gtfs <- function(paths, local = FALSE, quiet = FALSE) {
 
     zip_dir <- unzip_gtfs_files(zipfile = path, quiet = quiet)
 
-    read_gtfs(zip_dir, quiet = quiet)
+    try(read_gtfs(zip_dir, quiet = quiet))
   }
 
   # check if single column of data was inputed. if so, convert to vector; error otherwise.

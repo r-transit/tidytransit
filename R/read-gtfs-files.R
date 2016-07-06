@@ -105,8 +105,18 @@ read_gtfs <- function(exdir, delete_files = TRUE, quiet = FALSE) {
 
   if(!quiet) message('...done.\n\n')
 
+  # check if valid 'gtfs'
+  check <- validate_gtfs_structure(gtfs_list, return_gtfs_obj = FALSE, quiet = TRUE)
+  valid <- all(check$all_req_files, check$all_req_fields_in_req_files)
 
-  class(gtfs_list) <- 'gtfs'
+  if(!quiet) message("Testing if data structure...")
+  if(valid) {
+    class(gtfs_list) <- 'gtfs'
+    if(!quiet) message("...passed. Valid GTFS object.\n")
+  } else {
+    if(!quiet) message("...failed. Invalid data structure.\n")
+  }
+
   return(gtfs_list)
 
 }

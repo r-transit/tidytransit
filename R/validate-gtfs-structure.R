@@ -15,8 +15,6 @@
 
 validate_files_provided <- function(gtfs_obj) {
 
-  stopifnot(class(gtfs_obj) == 'gtfs')
-
   # Per spec, these are the required and optional files
   all_req_files <- c('agency', 'stops', 'routes', 'trips', 'stop_times', 'calendar')
   all_opt_files <- c('calendar_dates', 'fare_attributes', 'fare_rules', 'shapes', 'frequencies', 'transfers', 'feed_info', 'timetables', 'timetable_stop_order', 'route_directions')
@@ -33,13 +31,13 @@ validate_files_provided <- function(gtfs_obj) {
 
   all_files <- c(all_spec_files, extra_files)
 
-  prov_df <- dplyr::data_frame(file = all_files, spec = c(rep('req', times = length(all_req_files)), rep('opt', times = length(all_opt_files)), rep('ext', times = length(extra_files))))
+  val_files <- dplyr::data_frame(file = all_files, spec = c(rep('req', times = length(all_req_files)), rep('opt', times = length(all_opt_files)), rep('ext', times = length(extra_files))))
 
-  prov_df <- prov_df %>%
+  val_files <- val_files %>%
     dplyr::mutate(provided_status = ifelse(!(file %in% feed_names_file), 'no',
                                     ifelse(sapply(gtfs_obj, dim)[2,] == 0, 'empty',
                                            'yes')))
-  return(prov_df)
+  return(val_files)
 
 }
 
@@ -72,7 +70,7 @@ make_var_val <- function() {
 
 validate_vars_provided <- function(val_files, gtfs_obj) {
 
-  stopifnot(class(gtfs_obj) == 'gtfs', any(class(val_files) == 'tbl_df'))
+  stopifnot(any(class(val_files) == 'tbl_df'))
 
   # Generate the df of files and fields per the GTFS spec
   spec_vars_df <- make_var_val() %>%
@@ -180,7 +178,7 @@ validate_vars_provided <- function(val_files, gtfs_obj) {
 
 
   all_df <- all_df %>%
-    dplyr::mutate(validation_status = replace(validation_status, grepl('req_files', validation_details), 'problem'))
+    dplyr::mutate(validation_status = replace(validation_status, grepl('req_file', validation_details), 'problem'))
 
 
   return(all_df)
@@ -207,9 +205,9 @@ validate_gtfs_structure <- function(gtfs_obj, return_gtfs_obj = TRUE, quiet = FA
 
   if(!quiet) message(gtfs_obj$agency_df$agency_name)
 
-  prov_df <- validate_files_provided(gtfs_obj = gtfs_obj)
+  val_files <- validate_files_provided(gtfs_obj = gtfs_obj)
 
-  all_df <- validate_vars_provided(prov_df, gtfs_obj = gtfs_obj)
+  all_df <- validate_vars_provided(val_files, gtfs_obj = gtfs_obj)
 
   probs_subset <- all_df %>% dplyr::filter(validation_status == 'problem') # subset of only problems
 
@@ -222,7 +220,7 @@ validate_gtfs_structure <- function(gtfs_obj, return_gtfs_obj = TRUE, quiet = FA
 
   # get subset of problem req files
   if(!validate_list$all_req_files) {
-      validate_list$problem_req_files <- prob_subset %>%
+      validate_list$problem_req_files <- probs_subset %>%
         dplyr::filter(grepl('missing_req_*', validation_details))%>%
         dplyr::select(file, file_spec, file_provided_status, field, field_spec, field_provided_status)
   }
