@@ -191,7 +191,7 @@ validate_list_attr[[3]]$problem_opt_files
 
 We can see that the optional `frequencies.txt` file was provided but all of the *required fields* were empty.
 
-It is important to recall that most GTFS feed files and fields are **optional**. Therefore, while useful to know any potential problems with optional files provided by a given feed, we can still proceed with doing interesting analyses as long as we have all the required files and fields.
+It is important to recall that GTFS feed files and fields can contain **optional** fields. Therefore, while  it is useful to know any potential problems with optional files provided by a given feed, we can still proceed with interesting analyses as long as we have all the required files and fields.
 
 ## 4. Mapping stops and routes using `gtfsr`
 
