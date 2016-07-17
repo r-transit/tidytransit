@@ -100,8 +100,7 @@ row col   expected    actual
 ...
 ```
 
-To understand the problem, let's extract the data frame `calendar_df`. Recall that `import_gtfs` returns either a single `gtfs` object (if one url is provided) or a list of `gtfs` objects. Each `gtfs` object is just a list of data frames.
-
+To understand the problem, let's extract the data frame `calendar_df`. Recall that `import_gtfs` returns either a single `gtfs` list object (if one url is provided) or a list of `gtfs` objects. 
 
 ```{r calendar, echo=TRUE, eval=TRUE}
 # extract `calendar_df` from gtfs_obj
