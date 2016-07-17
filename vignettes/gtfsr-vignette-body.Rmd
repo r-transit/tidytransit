@@ -222,7 +222,7 @@ west_chapel_stop_id
 
 Now, we can quickly map the stop using the function `map_gtfs_stop()`.
 
-```{r duke-map, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, cache=FALSE}
+```{r duke-map, warning=FALSE, message=FALSE, echo=TRUE, eval=FALSE, cache=FALSE}
 map_gtfs_stop(gtfs_obj = duke_gtfs_obj, stop_id = west_chapel_stop_id)
 ```
 
