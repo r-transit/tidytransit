@@ -111,7 +111,7 @@ df
 attr(df, 'problems')
 ```
 
-From inspecting the output from `attr(df, 'problems')` and comparing it to just `df`, it appears the problems (at least for this particular `calendar_df`) stem from the empty rows added to the end of the original text file. Not a big deal and easily fixed. But we leave such specific fixes to the user to correct.
+From inspecting the output from `attr(df, 'problems')` and comparing it to `df`, it appears the problems for this particular `calendar_df` stem from the empty rows added to the end of the original text file. Not a big deal and easily fixed but we leave such specific fixes to the user to correct.
 
 
 
