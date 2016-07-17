@@ -202,11 +202,9 @@ Let's try mapping a stop from a bus route popular with Duke University students-
 First, let's convert Duke University's GTFS transit feed into a `gtfs` object.
 
 ```{r duke-extract, include=TRUE}
-nc <- feedlist_df %>%
-    filter(grepl('NC, USA', loc_t, ignore.case=TRUE)) # get NC agencies
-
-duke_gtfs_obj <- nc %>%
-    filter(grepl('duke', t, ignore.case=TRUE)) %>%  # note, we search `t` (agency name)
+duke_gtfs_obj <- feedlist_df %>%
+    filter(grepl('duke', t, ignore.case=TRUE) & # note, we search `t` (agency name)
+           grepl('NC, USA', loc_t, ignore.case=TRUE)) %>%  # get NC agencies
     select(url_d) %>%   # get duke univeristy feed url
     import_gtfs(quiet=TRUE)     # suppress import messages and prints
 ```
