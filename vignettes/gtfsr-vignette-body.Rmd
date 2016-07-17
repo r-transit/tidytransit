@@ -80,7 +80,7 @@ NOTE: Parsing errors and warnings while importing data can be extracted from any
 
 This output was suppressed in the last section to save space given how verbose it is. But the highlighted `NOTE` explains that *if one observes an error or warning during the import process*, one can extract a data frame of problems, which is stored as an attribute for any data frame contained within any `gtfs` object that had a warning output.
 
-As an example, let's extract the data and problems data frames for a url with parsing errors/warnings.
+As an example, let's extract the gtfs data and problems data for a url with parsing errors/warnings.  You can use `import gtfs` without going through transitfeeds.com if you choose too.
 
 ```{r problems, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, results='hide'}
 url <- 'http://www.co.fairbanks.ak.us/transportation/MACSDocuments/GTFS.zip'
