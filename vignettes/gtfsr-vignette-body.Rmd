@@ -88,7 +88,7 @@ url <- 'http://www.co.fairbanks.ak.us/transportation/MACSDocuments/GTFS.zip'
 gtfs_obj <- url %>% import_gtfs
 ```
 
-If you look at the output when creating the `gtfs_obj` object, you should see output that looks like this...
+If you look at the console output when creating the `gtfs_obj` object, you could see this kind of warning. 
 
 ```
 ...
