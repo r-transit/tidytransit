@@ -40,6 +40,10 @@ feedlist_df <- get_feedlist() # create a data frame of all feeds
 feedlist_df <- feedlist_df %>% filter_feedlist # filter the feedlist
 
 feedlist_df %>% select(url_d) %>% head(5) # show first 5 feed urls
+
+leaflet() %>% addTiles() %>%
+    addCircleMarkers(data = feedlist_df, lat = ~loc_lat, lng = ~loc_lng, 
+                     popup = ~paste(sep = "<br/>", t, loc_t))
 ```
 
 If we want only the data for a specific location (or locations), we can get then search the feedlist for feeds of interest.
