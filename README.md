@@ -79,18 +79,15 @@ With a valid API key loaded, you can easily get the full list of GTFS feeds usin
 feedlist_df <- get_feedlist() # create a data frame of all feeds
 
 feedlist_df <- feedlist_df %>% filter_feedlist # filter the feedlist
-#> 152 of 649 feeds did not provide valid URLs. 497 returned.
+#> 153 of 666 feeds did not provide valid URLs. 513 returned.
 
 feedlist_df %>% select(url_d) %>% head(5) # show first 5 feed urls
-#> Source: local data frame [5 x 1]
-#> 
-#>                                                                                  url_d
-#>                                                                                  (chr)
-#> 1       http://data.trilliumtransit.com/gtfs/thousandoaks-ca-us/thousandoaks-ca-us.zip
-#> 2           http://corporate.sunrail.com/wp-content/uploads/2016/05/google_transit.zip
-#> 3                 http://data.trilliumtransit.com/gtfs/westcat-ca-us/westcat-ca-us.zip
-#> 4 http://data.trilliumtransit.com/gtfs/marthasvineyard-ma-us/marthasvineyard-ma-us.zip
-#> 5 http://data.trilliumtransit.com/gtfs/eldoradotransit-ca-us/eldoradotransit-ca-us.zip
+#>                                                                                                url_d
+#> 1                     http://www.wheelsbus.com/wp-content/themes/enfold-child/pdf/google_transit.zip
+#> 2                                            http://www.tri-rail.com/GTDF/Current/google_transit.zip
+#> 3 http://data.trilliumtransit.com/gtfs/cityandboroughofjuneau-ak-us/cityandboroughofjuneau-ak-us.zip
+#> 4                                         http://bctransit.com/servlet/bctransit/data/GTFS%20-%20FVX
+#> 5                                    http://bctransit.com/servlet/bctransit/data/GTFS%20-%20Whistler
 ```
 
 If we want only the data for a specific location (or locations), we can get then search the feedlist for feeds of interest.
@@ -105,10 +102,7 @@ aussie_df <- feedlist_df %>%
     filter(grepl('australia', loc_t, ignore.case = TRUE)) # filter out locations with "australia" in name
 
 aussie_df %>% select(loc_t) %>% head(5) # look at location names
-#> Source: local data frame [5 x 1]
-#> 
 #>                        loc_t
-#>                        (chr)
 #> 1   Melbourne VIC, Australia
 #> 2 Burnie TAS 7320, Australia
 #> 3  Launceston TAS, Australia
@@ -157,28 +151,26 @@ To understand the problem, let's extract the data frame `calendar_df`. Recall th
 df <- gtfs_obj$calendar_df
 
 df
-#> Source: local data frame [4 x 10]
-#> 
+#> # A tibble: 4 x 10
 #>   service_id monday tuesday wednesday thursday friday saturday sunday
-#>        (chr)  (int)   (int)     (int)    (int)  (int)    (int)  (int)
+#> *      <chr>  <int>   <int>     <int>    <int>  <int>    <int>  <int>
 #> 1    Weekday      1       1         1        1      1        0      0
 #> 2   Saturday      0       0         0        0      0        1      0
-#> 3         NA     NA      NA        NA       NA     NA       NA     NA
-#> 4         NA     NA      NA        NA       NA     NA       NA     NA
+#> 3       <NA>     NA      NA        NA       NA     NA       NA     NA
+#> 4       <NA>     NA      NA        NA       NA     NA       NA     NA
 #>   start_date end_date
-#>        (chr)    (chr)
+#> *      <chr>    <chr>
 #> 1   20151215 20161231
 #> 2   20151215 20161231
-#> 3         NA       NA
-#> 4         NA       NA
+#> 3       <NA>     <NA>
+#> 4       <NA>     <NA>
 
 attr(df, 'problems')
-#> Source: local data frame [2 x 4]
-#> 
+#> # A tibble: 2 x 4
 #>     row   col   expected    actual
-#>   (int) (chr)      (chr)     (chr)
-#> 1     3    NA 10 columns 1 columns
-#> 2     4    NA 10 columns 1 columns
+#>   <int> <chr>      <chr>     <chr>
+#> 1     3  <NA> 10 columns 1 columns
+#> 2     4  <NA> 10 columns 1 columns
 ```
 
 From inspecting the output from `attr(df, 'problems')` and comparing it to just `df`, it appears the problems (at least for this particular `calendar_df`) stem from the empty rows added to the end of the original text file. Not a big deal and easily fixed. But we leave such specific fixes to the user to correct.
@@ -205,7 +197,7 @@ durham_urls <- nc %>%
 gtfs_objs <- durham_urls %>% import_gtfs(quiet=TRUE) # quietly import
 
 sapply(gtfs_objs, class) # verify that each object of is a `gtfs` object
-#> [1] "gtfs" "gtfs" "gtfs"
+#> [1] "gtfs" "NULL" "gtfs"
 
 # validate file and field structures ----------
 # attach `validate` data as attribute
@@ -235,17 +227,40 @@ There can also be 3 other elements:
 -   `problem_opt_files` a data frame which highlights problematic *optional* files (optional files that are missing *required fields*)
 -   `extra_files` a data frame of any extra files found (i.e. non-standard GTFS feed files not listed as optional or required)
 
-Taking a closer look, we can see that all 3 Durham agencies provide all required files and they contain all required fields. However, all 3 Durham agencies provided *optional files* that are missing *required fields*.
+Taking a closer look, we can see that *not* all Durham agencies provide all required files. The second object, `gtfs_objs[[2]]`, is `NULL` given that the link doesn't connect to a valid feed. (The link connects you to [Go Transit NC's Developer Resources page](https://gotransitnc.org/developer-resources/gtfs) but not directly to any feeds.)
+
+The two valid gtfs objects, `gtfs_objs[[1]]` and `gtfs_objs[[3]]`, contain all required fields. However, these agencies provided *optional files* that are missing *required fields*.
 
 ``` r
 validate_list_attr %>% sapply(. %>% extract2('all_req_files'))
-#> [1] TRUE TRUE TRUE
+#> [[1]]
+#> [1] TRUE
+#> 
+#> [[2]]
+#> NULL
+#> 
+#> [[3]]
+#> [1] TRUE
 
 validate_list_attr %>% sapply(. %>% extract2('all_req_fields_in_req_files'))
-#> [1] TRUE TRUE TRUE
+#> [[1]]
+#> [1] TRUE
+#> 
+#> [[2]]
+#> NULL
+#> 
+#> [[3]]
+#> [1] TRUE
 
 validate_list_attr %>% sapply(. %>% extract2('all_req_fields_in_opt_files'))
-#> [1] FALSE FALSE FALSE
+#> [[1]]
+#> [1] FALSE
+#> 
+#> [[2]]
+#> NULL
+#> 
+#> [[3]]
+#> [1] FALSE
 
 # OR, without piping
 # sapply(validate_list_attr, '[[', 'all_req_files')
@@ -258,10 +273,9 @@ We can get more detail about the problematic optional files by extracting the el
 ``` r
 # extract the `problem_opt_files` from the validation list
 validate_list_attr[[3]]$problem_opt_files
-#> Source: local data frame [8 x 6]
-#> 
+#> # A tibble: 8 x 6
 #>                   file file_spec file_provided_status         field
-#>                  (chr)     (chr)                (chr)         (chr)
+#>                  <chr>     <chr>                <chr>         <chr>
 #> 1      fare_attributes       opt                  yes     transfers
 #> 2          frequencies       opt                  yes       trip_id
 #> 3          frequencies       opt                  yes    start_time
@@ -271,7 +285,7 @@ validate_list_attr[[3]]$problem_opt_files
 #> 7 timetable_stop_order       opt                  yes       stop_id
 #> 8 timetable_stop_order       opt                  yes stop_sequence
 #>   field_spec field_provided_status
-#>        (chr)                 (chr)
+#>        <chr>                 <chr>
 #> 1        req                 empty
 #> 2        req                 empty
 #> 3        req                 empty
@@ -288,8 +302,6 @@ It is important to recall that most GTFS feed files and fields are **optional**.
 
 4. Mapping stops and routes using `gtfsr`
 -----------------------------------------
-
-**NOTE:** *Github does not allow javascript. As a result, we use static PNG pictures as placeholders for what are actually interactive `leaflet` maps. If you build the vignette or run the codes in R, these `leaflet` maps should be built automatically.*
 
 The `gtfsr` has mapping functions designed to help users quickly map spatial data that is found within most GTFS feeds. These functions input `gtfs` objects and then map the desired datum or data (stop, route, route networks).
 
@@ -327,23 +339,35 @@ map_gtfs_stop(gtfs_obj = duke_gtfs_obj, stop_id = west_chapel_stop_id)
 
 ![](README/README-duke-map-1.png)
 
-Let's go further and map out all stops and the shape of the popular *C1 East-West Loop* bus route. We need only find the `route_id` before mapping all the stops using `map_gtfs_route_stops()` and the shape using `map_gtfs_route_shape()`.
+Let's go further and map out all stops and the shape of the popular *C1 East-West Loop* bus route. We need only find the `route_id` before mapping all the stops using `map_gtfs_route_stops()` and the shape using `map_gtfs_route_shapes()`.
 
 ``` r
 C1_route_id <- duke_gtfs_obj[['routes_df']] %>%
     slice(which(grepl('C1', route_short_name, ignore.case=TRUE))) %>% # search for "C1"
     extract2('route_id') # extract just the datum in route_id
 
-map_gtfs_route_stops(gtfs_obj = duke_gtfs_obj, route_id = C1_route_id) # map all stops along route
+map_gtfs_route_stops(gtfs_obj = duke_gtfs_obj, C1_route_id) # map all stops along route
 ```
 
-![](README/README-duke-map1-1.png)
+![](README/README-duke-map1a-1.png)
 
 ``` r
-map_gtfs_route_shape(gtfs_obj = duke_gtfs_obj, route_id = C1_route_id) # map route shape with stops
+map_gtfs_route_shapes(gtfs_obj = duke_gtfs_obj, C1_route_id) # map route shape with stops
 ```
 
-![](README/README-duke-map1-2.png)
+![](README/README-duke-map1a-2.png)
+
+We can also map more than one route *shape* at a time by passing 2 or more route IDs. Let's add the Central Campus Express `CCX`. (Note this feature does not exists for route stops but it's coming soon.)
+
+``` r
+C1_CCX_route_ids <- duke_gtfs_obj[['routes_df']] %>%
+    slice(which(grepl('C1|CCX', route_short_name, ignore.case=TRUE))) %>% # search for "C1"
+    extract2('route_id') # extract just the datum in route_id
+
+map_gtfs_route_shapes(gtfs_obj = duke_gtfs_obj, C1_CCX_route_ids) # map route shape with stops
+```
+
+![](README/README-duke-map1b-1.png)
 
 Finally, we can get visualize all of the routes that make up Duke University's Transit system using `map_gtfs_agency_routes`. Duke University Transit system is made of only one agency (`duke_agency_name = "Duke Transit"`). If desired, we can also add every stop for every route in the network by using option `include_stops = TRUE` (this option is `FALSE` by default).
 

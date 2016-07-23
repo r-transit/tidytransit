@@ -8,7 +8,7 @@
 #' @return Leaflet map object with all stop lat/long values plotted for a route.
 #' @export
 
-map_gtfs_route_shape <- function(gtfs_obj, route_ids, service_ids = NULL, include_stops = TRUE) {
+map_gtfs_route_shapes <- function(gtfs_obj, route_ids, service_ids = NULL, include_stops = TRUE) {
 
 	stopifnot(class(gtfs_obj) == 'gtfs',
 		!is.null(gtfs_obj$stops_df),
@@ -194,10 +194,11 @@ get_routes_sldf <- function(gtfs_obj, route_ids, service_ids = NULL) {
 
 		df <- gtfstrips %>%
 	    dplyr::distinct(shape_id) %>%
-	    dplyr::do_("`rownames<-`(.,.$shape_id)") %>%
-	    as.data.frame
+	    as.data.frame %>%
+	    `rownames<-`(., .$shape_id)
 
-	  gtfslines <- sp::SpatialLinesDataFrame(sp_lines, data = df) %>% rgeos::gSimplify(.00001)
+	  gtfslines <- sp::SpatialLinesDataFrame(sp_lines, data = df) %>%
+	  	rgeos::gSimplify(.00001)
 
 	  # extract corresponding route ids and names for shape ids
 	  routes_colors_df <- dplyr::data_frame(route_id = route_ids,

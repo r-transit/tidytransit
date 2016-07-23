@@ -162,7 +162,9 @@ There can also be 3 other elements:
 - `problem_opt_files` a data frame which highlights problematic *optional* files (optional files that are missing *required fields*)
 - `extra_files` a data frame of any extra files found (i.e. non-standard GTFS feed files not listed as optional or required)
 
-Taking a closer look, we can see that all 3 Durham agencies provide all required files and they contain all required fields. However, all 3 Durham agencies provided *optional files* that are missing *required fields*.
+Taking a closer look, we can see that *not* all Durham agencies provide all required files. The second object, `gtfs_objs[[2]]`, is `NULL` given that the link doesn't connect to a valid feed. (The link connects you to [Go Transit NC's Developer Resources page](https://gotransitnc.org/developer-resources/gtfs) but not directly to any feeds.)
+
+The two valid gtfs objects, `gtfs_objs[[1]]` and `gtfs_objs[[3]]`, contain all required fields. However, these agencies provided *optional files* that are missing *required fields*.
 
 ```{r durham-validate1, include=TRUE}
 validate_list_attr %>% sapply(. %>% extract2('all_req_files'))
@@ -223,15 +225,25 @@ Now, we can quickly map the stop using the function `map_gtfs_stop()`.
 map_gtfs_stop(gtfs_obj = duke_gtfs_obj, stop_id = west_chapel_stop_id)
 ```
 
-Let's go further and map out all stops and the shape of the popular *C1 East-West Loop* bus route. We need only find the `route_id` before mapping all the stops using `map_gtfs_route_stops()` and the shape using `map_gtfs_route_shape()`.
+Let's go further and map out all stops and the shape of the popular *C1 East-West Loop* bus route. We need only find the `route_id` before mapping all the stops using `map_gtfs_route_stops()` and the shape using `map_gtfs_route_shapes()`.
 
-```{r duke-map1, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, cache=FALSE}
+```{r duke-map1a, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, cache=FALSE}
 C1_route_id <- duke_gtfs_obj[['routes_df']] %>%
     slice(which(grepl('C1', route_short_name, ignore.case=TRUE))) %>% # search for "C1"
     extract2('route_id') # extract just the datum in route_id
 
-map_gtfs_route_stops(gtfs_obj = duke_gtfs_obj, route_id = C1_route_id) # map all stops along route
-map_gtfs_route_shape(gtfs_obj = duke_gtfs_obj, route_id = C1_route_id) # map route shape with stops
+map_gtfs_route_stops(gtfs_obj = duke_gtfs_obj, C1_route_id) # map all stops along route
+map_gtfs_route_shapes(gtfs_obj = duke_gtfs_obj, C1_route_id) # map route shape with stops
+```
+
+We can also map more than one route *shape* at a time by passing 2 or more route IDs. Let's add the Central Campus Express `CCX`. (Note this feature does not exists for route stops but it's coming soon.)
+
+```{r duke-map1b, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, cache=FALSE}
+C1_CCX_route_ids <- duke_gtfs_obj[['routes_df']] %>%
+    slice(which(grepl('C1|CCX', route_short_name, ignore.case=TRUE))) %>% # search for "C1"
+    extract2('route_id') # extract just the datum in route_id
+
+map_gtfs_route_shapes(gtfs_obj = duke_gtfs_obj, C1_CCX_route_ids) # map route shape with stops
 ```
 
 Finally, we can get visualize all of the routes that make up Duke University's Transit system using `map_gtfs_agency_routes`. Duke University Transit system is made of only one agency (`duke_agency_name = "Duke Transit"`). If desired, we can also add every stop for every route in the network by using option `include_stops = TRUE` (this option is `FALSE` by default).
