@@ -62,7 +62,6 @@ First things first, load the `gtfsr` package and set your key to access the Tran
 
 ``` r
 library(gtfsr)
-library(magrittr)
 library(dplyr)
 options(dplyr.width = Inf) # I like to see all the columns
 
