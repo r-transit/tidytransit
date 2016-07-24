@@ -46,6 +46,8 @@ get_feedlist <- function() {
 
   }
 
+  req_df <- req_df %>% mutate(loc_lng = as.numeric(loc_lng), loc_lat = as.numeric(loc_lat))
+
   return(req_df)
 
 }
@@ -354,5 +356,3 @@ tfeeds_get <- function(path, query, ..., version = 'v1/', key = if(has_api_key()
 
   req
 }
-
-

@@ -41,6 +41,12 @@ feedlist_df <- feedlist_df %>% filter_feedlist # filter the feedlist
 feedlist_df %>% select(url_d) %>% head(5) # show first 5 feed urls
 ```
 
+```{r transitfeeds_map, warning=TRUE, message=TRUE, echo=TRUE, eval=FALSE}
+leaflet::leaflet() %>% leaflet::addTiles() %>%
+    leaflet::addCircleMarkers(data = feedlist_df, lat = ~loc_lat, lng = ~loc_lng,
+                     popup = ~paste(sep = "<br/>", t, loc_t))
+```
+
 If we want only the data for a specific location (or locations), we can get then search the feedlist for feeds of interest.
 
 Assume we are interested in getting all the GTFS data from *Australian* feeds (i.e. we search for location names for the word 'australia'). We can match Australian agencies by name (filter on `loc_t`) and extract the corresponding url feeds (select `url_d`).
@@ -75,7 +81,7 @@ NOTE: Parsing errors and warnings while importing data can be extracted from any
 
 This output was suppressed in the last section to save space given how verbose it is. But the highlighted `NOTE` explains that *if one observes an error or warning during the import process*, one can extract a data frame of problems, which is stored as an attribute for any data frame contained within any `gtfs` object that had a warning output.
 
-As an example, let's extract the data and problems data frames for a url with parsing errors/warnings.
+As an example, let's extract the gtfs data and problems data for a url with parsing errors/warnings.  You can use `import gtfs` without going through transitfeeds.com if you choose too.
 
 ```{r problems, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, results='hide'}
 url <- 'http://www.co.fairbanks.ak.us/transportation/MACSDocuments/GTFS.zip'
@@ -83,7 +89,7 @@ url <- 'http://www.co.fairbanks.ak.us/transportation/MACSDocuments/GTFS.zip'
 gtfs_obj <- url %>% import_gtfs
 ```
 
-If you look at the output when creating the `gtfs_obj` object, you should see output that looks like this...
+If you look at the console output when creating the `gtfs_obj` object, you could see this kind of warning.
 
 ```
 ...
@@ -95,8 +101,7 @@ row col   expected    actual
 ...
 ```
 
-To understand the problem, let's extract the data frame `calendar_df`. Recall that `import_gtfs` returns either a single `gtfs` object (if one url is provided) or a list of `gtfs` objects. Each `gtfs` object is just a list of data frames.
-
+To understand the problem, let's extract the data frame `calendar_df`. Recall that `import_gtfs` returns either a single `gtfs` list object (if one url is provided) or a list of `gtfs` objects.
 
 ```{r calendar, echo=TRUE, eval=TRUE}
 # extract `calendar_df` from gtfs_obj
@@ -107,17 +112,17 @@ df
 attr(df, 'problems')
 ```
 
-From inspecting the output from `attr(df, 'problems')` and comparing it to just `df`, it appears the problems (at least for this particular `calendar_df`) stem from the empty rows added to the end of the original text file. Not a big deal and easily fixed. But we leave such specific fixes to the user to correct.
+From inspecting the output from `attr(df, 'problems')` and comparing it to `df`, it appears the problems for this particular `calendar_df` stem from the empty rows added to the end of the original text file. Not a big deal and easily cleaned to fit the standard but we leave such specific fixes to the user to correct.
 
 
 
 ## 3. Validating the file and fields structure of a GTFS feed
 
-GTFS feeds contain numerous *required* and *optional* files. And within each of these files, there are also *required* and *optional* fields (variables). (For more detailed information, please see Google's [GTFS Feed Specification Reference](https://developers.google.com/transit/gtfs/reference). Information on non-standard GTFS files---specifically `timetables-new.txt` and `timetable_stop_order-new.txt`---can be found at the [GTFS-to-HTML repo](https://github.com/brendannee/gtfs-to-html).
+GTFS feeds contain *required* and *optional* files. And within each of these files, there are also *required* and *optional* fields (For more detailed information, please see Google's [GTFS Feed Specification Reference](https://developers.google.com/transit/gtfs/reference). Information on non-standard GTFS files---specifically `timetables-new.txt` and `timetable_stop_order-new.txt`---can be found at the [GTFS-to-HTML repo](https://github.com/brendannee/gtfs-to-html).
 
 After one has successfully downloaded and unpacked a transit feed, there is no guarantee that it satisfies the requirements of a valid GTFS feed. For example, an unpacked directory may contain all the properly named text files (e.g. `agency.txt`, `stops.txt`, etc), but it could be that within each text file there is no data or that some of the required fields (or variables) (e.g. `stop_id`) are missing.
 
-The `gtfsr` package can quickly check the file and field structure of a GTFS feed and inform you if all required files and fields have been found. Additional information about optional files and fields is also provided. The function is called `validate_gtfs_structure()`. It inputs an object of class `gtfs` (the output of functions `import_gtfs()` or `read_gtfs()`) and, by default, attaches a `validate` attribute (i.e. `attr(gtfs_obj, 'validate')`) to the `gtfs` object. This `validate` attribute is just a list of validation information. Set the option `return_gtfs_obj = FALSE` if you only want this validation list.
+The `gtfsr` package can quickly check the file and field structure of a GTFS feed and inform you if all required files and fields have been found. Additional information about optional files and fields is also provided. The function is called `validate_gtfs_structure()`. It inputs an object of class `gtfs` (the output of functions `import_gtfs()` or `read_gtfs()`) and by default, attaches the `validate` attribute (i.e. `attr(gtfs_obj, 'validate')`) to the `gtfs` object. The `validate` attribute is just a list of validation information. Set the option `return_gtfs_obj = FALSE` if you only want this validation list.
 
 Let's take a look at an example, using transit feed data from agencies in Durham, NC, USA.
 
@@ -187,7 +192,7 @@ validate_list_attr[[3]]$problem_opt_files
 
 We can see that the optional `frequencies.txt` file was provided but all of the *required fields* were empty.
 
-It is important to recall that most GTFS feed files and fields are **optional**. Therefore, while useful to know any potential problems with optional files provided by a given feed, we can still proceed with doing interesting analyses as long as we have all the required files and fields.
+It is important to recall that GTFS feed files and fields can contain **optional** fields. Therefore, while  it is useful to know any potential problems with optional files provided by a given feed, we can still proceed with interesting analyses as long as we have all the required files and fields.
 
 ## 4. Mapping stops and routes using `gtfsr`
 
@@ -198,11 +203,9 @@ Let's try mapping a stop from a bus route popular with Duke University students-
 First, let's convert Duke University's GTFS transit feed into a `gtfs` object.
 
 ```{r duke-extract, include=TRUE}
-nc <- feedlist_df %>%
-    filter(grepl('NC, USA', loc_t, ignore.case=TRUE)) # get NC agencies
-
-duke_gtfs_obj <- nc %>%
-    filter(grepl('duke', t, ignore.case=TRUE)) %>%  # note, we search `t` (agency name)
+duke_gtfs_obj <- feedlist_df %>%
+    filter(grepl('duke', t, ignore.case=TRUE) & # note, we search `t` (agency name)
+           grepl('NC, USA', loc_t, ignore.case=TRUE)) %>%  # get NC agencies
     select(url_d) %>%   # get duke univeristy feed url
     import_gtfs(quiet=TRUE)     # suppress import messages and prints
 ```
@@ -220,7 +223,7 @@ west_chapel_stop_id
 
 Now, we can quickly map the stop using the function `map_gtfs_stop()`.
 
-```{r duke-map, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, cache=FALSE}
+```{r duke-map, warning=FALSE, message=FALSE, echo=TRUE, eval=FALSE, cache=FALSE}
 map_gtfs_stop(gtfs_obj = duke_gtfs_obj, stop_id = west_chapel_stop_id)
 ```
 
