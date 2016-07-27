@@ -192,10 +192,12 @@ get_routes_sldf <- function(gtfs_obj, route_ids, service_ids = NULL) {
 			magrittr::extract2('gtfsline') %>%
 			magrittr::extract2(1)
 
-		df <- gtfstrips %>%
-	    dplyr::distinct(shape_id) %>%
-	    as.data.frame %>%
-	    `rownames<-`(., .$shape_id)
+	  # get updated shape ids (order matters)
+	  shape_ids <- sapply(sp_lines@lines, function(x) x@ID)
+
+	  df <- shape_ids %>%
+	  	as.data.frame %>%
+	  	`rownames<-`(., shape_ids)
 
 	  gtfslines <- sp::SpatialLinesDataFrame(sp_lines, data = df) %>%
 	  	rgeos::gSimplify(.00001)
@@ -205,9 +207,6 @@ get_routes_sldf <- function(gtfs_obj, route_ids, service_ids = NULL) {
 	  	color = scales::hue_pal()(length(route_ids))) %>%
 	  	dplyr::left_join(gtfs_obj$routes_df %>% dplyr::select(route_id, route_short_name), by = 'route_id')
 
-	  # get updated shape ids (order matters)
-	  shape_ids <- gtfslines@lines %>%
-	  	lapply(. %>% '@'('ID')) %>% unlist
 
 	  # merge colors to shape_routes
 	  shapes_routes_colors_df <- shapes_routes_df %>%

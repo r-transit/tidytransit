@@ -22,6 +22,7 @@ First things first, load the `gtfsr` package and set your key to access the Tran
 library(gtfsr)
 library(dplyr)
 options(dplyr.width = Inf) # I like to see all the columns
+library(magrittr)
 
 set_api_key('2ec1ae29-b8c2-4a03-b96e-126d585233f9') # input your API key here
 ```

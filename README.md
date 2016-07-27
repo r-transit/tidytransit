@@ -64,6 +64,7 @@ First things first, load the `gtfsr` package and set your key to access the Tran
 library(gtfsr)
 library(dplyr)
 options(dplyr.width = Inf) # I like to see all the columns
+library(magrittr)
 
 set_api_key('2ec1ae29-b8c2-4a03-b96e-126d585233f9') # input your API key here
 ```
@@ -78,7 +79,7 @@ With a valid API key loaded, you can easily get the full list of GTFS feeds usin
 feedlist_df <- get_feedlist() # create a data frame of all feeds
 
 feedlist_df <- feedlist_df %>% filter_feedlist # filter the feedlist
-#> 153 of 666 feeds did not provide valid URLs. 513 returned.
+#> 155 of 668 feeds did not provide valid URLs. 513 returned.
 
 feedlist_df %>% select(url_d) %>% head(5) # show first 5 feed urls
 #>                                                                                                url_d
