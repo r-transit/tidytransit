@@ -42,3 +42,13 @@ valid_url <- function(url, timeout = 5, test_url = TRUE, quiet = TRUE) {
 	return(all(url_cond1, url_cond2))
 
 }
+
+#' Used to trigger suppressWarnings or not
+#' @param expr expression to suppress
+#' @param quiet Logical. Whether to suppress or not. \code{FALSE} by default.
+
+trigger_suppressWarnings <- function(expr, quiet) {
+
+	if(!quiet) expr else suppressWarnings(expr)
+
+}

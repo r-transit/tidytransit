@@ -83,8 +83,8 @@ test_that('Check if/how we are parsing files', {
 	files <- list.files(folder, full.names = TRUE)
 	empty_file <- files[1]
 
-	expect_null(parse_gtfs('_empty_df', empty_file)) # expect null since file is empty
-	expect_is(parse_gtfs('agency_df', agency_file), 'tbl_df') # check for message
+	expect_null(parse_gtfs('_empty', empty_file)) # expect null since file is empty
+	expect_is(parse_gtfs('agency', agency_file), 'tbl_df') # check for message
 
 })
 

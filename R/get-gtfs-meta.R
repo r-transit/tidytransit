@@ -10,44 +10,19 @@ get_gtfs_meta <- function() {
   agency$spec <- c('opt', 'req', 'req', 'req', 'opt', 'opt', 'opt', 'opt')
   agency$coltype <- rep('c', 8)
 
-  # stops
-  assign("stops", list())
-  stops$field <- c('stop_id', 'stop_code', 'stop_name', 'stop_desc', 'stop_lat', 'stop_lon', 'zone_id', 'stop_url', 'location_type', 'parent_station', 'stop_timezone', 'wheelchair_boarding')
-  stops$spec <- c('req', 'opt', 'req', 'opt', 'req', 'req', 'opt', 'opt', 'opt', 'opt', 'opt', 'opt')
-  stops$coltype <- rep('c', length(stops$field))
-  stops$coltype[which(stops$field %in% c('stop_lat', 'stop_lon'))] <- 'd' # double
-  stops$coltype[which(stops$field %in% c('location_type', 'wheelchair_boarding'))] <- 'i' #integers
-
-  # routes
-  assign("routes", list())
-  routes$field <- c('route_id', 'agency_id', 'route_short_name', 'route_long_name', 'route_desc', 'route_type', 'route_url', 'route_color', 'route_text_color')
-  routes$spec <- c('req', 'opt', 'req', 'req', 'opt', 'req', 'opt', 'opt', 'opt')
-  routes$coltype <- rep('c', length(routes$field))
-  routes$coltype[routes$field %in% c('route_type')] <- 'i'
-
-  # trips
-  assign("trips", list())
-  trips$field <- c('route_id', 'service_id', 'trip_id', 'trip_headsign', 'trip_short_name', 'direction_id', 'block_id', 'shape_id', 'wheelchair_accessible', 'bikes_allowed')
-  trips$spec <- c('req', 'req', 'req', 'opt', 'opt', 'opt', 'opt', 'opt', 'opt', 'opt')
-  trips$coltype <- rep('c', length(trips$field))
-  trips$coltype[trips$field %in% c('direction_id', 'wheelchair_accessible', 'bikes_allowed')] <- 'i'
-
-  # stop_times
-  assign("stop_times", list())
-  stop_times$field <- c('trip_id', 'arrival_time', 'departure_time', 'stop_id', 'stop_sequence', 'stop_headsign', 'pickup_type', 'drop_off_type', 'shape_dist_traveled', 'timepoint')
-  stop_times$spec <- c('req', 'req', 'req', 'req', 'req', 'opt', 'opt', 'opt', 'opt', 'opt')
-  stop_times$coltype <- rep('c', length(stop_times$field))
-  stop_times$coltype[stop_times$field %in% c('stop_sequence', 'pickup_type', 'drop_off_type', 'timepoint')] <- 'i'
-  stop_times$coltype[stop_times$field %in% c('shape_dist_traveled')] <- 'd'
-
-
   # calendar
   assign("calendar", list())
-  calendar$field <- c('service_id', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'start_date', 'end_date')
-  calendar$spec <- rep('req', times = 10)
+  calendar$field <- c('service_id', 'service_name', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'start_date', 'end_date')
+  calendar$spec <- rep('req', times = length(calendar$field))
+  calendar$spec[2] <- 'opt'
   calendar$coltype <- rep('i', length(calendar$field))
-  calendar$coltype[calendar$field %in% c('service_id', 'start_date', 'end_date')] <- 'c'
+  calendar$coltype[calendar$field %in% c('service_id', 'service_name', 'start_date', 'end_date')] <- 'c'
 
+  # calendar_attributes
+  assign("calendar_attributes", list())
+  calendar_attributes$field <- c('service_id', 'service_description')
+  calendar_attributes$spec <- rep('req', times = 2)
+  calendar_attributes$coltype <- c('c', 'c')
 
   # calendar_dates
   assign("calendar_dates", list())
@@ -56,14 +31,25 @@ get_gtfs_meta <- function() {
   calendar_dates$coltype <- rep('c', length(calendar_dates$field))
   calendar_dates$coltype[calendar_dates$field %in% c('exception_type')] <- 'i'
 
+   # directions
+  assign("directions", list())
+  directions$field <- c('route_id', 'direction_id', 'direction')
+  directions$spec <- rep('req', times = 3)
+  directions$coltype <- c('c', 'i', 'c')
 
   # fare_attributes
   assign("fare_attributes", list())
-  fare_attributes$field <- c('fare_id', 'price', 'currency_type', 'payment_method', 'transfers', 'transfer_duration')
-  fare_attributes$spec <- c('req', 'req', 'req', 'req', 'req', 'opt')
+  fare_attributes$field <- c('agency_id', 'fare_id', 'price', 'currency_type', 'payment_method', 'transfers', 'transfer_duration')
+  fare_attributes$spec <- c('opt', 'req', 'req', 'req', 'req', 'req', 'opt')
   fare_attributes$coltype <- rep('c', length(fare_attributes$field))
   fare_attributes$coltype[fare_attributes$field %in% c('payment_method', 'transfers')] <- 'i'
   fare_attributes$coltype[fare_attributes$field %in% c('transfer_duration')] <- 'd'
+
+  # fare_rider_categories
+  assign("fare_rider_categories", list())
+  fare_rider_categories$field <- c('fare_id', 'rider_category_id', 'price')
+  fare_rider_categories$spec <- c('req', 'req', 'req')
+  fare_rider_categories$coltype <- c('c', 'c', 'd')
 
   # fare_rules
   assign("fare_rules", list())
@@ -72,13 +58,19 @@ get_gtfs_meta <- function() {
   fare_rules$coltype <- rep('c', length(fare_rules$field))
   fare_rules$coltype[fare_rules$field %in% c('direction_id', 'wheelchair_accessible', 'bikes_allowed')] <- 'i'
 
-  # shapes
-  assign("shapes", list())
-  shapes$field <- c('shape_id', 'shape_pt_lat', 'shape_pt_lon', 'shape_pt_sequence', 'shape_dist_traveled')
-  shapes$spec <- c('req', 'req', 'req', 'req', 'opt')
-  shapes$coltype <- rep('d', length(shapes$field))
-  shapes$coltype[shapes$field %in% c('shape_id')] <- 'c'
-  shapes$coltype[shapes$field %in% c('shape_pt_sequence')] <- 'i'
+  # farezone_attributes
+  assign("farezone_attributes", list())
+  farezone_attributes$field <- c('zone_id', 'zone_name')
+  farezone_attributes$spec <- c('req', 'req')
+  farezone_attributes$coltype <- rep('c', length(farezone_attributes$field))
+
+  # feed_info
+  assign("feed_info", list())
+  feed_info$field <- c('feed_id', 'feed_publisher_name', 'feed_publisher_url', 'feed_lang', 'feed_version', 'feed_license', 'feed_contact_email', 'feed_contact_url', 'feed_start_date', 'feed_end_date')
+  feed_info$spec <- rep('opt', times = length(feed_info$field))
+  reqs <- c(2:4)
+  feed_info$spec[reqs] <- 'req'
+  feed_info$coltype <- rep('c', length(feed_info$field))
 
   # frequencies
   assign("frequencies", list())
@@ -88,27 +80,55 @@ get_gtfs_meta <- function() {
   frequencies$coltype[frequencies$field %in% c('headway_secs')] <- 'd'
   frequencies$coltype[frequencies$field %in% c('exact_times')] <- 'i'
 
-  # transfers
-  assign("transfers", list())
-  transfers$field <- c('from_stop_id', 'to_stop_id', 'transfer_type', 'min_transfer_time')
-  transfers$spec <- c('req', 'req', 'req', 'opt')
-  transfers$coltype <- rep('c', length(transfers$field))
-  transfers$coltype[transfers$field %in% c('exception_type')] <- 'i'
+  # rider_categories
+  assign("rider_categories", list())
+  rider_categories$field <- c('rider_category_id', 'rider_category_description')
+  rider_categories$spec <- c('req', 'req')
+  rider_categories$coltype <- rep('c', length(rider_categories$field))
 
-  # feed_info
-  assign("feed_info", list())
-  feed_info$field <- c('feed_publisher_name', 'feed_publisher_url', 'feed_lang', 'feed_start_date', 'feed_end_date', 'feed_version')
-  feed_info$spec <- c('req', 'req', 'req', 'opt', 'opt', 'opt')
-  feed_info$coltype <- rep('c', length(feed_info$field))
-  feed_info$coltype[feed_info$field %in% c('exception_type')] <- 'i'
+  # route_directions
+  assign("route_directions", list())
+  route_directions$field <- c("route_id", "direction_id", "direction_name")
+  route_directions$spec <- rep('req', length(route_directions$field))
+  route_directions$coltype <- rep('c', length(route_directions$field))
+  route_directions$coltype[route_directions$field %in% c("direction_id")] <- 'i'
 
-  # timetables
-  assign("timetables", list())
-  timetables$field <- c("timetable_id", "route_id", "direction_id", "start_date", "end_date", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "route_label", "service_notes", "direction_label", "orientation")
-  timetables$spec <- rep('req', length(timetables$field))
-  timetables$spec[timetables$field %in% c("route_label", "service_notes", "direction_label", "orientation")] <- 'opt'
-  timetables$coltype <- rep('c', length(timetables$field))
-  timetables$coltype[timetables$field %in% c("direction_id", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday")] <- 'i'
+  # routes
+  assign("routes", list())
+  routes$field <- c('route_id', 'agency_id', 'route_short_name', 'route_long_name', 'route_desc', 'route_type', 'route_url', 'route_color', 'route_text_color', 'route_sort_order', 'min_headway_minutes')
+  routes$spec <- c('req', 'opt', 'req', 'req', 'opt', 'req', 'opt', 'opt', 'opt', 'opt', 'opt')
+  routes$coltype <- rep('c', length(routes$field))
+  routes$coltype[routes$field %in% c('route_type', 'route_sort_order', 'min_headway_minutes')] <- 'i'
+
+  # shapes
+  assign("shapes", list())
+  shapes$field <- c('shape_id', 'shape_pt_lat', 'shape_pt_lon', 'shape_pt_sequence', 'shape_dist_traveled')
+  shapes$spec <- c('req', 'req', 'req', 'req', 'opt')
+  shapes$coltype <- rep('d', length(shapes$field))
+  shapes$coltype[shapes$field %in% c('shape_id')] <- 'c'
+  shapes$coltype[shapes$field %in% c('shape_pt_sequence')] <- 'i'
+
+  # stop_attributes
+  assign("stop_attributes", list())
+  stop_attributes$field <- c('stop_id', 'stop_city')
+  stop_attributes$spec <- c('req', 'req')
+  stop_attributes$coltype <- c('c', 'c')
+
+  # stop_times
+  assign("stop_times", list())
+  stop_times$field <- c('trip_id', 'arrival_time', 'departure_time', 'stop_id', 'stop_sequence', 'stop_headsign', 'pickup_type', 'drop_off_type', 'shape_dist_traveled', 'timepoint')
+  stop_times$spec <- c('req', 'req', 'req', 'req', 'req', 'opt', 'opt', 'opt', 'opt', 'opt')
+  stop_times$coltype <- rep('c', length(stop_times$field))
+  stop_times$coltype[stop_times$field %in% c('stop_sequence', 'pickup_type', 'drop_off_type', 'timepoint')] <- 'i'
+  stop_times$coltype[stop_times$field %in% c('shape_dist_traveled')] <- 'd'
+
+  # stops
+  assign("stops", list())
+  stops$field <- c('stop_id', 'stop_code', 'platform_code', 'stop_name', 'stop_desc', 'stop_lat', 'stop_lon', 'zone_id', 'stop_url', 'location_type', 'parent_station', 'stop_timezone', 'wheelchair_boarding')
+  stops$spec <- c('req', 'opt', 'opt', 'req', 'opt', 'req', 'req', 'opt', 'opt', 'opt', 'opt', 'opt', 'opt')
+  stops$coltype <- rep('c', length(stops$field))
+  stops$coltype[which(stops$field %in% c('stop_lat', 'stop_lon'))] <- 'd' # double
+  stops$coltype[which(stops$field %in% c('location_type', 'wheelchair_boarding'))] <- 'i' #integers
 
   # timetable_stop_order
   assign("timetable_stop_order", list())
@@ -118,12 +138,29 @@ get_gtfs_meta <- function() {
   timetable_stop_order$coltype <- rep('c', length(timetable_stop_order$field))
   timetable_stop_order$coltype[timetable_stop_order$field %in% c("stop_sequence")] <- 'i'
 
-  # route_directions
-  assign("route_directions", list())
-  route_directions$field <- c("route_id", "direction_id", "direction_name")
-  route_directions$spec <- rep('req', length(route_directions$field))
-  route_directions$coltype <- rep('c', length(route_directions$field))
-  route_directions$coltype[route_directions$field %in% c("direction_id")] <- 'i'
+  # timetables
+  assign("timetables", list())
+  timetables$field <- c("timetable_id", "route_id", "direction_id", "start_date", "end_date", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "route_label", "service_notes", "direction_label", "orientation")
+  timetables$spec <- rep('req', length(timetables$field))
+  timetables$spec[timetables$field %in% c("route_label", "service_notes", "direction_label", "orientation")] <- 'opt'
+  timetables$coltype <- rep('c', length(timetables$field))
+  timetables$coltype[timetables$field %in% c("direction_id", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday")] <- 'i'
+
+  # transfers
+  assign("transfers", list())
+  transfers$field <- c('from_stop_id', 'to_stop_id', 'transfer_type', 'min_transfer_time')
+  transfers$spec <- c('req', 'req', 'req', 'opt')
+  transfers$coltype <- rep('c', length(transfers$field))
+  transfers$coltype[transfers$field %in% c('exception_type')] <- 'i'
+
+  # trips
+  assign("trips", list())
+  trips$field <- c('route_id', 'service_id', 'trip_id', 'trip_headsign', 'trip_short_name', 'direction_id', 'block_id', 'shape_id', 'wheelchair_accessible', 'bikes_allowed')
+  trips$spec <- c('req', 'req', 'req', 'opt', 'opt', 'opt', 'opt', 'opt', 'opt', 'opt')
+  trips$coltype <- rep('c', length(trips$field))
+  trips$coltype[trips$field %in% c('direction_id', 'wheelchair_accessible', 'bikes_allowed')] <- 'i'
+
+
 
   environment()
 

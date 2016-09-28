@@ -1,7 +1,7 @@
 Package: gtfsr
 Type: Package
 Title: Working with GTFS (General Transit Feed Specification) feeds in R
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: as.person(c(
     "Elaine McVey <elaine.mcvey@transloc.com> [aut, cre]",
     "Danton Noriega-Goodwin <danton@transloc.com> [aut]"

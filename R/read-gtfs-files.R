@@ -109,7 +109,7 @@ read_gtfs <- function(exdir, delete_files = TRUE, quiet = FALSE) {
   check <- validate_gtfs_structure(gtfs_list, return_gtfs_obj = FALSE, quiet = TRUE)
   valid <- all(check$all_req_files, check$all_req_fields_in_req_files)
 
-  if(!quiet) message("Testing if data structure...")
+  if(!quiet) message("Testing data structure...")
   if(valid) {
     class(gtfs_list) <- 'gtfs'
     if(!quiet) message("...passed. Valid GTFS object.\n")
@@ -161,25 +161,57 @@ parse_gtfs <- function(prefix, file_path, quiet = FALSE) {
 
     ## get correct meta data using file prefix (e.g. 'agency', 'stop_times')
     meta <- get_gtfs_meta()[[prefix]]
-    small_df <- suppressWarnings(readr::read_csv(file_path, n_max = 10)) # get a small df to find how many cols are needed
+
+    if(length(scan(file_path, what = "", quiet = TRUE, sep = '\n')) < 1) {
+      s <- sprintf("File '%s' is empty. Returning NULL.\n", basename(file_path))
+      message(s)
+      return()
+    }
+
+    ## read.csv supports UTF-8-BOM. use this to get field names.
+    small_df <- suppressWarnings(read.csv(file_path, nrows = 10, stringsAsFactors = FALSE)) # get a small df to find how many cols are needed
+
     ## get correct coltype, if possible
     coltypes <- rep('c', dim(small_df)[2]) # create 'c' as coltype defaults
-    names(coltypes) <- names(small_df)
+    names(coltypes) <- names(small_df) %>% tolower()
     indx <- match(names(coltypes), meta$field)  # indx from valid cols in meta$field. NAs will return for invalid cols
+
+    colnames <- meta$field[indx] # get expected/required names for columns. these are imposed.
+
     ## !is.na(indx) = valid col in 'coltype' found in meta$field
     ## indx[!is.na(indx)] = location in 'meta$coltype' where corresponding type is found
     coltypes[!is.na(indx)] <- meta$coltype[indx[!is.na(indx)]] # valid cols found in small_df
+
+    ## get colclasses for use in read.csv (useful when UTF-8-BOM encoding is found)
+    colclasses <- sapply(coltypes, switch, c = "character", i = "integer", d = "double")
+
+    ## collapse coltypes for use in read_csv
     coltypes <- coltypes %>% paste(collapse = "")
 
-    if(!quiet) {
-      df <- readr::read_csv(file_path, col_types = coltypes)
-      probs <- readr::problems(readr::read_csv(file_path, col_types = coltypes))
-    } else {
-      df <- suppressWarnings(readr::read_csv(file_path, col_types = coltypes))
-      probs <- suppressWarnings(readr::problems(readr::read_csv(file_path, col_types = coltypes)))
+    ## switch function for when BOMs exist
+    converttype <- function(x, y) {
+      switch(x, character = as.character(y), integer = as.integer(y), double = as.double(y))
     }
 
-    if(dim(probs)[1] > 0) attributes(df) <- append(attributes(df), list(problems = probs))
+    if (has_bom(file_path)) { # check for BOM. if yes, use read.csv()
+      csv <- substitute(read.csv(file_path, col.names = colnames, stringsAsFactors= FALSE))
+      df <- try(suppressWarnings(eval(csv)) %>%
+          mapply(converttype, x = colclasses, y = ., SIMPLIFY = FALSE) %>% # ensure proper column types
+          tibble::as_tibble())
+
+      if(any(class(df) %in% "try-error")) {
+        probs <- "Error during import. Likely encoding error. Note that read.csv() was used, not readr::read_csv()."
+        attributes(df) <- append(attributes(df), list(problems = probs))
+      }
+
+    } else {
+      csv <- substitute(readr::read_csv(file_path, col_types = coltypes, col_names = colnames, skip = 1L))
+      prob <- substitute(readr::problems(readr::read_csv(file_path, col_types = coltypes, col_names = colnames, skip = 1L)))
+      df <- trigger_suppressWarnings(eval(csv), quiet)
+      probs <- trigger_suppressWarnings(eval(prob), quiet)
+
+      if(dim(probs)[1] > 0) attributes(df) <- append(attributes(df), list(problems = probs))
+    }
 
     return(df)
   } else return(NULL)

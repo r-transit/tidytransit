@@ -17,7 +17,24 @@ validate_files_provided <- function(gtfs_obj) {
 
   # Per spec, these are the required and optional files
   all_req_files <- c('agency', 'stops', 'routes', 'trips', 'stop_times', 'calendar')
-  all_opt_files <- c('calendar_dates', 'fare_attributes', 'fare_rules', 'shapes', 'frequencies', 'transfers', 'feed_info', 'timetables', 'timetable_stop_order', 'route_directions')
+  all_opt_files <- c(
+    'calendar_attributes',
+    'calendar_dates',
+    'directions',
+    'fare_attributes',
+    'fare_rider_categories',
+    'fare_rules',
+    'farezone_attributes',
+    'feed_info',
+    'frequencies',
+    'rider_categories',
+    'route_directions',
+    'shapes',
+    'stop_attributes',
+    'timetable_stop_order',
+    'timetables',
+    'transfers'
+  )
   all_spec_files <- c(all_req_files, all_opt_files)
 
   # Get the names of all the dfs in the list for a gtfs_obj
@@ -48,13 +65,13 @@ make_var_val <- function() {
 
   nms <- get_gtfs_meta() %>% names # get names of each envir element
 
-  all_df <- get_gtfs_meta() %>%
+  all_val_df <- get_gtfs_meta() %>%
     lapply(. %>% as.data.frame(stringsAsFactors=FALSE) %>% dplyr::tbl_df(.)) # convert list data to tbl_df
 
-  all_df <- mapply(function(x,y) dplyr::mutate(.data=x, file = y), x = all_df, y = nms, SIMPLIFY=FALSE) %>%
+  all_val_df <- mapply(function(x,y) dplyr::mutate(.data=x, file = y), x = all_val_df, y = nms, SIMPLIFY=FALSE) %>%
     dplyr::bind_rows() # assign new variable 'file' to each tbl_df based on names
 
-  return(all_df)
+  return(all_val_df)
 
 }
 
@@ -138,38 +155,38 @@ validate_vars_provided <- function(val_files, gtfs_obj) {
   }
 
   # Join observed field provided status with spec info
-  all_df <- suppressMessages(dplyr::full_join(vars_df, val_vars_df))
+  all_val_df <- suppressMessages(dplyr::full_join(vars_df, val_vars_df))
 
-  orig_rows <- nrow(all_df)
+  orig_rows <- nrow(all_val_df)
 
   # Now fill in special cases from join results
 
   # 1) Extra fields provided in spec files
-  sub_all_df <- all_df %>%
+  sub_all_val_df <- all_val_df %>%
     dplyr::filter(!is.na(field_spec))
 
-  case1_df <- all_df %>%
+  case_df <- all_val_df %>%
     dplyr::filter(is.na(field_spec))
 
-  case1_df <- case1_df %>%
+  case_df <- case_df %>%
     dplyr::mutate(field_spec = 'ext') %>%
     dplyr::group_by(file) %>%
-    dplyr::mutate(file_spec = unique(sub_all_df$file_spec[sub_all_df$file == unique(file)]),
-           file_provided_status = unique(sub_all_df$file_provided_status[sub_all_df$file == unique(file)]))
+    dplyr::mutate(file_spec = unique(sub_all_val_df$file_spec[sub_all_val_df$file == unique(file)]),
+           file_provided_status = unique(sub_all_val_df$file_provided_status[sub_all_val_df$file == unique(file)]))
 
 
   # 2) field_provided_status is NA for spec fields not provided in files provided
-  sub_all_df$field_provided_status[is.na(sub_all_df$field_provided_status)] <- 'no'
+  sub_all_val_df$field_provided_status[is.na(sub_all_val_df$field_provided_status)] <- 'no'
 
   # Put filled in parts back together
-  all_df <- dplyr::bind_rows(sub_all_df, case1_df)
-  if (nrow(all_df) != orig_rows) stop('Handling of special cases failed.')
+  all_val_df <- dplyr::bind_rows(sub_all_val_df, case_df)
+  if (nrow(all_val_df) != orig_rows) stop('Handling of special cases failed.')
 
   # Check overall status for required files/fields
-  all_df <- all_df %>%
+  all_val_df <- all_val_df %>%
     dplyr::mutate(validation_status = 'ok') # default ok
 
-  all_df <- all_df %>%
+  all_val_df <- all_val_df %>%
     dplyr::mutate(validation_details = NA) %>% # default to NA
     dplyr::mutate(validation_details = replace(validation_details, file_provided_status != 'yes' & file_spec == 'opt', 'missing_opt_file')) %>% # optional file missing
     dplyr::mutate(validation_details = replace(validation_details, file_provided_status != 'yes' & file_spec == 'req', 'missing_req_file')) %>% # req file missing
@@ -177,11 +194,11 @@ validate_vars_provided <- function(val_files, gtfs_obj) {
     dplyr::mutate(validation_details = replace(validation_details, file_provided_status == 'yes' & field_spec == 'opt' & field_provided_status != 'yes', 'missing_opt_field'))
 
 
-  all_df <- all_df %>%
+  all_val_df <- all_val_df %>%
     dplyr::mutate(validation_status = replace(validation_status, grepl('req_file', validation_details), 'problem'))
 
 
-  return(all_df)
+  return(all_val_df)
 
 }
 
@@ -207,16 +224,17 @@ validate_gtfs_structure <- function(gtfs_obj, return_gtfs_obj = TRUE, quiet = FA
 
   val_files <- validate_files_provided(gtfs_obj = gtfs_obj)
 
-  all_df <- validate_vars_provided(val_files, gtfs_obj = gtfs_obj)
+  all_val_df <- validate_vars_provided(val_files, gtfs_obj = gtfs_obj) %>%
+    calendar_exception_fix
 
-  probs_subset <- all_df %>% dplyr::filter(validation_status == 'problem') # subset of only problems
+  probs_subset <- all_val_df %>% dplyr::filter(validation_status == 'problem') # subset of only problems
 
-  ok_subset <- all_df %>% dplyr::filter(validation_status != 'problem') # subset of ok values
+  ok_subset <- all_val_df %>% dplyr::filter(validation_status != 'problem') # subset of ok values
 
   validate_list <- list(all_req_files = !('missing_req_file' %in% probs_subset$validation_details),
                         all_req_fields_in_req_files = !('missing_req_field' %in% probs_subset$validation_details),
                         all_req_fields_in_opt_files = !('missing_req_field' %in% ok_subset$validation_details),
-                        validate_df = all_df)
+                        validate_df = all_val_df)
 
   # get subset of problem req files
   if(!validate_list$all_req_files) {
@@ -225,16 +243,16 @@ validate_gtfs_structure <- function(gtfs_obj, return_gtfs_obj = TRUE, quiet = FA
         dplyr::select(file, file_spec, file_provided_status, field, field_spec, field_provided_status)
   }
 
-  # get subset of problem req files
+  # get subset of problem opt files
   if(any(!validate_list$all_req_fields_in_req_files, !validate_list$all_req_fields_in_opt_files)) {
       validate_list$problem_opt_files <- ok_subset %>%
-        dplyr::filter(grepl('missing_req_*', validation_details)) %>%
+        dplyr::filter(grepl('missing_opt_*', validation_details)) %>%
         dplyr::select(file, file_spec, file_provided_status, field, field_spec, field_provided_status)
   }
 
   # get subset of extra files
-  if('ext' %in% all_df$file_spec) {
-      validate_list$extra_files <- all_df %>%
+  if('ext' %in% all_val_df$file_spec) {
+      validate_list$extra_files <- all_val_df %>%
         dplyr::filter(grepl('ext', file_spec)) %>%
         dplyr::select(file, file_spec, file_provided_status, field, field_spec, field_provided_status)
   }
@@ -248,6 +266,38 @@ validate_gtfs_structure <- function(gtfs_obj, return_gtfs_obj = TRUE, quiet = FA
     return(validate_list)
   }
 
-
 }
 
+
+#' checks for the missing calendar.txt exception (see https://developers.google.com/transit/gtfs/reference/calendar_dates-file). if the exception is TRUE, then calendar has its file spec set to 'extra'.
+#' @param all_val_df dataframe of all files and fields. returned from validate_vars_provided()
+#' @return corrected dataframe.
+
+calendar_exception_fix <- function(all_val_df) {
+
+  # see if missing calendar
+  missing_calendar <- all_val_df %>%
+    dplyr::filter(file == 'calendar') %>%
+    '$'('file_provided_status') %>%
+    unique() %>%
+    `==`('no')
+
+  # see if calendar_dates file includes field `date`
+  has_date_field <- all_val_df %>%
+    dplyr::filter(file == 'calendar_dates') %>%
+    dplyr::filter(field == 'date') %>%
+    '$'('field_provided_status') %>%
+    `==`('yes')
+
+  # if missing calendar.txt but calendar_dates.txt has 'date' field, then update validation status of calendar to 'ok'
+
+  if(all(missing_calendar, has_date_field)) {
+
+    all_val_df <- all_val_df %>%
+      dplyr::mutate(validation_status = dplyr::if_else(file == "calendar", "ok", validation_status)) %>%
+      dplyr::mutate(file_spec = dplyr::if_else(file == "calendar", "ext", file_spec))
+  }
+
+  return(all_val_df)
+
+}
