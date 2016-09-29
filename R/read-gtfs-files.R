@@ -169,7 +169,7 @@ parse_gtfs <- function(prefix, file_path, quiet = FALSE) {
     }
 
     ## read.csv supports UTF-8-BOM. use this to get field names.
-    small_df <- suppressWarnings(read.csv(file_path, nrows = 10, stringsAsFactors = FALSE)) # get a small df to find how many cols are needed
+    small_df <- suppressWarnings(utils::read.csv(file_path, nrows = 10, stringsAsFactors = FALSE)) # get a small df to find how many cols are needed
 
     ## get correct coltype, if possible
     coltypes <- rep('c', dim(small_df)[2]) # create 'c' as coltype defaults
@@ -194,19 +194,19 @@ parse_gtfs <- function(prefix, file_path, quiet = FALSE) {
     }
 
     if (has_bom(file_path)) { # check for BOM. if yes, use read.csv()
-      csv <- substitute(read.csv(file_path, col.names = colnames, stringsAsFactors= FALSE))
+      csv <- quote(utils::read.csv(file_path, col.names = colnames, stringsAsFactors= FALSE))
       df <- try(suppressWarnings(eval(csv)) %>%
           mapply(converttype, x = colclasses, y = ., SIMPLIFY = FALSE) %>% # ensure proper column types
           tibble::as_tibble())
 
       if(any(class(df) %in% "try-error")) {
-        probs <- "Error during import. Likely encoding error. Note that read.csv() was used, not readr::read_csv()."
+        probs <- "Error during import. Likely encoding error. Note that utils::read.csv() was used, not readr::read_csv()."
         attributes(df) <- append(attributes(df), list(problems = probs))
       }
 
     } else {
-      csv <- substitute(readr::read_csv(file_path, col_types = coltypes, col_names = colnames, skip = 1L))
-      prob <- substitute(readr::problems(readr::read_csv(file_path, col_types = coltypes, col_names = colnames, skip = 1L)))
+      csv <- quote(readr::read_csv(file = file_path, col_types = coltypes, col_names = colnames, skip = 1L))
+      prob <- quote(readr::problems(readr::read_csv(file = file_path, col_types = coltypes, col_names = colnames, skip = 1L)))
       df <- trigger_suppressWarnings(eval(csv), quiet)
       probs <- trigger_suppressWarnings(eval(prob), quiet)
 
