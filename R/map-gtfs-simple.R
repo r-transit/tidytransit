@@ -75,17 +75,17 @@ map_gtfs_route_stops <- function(gtfs_obj, route_ids, stop_opacity = 0.5, route_
 	if(any(stop_opacity < 0, stop_opacity > 1)) stop_opacity = 0.5 # error in opacity is fixed
 
 	## route_colors
-	if(length(route_colors) != length(route_ids)) {
-	  warning("route_colors and route_ids are not the same length. route_colors is ignored and default colors will be used.")
-	  route_colors <- NULL
-	}
+
 	if(!is.null(route_colors)) {
+	  if(length(route_colors) != length(route_ids)) {
+	    warning("route_colors and route_ids are not the same length. route_colors is ignored and default colors will be used.")
+	    route_colors <- NULL
+	  } else {
+	    route_colors <- scales::col2hcl(route_colors) %>%
+	      sapply(. %>% substr(.,1,7), USE.NAMES = FALSE)
 
-	  route_colors <- scales::col2hcl(route_colors) %>%
-	    sapply(. %>% substr(.,1,7), USE.NAMES = FALSE)
-
-	  plotting_data$routes_colors_df$color <- route_colors
-
+	    plotting_data$routes_colors_df$color <- route_colors
+    }
 	}
 
 	# create map with shapes
