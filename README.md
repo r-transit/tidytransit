@@ -341,7 +341,7 @@ Now, we can quickly map the stop using the function `map_gtfs_stop()`.
 map_gtfs_stop(gtfs_obj = duke_gtfs_obj, stop_id = west_chapel_stop_id)
 ```
 
-Let's go further and map out all stops and the shape of the popular *C1 East-West Loop* bus route. We need only find the `route_id` before mapping all the stops using `map_gtfs_route_stops()` and the shape using `map_gtfs_route_shapes()`.
+Let's go further and map out all stops and the shape of the popular *C1 East-West Loop* bus route. We need only find the `route_id` before mapping all the stops using `map_gtfs_routes(..., only_stops = TRUE)` and the shape using `map_gtfs_routes(..., only_stops = FALSE)`.
 
 ``` r
 C1_route_id <- duke_gtfs_obj[['routes_df']] %>%
@@ -354,7 +354,7 @@ map_gtfs_route_stops(gtfs_obj = duke_gtfs_obj, C1_route_id) # map all stops alon
 ![](README/README-duke-map1a-1.png)
 
 ``` r
-map_gtfs_route_shapes(gtfs_obj = duke_gtfs_obj, C1_route_id) # map route shape with stops
+map_gtfs_routes(gtfs_obj = duke_gtfs_obj, C1_route_id) # map route shape with stops
 ```
 
 ![](README/README-duke-map1a-2.png)
@@ -366,23 +366,23 @@ C1_CCX_route_ids <- duke_gtfs_obj[['routes_df']] %>%
     slice(which(grepl('C1|CCX', route_short_name, ignore.case=TRUE))) %>% # search for "C1"
     extract2('route_id') # extract just the datum in route_id
 
-map_gtfs_route_shapes(gtfs_obj = duke_gtfs_obj, C1_CCX_route_ids) # map route shape with stops
+map_gtfs_routes(gtfs_obj = duke_gtfs_obj, C1_CCX_route_ids) # map route shape with stops
 ```
 
 ![](README/README-duke-map1b-1.png)
 
-Finally, we can get visualize all of the routes that make up Duke University's Transit system using `map_gtfs_agency_routes`. Duke University Transit system is made of only one agency (`duke_agency_name = "Duke Transit"`). If desired, we can also add every stop for every route in the network by using option `include_stops = TRUE` (this option is `FALSE` by default).
+Finally, we can get visualize all of the routes that make up Duke University's Transit system using `map_gtfs_agency_network`. Duke University Transit system is made of only one agency (`duke_agency_name = "Duke Transit"`). If desired, we can also add every stop for every route in the network by using option `include_stops = TRUE` (this option is `FALSE` by default).
 
 ``` r
 duke_agency_name <- duke_gtfs_obj[['agency_df']]$agency_name[1]
 
-map_gtfs_agency_routes(gtfs_obj = duke_gtfs_obj, agency_name = duke_agency_name) # map all routes of agency
+map_gtfs_agency_network(gtfs_obj = duke_gtfs_obj, agency_name = duke_agency_name) # map all routes of agency
 ```
 
 ![](README/README-duke-map2-1.png)
 
 ``` r
-map_gtfs_agency_routes(gtfs_obj = duke_gtfs_obj, agency_name = duke_agency_name, include_stops = TRUE) # map all routes of agency with stops
+map_gtfs_agency_network(gtfs_obj = duke_gtfs_obj, agency_name = duke_agency_name, include_stops = TRUE) # map all routes of agency with stops
 ```
 
 ![](README/README-duke-map2-2.png)

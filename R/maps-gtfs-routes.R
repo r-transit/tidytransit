@@ -4,14 +4,14 @@
 #' @param route_ids Vector (Character). IDs for routes of interest.
 #' @param service_ids Vector (Character). Service IDs. NULL by Default.
 #' @param include_stops Boolean. Whether to layer on stops to the route shape. Default is TRUE.
+#' @param only_stops Boolean. Whether to map only stops, no routes. Overrides `include_stops`. Default is FALSE.
 #' @param stop_opacity Numeric. Value must be between 0 and 1. Defaults is 0.5.
 #' @param route_colors Character. Names of colors (e.g. "blue") or hex values (e.g. '#000000'). Default is NULL.
-
 #'
 #' @return Leaflet map object with all stop lat/long values plotted for a route.
 #' @export
 
-map_gtfs_route_shapes <- function(gtfs_obj, route_ids, service_ids = NULL, include_stops = TRUE, stop_opacity = 0.5, route_colors = NULL) {
+map_gtfs_routes <- function(gtfs_obj, route_ids, service_ids = NULL, include_stops = TRUE, only_stops = FALSE, stop_opacity = 0.5, route_colors = NULL) {
 
 	stopifnot(class(gtfs_obj) == 'gtfs',
 		!is.null(gtfs_obj$stops_df),
@@ -22,13 +22,33 @@ map_gtfs_route_shapes <- function(gtfs_obj, route_ids, service_ids = NULL, inclu
 		length(route_ids) > 0,
 		is.logical(include_stops))
 
+	## check service and route_ids
 	if(typeof(service_ids) != "character") service_ids %<>% unlist
-	if(typeof(route_ids) != "character") route_ids %<>% unlist
+  if(typeof(route_ids) != "character") route_ids %<>% unlist
+  if(!is.null(route_ids)) route_ids <- as.character(route_ids) # if not null, ensure characters
+
+	# check for valid routes
+	all_routes <- gtfs_obj$routes_df$route_id %>% unique
+
+  indx <- match(all_routes, route_ids) %>% na.omit()
+  not_found <- route_ids[!route_ids %in% all_routes] #routes not found
+
+  #check to see if routes were dropped
+  if(length(route_ids) > length(indx)) {
+    s <- sprintf("route_id(s) %s are/were not found.", paste(not_found))
+    warning(s)
+  }
+
+  route_ids <- all_routes[indx]
+
+  if(length(route_ids) < 1) {
+      stop("No specified route_ids were found.")
+  }
+
 
 	plotting_data <- get_routes_sldf(gtfs_obj, route_ids, service_ids)
 
 	route_ids <- plotting_data$shapes_routes_df$route_id # update route ids
-
 
 	# update/check variables
 	## stop_opacity
@@ -73,14 +93,19 @@ map_gtfs_route_shapes <- function(gtfs_obj, route_ids, service_ids = NULL, inclu
   m <- plotting_data$gtfslines %>%
   	leaflet::leaflet() %>%
   	leaflet::addProviderTiles("OpenStreetMap.BlackAndWhite") %>%
-  	leaflet::addPolylines(
-  		color = plotting_data$shape_colors$color,
-  		opacity = plotting_data$shape_colors$opacity,
-  		popup = plotting_data$shape_colors$popups) %>% # assign color to each separate shape file
 		leaflet::addLegend(
 			colors = plotting_data$routes_colors_df$color,
 			labels = paste("Route", plotting_data$routes_colors_df$route_short_name),
 			title = stringr::str_to_title(agency_lbl))
+
+  if(only_stops) {
+    include_stops <- TRUE
+  } else {
+    m %<>% leaflet::addPolylines(
+      color = plotting_data$shape_colors$color,
+      opacity = plotting_data$shape_colors$opacity,
+      popup = plotting_data$shape_colors$popups) # assign color to each separate shape file
+  }
 
 	if(include_stops) {
 
@@ -101,10 +126,8 @@ map_gtfs_route_shapes <- function(gtfs_obj, route_ids, service_ids = NULL, inclu
 
 		stops <- agency %>%
 			lapply(. %>% get_agency_stops(gtfs_obj, agency_name = .)) %>%
-			dplyr::bind_rows()
-	  stops %<>%
-	  	dplyr::inner_join(plotting_data$routes_colors_df, by = 'route_id')
-	  stops %<>%
+			dplyr::bind_rows() %>%
+	  	dplyr::inner_join(plotting_data$routes_colors_df, by = 'route_id') %>%
 	  	dplyr::slice(which(stop_id %in% possible_stops))
 
 	  m %<>% leaflet::addCircleMarkers(
