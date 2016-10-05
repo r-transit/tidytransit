@@ -145,7 +145,7 @@ map_gtfs_agency_network <- function(gtfs_obj, agency_name = NULL, route_ids = NU
       opacity = stop_opacity,
       fill = TRUE,
       fillColor = stops$color,
-      fillOpacity = 0.5,
+      fillOpacity = stop_opacity,
       lat = stops$lat,
       lng = stops$lng)
   }

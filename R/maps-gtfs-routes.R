@@ -134,6 +134,7 @@ map_gtfs_routes <- function(gtfs_obj, route_ids, service_ids = NULL, include_sto
 			popup = stops$stop_name,
 			radius = 6,
 	    stroke = TRUE,
+	    opacity = stop_opacity,
 			weight = 4,
 			color = 'black',
 	    fill = TRUE,
