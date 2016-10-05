@@ -6,13 +6,14 @@
 #' @param include_stops Boolean. Whether to layer on stops to the route shape. Default is TRUE.
 #' @param only_stops Boolean. Whether to map only stops, no routes. Default is FALSE.
 #' @param stop_opacity Numeric. Value must be between 0 and 1. Defaults is 0.5.
+#' @param route_opacity Numeric. Value must be between 0 and 1. Default is NULL.
 #' @param route_colors Character. Names of colors (e.g. "blue") or hex values (e.g. '#000000'). Default is NULL.
 
 #'
 #' @return Leaflet map object with all routes plotted for given agency ID.
 #' @export
 
-map_gtfs_agency_network <- function(gtfs_obj, agency_name = NULL, route_ids = NULL, include_stops = TRUE, only_stops = FALSE, stop_opacity = 0.5, route_colors = NULL) {
+map_gtfs_agency_network <- function(gtfs_obj, agency_name = NULL, route_ids = NULL, include_stops = TRUE, only_stops = FALSE, stop_opacity = 0.5, route_opacity = NULL, route_colors = NULL) {
 
   stopifnot(class(gtfs_obj) == 'gtfs',
             !is.null(gtfs_obj$stops_df),
@@ -27,7 +28,7 @@ map_gtfs_agency_network <- function(gtfs_obj, agency_name = NULL, route_ids = NU
   # if agency_name is null, take the first agency_name in gtfs obj
   if(is.null(agency_name)) {
     agency <- gtfs_obj$agency_df$agency_name[1]
-    s <- sprintf("No agency_name was provided. The first observed agency, %s, name is used.", agency)
+    s <- sprintf("No agency_name was provided. The first observed agency, %s, is used.", agency)
     message(s)
   } else {
     agency <- agency_name
@@ -93,6 +94,10 @@ map_gtfs_agency_network <- function(gtfs_obj, agency_name = NULL, route_ids = NU
   # update/check variables
   ## stop_opacity
   if(any(stop_opacity < 0, stop_opacity > 1)) stop_opacity = 0.5 # error in opacity is fixed
+  if(any(route_opacity < 0, route_opacity > 1)) route_opacity = NULL # force ok ruote_opacity
+
+  ## keep the calculated opacity values but scale up or down
+  if(is.null(route_opacity)) route_alpha <- 1 else route_alpha <- route_opacity/.75
 
   ## route_colors
   if(!is.null(route_colors)) {
@@ -126,7 +131,7 @@ map_gtfs_agency_network <- function(gtfs_obj, agency_name = NULL, route_ids = NU
     m  %<>%
       leaflet::addPolylines(
         color = plotting_data$shape_colors$color,
-        opacity = plotting_data$shape_colors$opacity,
+        opacity = plotting_data$shape_colors$opacity*route_alpha,
         popup = plotting_data$shape_colors$popups)
   }
 

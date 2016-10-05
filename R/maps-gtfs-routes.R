@@ -6,12 +6,13 @@
 #' @param include_stops Boolean. Whether to layer on stops to the route shape. Default is TRUE.
 #' @param only_stops Boolean. Whether to map only stops, no routes. Overrides `include_stops`. Default is FALSE.
 #' @param stop_opacity Numeric. Value must be between 0 and 1. Defaults is 0.5.
+#' @param route_opacity Numeric. Value must be between 0 and 1. Default is NULL.
 #' @param route_colors Character. Names of colors (e.g. "blue") or hex values (e.g. '#000000'). Default is NULL.
 #'
 #' @return Leaflet map object with all stop lat/long values plotted for a route.
 #' @export
 
-map_gtfs_routes <- function(gtfs_obj, route_ids, service_ids = NULL, include_stops = TRUE, only_stops = FALSE, stop_opacity = 0.5, route_colors = NULL) {
+map_gtfs_routes <- function(gtfs_obj, route_ids, service_ids = NULL, include_stops = TRUE, only_stops = FALSE, stop_opacity = 0.5, route_opacity = NULL, route_colors = NULL) {
 
 	stopifnot(class(gtfs_obj) == 'gtfs',
 		!is.null(gtfs_obj$stops_df),
@@ -53,6 +54,10 @@ map_gtfs_routes <- function(gtfs_obj, route_ids, service_ids = NULL, include_sto
 	# update/check variables
 	## stop_opacity
 	if(any(stop_opacity < 0, stop_opacity > 1)) stop_opacity = 0.5 # error in opacity is fixed
+	if(any(route_opacity < 0, route_opacity > 1)) route_opacity = NULL # force ok ruote_opacity
+
+	## keep the calculated opacity values but scale up or down
+  if(is.null(route_opacity)) route_alpha <- 1 else route_alpha <- route_opacity/.75
 
 	## route_colors
 	if(!is.null(route_colors)) {
@@ -258,7 +263,7 @@ get_routes_sldf <- function(gtfs_obj, route_ids, service_ids = NULL) {
 	  # make color vector for shapes
 	  shape_colors <- shapes_routes_colors_df %>%
 	  	dplyr::group_by(route_id) %>%
-	  	dplyr::mutate(n = n(), opacity = 0.75/(n)) %>%
+	  	dplyr::mutate(n = n(), opacity = 0.75/(n)) %>% # opacity is scaled by route numbers
 	  	dplyr::mutate(popups = paste("Route", route_short_name)) %>%
 	  	dplyr::select(-n) %>%
 	  	dplyr::ungroup() %>% # important to keep order correct!

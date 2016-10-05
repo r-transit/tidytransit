@@ -6,7 +6,7 @@
 \usage{
 map_gtfs(gtfs_obj, agency_name = NULL, route_ids = NULL,
   service_ids = NULL, include_stops = TRUE, only_stops = FALSE,
-  stop_opacity = 0.5, route_colors = NULL)
+  stop_opacity = 0.5, route_opacity = NULL, route_colors = NULL)
 }
 \arguments{
 \item{gtfs_obj}{A GTFS list object with components agency_df, etc.}
@@ -22,6 +22,8 @@ map_gtfs(gtfs_obj, agency_name = NULL, route_ids = NULL,
 \item{only_stops}{Boolean. Whether to map only stops, no routes. Overrides `include_stops`. Default is FALSE.}
 
 \item{stop_opacity}{Numeric. Value must be between 0 and 1. Defaults is 0.5.}
+
+\item{route_opacity}{Numeric. Value must be between 0 and 1. Default is NULL.}
 
 \item{route_colors}{Character. Names of colors (e.g. "blue") or hex values (e.g. '#000000'). Default is NULL.}
 }
