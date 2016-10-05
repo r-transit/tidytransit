@@ -4,12 +4,17 @@
 \alias{map_gtfs_route_stops}
 \title{map all stops for a route}
 \usage{
-map_gtfs_route_stops(gtfs_obj, route_id)
+map_gtfs_route_stops(gtfs_obj, route_ids, stop_opacity = 0.5,
+  route_colors = NULL)
 }
 \arguments{
 \item{gtfs_obj}{A GTFS list object with components agency_df, etc.}
 
-\item{route_id}{Character. A single ID for a route of interest.}
+\item{route_ids}{Vector (Character). IDs for routes of interest.}
+
+\item{stop_opacity}{Numeric. Value must be between 0 and 1. Defaults is 0.5}
+
+\item{route_colors}{Character. Names of colors (e.g. "blue") or hex values (e.g. '#000000'). Default is NULL.}
 }
 \value{
 Leaflet map object with all stop lat/long values plotted for a route.

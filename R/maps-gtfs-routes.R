@@ -1,14 +1,17 @@
-#' map the shape, with stops, for one or more routes
+#' map the shape, with stops, for one or more routes.
 #'
 #' @param gtfs_obj A GTFS list object with components agency_df, etc.
 #' @param route_ids Vector (Character). IDs for routes of interest.
-#' @param include_stops Boolean. Whether to layer on stops to the route shape. Default is TRUE.
 #' @param service_ids Vector (Character). Service IDs. NULL by Default.
+#' @param include_stops Boolean. Whether to layer on stops to the route shape. Default is TRUE.
+#' @param stop_opacity Numeric. Value must be between 0 and 1. Defaults is 0.5.
+#' @param route_colors Character. Names of colors (e.g. "blue") or hex values (e.g. '#000000'). Default is NULL.
+
 #'
 #' @return Leaflet map object with all stop lat/long values plotted for a route.
 #' @export
 
-map_gtfs_route_shapes <- function(gtfs_obj, route_ids, service_ids = NULL, include_stops = TRUE) {
+map_gtfs_route_shapes <- function(gtfs_obj, route_ids, service_ids = NULL, include_stops = TRUE, stop_opacity = 0.5, route_colors = NULL) {
 
 	stopifnot(class(gtfs_obj) == 'gtfs',
 		!is.null(gtfs_obj$stops_df),
@@ -25,6 +28,27 @@ map_gtfs_route_shapes <- function(gtfs_obj, route_ids, service_ids = NULL, inclu
 	plotting_data <- get_routes_sldf(gtfs_obj, route_ids, service_ids)
 
 	route_ids <- plotting_data$shapes_routes_df$route_id # update route ids
+
+
+	# update/check variables
+	## stop_opacity
+	if(any(stop_opacity < 0, stop_opacity > 1)) stop_opacity = 0.5 # error in opacity is fixed
+
+	## route_colors
+	if(length(route_colors) != length(route_ids)) {
+	  warning("route_colors and route_ids are not the same length. route_colors is ignored and default colors will be used.")
+	  route_colors <- NULL
+	}
+	if(!is.null(route_colors)) {
+
+	  route_colors <- scales::col2hcl(route_colors) %>%
+	    sapply(. %>% substr(.,1,7), USE.NAMES = FALSE)
+	  shape_colors <- route_colors
+
+	  plotting_data$routes_colors_df$color <- route_colors
+	  plotting_data$shape_colors$color <- shape_colors
+
+	}
 
   # find agency names from routes
 	if((!"agency_id" %in% gtfs_obj$routes_df)) {
@@ -74,12 +98,7 @@ map_gtfs_route_shapes <- function(gtfs_obj, route_ids, service_ids = NULL, inclu
 			stop(s)
 		}
 
-		# extract all possible stops across all trips for given routes
-		possible_stops <- gtfs_obj$stop_times_df %>%
-			dplyr::slice(which(trip_id %in% trip_ids)) %>%
-			dplyr::select(stop_id) %>%
-			dplyr::distinct(stop_id) %>%
-			magrittr::extract2(1)
+		possible_stops <- get_possible_stops(gtfs_obj, trip_ids)
 
 		stops <- agency %>%
 			lapply(. %>% get_agency_stops(gtfs_obj, agency_name = .)) %>%
@@ -91,12 +110,13 @@ map_gtfs_route_shapes <- function(gtfs_obj, route_ids, service_ids = NULL, inclu
 
 	  m %<>% leaflet::addCircleMarkers(
 			popup = stops$stop_name,
-			radius = 4,
+			radius = 6,
 	    stroke = TRUE,
+			weight = 4,
 			color = 'black',
-	    opacity = 0.3,
 	    fill = TRUE,
 	    fillColor = stops$color,
+	    fillOpacity = stop_opacity,
 			lat = stops$lat,
 			lng = stops$lng)
 

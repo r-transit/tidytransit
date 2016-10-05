@@ -2,21 +2,21 @@
 % Please edit documentation in R/map-gtfs-networks.R
 \name{map_gtfs_agency_routes}
 \alias{map_gtfs_agency_routes}
-\title{map all routes for an agency}
+\title{Map all routes for an agency. If no agency is specified, the first observed agency is taken by default and all its routes are mapped.}
 \usage{
-map_gtfs_agency_routes(gtfs_obj, agency_name = NULL, include_stops = FALSE)
+map_gtfs_agency_routes(gtfs_obj, agency_name = NULL, include_stops = TRUE)
 }
 \arguments{
 \item{gtfs_obj}{A GTFS list object with components agency_df, etc.}
 
 \item{agency_name}{Character. Provide the name of the agency whose routes are being mapped.}
 
-\item{include_stops}{Boolean. Whether to layer on stops to the route shape. Default is FALSE}
+\item{include_stops}{Boolean. Whether to layer on stops to the route shape. Default is TRUE.}
 }
 \value{
 Leaflet map object with all routes plotted for given agency ID.
 }
 \description{
-map all routes for an agency
+Map all routes for an agency. If no agency is specified, the first observed agency is taken by default and all its routes are mapped.
 }
 
