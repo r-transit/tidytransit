@@ -52,10 +52,41 @@ remove.packages('gtfsr')
 devtools::install_github('ropenscilabs/gtfsr')
 ```
 
-Example Usage (`gtfsr` vignette)
+Example Usage
 ------------------
 
-```{r vignette-body, child = 'vignettes/gtfsr-vignette-body.Rmd'}
+```{r readme-body}
+library(gtfsr)
+library(magrittr)
+library(dplyr)
+
+# set the API key
+set_api_key('2ec1ae29-b8c2-4a03-b96e-126d585233f9')
+
+# get the feedlist dataframe and filter out NYC subway
+feedlist_df <- get_feedlist() %>%
+  filter(grepl('NYC Subway GTFS',t, ignore.case= TRUE))
+
+# import NYC gtfs feed by sending the url to `import_gtfs`
+NYC <- import_gtfs(feedlist_df$url_d)
+
+# get line (routes) A and B
+routes <- NYC[['routes_df']] %>%
+  slice(which(grepl('a|b', route_id, ignore.case=TRUE))) %>%
+  '$'('route_id')
+
+# take the NYC `gtfs` object and map routes but include stops
+NYC %>% map_gtfs(route_ids = routes, include_stops = TRUE)
+
+# gtfs will plot ALL shapes for a given route_ids. These can be reduced using the `service_ids` option.
+service_ids <- NYC$trips_df %>%
+  select(service_id, route_id) %>%
+  distinct() %>%
+  filter(route_id %in% routes)
+service_ids
+
+
+
 ```
 
 

@@ -15,6 +15,7 @@ Imports:
     tibble,
     readr,
     httr,
+    htmltools,
     magrittr,
     stringr,
     assertthat,

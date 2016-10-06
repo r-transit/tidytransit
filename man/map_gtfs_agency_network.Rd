@@ -4,9 +4,10 @@
 \alias{map_gtfs_agency_network}
 \title{Map all routes for an agency. If no agency is specified, the first observed agency is taken by default and all its routes are mapped.}
 \usage{
-map_gtfs_agency_network(gtfs_obj, agency_name = NULL, route_ids = NULL,
-  include_stops = TRUE, only_stops = FALSE, stop_opacity = 0.5,
-  route_opacity = NULL, route_colors = NULL)
+map_gtfs_agency_network(gtfs_obj, agency_name, route_ids, service_ids = NULL,
+  shape_ids = NULL, include_stops = TRUE, only_stops = FALSE,
+  stop_opacity = 0.5, stop_details = FALSE, route_opacity = NULL,
+  route_colors = NULL)
 }
 \arguments{
 \item{gtfs_obj}{A GTFS list object with components agency_df, etc.}
@@ -15,11 +16,17 @@ map_gtfs_agency_network(gtfs_obj, agency_name = NULL, route_ids = NULL,
 
 \item{route_ids}{Vector (Character). IDs for routes of interest.}
 
+\item{service_ids}{Vector (Character). Service IDs. NULL by Default.}
+
+\item{shape_ids}{Vector (Character). Shape IDs. NULL by Default.}
+
 \item{include_stops}{Boolean. Whether to layer on stops to the route shape. Default is TRUE.}
 
 \item{only_stops}{Boolean. Whether to map only stops, no routes. Default is FALSE.}
 
 \item{stop_opacity}{Numeric. Value must be between 0 and 1. Defaults is 0.5.}
+
+\item{stop_details}{Boolean. Whether to generate detail stop information. Default is FALSE.}
 
 \item{route_opacity}{Numeric. Value must be between 0 and 1. Default is NULL.}
 

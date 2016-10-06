@@ -4,22 +4,27 @@
 \alias{map_gtfs}
 \title{General mapping function. Specify a map type and/or a route id.}
 \usage{
-map_gtfs(gtfs_obj, agency_name = NULL, route_ids = NULL,
-  service_ids = NULL, include_stops = TRUE, only_stops = FALSE,
-  stop_opacity = 0.5, route_opacity = NULL, route_colors = NULL)
+map_gtfs(gtfs_obj, route_ids = NULL, service_ids = NULL, shape_ids = NULL,
+  agency_name = NULL, include_stops = TRUE, only_stops = FALSE,
+  stop_details = FALSE, stop_opacity = 0.5, route_opacity = NULL,
+  route_colors = NULL)
 }
 \arguments{
 \item{gtfs_obj}{A GTFS list object with components agency_df, etc.}
-
-\item{agency_name}{Character. Provide the name of the agency whose routes are being mapped.}
 
 \item{route_ids}{Vector (Character). IDs for routes of interest.}
 
 \item{service_ids}{Vector (Character). Service IDs. NULL by Default.}
 
+\item{shape_ids}{Vector (Character). Shape IDs. NULL by Default.}
+
+\item{agency_name}{Character. Provide the name of the agency whose routes are being mapped.}
+
 \item{include_stops}{Boolean. Whether to layer on stops to the route shape. Default is TRUE.}
 
 \item{only_stops}{Boolean. Whether to map only stops, no routes. Overrides `include_stops`. Default is FALSE.}
+
+\item{stop_details}{Boolean. Whether to generate detail stop information. Default is FALSE.}
 
 \item{stop_opacity}{Numeric. Value must be between 0 and 1. Defaults is 0.5.}
 
