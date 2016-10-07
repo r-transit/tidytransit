@@ -40,7 +40,7 @@ library(magrittr)
 library(dplyr)
 
 # set the API key
-set_api_key('2ec1ae29-b8c2-4a03-b96e-126d585233f9')
+set_api_key('XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXX')
 
 # get the feedlist dataframe and filter out NYC subway
 feedlist_df <- get_feedlist() %>%
