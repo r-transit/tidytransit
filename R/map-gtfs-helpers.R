@@ -162,11 +162,24 @@ get_routes_sldf <- function(gtfs_obj, route_ids, service_ids, shape_ids, route_o
     gtfslines <- sp::SpatialLinesDataFrame(sp_lines, data = df) %>%
       rgeos::gSimplify(.00001)
 
+    # OPACITY AND COLORS ------------------------------------------------
+    ## route_colors
+    if(!is.null(route_colors)) {
+      if(length(route_colors) != length(route_ids)) {
+        warning("route_colors and route_ids are not the same length. route_colors is ignored and default colors will be used.")
+        route_colors <- scales::hue_pal()(length(route_ids))
+      } else {
+        route_colors <- scales::col2hcl(route_colors) %>%
+          sapply(. %>% substr(.,1,7), USE.NAMES = FALSE)
+      }
+    } else {
+      route_colors <- scales::hue_pal()(length(route_ids))
+    }
+
     # extract corresponding route ids and names for shape ids
     routes_colors_df <- dplyr::data_frame(route_id = route_ids,
-      color = scales::hue_pal()(length(route_ids))) %>%
+      color = route_colors) %>%
       dplyr::left_join(gtfs_obj$routes_df %>% dplyr::select(route_id, route_short_name), by = 'route_id')
-
 
     # merge colors to shape_routes
     shapes_routes_colors_df <- shapes_routes_df %>%
@@ -196,43 +209,13 @@ get_routes_sldf <- function(gtfs_obj, route_ids, service_ids, shape_ids, route_o
     shape_colors <- shapes_routes_colors_df %>%
       dplyr::slice(match(shape_ids, shape_id)) %>% # match helps resort rows so colors/labels match up with gtfslines (only works cause we have ONE of each shape)
       dplyr::group_by(route_id) %>%
-      dplyr::mutate(n = n(), opacity = 0.75/(n)) %>% # opacity is scaled by route numbers
+      dplyr::mutate(n = n(), opacity = route_opacity/(n)) %>% # opacity is scaled by route numbers
       dplyr::mutate(labels = paste("Route", route_short_name)) %>%
       dplyr::mutate(popups = gen_popups_routes(route_id, service_id, shape_id)) %>%
       dplyr::select(-n) %>%
       dplyr::ungroup() %>% # important to keep order correct!
       dplyr::select(shape_id, color, opacity, labels, popups) %>%
       dplyr::mutate(opacity = dplyr::if_else(opacity < 0.05, 0.05, opacity)) # opacity threshold
-
-
-    # OPACITY AND COLORS ------------------------------------------------
-    ## rescale the opacity
-    if(!is.null(route_opacity)) {
-      route_opacity <- as.numeric(route_opacity)
-      if(length(route_opacity) > 1) route_opacity <- route_opacity[1]
-
-      shape_colors %<>%
-        dplyr::group_by(color) %>%
-        dplyr::mutate(n = n(), opacity = route_opacity/(n)) %>% # opacity is scaled by route numbers
-        dplyr::ungroup(.) %>%
-        dplyr::mutate(opacity = dplyr::if_else(opacity < 0.05, 0.05, opacity))
-        dplyr::select(-n)
-
-    }
-
-    ## route_colors
-    if(!is.null(route_colors)) {
-      if(length(route_colors) != length(route_ids)) {
-        warning("route_colors and route_ids are not the same length. route_colors is ignored and default colors will be used.")
-      } else {
-        route_colors <- scales::col2hcl(route_colors) %>%
-          sapply(. %>% substr(.,1,7), USE.NAMES = FALSE)
-        shape_colors <- route_colors
-
-        routes_colors_df$color <- route_colors
-        shape_colors$color <- shape_colors
-      }
-    }
 
     # CHECKING ROUTES ------------------------------------------------
     # update/ensure route_ids carry correctly and sort correctly for plotting

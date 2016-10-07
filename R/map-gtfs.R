@@ -9,14 +9,14 @@
 #' @param only_stops Boolean. Whether to map only stops, no routes. Overrides `include_stops`. Default is FALSE.
 #' @param stop_opacity Numeric. Value must be between 0 and 1. Defaults is 0.5.
 #' @param stop_details Boolean. Whether to generate detail stop information. Default is FALSE.
-#' @param route_opacity Numeric. Value must be between 0 and 1. Default is NULL.
+#' @param route_opacity Numeric. Value must be between 0 and 1. Default is .75.
 
 #' @param route_colors Character. Names of colors (e.g. "blue") or hex values (e.g. '#000000'). Default is NULL.
 #'
 #' @return Leaflet map object with all stop lat/long values plotted for a route.
 #' @export
 
-map_gtfs <- function(gtfs_obj, route_ids = NULL, service_ids = NULL, shape_ids = NULL, agency_name = NULL, include_stops = TRUE, only_stops = FALSE, stop_details = FALSE, stop_opacity = 0.5, route_opacity = NULL, route_colors = NULL) {
+map_gtfs <- function(gtfs_obj, route_ids = NULL, service_ids = NULL, shape_ids = NULL, agency_name = NULL, include_stops = TRUE, only_stops = FALSE, stop_details = FALSE, stop_opacity = 0.5, route_opacity = 0.75, route_colors = NULL) {
 
   stopifnot(class(gtfs_obj) == 'gtfs',
     !is.null(gtfs_obj$stops_df),
@@ -29,13 +29,6 @@ map_gtfs <- function(gtfs_obj, route_ids = NULL, service_ids = NULL, shape_ids =
     is.logical(only_stops),
     is.logical(stop_details))
 
-  ## check service ids ------------------------
-  if(typeof(service_ids) != "character") service_ids %<>% unlist
-  if(!is.null(service_ids)) {
-    service_ids <- as.character(service_ids)
-    service_ids <- unique(service_ids)
-  } # if not null, ensure characters
-
   # check route ids ------------------------------------------------
   if(typeof(route_ids) != "character") route_ids %<>% unlist
   if(!is.null(route_ids)) {
@@ -43,10 +36,26 @@ map_gtfs <- function(gtfs_obj, route_ids = NULL, service_ids = NULL, shape_ids =
     route_ids <- unique(route_ids)
   } # if not null, ensure characters
 
+  ## check service ids ------------------------
+  if(typeof(service_ids) != "character") service_ids %<>% unlist
+  if(!is.null(service_ids)) {
+    service_ids <- as.character(service_ids)
+    service_ids <- unique(service_ids)
+  } # if not null, ensure characters
+
+  # check shape ids ------------------------------------------------
+  if(typeof(shape_ids) != "character") shape_ids %<>% unlist
+  if(!is.null(shape_ids)) {
+    shape_ids <- as.character(shape_ids)
+    shape_ids <- unique(shape_ids)
+  } # if not null, ensure characters
+
   # update/check variables ------------------------------------------------
   ## check opacities
+  stop_opacity <- as.numeric(stop_opacity)
+  route_opacity <- as.numeric(route_opacity)
   if(any(stop_opacity < 0, stop_opacity > 1)) stop_opacity = 0.5 # error in opacity is fixed
-  if(any(route_opacity < 0, route_opacity > 1)) route_opacity = NULL # force ok ruote_opacity
+  if(any(route_opacity < 0, route_opacity > 1)) route_opacity = .75 # force ok ruote_opacity
 
 
   # NO AGENCY, NO ROUTES ------------------------------------------------

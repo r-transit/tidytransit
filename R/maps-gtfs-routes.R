@@ -8,12 +8,12 @@
 #' @param only_stops Boolean. Whether to map only stops, no routes. Overrides `include_stops`. Default is FALSE.
 #' @param stop_opacity Numeric. Value must be between 0 and 1. Defaults is 0.5.
 #' @param stop_details Boolean. Whether to generate detail stop information. Default is FALSE.
-#' @param route_opacity Numeric. Value must be between 0 and 1. Default is NULL.
+#' @param route_opacity Numeric. Value must be between 0 and 1. Default is 0.75
 #' @param route_colors Character. Names of colors (e.g. "blue") or hex values (e.g. '#000000'). Default is NULL.
 #'
 #' @return Leaflet map object with all stop lat/long values plotted for a route.
 
-map_gtfs_routes <- function(gtfs_obj, route_ids, service_ids = NULL, shape_ids = NULL, include_stops = TRUE, only_stops = FALSE, stop_opacity = 0.5, stop_details = FALSE, route_opacity = NULL, route_colors = NULL) {
+map_gtfs_routes <- function(gtfs_obj, route_ids, service_ids = NULL, shape_ids = NULL, include_stops = TRUE, only_stops = FALSE, stop_opacity = 0.5, stop_details = FALSE, route_opacity = .75, route_colors = NULL) {
 
   # GET PLOTTING DATA --------------------------------
   plotting_data <- get_routes_sldf(gtfs_obj, route_ids, service_ids, shape_ids, route_opacity, route_colors)

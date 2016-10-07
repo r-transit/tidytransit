@@ -6,7 +6,7 @@
 \usage{
 map_gtfs(gtfs_obj, route_ids = NULL, service_ids = NULL, shape_ids = NULL,
   agency_name = NULL, include_stops = TRUE, only_stops = FALSE,
-  stop_details = FALSE, stop_opacity = 0.5, route_opacity = NULL,
+  stop_details = FALSE, stop_opacity = 0.5, route_opacity = 0.75,
   route_colors = NULL)
 }
 \arguments{
@@ -28,7 +28,7 @@ map_gtfs(gtfs_obj, route_ids = NULL, service_ids = NULL, shape_ids = NULL,
 
 \item{stop_opacity}{Numeric. Value must be between 0 and 1. Defaults is 0.5.}
 
-\item{route_opacity}{Numeric. Value must be between 0 and 1. Default is NULL.}
+\item{route_opacity}{Numeric. Value must be between 0 and 1. Default is .75.}
 
 \item{route_colors}{Character. Names of colors (e.g. "blue") or hex values (e.g. '#000000'). Default is NULL.}
 }

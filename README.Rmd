@@ -75,17 +75,29 @@ routes <- NYC[['routes_df']] %>%
   slice(which(grepl('a|b', route_id, ignore.case=TRUE))) %>%
   '$'('route_id')
 
-# take the NYC `gtfs` object and map routes but include stops
-NYC %>% map_gtfs(route_ids = routes, include_stops = TRUE)
+# take the NYC `gtfs` object and map routes. includes stops by default.
+NYC %>% map_gtfs(route_ids = routes)
 
 # gtfs will plot ALL shapes for a given route_ids. These can be reduced using the `service_ids` option.
-service_ids <- NYC$trips_df %>%
-  select(service_id, route_id) %>%
+ids <- NYC$trips_df %>%
+  select(route_id, service_id, shape_id) %>%
   distinct() %>%
   filter(route_id %in% routes)
-service_ids
+ids %>% head(5) # see all unique combos of ids
 
+# lets map just the the first row
+route_ids <- ids$route_id[1]
+service_ids <- ids$service_id[1]
+shape_ids <- ids$shape_id[1]
 
+# lets map the specific data with some other options enabled.
+NYC %>%
+  map_gtfs(route_ids = route_ids,
+    service_ids = service_ids,
+    shape_ids = shape_ids,
+    route_colors = 'green', # set the route color
+    stop_details = TRUE, # get more stop details on click
+    route_opacity = .5) # change the route opacity
 
 ```
 

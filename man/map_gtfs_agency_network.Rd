@@ -6,7 +6,7 @@
 \usage{
 map_gtfs_agency_network(gtfs_obj, agency_name, route_ids, service_ids = NULL,
   shape_ids = NULL, include_stops = TRUE, only_stops = FALSE,
-  stop_opacity = 0.5, stop_details = FALSE, route_opacity = NULL,
+  stop_opacity = 0.5, stop_details = FALSE, route_opacity = 0.75,
   route_colors = NULL)
 }
 \arguments{
@@ -28,7 +28,7 @@ map_gtfs_agency_network(gtfs_obj, agency_name, route_ids, service_ids = NULL,
 
 \item{stop_details}{Boolean. Whether to generate detail stop information. Default is FALSE.}
 
-\item{route_opacity}{Numeric. Value must be between 0 and 1. Default is NULL.}
+\item{route_opacity}{Numeric. Value must be between 0 and 1. Default is 0.75}
 
 \item{route_colors}{Character. Names of colors (e.g. "blue") or hex values (e.g. '#000000'). Default is NULL.}
 }

@@ -9,11 +9,11 @@
 #' @param only_stops Boolean. Whether to map only stops, no routes. Default is FALSE.
 #' @param stop_opacity Numeric. Value must be between 0 and 1. Defaults is 0.5.
 #' @param stop_details Boolean. Whether to generate detail stop information. Default is FALSE.
-#' @param route_opacity Numeric. Value must be between 0 and 1. Default is NULL.
+#' @param route_opacity Numeric. Value must be between 0 and 1. Default is 0.75
 #' @param route_colors Character. Names of colors (e.g. "blue") or hex values (e.g. '#000000'). Default is NULL.
 #' @return Leaflet map object with all routes plotted for given agency ID.
 
-map_gtfs_agency_network <- function(gtfs_obj, agency_name, route_ids, service_ids = NULL, shape_ids = NULL, include_stops = TRUE, only_stops = FALSE, stop_opacity = 0.5, stop_details = FALSE, route_opacity = NULL, route_colors = NULL) {
+map_gtfs_agency_network <- function(gtfs_obj, agency_name, route_ids, service_ids = NULL, shape_ids = NULL, include_stops = TRUE, only_stops = FALSE, stop_opacity = 0.5, stop_details = FALSE, route_opacity = 0.75, route_colors = NULL) {
 
   stopifnot(length(agency_name) == 1)
 
