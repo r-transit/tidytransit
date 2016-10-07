@@ -160,6 +160,7 @@ map_gtfs(gtfs_obj = duke_gtfs_obj, agency_name = duke_agency_name)
 If desired, we can also omit stops for every route in the network by using option `include_stops = FALSE` (this option is `include_stops = TRUE` by default).
 
 ```{r duke-map2b, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, cache=FALSE}
+duke_agency_name <- duke_gtfs_obj[['agency_df']]$agency_name[1]
 map_gtfs(gtfs_obj = duke_gtfs_obj, agency_name = duke_agency_name, include_stops = FALSE) # map all routes of agency, with no stops
 ```
 

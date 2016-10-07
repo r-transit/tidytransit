@@ -65,7 +65,7 @@ set_api_key('2ec1ae29-b8c2-4a03-b96e-126d585233f9')
 
 # get the feedlist dataframe and filter out NYC subway
 feedlist_df <- get_feedlist() %>%
-  filter(grepl('NYC Subway GTFS',t, ignore.case= TRUE))
+  filter(grepl('NYC Subway GTFS', t, ignore.case= TRUE))
 
 # import NYC gtfs feed by sending the url to `import_gtfs`
 NYC <- import_gtfs(feedlist_df$url_d)
