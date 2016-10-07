@@ -14,7 +14,7 @@
 #' @importFrom magrittr "%>%"
 #' @importFrom magrittr "%<>%"
 #' @importFrom utils "read.csv"
-#' @importFrom stats "stats::na.omit"
+#' @importFrom stats "na.omit"
 #' @importFrom stats "setNames"
 #' @return Result of httr::GET
 #'

@@ -1,5 +1,6 @@
 language: r
 warnings_are_errors: false
+Remotes: rstudio/leaflet
 # cache: packages
 sudo: false
 
