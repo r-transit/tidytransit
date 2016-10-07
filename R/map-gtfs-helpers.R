@@ -38,7 +38,7 @@ gen_stop_popups <- function(a, b, c, d) {
   SIMPLIFY = FALSE) %>%
   unlist %>%
   sapply(stringr::str_replace_all, '\n[ ]*', '') %>%
-  setNames(NULL)
+  stats::setNames(NULL)
 }
 
 
@@ -202,7 +202,7 @@ get_routes_sldf <- function(gtfs_obj, route_ids, service_ids, shape_ids, route_o
       SIMPLIFY = FALSE) %>%
       unlist %>%
       sapply(stringr::str_replace_all, '\n[ ]*', '') %>%
-      setNames(NULL)
+      stats::setNames(NULL)
     }
 
     # make color vector for shapes
@@ -222,7 +222,7 @@ get_routes_sldf <- function(gtfs_obj, route_ids, service_ids, shape_ids, route_o
     keep <- shapes_routes_df$route_id %>% unique()
     ids <- routes_colors_df$route_id
 
-    indx <- match(ids, keep) %>% na.omit()
+    indx <- match(ids, keep) %>% stats::na.omit()
     not_found <- ids[!ids %in% keep] #routes not found
 
     #check to see if routes were dropped

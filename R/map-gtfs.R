@@ -110,7 +110,7 @@ map_gtfs <- function(gtfs_obj, route_ids = NULL, service_ids = NULL, shape_ids =
     # check for valid routes
     all_routes <- gtfs_obj$routes_df$route_id %>% unique
 
-    indx <- match(route_ids, all_routes) %>% na.omit()
+    indx <- match(route_ids, all_routes) %>% stats::na.omit()
     not_found <- route_ids[!route_ids %in% all_routes] #routes not found
 
     #check to see if routes were dropped
@@ -134,7 +134,7 @@ map_gtfs <- function(gtfs_obj, route_ids = NULL, service_ids = NULL, shape_ids =
     # check for valid routes
     all_routes <- gtfs_obj$routes_df$route_id %>% unique
 
-    indx <- match(route_ids, all_routes) %>% na.omit()
+    indx <- match(route_ids, all_routes) %>% stats::na.omit()
     not_found <- route_ids[!route_ids %in% all_routes] #routes not found
 
     #check to see if routes were dropped
