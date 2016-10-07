@@ -147,25 +147,25 @@ duke_gtfs_obj <- feedlist_df %>%
 We can get visualize all of the routes that make up Duke University's Transit system using `map_gtfs` and just passing the `gtfs` objected `duke_gtfs_obj`. This is because the Duke University Transit system is made of only one agency (`duke_agency_name = "Duke Transit"`) and, when you pass a single `gtfs` object, the default behavior of `map_gtfs` is to take the *first* observed agency name and plot all it's routes.
 
 ```{r duke-map2, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, cache=FALSE}
-map_gtfs_agency_network(gtfs_obj = duke_gtfs_obj) # map all routes of agency with stops (the stops)
+map_gtfs(gtfs_obj = duke_gtfs_obj) # map all routes of agency with stops (the stops)
 ```
 
 
 ```{r duke-map2a, warning=FALSE, message=FALSE, echo=TRUE, eval=FALSE, cache=FALSE}
 # below is equivalent because duke only has a single agency.
 duke_agency_name <- duke_gtfs_obj[['agency_df']]$agency_name[1]
-map_gtfs_agency_network(gtfs_obj = duke_gtfs_obj, agency_name = duke_agency_name)
+map_gtfs(gtfs_obj = duke_gtfs_obj, agency_name = duke_agency_name)
 ```
 
 If desired, we can also omit stops for every route in the network by using option `include_stops = FALSE` (this option is `include_stops = TRUE` by default).
 
 ```{r duke-map2b, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, cache=FALSE}
-map_gtfs_agency_network(gtfs_obj = duke_gtfs_obj, agency_name = duke_agency_name, include_stops = FALSE) # map all routes of agency, with no stops
+map_gtfs(gtfs_obj = duke_gtfs_obj, agency_name = duke_agency_name, include_stops = FALSE) # map all routes of agency, with no stops
 ```
 
 ### Mapping routes and route stops
 
-Let's get more specific and map out all stops and the shape of the popular *C1 East-West Loop* bus route. We need only find the `route_id` before mapping all the stops using `map_gtfs_routes(..., only_stops = TRUE)` and the shape using `map_gtfs_routes(..., only_stops = FALSE)`.
+Let's get more specific and map out all stops and the shape of the popular *C1 East-West Loop* bus route. We need only find the `route_id` before mapping all the stops using `map_gtfs(..., only_stops = TRUE)` and the shape using `map_gtfs(..., only_stops = FALSE)`.
 
 ```{r duke-map1a, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, cache=FALSE}
 C1_route_id <- duke_gtfs_obj[['routes_df']] %>%
@@ -184,7 +184,7 @@ C1_CCX_route_ids <- duke_gtfs_obj[['routes_df']] %>%
     slice(which(grepl('C1|CCX', route_short_name, ignore.case=TRUE))) %>% # search for "C1"
     extract2('route_id') # extract just the datum in route_id
 
-map_gtfs_routes(gtfs_obj = duke_gtfs_obj, route_ids = C1_CCX_route_ids) # pass multiple route IDS and map route shapes with stops (the default)
+map_gtfs(gtfs_obj = duke_gtfs_obj, route_ids = C1_CCX_route_ids) # pass multiple route IDS and map route shapes with stops (the default)
 ```
 
 ### Mapping a single stop

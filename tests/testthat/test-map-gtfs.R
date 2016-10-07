@@ -65,6 +65,7 @@ test_that('Mapping one or more routes or full network', {
 
 
 	# map_gtfs()
+	expect_is(map_gtfs(gtfs_obj), 'leaflet')
 	expect_is(map_gtfs(gtfs_obj, yes_route_id), 'leaflet')
 	expect_is(map_gtfs(gtfs_obj, yes_route_ids), 'leaflet')
 	expect_is(map_gtfs(gtfs_obj, yes_route_ids, yes_service_ids), 'leaflet')

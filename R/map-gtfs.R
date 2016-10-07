@@ -65,18 +65,19 @@ map_gtfs <- function(gtfs_obj, route_ids = NULL, service_ids = NULL, shape_ids =
 
     agency_name <- gtfs_obj$agency_df$agency_name[1]
 
+    agency <- agency_name # need to rename so we can verify
     agency_ids <- gtfs_obj$agency_df %>%
       dplyr::slice(which(agency_name %in% agency)) %>%
       magrittr::extract2(1) %>%
       unique
 
-    all_routes <- gtfs_obj$routes_df %>%
+    all_agency_routes <- gtfs_obj$routes_df %>%
       dplyr::slice(which(agency_id %in% agency_ids)) %>%
       dplyr::select(route_id) %>%
       magrittr::extract2(1) %>%
       unique()
 
-    route_ids <- all_routes
+    route_ids <- all_agency_routes
 
   }
 
@@ -153,7 +154,22 @@ map_gtfs <- function(gtfs_obj, route_ids = NULL, service_ids = NULL, shape_ids =
       stop("No specified route_ids were found.")
     }
 
-      m <- map_gtfs_routes(gtfs_obj,
+    m <- map_gtfs_routes(gtfs_obj,
+                      route_ids = route_ids,
+                      service_ids = service_ids,
+                      shape_ids = shape_ids,
+                      include_stops = include_stops,
+                      only_stops = only_stops,
+                      stop_opacity = stop_opacity,
+                      stop_details = stop_details,
+                      route_opacity = route_opacity,
+                      route_colors = route_colors)
+  } else {
+
+    stopifnot(length(route_ids) > 0, length(agency_name) > 0)
+
+    m <- map_gtfs_agency_network(gtfs_obj,
+                        agency_name = agency_name,
                         route_ids = route_ids,
                         service_ids = service_ids,
                         shape_ids = shape_ids,
@@ -163,21 +179,6 @@ map_gtfs <- function(gtfs_obj, route_ids = NULL, service_ids = NULL, shape_ids =
                         stop_details = stop_details,
                         route_opacity = route_opacity,
                         route_colors = route_colors)
-    } else {
-
-      stopifnot(length(route_ids) > 0, agency_name > 0)
-
-      m <- map_gtfs_agency_network(gtfs_obj,
-                          agency_name = agency_name,
-                          route_ids = route_ids,
-                          service_ids = service_ids,
-                          shape_ids = shape_ids,
-                          include_stops = include_stops,
-                          only_stops = only_stops,
-                          stop_opacity = stop_opacity,
-                          stop_details = stop_details,
-                          route_opacity = route_opacity,
-                          route_colors = route_colors)
   }
 
   m
