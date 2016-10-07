@@ -48,7 +48,7 @@ feedlist_df <- get_feedlist() %>%
 
 # import NYC gtfs feed by sending the url to `import_gtfs`
 NYC <- import_gtfs(feedlist_df$url_d)
-#> Unzipped the following files to directory '/private/var/folders/97/sbpwvr3n36516bwd2yjrmsc80000gn/T/RtmpLJNK2r/filef2f453533b8d'...
+#> Unzipped the following files to directory '/private/var/folders/97/sbpwvr3n36516bwd2yjrmsc80000gn/T/RtmpLJNK2r/filef2f456e95ba1'...
 #> [1] "agency.txt"         "calendar_dates.txt" "calendar.txt"      
 #> [4] "routes.txt"         "shapes.txt"         "stop_times.txt"    
 #> [7] "stops.txt"          "transfers.txt"      "trips.txt"
