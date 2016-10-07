@@ -10,6 +10,7 @@ Description: Provides API wrappers for popular public GTFS feed sharing sites, r
 License: GPL
 LazyData: TRUE
 Depends: R (>= 3.2.4)
+Remotes: github::rstudio/leaflet
 Imports:
     dplyr,
     tibble,
