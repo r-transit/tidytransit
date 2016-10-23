@@ -1,0 +1,36 @@
+if(getRversion() >= "3.1.0") {
+  utils::globalVariables(
+    c(
+      '.',
+      'agency_id',
+      'color',
+      'field_provided_status',
+      'field_spec',
+      'field',
+      'file_provided_status',
+      'file_spec',
+      'lat',
+      'lng',
+      'loc_lat',
+      'loc_lng',
+      'n',
+      'opacity',
+      'popups',
+      'route_id',
+      'route_short_name',
+      'service_id',
+      'shape_id',
+      'shape_pt_lat',
+      'shape_pt_lon',
+      'shape_pt_sequence',
+      'spec',
+      'stop_id',
+      'stop_lat',
+      'stop_lon',
+      'stop_name',
+      'trip_id',
+      'validation_details',
+      'validation_status'
+    )
+  )
+}

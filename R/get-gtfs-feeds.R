@@ -49,7 +49,8 @@ get_feedlist <- function() {
 
   }
 
-  req_df <- req_df %>% mutate(loc_lng = as.numeric(loc_lng), loc_lat = as.numeric(loc_lat))
+  req_df <- req_df %>%
+    dplyr::mutate(loc_lng = as.numeric(loc_lng), loc_lat = as.numeric(loc_lat))
 
   return(req_df)
 
