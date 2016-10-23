@@ -94,7 +94,6 @@ get_agency_stops <- function(gtfs_obj, agency_name) {
 
 	# rename agency name
 	agency <- agency_name
-	rm('agency_name')
 
 	# find agency routes
 	if(!"agency_id" %in% names(gtfs_obj$routes_df)) {
@@ -105,21 +104,19 @@ get_agency_stops <- function(gtfs_obj, agency_name) {
 		# find routes for a given agency
 		agency_ids <- gtfs_obj$agency_df %>%
 			dplyr::slice(which(agency_name %in% agency)) %>%
-			magrittr::extract2(1) %>%
+			'[['('agency_id') %>%
 			unique
 
 		route_ids <- gtfs_obj$routes_df %>%
 			dplyr::slice(which(agency_id %in% agency_ids)) %>%
-			dplyr::select(route_id) %>%
-			magrittr::extract2(1) %>%
+			'[['('route_id') %>%
 			unique
 	}
 
 	# extract vector of all trips matching route_id
 	trip_ids <- gtfs_obj$trips_df %>%
 		dplyr::slice(which(route_id %in% route_ids)) %>%
-		dplyr::select(trip_id) %>%
-		magrittr::extract2(1) %>%
+    '[['('trip_id') %>%
 		unique
 
 	if(length(trip_ids) == 0) {
