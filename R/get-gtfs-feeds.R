@@ -165,15 +165,59 @@ get_locations <- function() {
 # API Keys ------------------------------------------------
 
 #' Tools to get, set, or check for API key
-#' @param value Character. A TransitFeed API Key.
 
-tools_api_key <- function(value = NULL) {
-  key = value
+tools_api_key <- function() {
 
-  get = function() key
-  set = function(x) key <<- x
-  has = function() if(is.null(key)) FALSE else TRUE
-  clear = function() key <<- NULL
+  get = function() {
+    env <- Sys.getenv('TRANSITFEED_API')
+
+    if(identical(env, "")) {
+      message("Couldn't find env var TRANSITFEED_API. Please set you api key using the function gtfs_api_key$set().")
+      return(NULL)
+    } else env
+
+  }
+
+  set = function() {
+    # have user input api key
+    message("Please enter your API key you requested from https://transitfeeds.com/api/keys, and press enter:")
+    key <- readline(": ")
+
+    text <- paste0("TRANSITFEED_API=",key,"\n")
+
+    env <- Sys.getenv('TRANSITFEED_API')
+
+    # check for existing TRANSITFEED_API
+    if (!identical(env, "")) { # if found, replace line and rewrite
+      renv <- readLines(file.path(normalizePath("~/"), ".Renviron"))
+      loc <- grep("TRANSITFEED_API", renv)
+      renv[loc] <- text
+      Sys.setenv(TRANSITFEED_API = key)
+      writeLines(renv, file.path(normalizePath("~/"), ".Renviron"))
+    } else { # if not found, append to file
+      Sys.setenv(TRANSITFEED_API = key)
+      cat(text, file=file.path(normalizePath("~/"), ".Renviron"), append=TRUE)
+    }
+
+  }
+
+  has = function() {
+    env <- Sys.getenv('TRANSITFEED_API')
+    if(!identical(env, "")) TRUE else FALSE
+  }
+
+  clear = function() {
+    env <- Sys.getenv('TRANSITFEED_API')
+
+    # clear TRANSITFEED_API variable
+    if (!identical(env, "")) { # if found, replace line and rewrite
+      renv <- readLines(file.path(normalizePath("~/"), ".Renviron"))
+      indx <- grepl("TRANSITFEED_API", renv)
+      Sys.setenv(TRANSITFEED_API = "")
+      writeLines(renv[!indx], file.path(normalizePath("~/"), ".Renviron"))
+    }
+  }
+
   list(get = get, set = set, has = has, clear = clear)
 
 }

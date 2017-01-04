@@ -63,7 +63,7 @@ validate_files_provided <- function(gtfs_obj) {
 
 make_var_val <- function() {
 
-  nms <- get_gtfs_meta() %>% names # get names of each envir element
+  nms <- get_gtfs_meta() %>% names() # get names of each envir element
 
   all_val_df <- get_gtfs_meta() %>%
     lapply(. %>% as.data.frame(stringsAsFactors=FALSE) %>% dplyr::tbl_df(.)) # convert list data to tbl_df
