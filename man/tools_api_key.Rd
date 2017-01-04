@@ -4,10 +4,7 @@
 \alias{tools_api_key}
 \title{Tools to get, set, or check for API key}
 \usage{
-tools_api_key(value = NULL)
-}
-\arguments{
-\item{value}{Character. A TransitFeed API Key.}
+tools_api_key()
 }
 \description{
 Tools to get, set, or check for API key

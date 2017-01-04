@@ -59,9 +59,14 @@ test_that('Mapping one or more routes or full network', {
 	not_route_id1 <- 12345
 	not_route_id2 <- "SUPBRO"
 
-	yes_service_ids <- c("1504A4978", "1505A4978")
+	yes_service_ids <- gtfs_obj$trips_df %>%
+		dplyr::filter(route_id %in% yes_route_ids) %>%
+		dplyr::group_by(route_id) %>%
+		dplyr::slice(c(1)) %>%
+		'$'('service_id')
+
 	no_service_ids <- c("SUPBRO", 11111111)
-	ok_service_ids <- c("SUPBRO", "1505A4978")
+	ok_service_ids <- c("SUPBRO", yes_service_ids[1])
 
 
 	# map_gtfs()
