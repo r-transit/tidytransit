@@ -1,9 +1,5 @@
 ---
-output:
-  html_document:
-    keep_md: yes
-    toc: true
-    toc_depth: 2
+output: github_document
 ---
 
 ```{r, echo = FALSE}
@@ -11,6 +7,9 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   cache = FALSE,
   comment = "#>",
+  message = FALSE,
+  error = FALSE,
+  warning = FALSE,
   fig.path = "README/README-",
   fig.width=7.3,
   fig.height=5
@@ -55,7 +54,7 @@ devtools::install_github('ropenscilabs/gtfsr')
 Example Usage
 ------------------
 
-```{r readme-body, message=FALSE, error=FALSE}
+```{r readme-body}
 library(gtfsr)
 library(magrittr)
 library(dplyr)
@@ -98,7 +97,6 @@ NYC %>%
     route_colors = 'green', # set the route color
     stop_details = TRUE, # get more stop details on click
     route_opacity = .5) # change the route opacity
-
 ```
 
 
