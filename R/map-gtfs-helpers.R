@@ -159,8 +159,7 @@ get_routes_sldf <- function(gtfs_obj, route_ids, service_ids, shape_ids, route_o
       as.data.frame %>%
       `rownames<-`(., shape_ids)
 
-    gtfslines <- sp::SpatialLinesDataFrame(sp_lines, data = df) %>%
-      rgeos::gSimplify(.00001)
+    gtfslines <- sp::SpatialLinesDataFrame(sp_lines, data = df)
 
     # OPACITY AND COLORS ------------------------------------------------
     ## route_colors

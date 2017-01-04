@@ -22,7 +22,6 @@ Imports:
     assertthat,
     leaflet,
     sp,
-    rgeos,
     scales
 Suggests:
     testthat,
