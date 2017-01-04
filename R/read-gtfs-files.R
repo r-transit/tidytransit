@@ -69,12 +69,12 @@ unzip_gtfs_files <- function(zipfile, delete_zip = FALSE, move_path = NULL, quie
 #' Put GTFS text file contents into objects in memory and delete files
 #'
 #' @param exdir Character. Path to folder into which files were extracted.
-#' @param delete_files Logical, whether to delete the files after extraction.  Deletes by default.
+#' @param delete_files Logical, whether to delete the files after extraction.  Does not delete by default.
 #' @param quiet Boolean. Whether to output messages and files found in folder.
 #'
 #' @export
 
-read_gtfs <- function(exdir, delete_files = TRUE, quiet = FALSE) {
+read_gtfs <- function(exdir, delete_files = FALSE, quiet = FALSE) {
 
   # check path
   check <- try(normalizePath(exdir), silent=TRUE)
