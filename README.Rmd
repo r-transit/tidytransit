@@ -1,12 +1,10 @@
 ---
 output:
-  md_document:
-    variant: markdown_github
+  html_document:
+    keep_md: yes
     toc: true
     toc_depth: 2
 ---
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
@@ -34,10 +32,12 @@ Installation
 
 You can install this package from GitHub using the devtools package:
 
-    if (!require(devtools)) {
-        install.packages('devtools')
-    }
-    devtools::install_github('ropenscilabs/gtfsr')
+```
+if (!require(devtools)) {
+    install.packages('devtools')
+}
+devtools::install_github('ropenscilabs/gtfsr')
+```
 
 If you'd like to build the accompanying vignette, then run
 
@@ -55,13 +55,13 @@ devtools::install_github('ropenscilabs/gtfsr')
 Example Usage
 ------------------
 
-```{r readme-body}
+```{r readme-body, message=FALSE, error=FALSE}
 library(gtfsr)
 library(magrittr)
 library(dplyr)
 
 # set the API key
-set_api_key('XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXX')
+# set_api_key() # uncomment to set api key
 
 # get the feedlist dataframe and filter out NYC subway
 feedlist_df <- get_feedlist() %>%
