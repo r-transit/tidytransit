@@ -172,7 +172,7 @@ tools_api_key <- function() {
     env <- Sys.getenv('TRANSITFEED_API')
 
     if(identical(env, "")) {
-      message("Couldn't find env var TRANSITFEED_API. Please set you api key using the function gtfs_api_key$set().")
+      message("Couldn't find env var TRANSITFEED_API. Please set you api key using the function set_api_key().")
       return(NULL)
     } else env
 
@@ -182,6 +182,12 @@ tools_api_key <- function() {
     # have user input api key
     message("Please enter your API key you requested from https://transitfeeds.com/api/keys, and press enter:")
     key <- readline(": ")
+
+    stopifnot(nchar(key) == 36, is.character(key))
+    valid_api_key <- grepl('[[:alnum:]]{8}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{12}', key)
+    if(!valid_api_key) {
+      stop(sprintf("API key '%s' is invalid. API keys are 36 characters long with pattern XXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.", key))
+    }
 
     text <- paste0("TRANSITFEED_API=",key,"\n")
 
@@ -227,23 +233,14 @@ tools_api_key <- function() {
 gtfs_api_key <- tools_api_key()
 
 #' Clear the API key.
-#' @noRd
+#' @export
 clear_api_key <- gtfs_api_key$clear
 
 #' Set API key for recall
-#' @param key Character. API key.
 #' @export
 
-set_api_key <- function(key = NULL) {
-  stopifnot(nchar(key) == 36, is.character(key))
-  valid_api_key <- grepl('[[:alnum:]]{8}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{12}', key)
-  if(!valid_api_key) {
-    stop(sprintf("API key '%s' is invalid. API keys are 36 characters long with pattern XXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.", key))
-  }
+set_api_key <- gtfs_api_key$set
 
-  gtfs_api_key$set(key)
-
-}
 
 #' Get API key
 #' @export
@@ -252,6 +249,7 @@ get_api_key <- function() {
   if(!gtfs_api_key$has()) stop("API key not found. Please set your API key using function 'set_api_key()'")
 
   gtfs_api_key$get()
+
 }
 
 
