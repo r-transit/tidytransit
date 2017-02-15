@@ -1,5 +1,5 @@
 
-[![Build Status](https://travis-ci.org/ropenscilabs/gtfsr.svg?branch=master)](https://travis-ci.org/ropenscilabs/gtfsr)
+[![Build Status](https://travis-ci.org/ropensci/gtfsr.svg?branch=master)](https://travis-ci.org/ropensci/gtfsr)
 
 Description
 -----------
@@ -16,16 +16,16 @@ You can install this package from GitHub using the devtools package:
     if (!require(devtools)) {
         install.packages('devtools')
     }
-    devtools::install_github('ropenscilabs/gtfsr')
+    devtools::install_github('ropensci/gtfsr')
 
 If you'd like to build the accompanying vignette, then run
 
-    devtools::install_github('ropenscilabs/gtfsr', build_vignettes = TRUE)
+    devtools::install_github('ropensci/gtfsr', build_vignettes = TRUE)
 
 If you have already installed `gtfsr`, you can get the latest version by running
 
     remove.packages('gtfsr')
-    devtools::install_github('ropenscilabs/gtfsr')
+    devtools::install_github('ropensci/gtfsr')
 
 Example Usage
 -------------
@@ -44,7 +44,7 @@ feedlist_df <- get_feedlist() %>%
 
 # import NYC gtfs feed by sending the url to `import_gtfs`
 NYC <- import_gtfs(feedlist_df$url_d)
-#> [1] "agency.txt"         "calendar_dates.txt" "calendar.txt"      
+#> [1] "agency.txt"         "calendar.txt"       "calendar_dates.txt"
 #> [4] "routes.txt"         "shapes.txt"         "stop_times.txt"    
 #> [7] "stops.txt"          "transfers.txt"      "trips.txt"
 
@@ -67,7 +67,7 @@ ids <- NYC$trips_df %>%
   distinct() %>%
   filter(route_id %in% routes)
 ids %>% head(5) # see all unique combos of ids
-#> # A tibble: 5 × 3
+#> # A tibble: 5 <U+00D7> 3
 #>   route_id   service_id shape_id
 #>      <chr>        <chr>    <chr>
 #> 1        A B20161106WKD  A..N43R
