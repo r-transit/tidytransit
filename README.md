@@ -1,5 +1,6 @@
 
 [![Build Status](https://travis-ci.org/ropensci/gtfsr.svg?branch=master)](https://travis-ci.org/ropensci/gtfsr)
+[![codecov.io](https://codecov.io/github/ropensci/gtfsr/coverage.svg?branch=master)](https://codecov.io/github/ropensci/gtfsr?branch=master)
 
 Description
 -----------
