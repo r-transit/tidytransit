@@ -45,14 +45,18 @@ gen_stop_popups <- function(a, b, c, d) {
 #'@param gtfs_obj
 #'@route_ids the routes for which to join the tables together - required, but not sure why this can't just be any/all routes in routes_df
 #'@param service_ids - an optional filter for a certain service-default NULL
-#'@returns shapes_routes_df - a dataframe in which routes, services, 
+#'@returns shapes_routes_df - a dataframe in which routes, 
 #'# and shapes are all cross referenced - can be used to filter shapes by service_id, for example
-join_and_check_shapes_trips_and_routes <- function(gtfs_obj,route_ids,service_ids) {
+join_shape_route_service_ids <- function(gtfs_obj,route_ids=NULL,service_ids=NULL) {
   stopifnot(class(gtfs_obj) == 'gtfs',
             !is.null(gtfs_obj$shapes_df),
             !is.null(gtfs_obj$trips_df),
-            !is.null(gtfs_obj$routes_df),
-            length(route_ids) > 0)
+            !is.null(gtfs_obj$routes_df))
+
+  # pull all route_ids if the user doesn't provide any
+  if(length(route_ids) == 0) {
+    route_ids <- unique(gtfs_obj$routes_df$route_id)
+  }
   
   # check for bad route ids
   bad_route_ids <- route_ids[which(!route_ids %in% gtfs_obj$routes_df$route_id)]
@@ -230,8 +234,7 @@ gen_popups_routes <- function(a, b, c) {
 #' @return Environment containing spatial data, labels, colorings used for plotting
 
 get_routes_sldf <- function(gtfs_obj, route_ids, service_ids=NULL, shape_ids=NULL, route_opacity=NULL, route_colors=NULL) {
-
-  shapes_routes_df <- join_and_check_shapes_trips_and_routes(gtfs_obj,route_ids,service_ids)
+  shapes_routes_df <- join_shape_route_service_ids(gtfs_obj,route_ids,service_ids)
   shape_ids <- check_shape_ids(shape_ids, shapes_routes_df, gtfs_obj)
   
   gtfstrips <- gtfs_obj$trips_df %>%
