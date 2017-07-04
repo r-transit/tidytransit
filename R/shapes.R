@@ -1,47 +1,37 @@
-#' Get a SpatialLinesDataFrame for the shapes_df in a GTFSr object
-#' @param gtfs_obj is a gtfsr list of gtfs dataframes
-#' @return SpatialLinesDataFrame for the shapes_df 
-gtfs_shapes_as_sp_lines <- function(gtfs_obj, shape_id_filter=NULL) {
-  #as suggested by mdsumner here: https://github.com/ropensci/gtfsr/issues/24
-  library(spbabel)
-  sp_line <- sp(transmute(gtfs_obj$shapes_df, object_ = shape_id, branch_ = shape_id, order_ = shape_pt_sequence, x_ = shape_pt_lon, y_ = shape_pt_lat), crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
-  sp_line$shape_id <- unique(gtfs_obj$shapes_df$shape_id)
-  sp_line$rownumber_ <- NULL
-  return(sp_line)
+wgs84_crs <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
+
+#' return an sf linestring with lat and long from gtfs 
+#' @param a dataframe from the gtfsr shapes_df split() on shape_id
+#' @returns st_linestring (sfr) object
+gtfs_shape_to_sf_linestring <- function(df) {
+  #as suggested by www.github.com/mdsumner
+  m <- as.matrix(df[order(df$shape_pt_sequence), 
+                    c("shape_pt_lon", "shape_pt_lat")])
+  return(st_linestring(m))
 }
 
-#' turn a list of tibbles with lat and long from gtfs into st_linestrings
-#' @param a list of tibbles/dataframes from the gtfsr shapes_df split() on shape_id
-#' @returns st_linestring (sfr) objects by shape_id
-make_gtfs_linestring_list <- function(l1) {
-  m1 <- as.matrix(x[order(x$shape_pt_sequence), 
-                  c("shape_pt_lon", "shape_pt_lat")])
-  st_linestring(m)
+#' return an sf multilinestring with lat and long from gtfs for a route 
+#' @param a dataframe with the shapes for a given route
+#' @returns multilinestring (sfr) object
+gtfs_route_to_sf_multilinestring <- function(df) {
+  #as suggested by www.github.com/mdsumner
+  l_dfs <- split(df, 
+                 df$shape_id)
+  l_linestrings <- lapply(l_dfs,gtfs_shape_to_sf_linestring)
+  return(st_multilinestring(l_linestrings))
 }
 
-
-#' make a simple features object from gtfs shapes
-#' @param a gtfs shapes_df
-#' @return an sf (simple features) object for the gtfs shapes
-gtfs_shapes_as_sf_lines <-function(gtfs_obj, shape_id_filter=NULL) {
-  #as suggested by mdsumner here: https://github.com/ropensci/gtfsr/issues/24
-  library(sf)
-  library(dplyr)
-  sf_line <- distinct(gtfs_obj$shapes_df, shape_id)
-  l_dfs <- split(gtfs_obj$shapes_df, 
-                 gtfs_obj$shapes_df$shape_id)
-  l_linestrings <- lapply(l_dfs, make_gtfs_linestring_list)
-  wgs84_crs <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
-  sf_line[["geometry"]] <- st_sfc(l_linestrings, crs = wgs84_crs)
-  sf_line <- st_as_sf(sf_line)
-}
-
-
-gtfs_route_to_sf_multiline <- function(shapes_df_sl,df1,service_id,route_id) {
-  shpids <- df1[df1$service_id == service_id & 
-                 df1$route_id==route_id,]$shape_id
-  sfc1 <- shapes_df_sl[shapes_df_sl$shape_id %in% shpids,]
-  g1 <- st_geometry(sfc1)
-  st_mls1 <- st_multilinestring(g1)
-  return(st_mls1)
+#' return an sf dataframe with from a gtfs object 
+#' @param a gtfsr object
+#' @returns an sf dataframe for gtfs routes with a multilinestring column
+gtfs_routes_df_to_sf_df <- function(gtfs_obj) {
+  srs_id_df <- join_shape_route_service_ids(gtfs_obj)
+  srs_id_shapes_df <- inner_join(gtfs_obj$shapes_df,srs_id_df,by="shape_id")
+  sf_lines <- distinct(srs_id_shapes_df, route_id)
+  l_dfs <- split(srs_id_shapes_df, 
+                 srs_id_shapes_df$route_id)
+  l_mlinestrings <- lapply(l_dfs, gtfs_route_to_sf_multilinestring)
+  sf_lines[["geometry"]] <- st_sfc(l_mlinestrings, crs = wgs84_crs)
+  sf_lines <- st_as_sf(sf_lines)
+  return(sf_lines)
 }

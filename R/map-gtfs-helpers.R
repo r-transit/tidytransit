@@ -13,8 +13,6 @@ get_possible_stops <- function(gtfs_obj, trip_ids) {
 #' Generate stop popups
 #' @noRd
 gen_stop_popups <- function(a, b, c, d) {
-
-
   # a <- stops$stop_name
   # b <- stops$stop_id
   # c <- stops$lat
