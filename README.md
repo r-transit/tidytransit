@@ -92,17 +92,18 @@ NYC %>%
     route_opacity = .5) # change the route opacity
 ```
 
+![](README/README-readme-body-2.png)
+
+![](README/README-readme-body-2.png)
+
 ## Writing GTFS Routes to GeoPackage, GeoJSON (and other GDAL supported drivers)
 
+```
 library(sf)
 routes_df_sf <- gtfs_routes_df_to_sf_df(NYC)
 
 st_write(routes_df_sf, "routes_df_nyc.gpkg",driver="GPKG")
 st_write(routes_df_sf, "routes_df_nyc.geojson",driver="GeoJSON")
-
-![](README/README-readme-body-2.png)
-
-![](README/README-readme-body-2.png)
-
+```
 [![ropensci\_footer](http://ropensci.org/public_images/github_footer.png)](http://ropensci.org)
 
