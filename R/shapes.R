@@ -24,7 +24,7 @@ gtfs_route_to_sf_multilinestring <- function(df) {
 #' return an sf dataframe with from a gtfs object 
 #' @param a gtfsr object
 #' @returns an sf dataframe for gtfs routes with a multilinestring column
-gtfs_routes_df_to_sf_df <- function(gtfs_obj) {
+gtfs_routes_as_sf <- function(gtfs_obj) {
   srs_id_df <- join_shape_route_service_ids(gtfs_obj)
   srs_id_shapes_df <- inner_join(gtfs_obj$shapes_df,srs_id_df,by="shape_id")
   sf_lines <- distinct(srs_id_shapes_df, route_id)

@@ -100,7 +100,7 @@ NYC %>%
 
 ```
 library(sf)
-routes_df_sf <- gtfs_routes_df_to_sf_df(NYC)
+routes_df_sf <- gtfs_routes_as_sf(NYC)
 
 st_write(routes_df_sf, "routes_df_nyc.gpkg",driver="GPKG")
 st_write(routes_df_sf, "routes_df_nyc.geojson",driver="GeoJSON")
