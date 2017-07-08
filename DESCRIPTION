@@ -23,7 +23,10 @@ Imports:
     assertthat,
     leaflet,
     sp,
-    scales
+    sf,
+    scales,
+    udunits2,
+    units
 Suggests:
     testthat,
     knitr,

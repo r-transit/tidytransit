@@ -1,7 +1,7 @@
 language: r
 cache: packages
 warnings_are_errors: false
-sudo: false
+sudo: true
 
 after_success:
 - Rscript -e 'covr::codecov()'
@@ -11,3 +11,9 @@ r_build_args: "--no-build-vignettes --no-manual"
 repos:
   CRAN: https://cran.rstudio.com
   
+apt_packages:
+  - libudunits2-dev
+
+r:
+  - release
+  - devel
