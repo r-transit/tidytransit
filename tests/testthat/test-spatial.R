@@ -20,6 +20,6 @@ url <- "http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip"
 gtfs_obj <- url %>% import_gtfs(quiet=TRUE)
 
 # gtfs_routes_as_sf()
-test_that('Can convert get a gtfsr routes dataframe to a dataframe with a simple features column', {
+test_that('Can convert a gtfsr routes dataframe to a simple features dataframe', {
 	expect_is(gtfs_routes_as_sf(gtfs_obj), 'sf')
 })
