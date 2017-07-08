@@ -22,6 +22,7 @@ Imports:
     assertthat,
     leaflet,
     sp,
+    sf,
     scales
 Suggests:
     testthat,
