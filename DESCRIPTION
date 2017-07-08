@@ -4,7 +4,8 @@ Title: Working with GTFS (General Transit Feed Specification) feeds in R
 Version: 0.1.2
 Authors@R: as.person(c(
     "Elaine McVey <elaine.mcvey@transloc.com> [aut, cre]",
-    "Danton Noriega-Goodwin <danton.noriega@gmail.com> [aut]"
+    "Danton Noriega-Goodwin <danton.noriega@gmail.com> [aut]",
+    "Charles Hans Thompson <hans.thompson1@gmail.com> [ctb]"
   ))
 Description: Provides API wrappers for popular public GTFS feed sharing sites, reads feed data into a gtfs data object, validates data quality, provides convenience functions for common tasks.
 License: GPL
