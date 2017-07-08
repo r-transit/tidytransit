@@ -23,7 +23,9 @@ Imports:
     leaflet,
     sp,
     sf,
-    scales
+    scales,
+    udunits2,
+    units
 Suggests:
     testthat,
     knitr,
