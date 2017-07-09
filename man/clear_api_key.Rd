@@ -9,4 +9,3 @@ clear_api_key()
 \description{
 Clear the API key.
 }
-

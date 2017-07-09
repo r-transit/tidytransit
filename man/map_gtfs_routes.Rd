@@ -35,4 +35,3 @@ Leaflet map object with all stop lat/long values plotted for a route.
 \description{
 map the shape, with stops, for one or more routes.
 }
-

@@ -1,7 +1,8 @@
-
 ---
 title: "Getting GTFS Data and Mapping with gtfsr"
-author: "Danton Noriega <danton@transloc.com>"
+author: 
+ - "Danton Noriega <danton.noriega@gmail.com>"
+ - "Tom Buckley"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >

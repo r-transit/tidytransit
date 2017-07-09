@@ -15,4 +15,3 @@ Dataframe of feeds
 \description{
 Parse a gtfs feed list
 }
-

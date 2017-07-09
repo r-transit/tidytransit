@@ -38,4 +38,3 @@ Leaflet map object with all routes plotted for given agency ID.
 \description{
 Map all routes for an agency. If no agency is specified, the first observed agency is taken by default and all its routes are mapped.
 }
-

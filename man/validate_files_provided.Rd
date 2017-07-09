@@ -15,4 +15,3 @@ Dataframe will one row for all required and optional files per spec, plus one ro
 \description{
 For a single 'gtfs' class object, check provided files
 }
-

@@ -27,4 +27,3 @@ Set up GET for transitfeeds API
 \details{
 See http://transitfeeds.com/api/ for available API calls
 }
-

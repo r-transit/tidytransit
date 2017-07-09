@@ -15,4 +15,3 @@ Dataframe of locations with id, descriptions, and lat/lng
 \description{
 Extract location dataframe from transitfeeds getLocation API
 }
-

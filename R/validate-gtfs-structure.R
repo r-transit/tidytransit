@@ -145,7 +145,7 @@ validate_vars_provided <- function(val_files, gtfs_obj) {
       temp_vars_df <- dplyr::data_frame(file = gsub('_df', '', j), field = NA, field_provided_status = 'none')
     } else {
       provided_status <- temp_df %>%
-        dplyr::summarize_each(dplyr::funs(is_empty = all(is.na(.))))
+        dplyr::summarize_all(dplyr::funs(is_empty = all(is.na(.))))
 
       temp_vars_df <- dplyr::data_frame(file = rep(gsub('_df', '', j), length(temp_names)), field = temp_names, field_provided_status = ifelse(provided_status, 'empty', 'yes'))
     }

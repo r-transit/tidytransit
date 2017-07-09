@@ -12,4 +12,3 @@ Environment with gtfs data.
 \description{
 Function that creates gtfs meta data
 }
-

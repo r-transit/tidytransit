@@ -12,4 +12,3 @@ tfeeds_check(req)
 \description{
 Check HTTP status; stop if failure
 }
-

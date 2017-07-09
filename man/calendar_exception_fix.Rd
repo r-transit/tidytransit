@@ -15,4 +15,3 @@ corrected dataframe.
 \description{
 checks for the missing calendar.txt exception (see https://developers.google.com/transit/gtfs/reference/calendar_dates-file). if the exception is TRUE, then calendar has its file spec set to 'extra'.
 }
-

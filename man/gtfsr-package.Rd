@@ -2,8 +2,8 @@
 % Please edit documentation in R/package.R
 \docType{package}
 \name{gtfsr-package}
-\alias{gtfsr}
 \alias{gtfsr-package}
+\alias{gtfsr}
 \title{A package for plotting GTFS data.}
 \description{
 This package allows one to quickly map GTFS data. It also provides a quick and simple way to validate the structure of GTFS data.
@@ -20,4 +20,3 @@ This package allows one to quickly map GTFS data. It also provides a quick and s
 Danton Noriega-Goodwin \email{danton.noriega@gmail.com},
 Elaine McVey \email{elaine@transloc.com}
 }
-

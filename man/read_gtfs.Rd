@@ -16,4 +16,3 @@ read_gtfs(exdir, delete_files = FALSE, quiet = FALSE)
 \description{
 Put GTFS text file contents into objects in memory and delete files
 }
-

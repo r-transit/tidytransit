@@ -9,4 +9,3 @@ tools_api_key()
 \description{
 Tools to get, set, or check for API key
 }
-

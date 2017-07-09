@@ -4,8 +4,8 @@
 \alias{get_routes_sldf}
 \title{Get shapes spatial data for given route ids}
 \usage{
-get_routes_sldf(gtfs_obj, route_ids, service_ids, shape_ids, route_opacity,
-  route_colors)
+get_routes_sldf(gtfs_obj, route_ids, service_ids = NULL, shape_ids = NULL,
+  route_opacity = NULL, route_colors = NULL)
 }
 \arguments{
 \item{gtfs_obj}{A GTFS list object with components agency_df, etc.}
@@ -26,4 +26,3 @@ Environment containing spatial data, labels, colorings used for plotting
 \description{
 Get shapes spatial data for given route ids
 }
-

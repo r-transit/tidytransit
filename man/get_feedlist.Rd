@@ -12,4 +12,3 @@ Result of httr::GET
 \description{
 Get list of all available feeds from transitfeeds API
 }
-

@@ -19,4 +19,3 @@ Leaflet map object with point plotted at stop lat/long value
 \description{
 map a single stop
 }
-
