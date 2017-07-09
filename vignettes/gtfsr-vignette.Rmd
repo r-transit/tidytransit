@@ -1,8 +1,6 @@
 ---
 title: "Getting GTFS Data and Mapping with gtfsr"
-author: 
- - "Danton Noriega <danton.noriega@gmail.com>"
- - "Tom Buckley"
+author: "Danton Noriega <danton.noriega@gmail.com>"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -15,7 +13,7 @@ vignette: >
 knitr::opts_chunk$set(collapse = TRUE, cache=FALSE, comment = "#>", fig.width=7.3, fig.height=5)
 ```
 
-# `gtfsr`
+# `gtfsr` (v1.0.3)
 
 `gtfsr` is an R package for easily importing, validating, and mapping transit data that follows the [General Transit Feed Specification (GTFS)](https://developers.google.com/transit/gtfs/) format.
 
