@@ -16,7 +16,7 @@
 #' @importFrom utils "read.csv"
 #' @importFrom stats "na.omit"
 #' @importFrom stats "setNames"
-#' @return Result of httr::GET
+#' @return a data frame with the result of httr::GET
 #'
 #' @export
 
@@ -148,24 +148,10 @@ filter_feedlist <- function(feedlist_df, test_url = FALSE) {
 }
 
 
-#' Get all locations available from the transitfeeds API (getLocations)
-#'
-#' @return A dataframe of locations with id, descriptions, and lat/lng
-#'
-#' @export
-
-get_locations <- function() {
-
-  req <- tfeeds_get("getLocations")
-
-  tfeeds_parse_getlocation(req)
-
-}
-
 # API Keys ------------------------------------------------
 
 #' Tools to get, set, or check for API key
-
+#' @noRd
 tools_api_key <- function() {
 
   get = function() {
@@ -278,6 +264,7 @@ has_api_key <- function() {
 
 #' Check HTTP status; stop if failure
 #' @param req The result of an httr::GET
+#' @noRd
 
 tfeeds_check <- function(req) {
   if (req$status_code < 400) return(invisible())
@@ -289,9 +276,9 @@ tfeeds_check <- function(req) {
 #' Parse content as text
 #'
 #' @param req The result of a httr::GET
-#'
+#' @noRd
 #' @return content parsed as text
-#'
+
 
 tfeeds_text <- function(req) {
   parsed_content <- httr::content(req, as = "text")
@@ -302,7 +289,7 @@ tfeeds_text <- function(req) {
 #' Parse a gtfs feed list
 #'
 #' @param req The result of a GET
-#'
+#' @noRd
 #' @return Dataframe of feeds
 
 tfeeds_parse_getfeedlist <- function(req) {
@@ -350,7 +337,7 @@ tfeeds_parse_getfeedlist <- function(req) {
 #' Extract location dataframe from transitfeeds getLocation API
 #'
 #' @param req Response to getLocation httr::GET
-#'
+#' @noRd
 #' @return Dataframe of locations with id, descriptions, and lat/lng
 #'
 
@@ -382,7 +369,7 @@ tfeeds_parse_getlocation <- function(req) {
 #' @param version Version of API as character that can be appended as part of path, defaults to v1
 #' @param key API key, defaults to gtfs_api_key
 #' @param ... any httr::GET options to pass-through
-#'
+#' @noRd
 #' @return Result of httr::GET
 #'
 #' @details See http://transitfeeds.com/api/ for available API calls

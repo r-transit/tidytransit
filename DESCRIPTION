@@ -3,8 +3,8 @@ Type: Package
 Title: Working with GTFS (General Transit Feed Specification) feeds in R
 Version: 1.0.3
 Authors@R: as.person(c(
-    "Elaine McVey <elaine.mcvey@transloc.com> [aut, cre]",
-    "Danton Noriega-Goodwin <danton.noriega@gmail.com> [aut]",
+    "Elaine McVey <elaine.mcvey@transloc.com> [aut]",
+    "Danton Noriega-Goodwin <danton.noriega@gmail.com> [aut, cre]",
     "Charles Hans Thompson <hans.thompson1@gmail.com> [ctb]",
     "Tom Buckley [ctb]"
   ))

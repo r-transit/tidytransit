@@ -4,9 +4,12 @@
 ^beta/
 ^temp-files/
 ^vignettes/*_cache/
+^vignettes/gtfsr-vignette-body\.Rmd$
 ^\.travis\.yml$
 ^README\.Rmd$
 ^README-.*\.png$
 ^README.html
 ^packrat/
 ^CONDUCT\.md$
+^docs$
+^_pkgdown\.yml$

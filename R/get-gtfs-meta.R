@@ -1,6 +1,6 @@
 #' Function that creates gtfs meta data
 #' @return Environment with gtfs data.
-#' @export
+#' @noRd
 
 get_gtfs_meta <- function() {
 
@@ -159,8 +159,6 @@ get_gtfs_meta <- function() {
   trips$spec <- c('req', 'req', 'req', 'opt', 'opt', 'opt', 'opt', 'opt', 'opt', 'opt')
   trips$coltype <- rep('c', length(trips$field))
   trips$coltype[trips$field %in% c('direction_id', 'wheelchair_accessible', 'bikes_allowed')] <- 'i'
-
-
 
   environment()
 

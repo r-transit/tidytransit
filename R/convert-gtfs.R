@@ -24,6 +24,7 @@ convert_gtfs_routes_to_sf <- function(gtfs_obj) {
 
 #' return an sf linestring with lat and long from gtfs
 #' @param df dataframe from the gtfsr shapes_df split() on shape_id
+#' @noRd
 #' @return st_linestring (sfr) object
 shape_to_sf_linestring <- function(df) {
   # as suggested by www.github.com/mdsumner
@@ -36,6 +37,7 @@ shape_to_sf_linestring <- function(df) {
 
 #' return an sf multilinestring with lat and long from gtfs for a route
 #' @param df dataframe with the shapes for a given route
+#' @noRd
 #' @return multilinestring (sfr) object
 route_to_sf_multilinestring <- function(df) {
   # as suggested by www.github.com/mdsumner
@@ -49,11 +51,11 @@ route_to_sf_multilinestring <- function(df) {
 
 
 #'Join the shapes, trips and routes tables together - also checks on some potential errors in the data and warns accordingly
-#'@param gtfs_obj a gtfs object
-#'@param route_ids the routes for which to join the tables together - required, but not sure why this can't just be any/all routes in routes_df
-#'@param service_ids - an optional filter for a certain service-default NULL
-#'@return shapes_routes_df - a dataframe in which routes,
-#'# and shapes are all cross referenced - can be used to filter shapes by service_id, for example
+#' @param gtfs_obj a gtfs object
+#' @param route_ids the routes for which to join the tables together - required, but not sure why this can't just be any/all routes in routes_df
+#' @param service_ids - an optional filter for a certain service-default NULL
+#' @noRd
+#' @return shapes_routes_df - a dataframe in which routes,
 join_shape_route_service_ids <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
 
   stopifnot(class(gtfs_obj) == 'gtfs',

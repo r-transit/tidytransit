@@ -11,7 +11,6 @@
 #' @param gtfs_obj A GTFS list object with components agency_df, etc.
 #' @param stop_id Character. A single ID for a stop of interest.
 #' @param stop_color Character. An R color or hex value. Expects single value or NULL. Default is NULL. If length(stop_color) > 1, then it reverts to `stop_color <- stop_color[1]`
-#'
 #' @return Leaflet map object with point plotted at stop lat/long value
 #' @export
 

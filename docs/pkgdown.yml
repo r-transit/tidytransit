@@ -1,0 +1,6 @@
+urls:
+  reference: http://dantonnoriega.github.io/gtfsr/reference
+  article: http://dantonnoriega.github.io/gtfsr/articles
+articles:
+  gtfsr-vignette: gtfsr-vignette.html
+

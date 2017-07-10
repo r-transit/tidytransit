@@ -7,7 +7,7 @@
 get_feedlist()
 }
 \value{
-Result of httr::GET
+a data frame with the result of httr::GET
 }
 \description{
 Get list of all available feeds from transitfeeds API

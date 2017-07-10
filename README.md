@@ -1,6 +1,5 @@
 
-[![Build Status](https://travis-ci.org/ropensci/gtfsr.svg?branch=master)](https://travis-ci.org/ropensci/gtfsr)
-[![codecov.io](https://codecov.io/github/ropensci/gtfsr/coverage.svg?branch=master)](https://codecov.io/github/ropensci/gtfsr?branch=master)
+[![Build Status](https://travis-ci.org/ropensci/gtfsr.svg?branch=master)](https://travis-ci.org/ropensci/gtfsr) [![codecov.io](https://codecov.io/github/ropensci/gtfsr/coverage.svg?branch=master)](https://codecov.io/github/ropensci/gtfsr?branch=master)
 
 Description
 -----------
@@ -45,7 +44,7 @@ feedlist_df <- get_feedlist() %>%
 
 # import NYC gtfs feed by sending the url to `import_gtfs`
 NYC <- import_gtfs(feedlist_df$url_d)
-#> [1] "agency.txt"         "calendar.txt"       "calendar_dates.txt"
+#> [1] "agency.txt"         "calendar_dates.txt" "calendar.txt"      
 #> [4] "routes.txt"         "shapes.txt"         "stop_times.txt"    
 #> [7] "stops.txt"          "transfers.txt"      "trips.txt"
 
@@ -68,14 +67,14 @@ ids <- NYC$trips_df %>%
   distinct() %>%
   filter(route_id %in% routes)
 ids %>% head(5) # see all unique combos of ids
-#> # A tibble: 5 <U+00D7> 3
+#> # A tibble: 5 x 3
 #>   route_id   service_id shape_id
 #>      <chr>        <chr>    <chr>
-#> 1        A B20161106WKD  A..N43R
-#> 2        A B20161106WKD  A..S43R
-#> 3        A B20161106WKD  A..N85R
-#> 4        A B20161106WKD  A..N54R
-#> 5        A B20161106WKD  A..N65R
+#> 1        A B20170625WKD  A..N43R
+#> 2        A B20170625WKD  A..S43R
+#> 3        A B20170625WKD  A..N85R
+#> 4        A B20170625WKD  A..N54R
+#> 5        A B20170625WKD  A..N65R
 
 # lets map just the the first row
 route_ids <- ids$route_id[1]
@@ -94,16 +93,4 @@ NYC %>%
 
 ![](README/README-readme-body-2.png)
 
-![](README/README-readme-body-2.png)
-
-## Writing GTFS Routes to GeoPackage, GeoJSON (and other GDAL supported drivers)
-
-```
-library(sf)
-routes_df_sf <- gtfs_routes_as_sf(NYC)
-
-st_write(routes_df_sf, "routes_df_nyc.gpkg",driver="GPKG")
-st_write(routes_df_sf, "routes_df_nyc.geojson",driver="GeoJSON")
-```
 [![ropensci\_footer](http://ropensci.org/public_images/github_footer.png)](http://ropensci.org)
-

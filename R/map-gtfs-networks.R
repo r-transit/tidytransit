@@ -11,6 +11,7 @@
 #' @param stop_details Boolean. Whether to generate detail stop information. Default is FALSE.
 #' @param route_opacity Numeric. Value must be between 0 and 1. Default is 0.75
 #' @param route_colors Character. Names of colors (e.g. "blue") or hex values (e.g. '#000000'). Default is NULL.
+#' @noRd
 #' @return Leaflet map object with all routes plotted for given agency ID.
 
 map_gtfs_agency_network <- function(gtfs_obj, agency_name, route_ids, service_ids = NULL, shape_ids = NULL, include_stops = TRUE, only_stops = FALSE, stop_opacity = 0.5, stop_details = FALSE, route_opacity = 0.75, route_colors = NULL) {
@@ -23,7 +24,7 @@ map_gtfs_agency_network <- function(gtfs_obj, agency_name, route_ids, service_id
   # PLOTTING -------------------------------
   # create map with shapes
   m <- plotting_data$gtfs_lines %>%
-    leaflet::leaflet() %>%
+    leaflet::leaflet(width = '100%') %>%
     leaflet::addProviderTiles("OpenStreetMap.BlackAndWhite") %>%
     leaflet::addLegend(
       colors = plotting_data$routes_colors_df$color,
