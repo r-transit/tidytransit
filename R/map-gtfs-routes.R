@@ -41,7 +41,7 @@ map_gtfs_routes <- function(gtfs_obj, route_ids, service_ids = NULL, shape_ids =
 
 	# PLOTTING ------------------------------------------------
   # create map with shapes
-  m <- plotting_data$gtfslines %>%
+  m <- plotting_data$gtfs_lines %>%
   	leaflet::leaflet() %>%
   	leaflet::addProviderTiles("OpenStreetMap.BlackAndWhite") %>%
 		leaflet::addLegend(
@@ -53,10 +53,11 @@ map_gtfs_routes <- function(gtfs_obj, route_ids, service_ids = NULL, shape_ids =
     include_stops <- TRUE
   } else {
     m %<>% leaflet::addPolylines(
-      color = plotting_data$shape_colors$color,
-      opacity = plotting_data$shape_colors$opacity,
-      label = plotting_data$shape_colors$labels,
-      popup = plotting_data$shape_colors$popups) # assign color to each separate shape file
+      color = plotting_data$shapes_colors_df$color,
+      opacity = plotting_data$shapes_colors_df$opacity,
+      label = plotting_data$shapes_colors_df$labels,
+      group = plotting_data$shapes_colors_df$labels,
+      popup = plotting_data$shapes_colors_df$popups) # assign color to each separate shape file
   }
 
 	if(include_stops) {
@@ -80,7 +81,8 @@ map_gtfs_routes <- function(gtfs_obj, route_ids, service_ids = NULL, shape_ids =
 			lapply(. %>% get_agency_stops(gtfs_obj, agency_name = .)) %>%
 			dplyr::bind_rows() %>%
 	  	dplyr::inner_join(plotting_data$routes_colors_df, by = 'route_id') %>%
-	  	dplyr::slice(which(stop_id %in% possible_stops))
+	  	dplyr::slice(which(stop_id %in% possible_stops)) %>%
+      dplyr::mutate(stop_route = paste("Route", route_short_name)) # add stop labels for layers
 
 	  # whether to add stop details
 	  if(stop_details) {
@@ -93,6 +95,7 @@ map_gtfs_routes <- function(gtfs_obj, route_ids, service_ids = NULL, shape_ids =
 
 	  m %<>% leaflet::addCircleMarkers(
 			label = stops$stop_name,
+      group = stops$stop_route,
 			popup = stops$popups,
 			radius = 6,
 	    stroke = TRUE,
@@ -107,7 +110,11 @@ map_gtfs_routes <- function(gtfs_obj, route_ids, service_ids = NULL, shape_ids =
 
 	}
 
-	m
+  # add overlays
+  overlays <- unique(plotting_data$shapes_colors_df$labels)
+
+	m %>%
+    leaflet::addLayersControl(overlayGroups = overlays)
 
 }
 

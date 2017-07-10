@@ -9,4 +9,3 @@ get_api_key()
 \description{
 Get API key
 }
-

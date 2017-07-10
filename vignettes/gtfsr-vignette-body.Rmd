@@ -47,8 +47,7 @@ Here is a map of all available locations.
 
 ```{r transitfeeds_map, warning=TRUE, message=TRUE, echo=TRUE, eval=FALSE}
 leaflet::leaflet() %>% leaflet::addTiles() %>%
-    leaflet::addCircleMarkers(data = feedlist_df, lat = ~loc_lat, lng = ~loc_lng,
-                     popup = ~paste(sep = "<br/>", t, loc_t))
+    leaflet::addCircleMarkers(data = feedlist_df, lat = ~loc_lat, lng = ~loc_lng, popup = ~paste(sep = "<br/>", t, loc_t))
 ```
 
 
@@ -72,7 +71,7 @@ aussie_urls <- aussie_df %>% select(url_d) # get aussie urls
 Once we have the urls for the feeds of interest, we can download and extract all the GTFS data into a list of `gtfs` objects using the `import_gtfs` function.
 
 ```{r import_gtfs, warning=FALSE, message=FALSE, echo=TRUE, eval=FALSE}
-gtfs_objs <- aussie_urls %>% slice(8:9) %>% import_gtfs
+gtfs_objs <- aussie_urls %>% slice(c(6,9)) %>% import_gtfs()
 ```
 
 ### Inspecting Parsing Errors/Warnings
@@ -148,7 +147,7 @@ duke_gtfs_obj <- feedlist_df %>%
 We can get visualize all of the routes that make up Duke University's Transit system using `map_gtfs` and just passing the `gtfs` objected `duke_gtfs_obj`. This is because the Duke University Transit system is made of only one agency (`duke_agency_name = "Duke Transit"`) and, when you pass a single `gtfs` object, the default behavior of `map_gtfs` is to take the *first* observed agency name and plot all it's routes.
 
 ```{r duke-map2, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, cache=FALSE}
-map_gtfs(gtfs_obj = duke_gtfs_obj) # map all routes of agency with stops (the stops)
+map_gtfs(gtfs_obj = duke_gtfs_obj) # map all routes of agency with stops
 ```
 
 

@@ -15,4 +15,3 @@ content parsed as text
 \description{
 Parse content as text
 }
-

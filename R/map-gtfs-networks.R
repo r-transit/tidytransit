@@ -22,7 +22,7 @@ map_gtfs_agency_network <- function(gtfs_obj, agency_name, route_ids, service_id
 
   # PLOTTING -------------------------------
   # create map with shapes
-  m <- plotting_data$gtfslines %>%
+  m <- plotting_data$gtfs_lines %>%
     leaflet::leaflet() %>%
     leaflet::addProviderTiles("OpenStreetMap.BlackAndWhite") %>%
     leaflet::addLegend(
@@ -35,16 +35,19 @@ map_gtfs_agency_network <- function(gtfs_obj, agency_name, route_ids, service_id
   } else {
     m  %<>%
       leaflet::addPolylines(
-        color = plotting_data$shape_colors$color,
-        opacity = plotting_data$shape_colors$opacity,
-        popup = plotting_data$shape_colors$popups)
+        color = plotting_data$shapes_colors_df$color,
+        label = plotting_data$shapes_colors_df$labels,
+        group = plotting_data$shapes_colors_df$labels,
+        opacity = plotting_data$shapes_colors_df$opacity,
+        popup = plotting_data$shapes_colors_df$popups)
   }
 
   if(include_stops) {
     # get stops data
     stops <- get_agency_stops(gtfs_obj, agency_name = agency_name)
     stops %<>%
-      dplyr::inner_join(plotting_data$routes_colors_df, by = 'route_id')
+      dplyr::inner_join(plotting_data$routes_colors_df, by = 'route_id') %>%
+      dplyr::mutate(stop_route = paste("Route", route_short_name)) # add stop labels for layers
 
     # whether to add stop details
     if(stop_details) {
@@ -57,6 +60,7 @@ map_gtfs_agency_network <- function(gtfs_obj, agency_name, route_ids, service_id
 
     m %<>% leaflet::addCircleMarkers(
       label = stops$stop_name,
+      group = stops$stop_route,
       popup = stops$popups,
       radius = 6,
       weight = 4,
@@ -68,9 +72,14 @@ map_gtfs_agency_network <- function(gtfs_obj, agency_name, route_ids, service_id
       fillOpacity = stop_opacity,
       lat = stops$lat,
       lng = stops$lng)
+
   }
 
-  m
+  # add overlays
+  overlays <- unique(plotting_data$shapes_colors_df$labels)
+
+  m %>%
+    leaflet::addLayersControl(overlayGroups = overlays)
 
 }
 

@@ -1,17 +1,19 @@
 Package: gtfsr
 Type: Package
 Title: Working with GTFS (General Transit Feed Specification) feeds in R
-Version: 0.1.2
+Version: 1.0.3
 Authors@R: as.person(c(
     "Elaine McVey <elaine.mcvey@transloc.com> [aut, cre]",
     "Danton Noriega-Goodwin <danton.noriega@gmail.com> [aut]",
-    "Charles Hans Thompson <hans.thompson1@gmail.com> [ctb]"
+    "Charles Hans Thompson <hans.thompson1@gmail.com> [ctb]",
+    "Tom Buckley [ctb]"
   ))
 Description: Provides API wrappers for popular public GTFS feed sharing sites, reads feed data into a gtfs data object, validates data quality, provides convenience functions for common tasks.
 License: GPL
 LazyData: TRUE
 Depends: R (>= 3.2.4)
-Remotes: github::rstudio/leaflet
+Remotes: 
+    github::rstudio/leaflet
 Imports:
     dplyr,
     tibble,
@@ -23,10 +25,11 @@ Imports:
     assertthat,
     leaflet,
     sp,
+    sf,
     scales
 Suggests:
     testthat,
     knitr,
     rmarkdown
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 VignetteBuilder: knitr

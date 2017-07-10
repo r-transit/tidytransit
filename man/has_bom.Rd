@@ -24,10 +24,9 @@ override it.}
 \description{
 Checks UTF-8-BOM encoding. Special thanks to @patperu for finding the issue and to @hrbrmstr for the code to help deal with the issue.
 }
-\author{
-@hrbrmstr
-}
 \references{
 \href{http://www.unicode.org/faq/utf_bom.html}{UTF-8, UTF-16, UTF-32 & BOM}
 }
-
+\author{
+@hrbrmstr
+}

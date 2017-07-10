@@ -18,4 +18,3 @@ Dataframe with one record per file x column (columns in spec + any extra provide
 \description{
 Validate variables provided vs spec
 }
-

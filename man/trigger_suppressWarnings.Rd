@@ -14,4 +14,3 @@ trigger_suppressWarnings(expr, quiet)
 \description{
 Used to trigger suppressWarnings or not
 }
-

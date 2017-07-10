@@ -12,4 +12,3 @@ A dataframe of locations with id, descriptions, and lat/lng
 \description{
 Get all locations available from the transitfeeds API (getLocations)
 }
-

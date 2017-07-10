@@ -26,4 +26,3 @@ Environment containing spatial data, labels, colorings used for plotting
 \description{
 Get shapes spatial data for given route ids
 }
-

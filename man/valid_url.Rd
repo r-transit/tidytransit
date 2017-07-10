@@ -18,4 +18,3 @@ valid_url(url, timeout = 5, test_url = TRUE, quiet = TRUE)
 \description{
 Used to check if a url is valid
 }
-
