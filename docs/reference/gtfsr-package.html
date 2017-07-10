@@ -68,9 +68,6 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/gtfsr-vignette-body.html">UNKNOWN TITLE</a>
-    </li>
-    <li>
       <a href="../articles/gtfsr-vignette.html">Getting GTFS Data and Mapping with gtfsr</a>
     </li>
   </ul>
@@ -106,51 +103,8 @@
     <pre class="examples"><div class='input'>
  <span class='fu'>library</span>(<span class='no'>dplyr</span>)
  <span class='no'>url</span> <span class='kw'>&lt;-</span> <span class='st'>"http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip"</span>
- <span class='no'>gtfs_obj</span> <span class='kw'>&lt;-</span> <span class='no'>url</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='import_gtfs.html'>import_gtfs</a></span>(<span class='kw'>quiet</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='output co'>#&gt; <span class='message'>`summarise_each()` is deprecated.</span>
-#&gt; <span class='message'>Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead.</span>
-#&gt; <span class='message'>To map `funs` over all variables, use `summarise_all()`</span></div><div class='input'> <span class='no'>route</span> <span class='kw'>&lt;-</span> <span class='st'>"1693"</span>
+ <span class='no'>gtfs_obj</span> <span class='kw'>&lt;-</span> <span class='no'>url</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='import_gtfs.html'>import_gtfs</a></span>(<span class='kw'>quiet</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+ <span class='no'>route</span> <span class='kw'>&lt;-</span> <span class='st'>"1693"</span>
  <span class='fu'><a href='map_gtfs.html'>map_gtfs</a></span>(<span class='no'>gtfs_obj</span>, <span class='no'>route</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

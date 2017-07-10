@@ -56,7 +56,6 @@ route_to_sf_multilinestring <- function(df) {
 #' @param service_ids - an optional filter for a certain service-default NULL
 #' @noRd
 #' @return shapes_routes_df - a dataframe in which routes,
-#'# and shapes are all cross referenced - can be used to filter shapes by service_id, for example
 join_shape_route_service_ids <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
 
   stopifnot(class(gtfs_obj) == 'gtfs',

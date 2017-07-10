@@ -68,9 +68,6 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/gtfsr-vignette-body.html">UNKNOWN TITLE</a>
-    </li>
-    <li>
       <a href="../articles/gtfsr-vignette.html">Getting GTFS Data and Mapping with gtfsr</a>
     </li>
   </ul>
@@ -95,7 +92,7 @@
     <div class="page-header">
       <h1>
         Reference
-        <small>version&nbsp;0.1.2</small>
+        <small>version&nbsp;1.0.3</small>
       </h1>
     </div>
 
@@ -183,6 +180,12 @@
         <tr>
           <!--  -->
           <td>
+            <p><code><a href="map_gtfs_stop.html">map_gtfs_stop</a></code> </p>
+          </td>
+          <td><p>map a single stop</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
             <p><code><a href="map_gtfs.html">map_gtfs</a></code> </p>
           </td>
           <td><p>General mapping function. Specify a map type and/or a route id.</p></td>
@@ -201,6 +204,20 @@
           </td>
           <td><p>return an sf dataframe with from a gtfs object</p></td>
         </tr>
+      </tbody><tbody>
+        <tr>
+          <th colspan="2">
+            <h2 id="section-validate" class="hasAnchor"><a href="#section-validate" class="anchor"></a>Validate</h2>
+            <p class="section-desc"><p>Validate gtfs objects</p></p>
+          </th>
+        </tr>
+        <tr>
+          <!--  -->
+          <td>
+            <p><code><a href="validate_gtfs_structure.html">validate_gtfs_structure</a></code> </p>
+          </td>
+          <td><p>Create validation list for a gtfs_obj. It provides an overview of the structure of all files that were imported.</p></td>
+        </tr>
       </tbody>
       </table>
     </div>
@@ -214,6 +231,7 @@
       <li><a href="#section-import">Import</a></li>
       <li><a href="#section-map">Map</a></li>
       <li><a href="#section-convert">Convert</a></li>
+      <li><a href="#section-validate">Validate</a></li>
     </ul>
   </div>
 </div>

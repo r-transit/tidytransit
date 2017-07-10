@@ -70,6 +70,7 @@ unzip_gtfs_files <- function(zipfile, delete_zip = FALSE, move_path = NULL, quie
 #' @param exdir Character. Path to folder into which files were extracted.
 #' @param delete_files Logical, whether to delete the files after extraction.  Does not delete by default.
 #' @param quiet Boolean. Whether to output messages and files found in folder.
+#' @noRd
 
 read_gtfs <- function(exdir, delete_files = FALSE, quiet = FALSE) {
 

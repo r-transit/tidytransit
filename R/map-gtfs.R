@@ -16,7 +16,17 @@
 #' @return Leaflet map object with all stop lat/long values plotted for a route.
 #' @export
 
-map_gtfs <- function(gtfs_obj, route_ids = NULL, service_ids = NULL, shape_ids = NULL, agency_name = NULL, include_stops = TRUE, only_stops = FALSE, stop_details = FALSE, stop_opacity = 0.5, route_opacity = 0.75, route_colors = NULL) {
+map_gtfs <- function(gtfs_obj,
+                     route_ids = NULL,
+                     service_ids = NULL,
+                     shape_ids = NULL,
+                     agency_name = NULL,
+                     include_stops = TRUE,
+                     only_stops = FALSE,
+                     stop_details = FALSE,
+                     stop_opacity = 0.5,
+                     route_opacity = 0.75,
+                     route_colors = NULL) {
 
   stopifnot(class(gtfs_obj) == 'gtfs',
     !is.null(gtfs_obj$stops_df),
@@ -164,6 +174,7 @@ map_gtfs <- function(gtfs_obj, route_ids = NULL, service_ids = NULL, shape_ids =
                       stop_details = stop_details,
                       route_opacity = route_opacity,
                       route_colors = route_colors)
+
   } else {
 
     stopifnot(length(route_ids) > 0, length(agency_name) > 0)
@@ -179,6 +190,7 @@ map_gtfs <- function(gtfs_obj, route_ids = NULL, service_ids = NULL, shape_ids =
                         stop_details = stop_details,
                         route_opacity = route_opacity,
                         route_colors = route_colors)
+
   }
 
   m

@@ -4,6 +4,7 @@
 ^beta/
 ^temp-files/
 ^vignettes/*_cache/
+^vignettes/gtfsr-vignette-body\.Rmd$
 ^\.travis\.yml$
 ^README\.Rmd$
 ^README-.*\.png$

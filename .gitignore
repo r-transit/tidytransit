@@ -9,7 +9,7 @@ packrat/lib*/
 .Rprofile
 vignettes/*_cache/
 R/.Rapp.history
-vignettes/gtfsr-vignette.html
+vignettes/*.html
 beta/
 driver.R
 temp-files/

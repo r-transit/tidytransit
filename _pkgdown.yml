@@ -26,3 +26,12 @@ reference:
     desc: Convert gtfs objects to other formats
     contents:
     - convert_gtfs_routes_to_sf
+  - title: Validate
+    desc: Validate gtfs objects
+    contents:
+    - validate_gtfs_structure
+
+articles:
+  - title: Vignettes
+    contents:
+    - gtfsr-vignette
