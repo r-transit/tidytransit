@@ -57,7 +57,7 @@ routes <- NYC[['routes_df']] %>%
 NYC %>% map_gtfs(route_ids = routes)
 ```
 
-![](README/README-readme-body-1.png)
+<img src="README/README-readme-body-1.png" width="100%" />
 
 ``` r
 
@@ -91,6 +91,6 @@ NYC %>%
     route_opacity = .5) # change the route opacity
 ```
 
-![](README/README-readme-body-2.png)
+<img src="README/README-readme-body-2.png" width="100%" />
 
 [![ropensci\_footer](http://ropensci.org/public_images/github_footer.png)](http://ropensci.org)

@@ -12,7 +12,8 @@ knitr::opts_chunk$set(
   warning = FALSE,
   fig.path = "README/README-",
   fig.width=7.3,
-  fig.height=5
+  fig.height=5,
+  out.width = '100%'
 )
 ```
 
