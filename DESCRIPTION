@@ -33,6 +33,6 @@ Suggests:
     rmarkdown
 RoxygenNote: 6.0.1
 VignetteBuilder: knitr
-URL: http://dantonnoriega.github.io/gtfsr, https://github.com/dantonnoriega/gtfsr
-BugReports: https://github.com/dantonnoriega/gtfsr/issues
+URL: http://ropensci.github.io/gtfsr, https://github.com/ropensci/gtfsr
+BugReports: https://github.com/ropensci/gtfsr/issues
 Roxygen: list(markdown = TRUE)
