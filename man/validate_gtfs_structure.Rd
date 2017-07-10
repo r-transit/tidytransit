@@ -20,4 +20,3 @@ A gtfs_obj list object with attribute 'validate' or just a list containing valid
 \description{
 Create validation list for a gtfs_obj. It provides an overview of the structure of all files that were imported.
 }
-

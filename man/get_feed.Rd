@@ -19,4 +19,3 @@ File path
 \description{
 Download a zipped GTFS feed file from a url
 }
-

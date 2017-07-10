@@ -12,4 +12,3 @@ logical TRUE if key is not empty
 \description{
 Make sure API key string is not empty
 }
-

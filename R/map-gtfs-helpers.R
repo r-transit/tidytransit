@@ -49,6 +49,7 @@ gen_stop_popups <- function(a, b, c, d) {
 #' @param shape_ids Vector (Character). Shape IDs. NULL by Default.
 #' @param route_opacity Numeric. Value must be between 0 and 1. Default is NULL.
 #' @param route_colors Character. Names of colors (e.g. "blue") or hex values (e.g. '#000000').
+#' @noRd
 #' @return Environment containing spatial data, labels, colorings used for plotting
 
 get_routes_sldf <- function(gtfs_obj, route_ids, service_ids, shape_ids, route_opacity, route_colors) {

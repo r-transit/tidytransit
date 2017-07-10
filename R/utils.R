@@ -12,6 +12,7 @@ rmfolder <- function(folder) {
 #' @param timeout Integer. Seconds before timeout.
 #' @param quiet Boolean. Whether to display output.
 #' @param test_url Boolean. Whether to test if the url connects or not. FALSE by default (can take a while).
+#' @noRd
 
 valid_url <- function(url, timeout = 5, test_url = TRUE, quiet = TRUE) {
 
@@ -46,6 +47,7 @@ valid_url <- function(url, timeout = 5, test_url = TRUE, quiet = TRUE) {
 #' Used to trigger suppressWarnings or not
 #' @param expr expression to suppress
 #' @param quiet Logical. Whether to suppress or not. \code{FALSE} by default.
+#' @noRd
 
 trigger_suppressWarnings <- function(expr, quiet) {
 

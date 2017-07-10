@@ -38,4 +38,3 @@ Leaflet map object with all stop lat/long values plotted for a route.
 \description{
 General mapping function. Specify a map type and/or a route id.
 }
-

@@ -10,6 +10,7 @@
 #' @return \code{TRUE} if response contains a BOM, \code{NA} if an unsupported encoding
 #'         was passed (along with a message)
 #' @references \href{http://www.unicode.org/faq/utf_bom.html}{UTF-8, UTF-16, UTF-32 & BOM}
+#' @noRd
 #' @author @@hrbrmstr
 
 

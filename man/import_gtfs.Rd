@@ -19,4 +19,3 @@ Dataframes of GTFS data.
 \description{
 Get a Dataframes of GTFS data.
 }
-

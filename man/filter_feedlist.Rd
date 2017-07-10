@@ -17,4 +17,3 @@ A dataframe of feed metadata for all feeds in input that are downloadable
 \description{
 Filter a feedlist to include only valid urls (ending in .zip and connect)
 }
-
