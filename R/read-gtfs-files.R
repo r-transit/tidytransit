@@ -160,10 +160,20 @@ parse_gtfs <- function(prefix, file_path, quiet = FALSE) {
     ## get correct meta data using file prefix (e.g. 'agency', 'stop_times')
     meta <- get_gtfs_meta()[[prefix]]
 
+    # check if a file is empty. If so, return NULL.
     if(length(scan(file_path, what = "", quiet = TRUE, sep = '\n')) < 1) {
       s <- sprintf("File '%s' is empty. Returning NULL.\n", basename(file_path))
       message(s)
       return()
+    }
+
+    # if no meta data is found for a file type but file is not empty, read as is.
+    if(is.null(meta)) {
+      s <- sprintf("File %s not recognized. No meta data exists. Reading file as csv.\n", basename(file_path))
+      message(s)
+      csv <- quote(readr::read_csv(file = file_path))
+      df <- suppressMessages(trigger_suppressWarnings(eval(csv), quiet))
+      return(df)
     }
 
     ## read.csv supports UTF-8-BOM. use this to get field names.
@@ -174,7 +184,7 @@ parse_gtfs <- function(prefix, file_path, quiet = FALSE) {
     names(coltypes) <- names(small_df) %>% tolower()
     indx <- match(names(coltypes), meta$field)  # indx from valid cols in meta$field. NAs will return for invalid cols
 
-    colnames <- meta$field[indx] # get expected/required names for columns. these are imposed.
+    colnms <- meta$field[indx] # get expected/required names for columns. these are imposed.
 
     ## !is.na(indx) = valid col in 'coltype' found in meta$field
     ## indx[!is.na(indx)] = location in 'meta$coltype' where corresponding type is found
@@ -192,7 +202,7 @@ parse_gtfs <- function(prefix, file_path, quiet = FALSE) {
     }
 
     if (has_bom(file_path)) { # check for BOM. if yes, use read.csv()
-      csv <- quote(utils::read.csv(file_path, col.names = colnames, stringsAsFactors= FALSE))
+      csv <- quote(utils::read.csv(file_path, col.names = colnms, stringsAsFactors= FALSE))
       df <- try(suppressWarnings(eval(csv)) %>%
           mapply(converttype, x = colclasses, y = ., SIMPLIFY = FALSE) %>% # ensure proper column types
           tibble::as_tibble())
@@ -203,8 +213,8 @@ parse_gtfs <- function(prefix, file_path, quiet = FALSE) {
       }
 
     } else {
-      csv <- quote(readr::read_csv(file = file_path, col_types = coltypes, col_names = colnames, skip = 1L))
-      prob <- quote(readr::problems(readr::read_csv(file = file_path, col_types = coltypes, col_names = colnames, skip = 1L)))
+      csv <- quote(readr::read_csv(file = file_path, col_types = coltypes, col_names = colnms, skip = 1L))
+      prob <- quote(readr::problems(readr::read_csv(file = file_path, col_types = coltypes, col_names = colnms, skip = 1L)))
       df <- trigger_suppressWarnings(eval(csv), quiet)
       probs <- trigger_suppressWarnings(eval(prob), quiet)
 
