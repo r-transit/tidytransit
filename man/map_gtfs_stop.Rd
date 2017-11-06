@@ -11,7 +11,7 @@ map_gtfs_stop(gtfs_obj, stop_id, stop_color = NULL)
 
 \item{stop_id}{Character. A single ID for a stop of interest.}
 
-\item{stop_color}{Character. An R color or hex value. Expects single value or NULL. Default is NULL. If length(stop_color) > 1, then it reverts to `stop_color <- stop_color[1]`}
+\item{stop_color}{Character. An R color or hex value. Expects single value or NULL. Default is NULL. If length(stop_color) > 1, then it reverts to \code{stop_color <- stop_color[1]}}
 }
 \value{
 Leaflet map object with point plotted at stop lat/long value

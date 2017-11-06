@@ -7,7 +7,7 @@
 import_gtfs(paths, local = FALSE, quiet = FALSE)
 }
 \arguments{
-\item{paths}{Character. url links to zip files OR paths to local zip files. if to local path, then option `local` must be set to TRUE.}
+\item{paths}{Character. url links to zip files OR paths to local zip files. if to local path, then option \code{local} must be set to TRUE.}
 
 \item{local}{Boolean. If the paths are searching locally or not. Default is FALSE (that is, urls).}
 

@@ -22,7 +22,7 @@ map_gtfs(gtfs_obj, route_ids = NULL, service_ids = NULL, shape_ids = NULL,
 
 \item{include_stops}{Boolean. Whether to layer on stops to the route shape. Default is TRUE.}
 
-\item{only_stops}{Boolean. Whether to map only stops, no routes. Overrides `include_stops`. Default is FALSE.}
+\item{only_stops}{Boolean. Whether to map only stops, no routes. Overrides \code{include_stops}. Default is FALSE.}
 
 \item{stop_details}{Boolean. Whether to generate detail stop information. Default is FALSE.}
 
