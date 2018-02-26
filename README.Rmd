@@ -17,9 +17,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-[![Build Status](https://travis-ci.org/ropensci/gtfsr.svg?branch=master)](https://travis-ci.org/ropensci/gtfsr)
-[![codecov.io](https://codecov.io/github/ropensci/gtfsr/coverage.svg?branch=master)](https://codecov.io/github/ropensci/gtfsr?branch=master)
-[![](https://badges.ropensci.org/55_status.svg)](https://github.com/ropensci/onboarding/issues/55)
+[![Build Status](http://travis-ci.org/ropensci/gtfsr.svg?branch=master)](http://travis-ci.org/ropensci/gtfsr)
+[![codecov.io](http://codecov.io/github/ropensci/gtfsr/coverage.svg?branch=master)](http://codecov.io/github/ropensci/gtfsr?branch=master)
+[![](http://badges.ropensci.org/55_status.svg)](https://github.com/ropensci/onboarding/issues/55)
 
 
 Description
@@ -54,7 +54,7 @@ devtools::install_github('ropensci/gtfsr')
 devtools::install_github('ropensci/gtfsr', build_vignettes = TRUE)
 ```~~
 
-(Building the vignette requires an API, which should not be the case. I have to think of a workaround.)
+(Building the vignette requires an API key, which should not be the case. I have to think of a workaround.)
 
 Example Usage
 ------------------
