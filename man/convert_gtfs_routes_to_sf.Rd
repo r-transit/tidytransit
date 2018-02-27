@@ -2,7 +2,7 @@
 % Please edit documentation in R/convert-gtfs.R
 \name{convert_gtfs_routes_to_sf}
 \alias{convert_gtfs_routes_to_sf}
-\title{return an sf dataframe with from a gtfs object}
+\title{Convert GTFS data to simple features}
 \usage{
 convert_gtfs_routes_to_sf(gtfs_obj)
 }
@@ -10,8 +10,14 @@ convert_gtfs_routes_to_sf(gtfs_obj)
 \item{gtfs_obj}{gtfsr object}
 }
 \value{
-an sf dataframe for gtfs routes with a multilinestring column
+a simple features \code{sf} dataframe with \code{MULTILINESTRING} geometry of GTFS routes
 }
 \description{
-return an sf dataframe with from a gtfs object
+Convert routes to a simple features \code{sf} dataframe from a GTFS object.
+}
+\examples{
+data(gtfs_obj)
+library(sf)
+gtfs_sf <- convert_gtfs_routes_to_sf(gtfs_obj)
+plot(gtfs_sf[1])
 }
