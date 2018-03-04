@@ -4,8 +4,8 @@
 #' @export
 #' @return an sf dataframe for gtfs routes with a multilinestring column
 #' @examples 
-#' routes_sf <- routes_df_as_sf(gtfs_obj$shapes_df)
-#' plot(routes_sf[1])
+#' routes_sf <- routes_df_as_sf(gtfs_obj)
+#' plot(routes_sf[1,])
 routes_df_as_sf <- function(gtfs_obj) {
   shape_route_service_df <- shape_route_service(gtfs_obj)
   routes_latlong_df <- dplyr::inner_join(gtfs_obj$shapes_df, 
@@ -21,7 +21,7 @@ routes_df_as_sf <- function(gtfs_obj) {
   
   lines_sf <- sf::st_as_sf(lines_df)
 
-  return(sf_lines)
+  return(lines_sf)
 }
 
 
@@ -44,8 +44,8 @@ shape_as_sf_linestring <- function(df) {
 #' @export
 #' @return a multilinestring simple feature geometry (sfg) for the routes
 #' @examples
-#' shapes_sfg <- shapes_df_as_sf(gtfs_obj$shapes_df)
-#' plot(shapes_sfg)
+#' shapes_sfg <- shapes_df_as_sfg(gtfs_obj$shapes_df)
+#' plot(shapes_sfg[[1]])
 shapes_df_as_sfg <- function(df) {
   # as suggested by www.github.com/mdsumner
   l_dfs <- split(df, df$shape_id)
@@ -64,13 +64,15 @@ shapes_df_as_sfg <- function(df) {
 #' @export
 #' @return shapes_routes_service_df - a dataframe in which routes, services, and shape_ids are all joined
 #' @examples 
-#' library(magrittr)
 #' df <- shape_route_service(gtfs_obj)
 #' #get a summary of the number of shapes and services for a route
-#' route_summary <- df %>% 
+#' library(magrittr)
+#' library(dplyr)
+#' routes_shapes_services <- df %>% 
 #'           group_by(route_id) %>% 
 #'           summarize(shapes = length(unique(shape_id)), 
 #'           services= length(unique(service_id)))
+#' summary(routes_shapes_services)
 shape_route_service <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
 
   stopifnot(class(gtfs_obj) == 'gtfs',

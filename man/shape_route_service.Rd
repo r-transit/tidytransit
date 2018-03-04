@@ -22,11 +22,13 @@ shapes_routes_service_df - a dataframe in which routes, services, and shape_ids 
 Join the shapes, trips and routes tables together - also checks on some potential errors in the data and warns accordingly
 }
 \examples{
-library(magrittr)
 df <- shape_route_service(gtfs_obj)
 #get a summary of the number of shapes and services for a route
-route_summary <- df \%>\% 
+library(magrittr)
+library(dplyr)
+routes_shapes_services <- df \%>\% 
           group_by(route_id) \%>\% 
           summarize(shapes = length(unique(shape_id)), 
           services= length(unique(service_id)))
+summary(routes_shapes_services)
 }

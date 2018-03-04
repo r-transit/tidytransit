@@ -16,6 +16,6 @@ a multilinestring simple feature geometry (sfg) for the routes
 return an sf multilinestring with lat and long from gtfs for a route
 }
 \examples{
-shapes_sfg <- shapes_df_as_sf(gtfs_obj$shapes_df)
-plot(shapes_sfg)
+shapes_sfg <- shapes_df_as_sfg(gtfs_obj$shapes_df)
+plot(shapes_sfg[[1]])
 }

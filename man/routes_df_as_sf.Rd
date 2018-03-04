@@ -16,6 +16,6 @@ an sf dataframe for gtfs routes with a multilinestring column
 Get a \code{sf} dataframe for gtfs routes
 }
 \examples{
-routes_sf <- routes_df_as_sf(gtfs_obj$shapes_df)
-plot(routes_sf[1])
+routes_sf <- routes_df_as_sf(gtfs_obj)
+plot(routes_sf[1,])
 }
