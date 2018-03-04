@@ -4,8 +4,6 @@
 #' @export
 #' @return an sf dataframe for gtfs routes with a multilinestring column
 #' @examples 
-#' url <- "http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip"
-#' gtfs_obj <- import_gtfs(url, quiet=TRUE)
 #' routes_sf <- routes_df_as_sf(gtfs_obj$shapes_df)
 #' plot(routes_sf[1])
 routes_df_as_sf <- function(gtfs_obj) {
@@ -46,8 +44,6 @@ shape_as_sf_linestring <- function(df) {
 #' @export
 #' @return a multilinestring simple feature geometry (sfg) for the routes
 #' @examples
-#' url <- "http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip"
-#' gtfs_obj <- import_gtfs(url, quiet=TRUE)
 #' shapes_sfg <- shapes_df_as_sf(gtfs_obj$shapes_df)
 #' plot(shapes_sfg)
 shapes_df_as_sfg <- function(df) {
