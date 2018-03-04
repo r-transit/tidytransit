@@ -2,23 +2,25 @@
 #' @param gtfs_obj gtfsr object
 #' @export
 #' @return an sf dataframe for gtfs routes with a multilinestring column
-convert_gtfs_routes_to_sf <- function(gtfs_obj) {
-
-  srs_id_df <- join_shape_route_service_ids(gtfs_obj)
-  srs_id_shapes_df <- dplyr::inner_join(gtfs_obj$shapes_df, srs_id_df, by="shape_id")
-
-  sf_lines <- dplyr::distinct(srs_id_shapes_df, route_id)
-
-  l_dfs <- split(srs_id_shapes_df, srs_id_shapes_df$route_id)
-
-  l_mlinestrings <- lapply(l_dfs, route_to_sf_multilinestring)
-
-  wgs84_crs <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
-  sf_lines[["geometry"]] <- sf::st_sfc(l_mlinestrings, crs = wgs84_crs)
-
-  sf_lines <- sf::st_as_sf(sf_lines)
-
-  return(sf_lines)
+#' @example 
+#' url <- "http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip"
+#' gtfs_obj <- url %>% import_gtfs(quiet=TRUE)
+#' shapes_sf <- routes_df_as_sf(gtfs_obj$shapes_df)
+#' plot(shapes_sf)
+routes_df_as_sf <- function(gtfs_obj) {
+  shape_route_service_df <- shape_route_service(gtfs_obj)
+  routes_latlong_df <- dplyr::inner_join(gtfs_obj$shapes_df, 
+                                        shape_route_service_df, 
+                                        by="shape_id")
+  
+  lines_df <- dplyr::distinct(routes_latlong_df, route_id)
+  
+  list_of_line_tibbles <- split(routes_latlong_df, routes_latlong_df$route_id)
+  list_of_multilinestrings <- lapply(list_of_line_tibbles, shapes_df_as_sfg)
+  
+  lines_df$geometry <- sf::st_sfc(list_of_multilinestrings, crs = 4326)
+  
+  lines_sf <- sf::st_as_sf(lines_df)
 }
 
 
@@ -26,37 +28,49 @@ convert_gtfs_routes_to_sf <- function(gtfs_obj) {
 #' @param df dataframe from the gtfsr shapes_df split() on shape_id
 #' @noRd
 #' @return st_linestring (sfr) object
-shape_to_sf_linestring <- function(df) {
+shape_as_sf_linestring <- function(df) {
   # as suggested by www.github.com/mdsumner
 
-  m <- as.matrix(df[order(df$shape_pt_sequence), c("shape_pt_lon", "shape_pt_lat")])
+  m <- as.matrix(df[order(df$shape_pt_sequence), 
+                    c("shape_pt_lon", "shape_pt_lat")])
 
   return(sf::st_linestring(m))
 }
 
 
 #' return an sf multilinestring with lat and long from gtfs for a route
-#' @param df dataframe with the shapes for a given route
+#' @param df the shapes_df dataframe from a gtfsr object
 #' @noRd
-#' @return multilinestring (sfr) object
-route_to_sf_multilinestring <- function(df) {
+#' @return a multilinestring (sf) data frame for the routes
+#' @example 
+#' url <- "http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip"
+#' gtfs_obj <- url %>% import_gtfs(quiet=TRUE)
+#' shapes_sfg <- shapes_df_as_sf(gtfs_obj$shapes_df)
+#' plot(shapes_sfg)
+shapes_df_as_sfg <- function(df) {
   # as suggested by www.github.com/mdsumner
   l_dfs <- split(df, df$shape_id)
 
-  l_linestrings <- lapply(l_dfs, shape_to_sf_linestring)
+  l_linestrings <- lapply(l_dfs, 
+                          shape_as_sf_linestring)
 
   return(sf::st_multilinestring(l_linestrings))
 }
-
-
 
 #'Join the shapes, trips and routes tables together - also checks on some potential errors in the data and warns accordingly
 #' @param gtfs_obj a gtfs object
 #' @param route_ids the routes for which to join the tables together - required, but not sure why this can't just be any/all routes in routes_df
 #' @param service_ids - an optional filter for a certain service-default NULL
 #' @noRd
-#' @return shapes_routes_df - a dataframe in which routes,
-join_shape_route_service_ids <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
+#' @return shapes_routes_service_df - a dataframe in which routes, services, and shape_ids are all shown
+#' @example 
+#' df <- shape_route_service(gtfs_obj)
+#' #get a summary of the number of shapes and services for a route
+#' route_summary <- df %>% 
+#'           group_by(route_id) %>% 
+#'           summarize(shapes = length(unique(shape_id)), 
+#'           services= length(unique(service_id)))
+shape_route_service <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
 
   stopifnot(class(gtfs_obj) == 'gtfs',
             !is.null(gtfs_obj$shapes_df),
