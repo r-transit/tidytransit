@@ -24,6 +24,21 @@ routes_df_as_sf <- function(gtfs_obj) {
   return(lines_sf)
 }
 
+#' Get a `sf` dataframe for gtfs stops 
+#' 
+#' @param stops_df a gtfsr$stops_df dataframe
+#' @export
+#' @return an sf dataframe for gtfs routes with a point column
+#' @examples 
+#' some_stops <- gtfs_obj$stops_df[sample(nrow(gtfs_obj$stops_df), 40),]
+#' some_stops_sf <- stops_df_as_sf(some_stops)
+#' plot(some_stops_sf)
+stops_df_as_sf <- function(stops_df) {
+  stops_sf <- st_as_sf(stops_df, 
+                            coords = c("stop_lon", "stop_lat"), 
+                            crs = 4326)
+  return(stops_sf)
+}
 
 #' return an sf linestring with lat and long from gtfs
 #' @param df dataframe from the gtfsr shapes_df split() on shape_id
