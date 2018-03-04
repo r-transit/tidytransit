@@ -5,7 +5,7 @@
 #' @return an sf dataframe for gtfs routes with a multilinestring column
 #' @examples 
 #' url <- "http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip"
-#' gtfs_obj <- url %>% import_gtfs(quiet=TRUE)
+#' gtfs_obj <- import_gtfs(url, quiet=TRUE)
 #' routes_sf <- routes_df_as_sf(gtfs_obj$shapes_df)
 #' plot(routes_sf[1])
 routes_df_as_sf <- function(gtfs_obj) {
@@ -47,7 +47,7 @@ shape_as_sf_linestring <- function(df) {
 #' @return a multilinestring simple feature geometry (sfg) for the routes
 #' @examples
 #' url <- "http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip"
-#' gtfs_obj <- url %>% import_gtfs(quiet=TRUE)
+#' gtfs_obj <- import_gtfs(url, quiet=TRUE)
 #' shapes_sfg <- shapes_df_as_sf(gtfs_obj$shapes_df)
 #' plot(shapes_sfg)
 shapes_df_as_sfg <- function(df) {
@@ -68,6 +68,7 @@ shapes_df_as_sfg <- function(df) {
 #' @export
 #' @return shapes_routes_service_df - a dataframe in which routes, services, and shape_ids are all joined
 #' @examples 
+#' library(magrittr)
 #' df <- shape_route_service(gtfs_obj)
 #' #get a summary of the number of shapes and services for a route
 #' route_summary <- df %>% 

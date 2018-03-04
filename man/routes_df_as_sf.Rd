@@ -17,7 +17,7 @@ Get a \code{sf} dataframe for gtfs routes
 }
 \examples{
 url <- "http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip"
-gtfs_obj <- url \%>\% import_gtfs(quiet=TRUE)
+gtfs_obj <- import_gtfs(url, quiet=TRUE)
 routes_sf <- routes_df_as_sf(gtfs_obj$shapes_df)
 plot(routes_sf[1])
 }

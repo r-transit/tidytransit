@@ -17,7 +17,7 @@ return an sf multilinestring with lat and long from gtfs for a route
 }
 \examples{
 url <- "http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip"
-gtfs_obj <- url \%>\% import_gtfs(quiet=TRUE)
+gtfs_obj <- import_gtfs(url, quiet=TRUE)
 shapes_sfg <- shapes_df_as_sf(gtfs_obj$shapes_df)
 plot(shapes_sfg)
 }
