@@ -2,7 +2,7 @@
 #' @param gtfs_obj gtfsr object
 #' @export
 #' @return an sf dataframe for gtfs routes with a multilinestring column
-#' @example 
+#' @examples 
 #' url <- "http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip"
 #' gtfs_obj <- url %>% import_gtfs(quiet=TRUE)
 #' shapes_sf <- routes_df_as_sf(gtfs_obj$shapes_df)
@@ -40,9 +40,9 @@ shape_as_sf_linestring <- function(df) {
 
 #' return an sf multilinestring with lat and long from gtfs for a route
 #' @param df the shapes_df dataframe from a gtfsr object
-#' @noRd
-#' @return a multilinestring (sf) data frame for the routes
-#' @example 
+#' @export
+#' @return a multilinestring simple feature geometry (sfg) for the routes
+#' @examples
 #' url <- "http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip"
 #' gtfs_obj <- url %>% import_gtfs(quiet=TRUE)
 #' shapes_sfg <- shapes_df_as_sf(gtfs_obj$shapes_df)
@@ -57,13 +57,14 @@ shapes_df_as_sfg <- function(df) {
   return(sf::st_multilinestring(l_linestrings))
 }
 
+
 #'Join the shapes, trips and routes tables together - also checks on some potential errors in the data and warns accordingly
 #' @param gtfs_obj a gtfs object
 #' @param route_ids the routes for which to join the tables together - required, but not sure why this can't just be any/all routes in routes_df
 #' @param service_ids - an optional filter for a certain service-default NULL
-#' @noRd
-#' @return shapes_routes_service_df - a dataframe in which routes, services, and shape_ids are all shown
-#' @example 
+#' @export
+#' @return shapes_routes_service_df - a dataframe in which routes, services, and shape_ids are all joined
+#' @examples 
 #' df <- shape_route_service(gtfs_obj)
 #' #get a summary of the number of shapes and services for a route
 #' route_summary <- df %>% 
