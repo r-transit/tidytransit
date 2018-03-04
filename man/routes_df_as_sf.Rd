@@ -2,7 +2,7 @@
 % Please edit documentation in R/convert-gtfs.R
 \name{routes_df_as_sf}
 \alias{routes_df_as_sf}
-\title{return an sf dataframe with from a gtfs object}
+\title{Get a \code{sf} dataframe for gtfs routes}
 \usage{
 routes_df_as_sf(gtfs_obj)
 }
@@ -13,11 +13,11 @@ routes_df_as_sf(gtfs_obj)
 an sf dataframe for gtfs routes with a multilinestring column
 }
 \description{
-return an sf dataframe with from a gtfs object
+Get a \code{sf} dataframe for gtfs routes
 }
 \examples{
 url <- "http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip"
 gtfs_obj <- url \%>\% import_gtfs(quiet=TRUE)
-shapes_sf <- routes_df_as_sf(gtfs_obj$shapes_df)
-plot(shapes_sf)
+routes_sf <- routes_df_as_sf(gtfs_obj$shapes_df)
+plot(routes_sf[1])
 }

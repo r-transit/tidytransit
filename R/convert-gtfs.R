@@ -1,12 +1,13 @@
-#' return an sf dataframe with from a gtfs object
+#' Get a `sf` dataframe for gtfs routes 
+#' 
 #' @param gtfs_obj gtfsr object
 #' @export
 #' @return an sf dataframe for gtfs routes with a multilinestring column
 #' @examples 
 #' url <- "http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip"
 #' gtfs_obj <- url %>% import_gtfs(quiet=TRUE)
-#' shapes_sf <- routes_df_as_sf(gtfs_obj$shapes_df)
-#' plot(shapes_sf)
+#' routes_sf <- routes_df_as_sf(gtfs_obj$shapes_df)
+#' plot(routes_sf[1])
 routes_df_as_sf <- function(gtfs_obj) {
   shape_route_service_df <- shape_route_service(gtfs_obj)
   routes_latlong_df <- dplyr::inner_join(gtfs_obj$shapes_df, 
@@ -21,6 +22,8 @@ routes_df_as_sf <- function(gtfs_obj) {
   lines_df$geometry <- sf::st_sfc(list_of_multilinestrings, crs = 4326)
   
   lines_sf <- sf::st_as_sf(lines_df)
+
+  return(sf_lines)
 }
 
 
