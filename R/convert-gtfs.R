@@ -34,7 +34,7 @@ routes_df_as_sf <- function(gtfs_obj) {
 #' some_stops_sf <- stops_df_as_sf(some_stops)
 #' plot(some_stops_sf)
 stops_df_as_sf <- function(stops_df) {
-  stops_sf <- st_as_sf(stops_df, 
+  stops_sf <- sf::st_as_sf(stops_df, 
                             coords = c("stop_lon", "stop_lat"), 
                             crs = 4326)
   return(stops_sf)
