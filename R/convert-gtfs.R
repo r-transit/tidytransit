@@ -1,7 +1,14 @@
-#' return an sf dataframe with from a gtfs object
+#' Convert GTFS data to simple features
+#' 
+#' Convert routes to a simple features `sf` dataframe from a GTFS object.
 #' @param gtfs_obj gtfsr object
 #' @export
-#' @return an sf dataframe for gtfs routes with a multilinestring column
+#' @return a simple features `sf` dataframe with `MULTILINESTRING` geometry of GTFS routes
+#' @examples 
+#' data(gtfs_obj)
+#' library(sf)
+#' gtfs_sf <- convert_gtfs_routes_to_sf(gtfs_obj)
+#' plot(gtfs_sf[1])
 convert_gtfs_routes_to_sf <- function(gtfs_obj) {
 
   srs_id_df <- join_shape_route_service_ids(gtfs_obj)
