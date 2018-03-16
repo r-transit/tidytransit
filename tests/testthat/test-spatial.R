@@ -21,5 +21,9 @@ gtfs_obj <- url %>% import_gtfs(quiet=TRUE)
 
 # convert_gtfs_routes_to_sf()
 test_that('Can convert a gtfsr routes dataframe to a simple features dataframe', {
-	expect_is(convert_gtfs_routes_to_sf(gtfs_obj), 'sf')
+	expect_is(routes_df_as_sf(gtfs_obj), 'sf')
+})
+
+test_that('Can convert a gtfsr stops dataframe to a simple features dataframe', {
+  expect_is(stops_df_as_sf(gtfs_obj$stops_df), 'sf')
 })
