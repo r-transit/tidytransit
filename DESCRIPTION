@@ -6,7 +6,8 @@ Authors@R: as.person(c(
     "Elaine McVey <elaine.mcvey@transloc.com> [aut]",
     "Danton Noriega-Goodwin <danton.noriega@gmail.com> [aut, cre]",
     "Charles Hans Thompson <hans.thompson1@gmail.com> [ctb]",
-    "Tom Buckley [ctb]"
+    "Michael Sumner [ctb]",
+    "Tom Buckley <buckley.tom@gmail.com> [ctb]"
   ))
 Description: Provides API wrappers for popular public GTFS feed sharing sites, reads feed data into a gtfs data object, validates data quality, provides convenience functions for common tasks.
 License: GPL
