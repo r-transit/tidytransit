@@ -34,12 +34,9 @@ running
     remove.packages('gtfsr')
     devtools::install_github('ropensci/gtfsr')
 
-~~If you’d like to build the accompanying vignette, then run~~
+If you’d like to build the accompanying vignette, then run
 
-~~`devtools::install_github('ropensci/gtfsr', build_vignettes = TRUE)`~~
-
-(Building the vignette requires an API key, which should not be the
-case. I have to think of a workaround.)
+    devtools::install_github('ropensci/gtfsr', build_vignettes = TRUE)
 
 ## Example Usage
 
