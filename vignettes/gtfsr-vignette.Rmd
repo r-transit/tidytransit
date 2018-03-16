@@ -55,10 +55,11 @@ With a valid API key loaded, you can easily get the full list of GTFS feeds usin
 
 _By default, `filter_feedlist()` only checks to make sure each links starts with `http[s]://`. To check the link is actually working, use option `test_url = TRUE`. But beware, this can take a while!_
 
-```{r feedlist, warning=TRUE, message=TRUE, echo=TRUE, eval=TRUE}
+```{r feedlist, warning=TRUE, message=TRUE, echo=TRUE, eval=FALSE}
 feedlist_df <- get_feedlist() # create a data frame of all feeds
-
-feedlist_df <- feedlist_df %>% filter_feedlist # filter the feedlist
+```
+```{r feedlist-load, echo = TRUE, eval = TRUE}
+feedlist_df <- feedlist_df %>% filter_feedlist() # filter the feedlist
 
 feedlist_df %>% select(url_d) %>% head(5) # show first 5 feed urls
 ```
@@ -70,6 +71,9 @@ leaflet::leaflet() %>% leaflet::addTiles() %>%
     leaflet::addCircleMarkers(data = feedlist_df, lat = ~loc_lat, lng = ~loc_lng, popup = ~paste(sep = "<br/>", t, loc_t))
 ```
 
+```{r get-obj, eval = TRUE, echo = FALSE}
+load("~/GitHub/gtfsr/data/gtfs_obj.rda")
+```
 
 
 ### Subsetting the GTFS feedlist
