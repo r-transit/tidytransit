@@ -72,7 +72,7 @@ leaflet::leaflet() %>% leaflet::addTiles() %>%
 ```
 
 ```{r get-obj, eval = TRUE, echo = FALSE}
-load("~/GitHub/gtfsr/data/gtfs_obj.rda")
+load("data/gtfs_obj.rda")
 ```
 
 
