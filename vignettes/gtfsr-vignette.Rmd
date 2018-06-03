@@ -55,6 +55,12 @@ With a valid API key loaded, you can easily get the full list of GTFS feeds usin
 
 _By default, `filter_feedlist()` only checks to make sure each links starts with `http[s]://`. To check the link is actually working, use option `test_url = TRUE`. But beware, this can take a while!_
 
+```{r get-objs, eval = TRUE, echo = FALSE}
+feedlist_df <- readRDS(here::here("data-raw/feedlist_df"))
+gtfs_obj    <- readRDS(here::here("data-raw/gtfs_obj"))
+```
+
+
 ```{r feedlist, warning=TRUE, message=TRUE, echo=TRUE, eval=FALSE}
 feedlist_df <- get_feedlist() # create a data frame of all feeds
 ```
@@ -70,11 +76,6 @@ Here is a map of all available locations.
 leaflet::leaflet() %>% leaflet::addTiles() %>%
     leaflet::addCircleMarkers(data = feedlist_df, lat = ~loc_lat, lng = ~loc_lng, popup = ~paste(sep = "<br/>", t, loc_t))
 ```
-
-```{r get-obj, eval = TRUE, echo = FALSE}
-load("gtfs_obj.rda")
-```
-
 
 ### Subsetting the GTFS feedlist
 
@@ -113,7 +114,7 @@ As an example, let's extract the gtfs data and problems data for a url with pars
 ```{r problems, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE, results='hide'}
 url <- 'http://www.co.fairbanks.ak.us/transportation/MACSDocuments/GTFS.zip'
 
-gtfs_obj <- url %>% import_gtfs
+gtfs_obj <- url %>% import_gtfs()
 ```
 
 If you look at the console output when creating the `gtfs_obj` object, you could see this kind of warning.

@@ -27,7 +27,8 @@ Imports:
     leaflet,
     sp,
     sf,
-    scales
+    scales,
+    here
 Suggests:
     testthat,
     knitr,

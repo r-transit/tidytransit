@@ -1,6 +1,9 @@
+pandoc: 2.2.1
+pkgdown: 1.1.0
+pkgdown_sha: ~
+articles:
+  gtfsr-vignette: gtfsr-vignette.html
 urls:
   reference: http://dantonnoriega.github.io/gtfsr/reference
   article: http://dantonnoriega.github.io/gtfsr/articles
-articles:
-  gtfsr-vignette: gtfsr-vignette.html
 

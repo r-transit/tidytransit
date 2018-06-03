@@ -18,13 +18,22 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Function reference" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,12 +56,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">gtfsr</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">gtfsr</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">1.0.3</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -73,7 +86,7 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
@@ -85,6 +98,7 @@
   </a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -92,140 +106,244 @@
       
       </header>
 
-      <div class="row">
-  <div class="col-md-9">
+<div class="row">
+  <div class="contents col-md-9">
     <div class="page-header">
-      <h1>
-        Reference
-        <small>version&nbsp;1.0.3</small>
-      </h1>
+      <h1>Reference</h1>
     </div>
 
-    <div class="contents">
-      <table class="ref-index">
+    <table class="ref-index">
 
-      <colgroup>
-        <col class="alias" />
-        <col class="title" />
-      </colgroup>
+    <colgroup>
+      
+      <col class="alias" />
+      <col class="title" />
+    </colgroup>
 
-      <tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-api-key" class="hasAnchor"><a href="#section-api-key" class="anchor"></a>API Key</h2>
-            <p class="section-desc"><p>Functions for TransitFeed.com API key</p></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="clear_api_key.html">clear_api_key</a></code> </p>
-          </td>
-          <td><p>Clear the API key.</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="get_api_key.html">get_api_key</a></code> </p>
-          </td>
-          <td><p>Get API key</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="has_api_key.html">has_api_key</a></code> </p>
-          </td>
-          <td><p>Make sure API key string is not empty</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="set_api_key.html">set_api_key</a></code> </p>
-          </td>
-          <td><p>Set API key for recall</p></td>
-        </tr>
-      </tbody><tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-feedlist" class="hasAnchor"><a href="#section-feedlist" class="anchor"></a>Feedlist</h2>
-            <p class="section-desc"><p>Get TransitFeed.com feedlist</p></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="get_feedlist.html">get_feedlist</a></code> </p>
-          </td>
-          <td><p>Get list of all available feeds from transitfeeds API</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="filter_feedlist.html">filter_feedlist</a></code> </p>
-          </td>
-          <td><p>Filter a feedlist to include only valid urls (ending in .zip and connect)</p></td>
-        </tr>
-      </tbody><tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-import" class="hasAnchor"><a href="#section-import" class="anchor"></a>Import</h2>
-            <p class="section-desc"><p>Import GTFS data from url or local zip file</p></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="import_gtfs.html">import_gtfs</a></code> </p>
-          </td>
-          <td><p>Get a Dataframes of GTFS data.</p></td>
-        </tr>
-      </tbody><tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-map" class="hasAnchor"><a href="#section-map" class="anchor"></a>Map</h2>
-            <p class="section-desc"><p>Map gtfsr data</p></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="map_gtfs_stop.html">map_gtfs_stop</a></code> </p>
-          </td>
-          <td><p>map a single stop</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="map_gtfs.html">map_gtfs</a></code> </p>
-          </td>
-          <td><p>General mapping function. Specify a map type and/or a route id.</p></td>
-        </tr>
-      </tbody><tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-convert" class="hasAnchor"><a href="#section-convert" class="anchor"></a>Convert</h2>
-            <p class="section-desc"><p>Convert gtfs objects to other formats</p></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="convert_gtfs_routes_to_sf.html">convert_gtfs_routes_to_sf</a></code> </p>
-          </td>
-          <td><p>return an sf dataframe with from a gtfs object</p></td>
-        </tr>
-      </tbody><tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-validate" class="hasAnchor"><a href="#section-validate" class="anchor"></a>Validate</h2>
-            <p class="section-desc"><p>Validate gtfs objects</p></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="validate_gtfs_structure.html">validate_gtfs_structure</a></code> </p>
-          </td>
-          <td><p>Create validation list for a gtfs_obj. It provides an overview of the structure of all files that were imported.</p></td>
-        </tr>
-      </tbody>
-      </table>
-    </div>
+    <tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-api-key" class="hasAnchor"><a href="#section-api-key" class="anchor"></a>API Key</h2>
+          <p class="section-desc"><p>Functions for TransitFeed.com API key</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="clear_api_key.html">clear_api_key()</a></code> </p>
+        </td>
+        <td><p>Clear the API key.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_api_key.html">get_api_key()</a></code> </p>
+        </td>
+        <td><p>Get API key</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="has_api_key.html">has_api_key()</a></code> </p>
+        </td>
+        <td><p>Make sure API key string is not empty</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="set_api_key.html">set_api_key()</a></code> </p>
+        </td>
+        <td><p>Set API key for recall</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-feedlist" class="hasAnchor"><a href="#section-feedlist" class="anchor"></a>Feedlist</h2>
+          <p class="section-desc"><p>Get TransitFeed.com feedlist</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="get_feedlist.html">get_feedlist()</a></code> </p>
+        </td>
+        <td><p>Get list of all available feeds from transitfeeds API</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="filter_feedlist.html">filter_feedlist()</a></code> </p>
+        </td>
+        <td><p>Filter a feedlist to include only valid urls (ending in .zip and connect)</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-import" class="hasAnchor"><a href="#section-import" class="anchor"></a>Import</h2>
+          <p class="section-desc"><p>Import GTFS data from url or local zip file</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="import_gtfs.html">import_gtfs()</a></code> </p>
+        </td>
+        <td><p>Get a Dataframes of GTFS data.</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-map" class="hasAnchor"><a href="#section-map" class="anchor"></a>Map</h2>
+          <p class="section-desc"><p>Map gtfsr data</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="map_gtfs.html">map_gtfs()</a></code> </p>
+        </td>
+        <td><p>General mapping function. Specify a map type and/or a route id.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="map_gtfs_stop.html">map_gtfs_stop()</a></code> </p>
+        </td>
+        <td><p>map a single stop</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-convert" class="hasAnchor"><a href="#section-convert" class="anchor"></a>Convert</h2>
+          <p class="section-desc"><p>Convert gtfs objects to other formats</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="clear_api_key.html">clear_api_key()</a></code> </p>
+        </td>
+        <td><p>Clear the API key.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="filter_feedlist.html">filter_feedlist()</a></code> </p>
+        </td>
+        <td><p>Filter a feedlist to include only valid urls (ending in .zip and connect)</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_api_key.html">get_api_key()</a></code> </p>
+        </td>
+        <td><p>Get API key</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_feed.html">get_feed()</a></code> </p>
+        </td>
+        <td><p>Download a zipped GTFS feed file from a url</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_feedlist.html">get_feedlist()</a></code> </p>
+        </td>
+        <td><p>Get list of all available feeds from transitfeeds API</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_routes_sldf.html">get_routes_sldf()</a></code> </p>
+        </td>
+        <td><p>Get shapes spatial data for given route ids</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="gtfs_obj.html">gtfs_obj</a></code> </p>
+        </td>
+        <td><p>Example GTFS data</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="gtfsr-package.html">gtfsr-package</a></code> </p>
+        </td>
+        <td><p>A package for plotting GTFS data.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="has_api_key.html">has_api_key()</a></code> </p>
+        </td>
+        <td><p>Make sure API key string is not empty</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="import_gtfs.html">import_gtfs()</a></code> </p>
+        </td>
+        <td><p>Get a Dataframes of GTFS data.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="map_gtfs.html">map_gtfs()</a></code> </p>
+        </td>
+        <td><p>General mapping function. Specify a map type and/or a route id.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="map_gtfs_stop.html">map_gtfs_stop()</a></code> </p>
+        </td>
+        <td><p>map a single stop</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="routes_df_as_sf.html">routes_df_as_sf()</a></code> </p>
+        </td>
+        <td><p>Get a <code>sf</code> dataframe for gtfs routes</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="set_api_key.html">set_api_key()</a></code> </p>
+        </td>
+        <td><p>Set API key for recall</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="shape_route_service.html">shape_route_service()</a></code> </p>
+        </td>
+        <td><p>Join the shapes, trips and routes tables together - also checks on some potential errors in the data and warns accordingly</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="shapes_df_as_sfg.html">shapes_df_as_sfg()</a></code> </p>
+        </td>
+        <td><p>return an sf multilinestring with lat and long from gtfs for a route</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="stops_df_as_sf.html">stops_df_as_sf()</a></code> </p>
+        </td>
+        <td><p>Get a <code>sf</code> dataframe for gtfs stops</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="unzip_gtfs_files.html">unzip_gtfs_files()</a></code> </p>
+        </td>
+        <td><p>Unzip GTFS file and delete zip</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="validate_gtfs_structure.html">validate_gtfs_structure()</a></code> </p>
+        </td>
+        <td><p>Create validation list for a gtfs_obj. It provides an overview of the structure of all files that were imported.</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-validate" class="hasAnchor"><a href="#section-validate" class="anchor"></a>Validate</h2>
+          <p class="section-desc"><p>Validate gtfs objects</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="validate_gtfs_structure.html">validate_gtfs_structure()</a></code> </p>
+        </td>
+        <td><p>Create validation list for a gtfs_obj. It provides an overview of the structure of all files that were imported.</p></td>
+      </tr>
+    </tbody>
+    </table>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -247,11 +365,14 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

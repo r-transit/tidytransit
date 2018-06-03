@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>A package for plotting GTFS data. — gtfsr-package • gtfsr</title>
+<title>return an sf multilinestring with lat and long from gtfs for a route — shapes_df_as_sfg • gtfsr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="A package for plotting GTFS data. — gtfsr-package" />
+<meta property="og:title" content="return an sf multilinestring with lat and long from gtfs for a route — shapes_df_as_sfg" />
 
-<meta property="og:description" content="This package allows one to quickly map GTFS data. It also provides a quick and simple way to validate the structure of GTFS data." />
+<meta property="og:description" content="return an sf multilinestring with lat and long from gtfs for a route" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -112,41 +112,45 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>A package for plotting GTFS data.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ropensci/gtfsr/blob/master/R/package.R'><code>R/package.R</code></a></small>
-    <div class="hidden name"><code>gtfsr-package.Rd</code></div>
+    <h1>return an sf multilinestring with lat and long from gtfs for a route</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ropensci/gtfsr/blob/master/R/convert-gtfs.R'><code>R/convert-gtfs.R</code></a></small>
+    <div class="hidden name"><code>shapes_df_as_sfg.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This package allows one to quickly map GTFS data. It also provides a quick and simple way to validate the structure of GTFS data.</p>
+    <p>return an sf multilinestring with lat and long from gtfs for a route</p>
     
     </div>
 
-        
+    <pre class="usage"><span class='fu'>shapes_df_as_sfg</span>(<span class='no'>df</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>df</th>
+      <td><p>the shapes_df dataframe from a gtfsr object</p></td>
+    </tr>
+    </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>a multilinestring simple feature geometry (sfg) for the routes</p>
+    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
- <span class='fu'>library</span>(<span class='no'>dplyr</span>)</div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attaching package: ‘dplyr’</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:stats’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    filter, lag</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:base’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='input'> <span class='no'>url</span> <span class='kw'>&lt;-</span> <span class='st'>"http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip"</span>
- <span class='no'>gtfs_obj</span> <span class='kw'>&lt;-</span> <span class='no'>url</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='import_gtfs.html'>import_gtfs</a></span>(<span class='kw'>quiet</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>File areas.txt not recognized. No meta data exists. Reading file as csv.</span></div><div class='output co'>#&gt; <span class='message'>File runcut.txt not recognized. No meta data exists. Reading file as csv.</span></div><div class='input'> <span class='no'>route</span> <span class='kw'>&lt;-</span> <span class='st'>"1693"</span>
- <span class='fu'><a href='map_gtfs.html'>map_gtfs</a></span>(<span class='no'>gtfs_obj</span>, <span class='no'>route</span>)</div></pre>
+    <pre class="examples"><div class='input'><span class='no'>shapes_sfg</span> <span class='kw'>&lt;-</span> <span class='fu'>shapes_df_as_sfg</span>(<span class='no'>gtfs_obj</span>$<span class='no'>shapes_df</span>)</div><div class='output co'>#&gt; <span class='error'>Error in split(df, df$shape_id): object 'gtfs_obj' not found</span></div><div class='input'><span class='fu'>plot</span>(<span class='no'>shapes_sfg</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; <span class='error'>Error in plot(shapes_sfg[[1]]): object 'shapes_sfg' not found</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-            
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#value">Value</a></li>
+      
       <li><a href="#examples">Examples</a></li>
     </ul>
-
-    <h2>Author</h2>
-    
-Danton Noriega-Goodwin <a href='mailto:danton.noriega@gmail.com'>danton.noriega@gmail.com</a>,
-Elaine McVey <a href='mailto:elaine@transloc.com'>elaine@transloc.com</a>
 
   </div>
 </div>
