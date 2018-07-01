@@ -1,9 +1,9 @@
 
 ## Description
 
-`readgtfs` is a package for reading the GTFS data standard into R. It
-can read directly from URL’s or flat files, and does some validation of
-the data structure against the specification.
+`tread` is a package for reading the GTFS data standard into R. It can
+read directly from URL’s or flat files, and does some validation of the
+data structure against the specification.
 
 ## Goal
 
@@ -27,14 +27,14 @@ package:
     if (!require(devtools)) {
         install.packages('devtools')
     }
-    devtools::install_github('r-gtfs/readgtfs')
+    devtools::install_github('r-gtfs/tread')
 
 ## Example Usage
 
 Fetch data for a bus system in Accra, Ghana from GitHub.
 
 ``` r
-library(readgtfs)
+library(tread)
 library(dplyr)
 
 accra_gtfs <- import_gtfs("https://github.com/AFDLab4Dev/AccraMobility/raw/master/GTFS/GTFS_Accra.zip")

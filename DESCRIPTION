@@ -1,4 +1,4 @@
-Package: readgtfs
+Package: tread
 Type: Package
 Title: Read GTFS (General Transit Feed Specification) feeds in R
 Version: 1.0.3
@@ -30,6 +30,6 @@ Suggests:
     rmarkdown
 RoxygenNote: 6.0.1
 VignetteBuilder: knitr
-URL:https://github.com/r-gtfs/readgtfs
-BugReports: https://github.com/r-gtfs/readgtfs/issues
+URL:https://github.com/r-gtfs/tread
+BugReports: https://github.com/r-gtfs/tread/issues
 Roxygen: list(markdown = TRUE)
