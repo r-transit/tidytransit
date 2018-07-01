@@ -1,6 +1,6 @@
-Package: gtfsr
+Package: readgtfs
 Type: Package
-Title: Working with GTFS (General Transit Feed Specification) feeds in R
+Title: Read GTFS (General Transit Feed Specification) feeds in R
 Version: 1.0.3
 Authors@R: as.person(c(
     "Elaine McVey <elaine.mcvey@transloc.com> [aut]",
@@ -9,12 +9,10 @@ Authors@R: as.person(c(
     "Michael Sumner [ctb]",
     "Tom Buckley <buckley.tom@gmail.com> [ctb]"
   ))
-Description: Provides API wrappers for popular public GTFS feed sharing sites, reads feed data into a gtfs data object, validates data quality, provides convenience functions for common tasks.
+Description: Read GTFS zipfiles into a list of R dataframes. Some validation of the data structure against the specification.  
 License: GPL
 LazyData: TRUE
 Depends: R (>= 3.2.4)
-Remotes: 
-    github::rstudio/leaflet
 Imports:
     dplyr,
     tibble,
@@ -24,9 +22,6 @@ Imports:
     magrittr,
     stringr,
     assertthat,
-    leaflet,
-    sp,
-    sf,
     scales,
     here
 Suggests:
@@ -35,6 +30,6 @@ Suggests:
     rmarkdown
 RoxygenNote: 6.0.1
 VignetteBuilder: knitr
-URL: http://ropensci.github.io/gtfsr, https://github.com/ropensci/gtfsr
-BugReports: https://github.com/ropensci/gtfsr/issues
+URL:https://github.com/r-gtfs/readgtfs
+BugReports: https://github.com/r-gtfs/readgtfs/issues
 Roxygen: list(markdown = TRUE)

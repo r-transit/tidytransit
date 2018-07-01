@@ -1,106 +1,71 @@
 
-[![Build
-Status](http://travis-ci.org/ropensci/gtfsr.svg?branch=master)](http://travis-ci.org/ropensci/gtfsr)
-[![codecov.io](http://codecov.io/github/ropensci/gtfsr/coverage.svg?branch=master)](http://codecov.io/github/ropensci/gtfsr?branch=master)
-[![](http://badges.ropensci.org/55_status.svg)](https://github.com/ropensci/onboarding/issues/55)
-
 ## Description
 
-`gtfsr` is an R package for easily importing, validating, and mapping
-transit data that follows the [General Transit Feed Specification
-(GTFS)](https://developers.google.com/transit/gtfs/) format.
+`readgtfs` is a package for reading the GTFS data standard into R. It
+can read directly from URL’s or flat files, and does some validation of
+the data structure against the specification.
 
-The `gtfsr` package provides functions for converting files following
-the GTFS format into a single `gtfs` data objects. A `gtfs` object can
-then be validated for proper data formatting (i.e. if the source data is
-properly structured and formatted as a GTFS feed) or have any spatial
-data for stops and routes mapped using `leaflet`. The `gtfsr` package
-also provides API wrappers for the popular public GTFS feed sharing site
-[TransitFeeds](https://transitfeeds.com/), allowing users quick, easy
-access to hundreds of GTFS feeds from within R.
+## Goal
+
+This is a highly simplified fork/piece of the
+[gtfsr](https://github.com/ropensci/gtfsr/) package.
+
+The goal is to break that package into parts to simplify maintenance.
+
+## Contributors
+
+Among the many
+[contributors](https://github.com/ropensci/gtfsr/graphs/contributors),
+[Danton Noriega](https://github.com/dantonnoriega) wrote much of this
+package.
 
 ## Installation
 
-You can install this package from GitHub using the devtools package:
+For now, you can install this package from GitHub using the devtools
+package:
 
     if (!require(devtools)) {
         install.packages('devtools')
     }
-    devtools::install_github('ropensci/gtfsr')
-
-If you have already installed `gtfsr`, you can get the latest version by
-running
-
-    remove.packages('gtfsr')
-    devtools::install_github('ropensci/gtfsr')
-
-If you’d like to build the accompanying vignette, then run
-
-    devtools::install_github('ropensci/gtfsr', build_vignettes = TRUE)
+    devtools::install_github('r-gtfs/readgtfs')
 
 ## Example Usage
 
+Fetch data for a bus system in Accra, Ghana from GitHub.
+
 ``` r
-library(gtfsr)
-library(magrittr)
+library(readgtfs)
 library(dplyr)
 
-# set the API key
-# set_api_key() # uncomment to set api key
-
-# get the feedlist dataframe and filter out NYC subway
-feedlist_df <- get_feedlist() %>%
-  filter(grepl('NYC Subway GTFS', t, ignore.case= TRUE))
-
-# import NYC gtfs feed by sending the url to `import_gtfs`
-NYC <- import_gtfs(feedlist_df$url_d)
-#> [1] "agency.txt"         "calendar_dates.txt" "calendar.txt"      
-#> [4] "routes.txt"         "shapes.txt"         "stop_times.txt"    
-#> [7] "stops.txt"          "transfers.txt"      "trips.txt"
-
-# get line (routes) A and B
-routes <- NYC[['routes_df']] %>%
-  slice(which(grepl('a|b', route_id, ignore.case=TRUE))) %>%
-  '$'('route_id')
-
-# take the NYC `gtfs` object and map routes. includes stops by default.
-NYC %>% map_gtfs(route_ids = routes)
+accra_gtfs <- import_gtfs("https://github.com/AFDLab4Dev/AccraMobility/raw/master/GTFS/GTFS_Accra.zip")
+#> [1] "agency.txt"      "calendar.txt"    "feed_info.txt"   "frequencies.txt"
+#> [5] "routes.txt"      "shapes.txt"      "stop_times.txt"  "stops.txt"      
+#> [9] "trips.txt"
 ```
 
-<img src="README/README-readme-body-1.png" width="100%" />
+Count and list the number of stops per route.
 
 ``` r
+attach(accra_gtfs)
 
-# gtfs will plot ALL shapes for a given route_ids. These can be reduced using the `service_ids` option.
-ids <- NYC$trips_df %>%
-  select(route_id, service_id, shape_id) %>%
-  distinct() %>%
-  filter(route_id %in% routes)
-ids %>% head(5) # see all unique combos of ids
-#> # A tibble: 5 x 3
-#>   route_id service_id   shape_id
-#>   <chr>    <chr>        <chr>   
-#> 1 A        B20171105WKD A..N43R 
-#> 2 A        B20171105WKD A..S43R 
-#> 3 A        B20171105WKD A..N85R 
-#> 4 A        B20171105WKD A..N54R 
-#> 5 A        B20171105WKD A..N65R
-
-# lets map just the the first row
-route_ids <- ids$route_id[1]
-service_ids <- ids$service_id[1]
-shape_ids <- ids$shape_id[1]
-
-# lets map the specific data with some other options enabled.
-NYC %>%
-  map_gtfs(route_ids = route_ids,
-    service_ids = service_ids,
-    shape_ids = shape_ids,
-    route_colors = 'green', # set the route color
-    stop_details = TRUE, # get more stop details on click
-    route_opacity = .5) # change the route opacity
+routes_df %>% inner_join(trips_df, by="route_id") %>%
+  inner_join(stop_times_df) %>% 
+    inner_join(stops_df, by="stop_id") %>% 
+      group_by(route_long_name) %>%
+        summarise(stop_count=n_distinct(stop_id)) %>%
+  arrange(desc(stop_count))
+#> # A tibble: 271 x 2
+#>    route_long_name          stop_count
+#>    <chr>                         <int>
+#>  1 Kasoa ↔ Accra New Town          116
+#>  2 Omanjor ↔ Accra CMB             109
+#>  3 Manhean ↔ Accra CMB             105
+#>  4 Adeyman ↔ Abeka Lapaz           104
+#>  5 Ashongman ↔ Abeka Lapaz         101
+#>  6 Nungua ↔ Circle Odorna           91
+#>  7 Odorna ↔ Nungua                  91
+#>  8 Teshie-Nungua ↔ Achimota         91
+#>  9 Accra CMB ↔ Ablekuma             86
+#> 10 Kasoa ↔ Korle Bu                 84
+#> # ... with 261 more rows
 ```
-
-<img src="README/README-readme-body-2.png" width="100%" />
-
-[![ropensci\_footer](http://ropensci.org/public_images/github_footer.png)](http://ropensci.org)

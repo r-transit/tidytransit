@@ -1,3 +1,151 @@
+#' Download a zipped GTFS feed file from a url
+#'
+#' @param url Character URL of GTFS feed.
+#' @param path Character. Folder into which to put zipped file. If NULL, then save a tempfile
+#' @param quiet Boolean. Whether to see file download progress. FALSE by default.
+#'
+#' @return File path
+#'
+#' @export
+
+get_feed <- function(url, path=NULL, quiet=FALSE) {
+
+  stopifnot(length(url) == 1)
+
+  # check if single element of dataframe was inputed. if so, convert to single value; error otherwise.
+  if(!is.null(dim(url))) {
+    if(all(dim(url) == c(1,1))) {
+      url <- unlist(url, use.names = FALSE)
+    } else {
+      stop('Please input a single url.')
+    }
+  }
+
+  # check if url links to a zip file
+  valid <- valid_url(url)
+  if(!valid) {
+    if(!quiet) {
+      warn1 <- sprintf("Link '%s' is invalid; failed to connect. NULL was returned.", url)
+      warning(warn1)
+    }
+    return(NULL)
+  }
+
+  # generate a temporary file path if no path is specified
+  if(is.null(path)) temp <- tempfile(fileext = ".zip") else temp <- file.path(path, 'gtfs_zip.zip')
+
+  r <- httr::GET(url)
+
+  # Get gtfs zip if url can be reach
+  if(httr::status_code(r) == 200) {
+    check <- try(utils::download.file(url, temp, quiet = quiet), silent=TRUE)
+    if(check %>% assertthat::is.error()) {
+      warn <- sprintf("Link '%s' failed to download. NULL was returned.", url)
+      warning(warn)
+      return(NULL)
+    }
+  } else {
+    warn <- sprintf("Link '%s' cannot be reached. NULL was returned.", url)
+    warning(warn)
+    return(NULL)
+  }
+
+  # return the temp path - for unzipping
+  return(temp)
+
+}
+
+
+#' Get a Dataframes of GTFS data.
+#'
+#' @param paths Character. url links to zip files OR paths to local zip files. if to local path, then option `local` must be set to TRUE.
+#' @param local Boolean. If the paths are searching locally or not. Default is FALSE (that is, urls).
+#' @param quiet Boolean. Whether to see file download progress and files extract. FALSE by default.
+#'
+#' @return Dataframes of GTFS data.
+#'
+#' @export
+
+import_gtfs <- function(paths, local = FALSE, quiet = FALSE) {
+
+  feed_flow <- function(url) {
+
+    path <- get_feed(url = url, quiet = quiet)
+
+    # check path
+    check <- try(normalizePath(path), silent = TRUE)
+    if(assertthat::is.error(check)) {
+      warn <- 'Invalid file path. NULL is returned.'
+      if(!quiet) warning(warn)
+      return(NULL)
+    }
+
+    zip_dir <- unzip_gtfs_files(zipfile = path, quiet = quiet)
+
+    try(read_gtfs(zip_dir, quiet = quiet))
+  }
+
+  # check if single column of data was inputed. if so, convert to vector; error otherwise.
+  if(!is.null(dim(paths))) {
+    if(dim(paths)[2] == 1) {
+      paths <- unlist(paths, use.names = FALSE)
+    } else {
+      stop('Please input a vector or single column of data.')
+    }
+  }
+
+  if(local) {
+    paths <- paths %>% 
+      sapply(. %>% normalizePath)
+    data_list <- paths %>% 
+      lapply(. %>% 
+            unzip_gtfs_files(quiet=quiet) %>% 
+               read_gtfs(quiet=quiet))
+  } else {
+    data_list <- paths %>% 
+      lapply(. %>% feed_flow)
+  }
+
+  # show note, which is suppressed in read_gtfs
+  if(!quiet) {
+    message("\n")
+    message('NOTE: Parsing errors and warnings while importing data can be extracted from any given dataframe with `attr(df, "problems")`.')
+    message("\n")
+  }
+
+  if(length(data_list) > 1) 
+    return(data_list) 
+  else 
+    return(data_list[[1]])
+}
+
+#' Checks UTF-8-BOM encoding. Special thanks to @patperu for finding the issue and to @hrbrmstr for the code to help deal with the issue.
+#' @param path the path the the text file
+#' @param encoding can be one of \code{UTF-8}, \code{UTF-16} or \code{UTF-16BE}.
+#'        Although a BOM could be used with UTF-32 and other encodings, such
+#'        encodings are rarely used for data transmission and the three supported
+#'        encodings are the most likely ones folks in R will be working with from
+#'        web APIs.\cr\cr
+#'        This function defaults to looking for \code{UTF-8} BOM, but you can
+#'        override it.
+#' @return \code{TRUE} if response contains a BOM, \code{NA} if an unsupported encoding
+#'         was passed (along with a message)
+#' @references \href{http://www.unicode.org/faq/utf_bom.html}{UTF-8, UTF-16, UTF-32 & BOM}
+#' @noRd
+#' @author @@hrbrmstr
+
+
+has_bom <- function(path, encoding="UTF-8") {
+
+  B <- readBin(path, "raw", 4, 1)
+  switch(encoding,
+       `UTF-8`=B[1]==as.raw(0xef) & B[2]==as.raw(0xbb) & B[3]==as.raw(0xbf),
+       `UTF-16`=B[1]==as.raw(0xff) & B[2]==as.raw(0xfe),
+       `UTF-16BE`=B[1]==as.raw(0xfe) & B[2]==as.raw(0xff),
+       { message("Unsupported encoding") ; return(NA) }
+  )
+}
+
 # Purpose -----------------------------------------------------------------
 
 # Functions to read in GTFS data
