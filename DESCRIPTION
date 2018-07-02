@@ -1,13 +1,13 @@
-Package: tread
+Package: trread
 Type: Package
 Title: Read GTFS (General Transit Feed Specification) feeds in R
-Version: 1.0.3
+Version: 0.2.0
 Authors@R: as.person(c(
-    "Elaine McVey <elaine.mcvey@transloc.com> [aut]",
     "Danton Noriega-Goodwin <danton.noriega@gmail.com> [aut, cre]",
+    "Elaine McVey <elaine.mcvey@transloc.com> [aut]",
+    "Tom Buckley <tom@tbuckl.com> [aut]",
     "Charles Hans Thompson <hans.thompson1@gmail.com> [ctb]",
-    "Michael Sumner [ctb]",
-    "Tom Buckley <buckley.tom@gmail.com> [ctb]"
+    "Michael Sumner [ctb]"
   ))
 Description: Read GTFS zipfiles into a list of R dataframes. Some validation of the data structure against the specification.  
 License: GPL

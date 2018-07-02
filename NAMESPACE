@@ -2,6 +2,6 @@
 
 export(get_feed)
 export(import_gtfs)
-export(join_gtfsr_dfs)
 export(read_gtfs)
 export(validate_gtfs_structure)
+importFrom(dplyr,"%>%")

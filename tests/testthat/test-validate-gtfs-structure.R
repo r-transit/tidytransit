@@ -1,4 +1,4 @@
-library(gtfsr)
+library(trread)
 context('Meta GTFS Validation')
 
 working <- function(url) {

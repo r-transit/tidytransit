@@ -1,4 +1,4 @@
 library(testthat)
-library(gtfsr)
+library(trread)
 
-test_check("gtfsr")
+test_check("trread")
