@@ -27,7 +27,7 @@ package:
     if (!require(devtools)) {
         install.packages('devtools')
     }
-    devtools::install_github('r-gtfs/tread')
+    devtools::install_github('r-gtfs/trread')
 
 ## Usage
 
