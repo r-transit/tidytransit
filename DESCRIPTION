@@ -1,14 +1,14 @@
 Package: trread
 Type: Package
-Title: Read GTFS (General Transit Feed Specification) feeds in R
+Title: A Transit (GTFS) File Reader For R 
 Version: 0.2.0
-Authors@R: as.person(c(
-    "Danton Noriega-Goodwin <danton.noriega@gmail.com> [aut, cre]",
-    "Elaine McVey <elaine.mcvey@transloc.com> [aut]",
-    "Tom Buckley <tom@tbuckl.com> [aut]",
-    "Charles Hans Thompson <hans.thompson1@gmail.com> [ctb]",
-    "Michael Sumner [ctb]"
-  ))
+Authors@R: c(
+    person("Tom", "Buckley", role = c("aut", "cre"), email = "tom@tbuckl.com"),
+    person("Danton", "Noriega-Goodwin", role = c("aut"), email = "danton.noriega@gmail.com"),
+    person("Elaine", "McVey", role = c("aut"), email = "elaine.mcvey@transloc.com"),
+    person("Charles Hans", "Thompson", role = c("ctb"), email = "hans.thompson1@gmail.com"),
+    person("Michael", "Sumner", role = c("ctb"))
+  )
 Description: Read GTFS zipfiles into a list of R dataframes. Some validation of the data structure against the specification.  
 License: GPL
 LazyData: TRUE
@@ -29,7 +29,7 @@ Suggests:
     knitr,
     rmarkdown
 RoxygenNote: 6.0.1
-VignetteBuilder: knitr
-URL:https://github.com/r-gtfs/tread
+URL: https://github.com/r-gtfs/tread
 BugReports: https://github.com/r-gtfs/tread/issues
 Roxygen: list(markdown = TRUE)
+VignetteBuilder: knitr

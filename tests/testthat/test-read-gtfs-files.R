@@ -87,8 +87,8 @@ test_that('Check if/how we are parsing files', {
     files <- list.files(folder, full.names = TRUE)
     empty_file <- files[1]
     
-    expect_null(tread:::parse_gtfs('_empty', empty_file)) # expect null since file is empty
-    expect_is(tread:::parse_gtfs('agency', agency_file), 'tbl_df') # check for tibble object
+    expect_null(trread:::parse_gtfs('_empty', empty_file)) # expect null since file is empty
+    expect_is(trread:::parse_gtfs('agency', agency_file), 'tbl_df') # check for tibble object
   }
 })
 

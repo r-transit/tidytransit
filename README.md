@@ -1,7 +1,7 @@
 
 ## Description
 
-`tread` is a package for reading the GTFS data standard into R. It can
+`trread` is a package for reading the GTFS data standard into R. It can
 read directly from URL’s or flat files, and does some validation of the
 data structure against the specification.
 
@@ -29,12 +29,12 @@ package:
     }
     devtools::install_github('r-gtfs/tread')
 
-## Example Usage
+## Usage
 
 Fetch data for a bus system in Accra, Ghana from GitHub.
 
 ``` r
-library(tread)
+library(trread)
 library(dplyr)
 
 accra_gtfs <- import_gtfs("https://github.com/AFDLab4Dev/AccraMobility/raw/master/GTFS/GTFS_Accra.zip")
