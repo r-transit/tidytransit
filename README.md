@@ -1,3 +1,4 @@
+[![Travis-CI Build Status](https://travis-ci.org/r-gtfs/readgtfs.svg?branch=master)](https://travis-ci.org/r-gtfs/trread)
 
 ## Description
 
