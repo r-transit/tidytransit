@@ -27,11 +27,11 @@ test_that('Validate files and variables of a GTFS object', {
 	vars_dfs <- mapply(validate_vars_provided, val_files = prov_dfs, gtfs_obj = gtfs_objs, SIMPLIFY = FALSE)
 
 	x <- c("file", "spec", "provided_status")
-	expect_identical(sapply(prov_dfs, names), matrix(rep(x, n), length(x), n))
+	expect_identical(unname(sapply(prov_dfs, names)), matrix(rep(x, n), length(x), n))
 
 	x <- c("file", "file_spec", "file_provided_status", "field", "field_spec",
 				"field_provided_status", "validation_status", "validation_details")
-	expect_identical(sapply(vars_dfs, names), matrix(rep(x, n), length(x), n))
+	expect_identical(unname(sapply(vars_dfs, names), matrix(rep(x, n), length(x), n)))
 
 	# check required fields conditional on getting url
 	gtfs_list <- lapply(gtfs_objs, validate_gtfs_structure, quiet = TRUE)
@@ -40,14 +40,13 @@ test_that('Validate files and variables of a GTFS object', {
 	expect_true(all(sapply(gtfs_list, class) == rep('gtfs', n)))
 	expect_true(all(sapply(val_list, class) == rep('list', n)))
 
-
 	x <- c("tbl_df", "tbl", "data.frame")
 	expect_identical(
-		gtfs_list %>%
-			sapply( . %>%
-				attr(which='validate') %>%
-				magrittr::extract2('validate_df') %>%
-				class), matrix(x, n, length(x))) # check that validate_df is a data.frame
+		unname(gtfs_list %>%
+    			sapply( . %>%
+    				attr(which='validate') %>%
+    				magrittr::extract2('validate_df') %>%
+    				class)), matrix(x, n, length(x))) # check that validate_df is a data.frame
 
 	x <- matrix('logical', 3, n)
 	mat <- gtfs_list %>%
@@ -65,6 +64,6 @@ test_that('Validate files and variables of a GTFS object', {
 				attr(which='validate') %>%
 				magrittr::extract(x) %>%
 				names)
-	expect_identical(mat, matrix(rep(x, n), length(x), n)) # check that it has required names
+	expect_identical(unname(mat), matrix(rep(x, n), length(x), n)) # check that it has required names
 
 })
