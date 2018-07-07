@@ -229,7 +229,7 @@ read_and_validate <- function(all_files, delete_files = FALSE, quiet = FALSE) {
   }
 
   return(gtfs_list)
-
+  
 }
 
 #' Function to read all files into dataframes

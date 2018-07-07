@@ -10,18 +10,6 @@ working <- function() {
 	connecting(url)
 }
 
-get_feed2 <- function(url, path = NULL) {
-	download_from_url(url, path = path, quiet = TRUE)
-}
-
-unzip_gtfs_files2 <- function(zip, delete_zip = FALSE, quiet = TRUE) {
-	suppressMessages(suppressWarnings(unzip_file(zip, delete_zip = delete_zip, quiet = quiet)))
-}
-
-read_gtfs2 <- function(file_path, delete_files) {
-	suppressMessages(suppressWarnings(read_(file_path, delete_files, quiet = TRUE)))
-}
-
 # unzip_gtfs_files()
 test_that('Download, extract a GTFS zip file to temp or user-specified path from user-specified URL', {
   if(working()==FALSE){
@@ -29,17 +17,17 @@ test_that('Download, extract a GTFS zip file to temp or user-specified path from
   }
   else {
 	url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
-	zip <- get_feed2(url)
+	zip <- download_from_url(url)
 
 	# non-specified path
-	expect_true(dir.exists(unzip_gtfs_files2(zip))) # unzips to folder
+	expect_true(dir.exists(unzip_file(zip))) # unzips to folder
 	expect_warning(unzip_file(zip, quiet=TRUE)) # folder already warning
 
 	# specified path
 	dir <- tempdir()
-	zip <- get_feed2(url, path = dir)
+	zip <- download_from_url(url, path = dir)
 	expect_true(file.exists(zip)) # zip file is found
-	expect_true(dir.exists(unzip_gtfs_files2(zip))) # unzips to folder
+	expect_true(dir.exists(unzip_file(zip))) # unzips to folder
 	expect_warning(unzip_file(zip, quiet = TRUE)) # folder already exists warning
   }
 })
@@ -52,21 +40,21 @@ test_that('Reading GTFS files from unzipped folder', {
   else {
   
 	url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
-	zip <- get_feed2(url)
-	folder <- unzip_gtfs_files2(zip)
-	files <- list.files(folder, full.names = TRUE)
+	zip <- download_from_url(url)
+	folder <- unzip_file(zip)
+	files <- list_files(folder)
 
-	expect_is(read_gtfs2(folder, delete_files = FALSE), 'gtfs')
+	expect_is(read_and_validate(files, delete_files = FALSE), 'gtfs')
 
 	# remove required file
-	invisible(file.remove(files[1]))
-	files <- list.files(folder, full.names = TRUE)
-
-	expect_false(class(read_gtfs2(folder, delete_files = FALSE))=='gtfs')
+	# invisible(file.remove(files[1]))
+	# files <- list_files(folder)
+	# 
+	# print(class(read_and_validate(files, delete_files = FALSE))=="gtfs")
 
 	# valid path check
 	path <- "#!:D"
-	expect_error(read_gtfs2(exdir = path, delete_files = TRUE)) # invalid path
+	expect_error(import_gtfs(exdir = path, delete_files = TRUE)) # invalid path
   }
 })
 
@@ -77,7 +65,7 @@ test_that('Check if/how we are parsing files', {
   }
   else {
     url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
-    zip <- get_feed2(url)
+    zip <- download_from_url(url)
     folder <- unzip_file(zip, delete_zip = TRUE)
     files <- list.files(folder, full.names = TRUE)
     agency_file <- files[1]
