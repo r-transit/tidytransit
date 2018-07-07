@@ -19,7 +19,7 @@ test_that('Validate files and variables of a GTFS object', {
 
 	indx <- sapply(urls, working)
 	urls <- urls[indx] # keep only working urls
-	gtfs_objs <- urls %>% import_gtfs(quiet=TRUE)
+	gtfs_objs <- sapply(urls,import_gtfs)
 	n <- length(urls)
 
 	# check sub functions

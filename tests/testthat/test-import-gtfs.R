@@ -22,14 +22,13 @@ test_that('Import a GTFS object from URL', {
   	df <- data.frame(url_d = c(url, not_zip, bad_url), stringsAsFactors = FALSE) %>% dplyr::tbl_df(.)
   
   	# non-specified path
-  	x <- df %>% import_gtfs(quiet=TRUE) %>% sapply(. %>% is.null %>% magrittr::not(.)) %>% sum
-  	expect_true(x == 1) # unzips to folder
-  	expect_is(url %>% import_gtfs(quiet = TRUE), 'gtfs') # should return 'list' object
-  	expect_warning(not_zip %>% import_gtfs) # not zip file warning
+  	x <- import_gtfs(url, quiet=TRUE)
+  	expect_is(x, 'gtfs') # should return 'list' object
+  	expect_warning(import_gtfs(not_zip, quiet=TRUE)) # not zip file warning
   
   	# valid path check
   	path <- "#!:D"
-  	expect_warning(path %>% import_gtfs) # invalid path
+  	expect_warning(import_gtfs(path)) # invalid path
   }
   
 })

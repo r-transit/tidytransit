@@ -11,15 +11,15 @@ working <- function() {
 }
 
 get_feed2 <- function(url, path = NULL) {
-	get_feed(url, path = path, quiet = TRUE)
+	download_from_url(url, path = path, quiet = TRUE)
 }
 
 unzip_gtfs_files2 <- function(zip, delete_zip = FALSE, quiet = TRUE) {
-	suppressMessages(suppressWarnings(unzip_gtfs_files(zip, delete_zip = delete_zip, quiet = quiet)))
+	suppressMessages(suppressWarnings(unzip_file(zip, delete_zip = delete_zip, quiet = quiet)))
 }
 
 read_gtfs2 <- function(file_path, delete_files) {
-	suppressMessages(suppressWarnings(read_gtfs(file_path, delete_files, quiet = TRUE)))
+	suppressMessages(suppressWarnings(read_(file_path, delete_files, quiet = TRUE)))
 }
 
 # unzip_gtfs_files()
@@ -33,14 +33,14 @@ test_that('Download, extract a GTFS zip file to temp or user-specified path from
 
 	# non-specified path
 	expect_true(dir.exists(unzip_gtfs_files2(zip))) # unzips to folder
-	expect_warning(unzip_gtfs_files(zip, quiet=TRUE)) # folder already warning
+	expect_warning(unzip_file(zip, quiet=TRUE)) # folder already warning
 
 	# specified path
 	dir <- tempdir()
 	zip <- get_feed2(url, path = dir)
 	expect_true(file.exists(zip)) # zip file is found
 	expect_true(dir.exists(unzip_gtfs_files2(zip))) # unzips to folder
-	expect_warning(unzip_gtfs_files(zip, quiet = TRUE)) # folder already exists warning
+	expect_warning(unzip_file(zip, quiet = TRUE)) # folder already exists warning
   }
 })
 
@@ -78,7 +78,7 @@ test_that('Check if/how we are parsing files', {
   else {
     url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
     zip <- get_feed2(url)
-    folder <- unzip_gtfs_files2(zip, delete_zip = TRUE)
+    folder <- unzip_file(zip, delete_zip = TRUE)
     files <- list.files(folder, full.names = TRUE)
     agency_file <- files[1]
     # empty file

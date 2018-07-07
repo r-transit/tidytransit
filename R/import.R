@@ -7,9 +7,9 @@
 #' @return File path
 #' @importFrom dplyr %>%
 #'
-#' @export
+#' @keywords internal
 
-get_feed <- function(url, path=NULL, quiet=FALSE) {
+download_from_url <- function(url, path=NULL, quiet=FALSE) {
 
   stopifnot(length(url) == 1)
 
@@ -54,10 +54,19 @@ get_feed <- function(url, path=NULL, quiet=FALSE) {
   # return the temp path - for unzipping
   return(temp)
 
+  path <- download_from_url(url = url, quiet = quiet)
+
+  # check path
+  check <- try(normalizePath(path), silent = TRUE)
+  if(assertthat::is.error(check)) {
+    warn <- 'Invalid file path. NULL is returned.'
+    if(!quiet) warning(warn)
+    return(NULL)
+  }
+  return(path)
 }
 
-
-#' Get a Dataframes of GTFS data.
+#' Get dataframes of GTFS data.
 #'
 #' @param paths Character. url links to zip files OR paths to local zip files. if to local path, then option `local` must be set to TRUE.
 #' @param local Boolean. If the paths are searching locally or not. Default is FALSE (that is, urls).
@@ -66,45 +75,24 @@ get_feed <- function(url, path=NULL, quiet=FALSE) {
 #' @return Dataframes of GTFS data.
 #'
 #' @export
+#' @examples 
+#' \dontrun{
+#' accra_gtfs <- import_gtfs("https://github.com/AFDLab4Dev/AccraMobility/raw/master/GTFS/GTFS_Accra.zip")
+#' }
 
-import_gtfs <- function(paths, local = FALSE, quiet = FALSE) {
-
-  feed_flow <- function(url) {
-
-    path <- get_feed(url = url, quiet = quiet)
-
-    # check path
-    check <- try(normalizePath(path), silent = TRUE)
-    if(assertthat::is.error(check)) {
-      warn <- 'Invalid file path. NULL is returned.'
-      if(!quiet) warning(warn)
-      return(NULL)
-    }
-
-    zip_dir <- unzip_gtfs_files(zipfile = path, quiet = quiet)
-
-    try(read_gtfs(zip_dir, quiet = quiet))
-  }
-
-  # check if single column of data was inputed. if so, convert to vector; error otherwise.
-  if(!is.null(dim(paths))) {
-    if(dim(paths)[2] == 1) {
-      paths <- unlist(paths, use.names = FALSE)
-    } else {
-      stop('Please input a vector or single column of data.')
-    }
-  }
-
+import_gtfs <- function(path, data_dir = tempdir(), local = FALSE, quiet = FALSE) {
   if(local) {
-    paths <- paths %>% 
-      sapply(. %>% normalizePath)
-    data_list <- paths %>% 
-      lapply(. %>% 
-            unzip_gtfs_files(quiet=quiet) %>% 
-               read_gtfs(quiet=quiet))
+    path <- normalizePath(path) 
+    data_list <- path %>%
+      unzip_file(quiet=quiet) %>% 
+         list_files(quiet=quiet) %>%
+            read_and_validate()
   } else {
-    data_list <- paths %>% 
-      lapply(. %>% feed_flow)
+    data_list <- path %>%
+      download_from_url(.) %>%
+        unzip_file(quiet = quiet) %>%
+          list_files(quiet = quiet) %>%
+            read_and_validate()
   }
 
   # show note, which is suppressed in read_gtfs
@@ -114,10 +102,7 @@ import_gtfs <- function(paths, local = FALSE, quiet = FALSE) {
     message("\n")
   }
 
-  if(length(data_list) > 1) 
-    return(data_list) 
-  else 
-    return(data_list[[1]])
+  return(data_list) 
 }
 
 #' Checks UTF-8-BOM encoding. Special thanks to @patperu for finding the issue and to @hrbrmstr for the code to help deal with the issue.
@@ -133,8 +118,8 @@ import_gtfs <- function(paths, local = FALSE, quiet = FALSE) {
 #'         was passed (along with a message)
 #' @references \href{http://www.unicode.org/faq/utf_bom.html}{UTF-8, UTF-16, UTF-32 & BOM}
 #' @noRd
+#' @keywords internal
 #' @author @@hrbrmstr
-
 
 has_bom <- function(path, encoding="UTF-8") {
 
@@ -147,27 +132,19 @@ has_bom <- function(path, encoding="UTF-8") {
   )
 }
 
-# Purpose -----------------------------------------------------------------
-
-# Functions to read in GTFS data
-# These should collectively allow a user to
-# - unzip GTFS data from a local file
-# - validate that the content of the zipped file is a GTFS feed
-# - read the data into an object
-
-#' Unzip GTFS file and delete zip
+#' Unzip a file and delete zip
 #'
 #' @param zipfile path to zipped file
 #' @param delete_zip Boolean. whether to delete the zipped file after extraction.  Deletes by default.
-#' @param move_path Character. full file path to desire new location
 #' @param quiet Boolean. Whether to output files found in folder.
 #'
 #' @return file path to directory with gtfs .txt files
+#' @keywords internal
+#' 
+#' #TODO:NEEDS TO WRITE TO TEMPFILE
 
-unzip_gtfs_files <- function(zipfile, delete_zip = FALSE, move_path = NULL, quiet = FALSE) {
-
-  # set file path based on options
-  if(is.null(move_path)) f <- zipfile else f <- move_path
+unzip_file <- function(zipfile, delete_zip = TRUE, quiet = FALSE) {
+  f <- zipfile
 
   # check path
   if(try(path.expand(f), silent = TRUE) %>% assertthat::is.error()) {
@@ -178,24 +155,12 @@ unzip_gtfs_files <- function(zipfile, delete_zip = FALSE, move_path = NULL, quie
 
   f <- normalizePath(f)
 
-  if(!is.null(move_path)) {
-    if(dir.exists(move_path)) {
-      stop(sprintf('%s must be a full file path, not a directory path (e.g. "full/path/to/filename.zip")', move_path))
-    }
-    file.copy(zipfile, move_path, overwrite=TRUE)
-  }
-
   # create extraction folder
   ex_dir <- file.path(dirname(f), strsplit(basename(f), "\\.")[[1]][1])
-  if(!dir.exists(ex_dir)) dir.create(ex_dir) else {
-    warning('Extraction folder already exists. Overwriting.')
-    rmfolder(ex_dir)
-    dir.create(ex_dir)
-  }
 
   utils::unzip(f, exdir = ex_dir)
 
-  if(delete_zip) file.remove(f)
+  file.remove(f)
 
   if(length(list.files(ex_dir)) == 0) {
     warn <- "No files found after decompressing. NULL is returned."
@@ -212,15 +177,13 @@ unzip_gtfs_files <- function(zipfile, delete_zip = FALSE, move_path = NULL, quie
 }
 
 
-# Read in feed ------------------------------------------------------------
-
-#' Put GTFS text file contents into objects in memory and delete files
+#' Read files with a "txt" suffix in a folder into objects in memory and delete files
 #'
 #' @param exdir Character. Path to folder into which files were extracted.
 #' @param delete_files Logical, whether to delete the files after extraction.  Does not delete by default.
 #' @param quiet Boolean. Whether to output messages and files found in folder.
-#' @export
-read_gtfs <- function(exdir, delete_files = FALSE, quiet = FALSE) {
+#' @keywords internal
+list_files <- function(exdir, delete_files = FALSE, quiet = FALSE) {
 
   # check path
   check <- try(normalizePath(exdir), silent=TRUE)
@@ -231,12 +194,14 @@ read_gtfs <- function(exdir, delete_files = FALSE, quiet = FALSE) {
   }
 
   all_files <- list.files(exdir, full.names = TRUE)
-  is_txt <- grepl(pattern = '.txt', x = all_files)
-  all_txt <- all_files[is_txt]
+  return(all_files)
+}
 
+read_and_validate <- function(all_files, delete_files = FALSE, quiet = FALSE) {
   exec_env <- environment()
 
-  lapply(all_files, function(x) read_sub_gtfs(x, assign_envir = exec_env, quiet = quiet))
+  lapply(all_files, function(x) read_gtfs_files(x, 
+    assign_envir = exec_env, quiet = quiet))
 
   ls_envir <- ls(envir = exec_env)
 
@@ -273,19 +238,22 @@ read_gtfs <- function(exdir, delete_files = FALSE, quiet = FALSE) {
 #' @param assign_envir Environment Object. Option of where to assign dataframes.
 #' @param quiet Boolean. Whether to output messages and files found in folder.
 #' @noRd
+#' @keywords internal
 
-read_sub_gtfs <- function(file_path, assign_envir, quiet = FALSE) {
+read_gtfs_files <- function(file_path, assign_envir, quiet = FALSE) {
 
   split_path <- strsplit(file_path, '/')
   file_name <- split_path[[1]][length(split_path[[1]])]
 
-  prefix <- gsub('.txt|-new', '', file_name) # suffix '.*-new.txt' comes from trillium data
+  prefix <- gsub('.txt|-new', '', file_name) 
+  # suffix '.*-new.txt' comes from trillium data
   prefix <- gsub('\\-|\\.', '_', prefix)
   df_name <- paste0(prefix, '_df')
 
   if(!quiet) message(paste0('Reading ', file_name))
 
-  new_df <- parse_gtfs(prefix, file_path, quiet = quiet) # will have warning even though we fix problem
+  new_df <- parse_gtfs(prefix, file_path, quiet = quiet) 
+  # will have warning even though we fix problem
 
   assign(df_name, new_df, envir = assign_envir)
 
@@ -298,6 +266,7 @@ read_sub_gtfs <- function(file_path, assign_envir, quiet = FALSE) {
 #' @param quiet Boolean. Whether to output messages and files found in folder.
 #' @return Dataframe of parsed GTFS file.
 #' @noRd
+#' @keywords internal
 
 parse_gtfs <- function(prefix, file_path, quiet = FALSE) {
 

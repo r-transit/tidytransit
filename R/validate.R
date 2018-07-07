@@ -7,7 +7,7 @@
 #'
 #' @return A gtfs_obj list object with attribute 'validate' or just a list containing validation data
 #'
-#' @export
+#' @keywords internal
 
 validate_gtfs_structure <- function(gtfs_obj, return_gtfs_obj = TRUE, quiet = FALSE) {
 
@@ -268,8 +268,9 @@ validate_vars_provided <- function(val_files, gtfs_obj) {
 
 }
 
-
-#' checks for the missing calendar.txt exception (see https://developers.google.com/transit/gtfs/reference/calendar_dates-file). if the exception is TRUE, then calendar has its file spec set to 'extra'.
+#' checks for the missing calendar.txt 
+#' exception (see https://developers.google.com/transit/gtfs/reference/calendar_dates-file). 
+#' if the exception is TRUE, then calendar has its file spec set to 'extra'.
 #' @param all_val_df dataframe of all files and fields. returned from validate_vars_provided()
 #' @return corrected dataframe.
 #' @noRd

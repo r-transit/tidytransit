@@ -2,20 +2,25 @@
 % Please edit documentation in R/import.R
 \name{import_gtfs}
 \alias{import_gtfs}
-\title{Get a Dataframes of GTFS data.}
+\title{Get dataframes of GTFS data.}
 \usage{
-import_gtfs(paths, local = FALSE, quiet = FALSE)
+import_gtfs(path, data_dir = tempdir(), local = FALSE, quiet = FALSE)
 }
 \arguments{
-\item{paths}{Character. url links to zip files OR paths to local zip files. if to local path, then option \code{local} must be set to TRUE.}
-
 \item{local}{Boolean. If the paths are searching locally or not. Default is FALSE (that is, urls).}
 
 \item{quiet}{Boolean. Whether to see file download progress and files extract. FALSE by default.}
+
+\item{paths}{Character. url links to zip files OR paths to local zip files. if to local path, then option \code{local} must be set to TRUE.}
 }
 \value{
 Dataframes of GTFS data.
 }
 \description{
-Get a Dataframes of GTFS data.
+Get dataframes of GTFS data.
+}
+\examples{
+\dontrun{
+accra_gtfs <- import_gtfs("https://github.com/AFDLab4Dev/AccraMobility/raw/master/GTFS/GTFS_Accra.zip")
+}
 }
