@@ -1,4 +1,4 @@
-[![Travis-CI Build Status](https://travis-ci.org/r-gtfs/readgtfs.svg?branch=master)](https://travis-ci.org/r-gtfs/trread)
+[![Travis-CI Build Status](https://travis-ci.com/r-gtfs/trread.svg?branch=master)](https://travis-ci.com/r-gtfs/trread)
 
 ## Description
 
