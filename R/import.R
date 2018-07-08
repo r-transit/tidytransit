@@ -1,71 +1,3 @@
-#' Download a zipped GTFS feed file from a url
-#'
-#' @param url Character URL of GTFS feed.
-#' @param path Character. Folder into which to put zipped file. If NULL, then save a tempfile
-#' @param quiet Boolean. Whether to see file download progress. FALSE by default.
-#'
-#' @return File path
-#' @importFrom dplyr %>%
-#'
-#' @keywords internal
-
-download_from_url <- function(url, path=NULL, quiet=FALSE) {
-
-  stopifnot(length(url) == 1)
-
-  # check if single element of dataframe was inputed. if so, convert to single value; error otherwise.
-  if(!is.null(dim(url))) {
-    if(all(dim(url) == c(1,1))) {
-      url <- unlist(url, use.names = FALSE)
-    } else {
-      stop('Please input a single url.')
-    }
-  }
-
-  # check if url links to a zip file
-  valid <- valid_url(url)
-  if(!valid) {
-    if(!quiet) {
-      warn1 <- sprintf("Link '%s' is invalid; failed to connect. NULL was returned.", url)
-      warning(warn1)
-    }
-    return(NULL)
-  }
-
-  # generate a temporary file path if no path is specified
-  if(is.null(path)) temp <- tempfile(fileext = ".zip") else temp <- file.path(path, 'gtfs_zip.zip')
-
-  r <- httr::GET(url)
-
-  # Get gtfs zip if url can be reach
-  if(httr::status_code(r) == 200) {
-    check <- try(utils::download.file(url, temp, quiet = quiet), silent=TRUE)
-    if(check %>% assertthat::is.error()) {
-      warn <- sprintf("Link '%s' failed to download. NULL was returned.", url)
-      warning(warn)
-      return(NULL)
-    }
-  } else {
-    warn <- sprintf("Link '%s' cannot be reached. NULL was returned.", url)
-    warning(warn)
-    return(NULL)
-  }
-
-  # return the temp path - for unzipping
-  return(temp)
-
-  path <- download_from_url(url = url, quiet = quiet)
-
-  # check path
-  check <- try(normalizePath(path), silent = TRUE)
-  if(assertthat::is.error(check)) {
-    warn <- 'Invalid file path. NULL is returned.'
-    if(!quiet) warning(warn)
-    return(NULL)
-  }
-  return(path)
-}
-
 #' Get dataframes of GTFS data.
 #'
 #' @param paths Character. url links to zip files OR paths to local zip files. if to local path, then option `local` must be set to TRUE.
@@ -80,7 +12,7 @@ download_from_url <- function(url, path=NULL, quiet=FALSE) {
 #' accra_gtfs <- import_gtfs("https://github.com/AFDLab4Dev/AccraMobility/raw/master/GTFS/GTFS_Accra.zip")
 #' }
 
-import_gtfs <- function(path, data_dir = tempdir(), local = FALSE, quiet = FALSE) {
+import_gtfs <- function(path, local = FALSE, quiet = FALSE) {
   if(local) {
     path <- normalizePath(path) 
     data_list <- path %>%
@@ -103,6 +35,66 @@ import_gtfs <- function(path, data_dir = tempdir(), local = FALSE, quiet = FALSE
   }
 
   return(data_list) 
+}
+
+#' Download a zipped GTFS feed file from a url
+#'
+#' @param url Character URL of GTFS feed.
+#' @param path Character. Folder into which to put zipped file. If NULL, then save a tempfile
+#' @param quiet Boolean. Whether to see file download progress. FALSE by default.
+#'
+#' @return File path
+#' @importFrom dplyr %>%
+#'
+#' @keywords internal
+
+download_from_url <- function(url, path=tempfile(fileext = ".zip"), quiet=FALSE) {
+  
+  stopifnot(length(url) == 1)
+  
+  # check if single element of dataframe was inputed. if so, convert to single value; error otherwise.
+  if(!is.null(dim(url))) {
+    if(all(dim(url) == c(1,1))) {
+      url <- unlist(url, use.names = FALSE)
+    } else {
+      stop('Please input a single url.')
+    }
+  }
+  
+  # check if url links to a zip file
+  valid <- valid_url(url)
+  if(!valid) {
+    if(!quiet) {
+      warn1 <- sprintf("Link '%s' is invalid; failed to connect. NULL was returned.", url)
+      warning(warn1)
+    }
+    return(NULL)
+  }
+  
+  r <- httr::GET(url)
+  
+  # Get gtfs zip if url can be reach
+  if(httr::status_code(r) == 200) {
+    check <- try(utils::download.file(url, path, quiet = quiet), silent=TRUE)
+    if(check %>% assertthat::is.error()) {
+      warn <- sprintf("Link '%s' failed to download. NULL was returned.", url)
+      warning(warn)
+      return(NULL)
+    }
+  } else {
+    warn <- sprintf("Link '%s' cannot be reached. NULL was returned.", url)
+    warning(warn)
+    return(NULL)
+  }
+  
+  # check path
+  check <- try(normalizePath(path), silent = TRUE)
+  if(assertthat::is.error(check)) {
+    warn <- 'Invalid file path. NULL is returned.'
+    if(!quiet) warning(warn)
+    return(NULL)
+  }
+  return(path)
 }
 
 #' Checks UTF-8-BOM encoding. Special thanks to @patperu for finding the issue and to @hrbrmstr for the code to help deal with the issue.
@@ -143,7 +135,7 @@ has_bom <- function(path, encoding="UTF-8") {
 #' 
 #' #TODO:NEEDS TO WRITE TO TEMPFILE
 
-unzip_file <- function(zipfile, delete_zip = TRUE, quiet = FALSE) {
+unzip_file <- function(zipfile, ex_dir=tempdir(), delete_zip = TRUE, quiet = FALSE) {
   f <- zipfile
 
   # check path
@@ -156,7 +148,6 @@ unzip_file <- function(zipfile, delete_zip = TRUE, quiet = FALSE) {
   f <- normalizePath(f)
 
   # create extraction folder
-  ex_dir <- file.path(dirname(f), strsplit(basename(f), "\\.")[[1]][1])
 
   utils::unzip(f, exdir = ex_dir)
 

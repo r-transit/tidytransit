@@ -114,12 +114,16 @@ validate_files_provided <- function(gtfs_obj) {
 
   all_files <- c(all_spec_files, extra_files)
 
-  val_files <- dplyr::data_frame(file = all_files, spec = c(rep('req', times = length(all_req_files)), rep('opt', times = length(all_opt_files)), rep('ext', times = length(extra_files))))
+  val_files <- dplyr::data_frame(file = all_files, 
+                                 spec = c(rep('req', 
+                                 times = length(all_req_files)), 
+                                 rep('opt', 
+                                 times = length(all_opt_files)), 
+                                 rep('ext', times = length(extra_files))))
 
   val_files <- val_files %>%
-    dplyr::mutate(provided_status = ifelse(!(file %in% feed_names_file), 'no',
-                                    ifelse(sapply(gtfs_obj, dim)[2,] == 0, 'empty',
-                                           'yes')))
+    dplyr::mutate(provided_status = ifelse(!(file %in% 
+                                               feed_names_file), 'no', 'yes'))
   return(val_files)
 
 }
