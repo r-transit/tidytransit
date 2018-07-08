@@ -14,6 +14,7 @@
 #' @return Dataframes of GTFS data.
 #'
 #' @export
+#' @importFrom dplyr %>% arrange summarise group_by inner_join
 #' @examples 
 #' library(dplyr)
 #' u1 <- "https://github.com/AFDLab4Dev/AccraMobility/raw/master/GTFS/GTFS_Accra.zip"

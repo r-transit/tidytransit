@@ -2,3 +2,7 @@
 
 export(import_gtfs)
 importFrom(dplyr,"%>%")
+importFrom(dplyr,arrange)
+importFrom(dplyr,group_by)
+importFrom(dplyr,inner_join)
+importFrom(dplyr,summarise)
