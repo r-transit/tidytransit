@@ -4,7 +4,7 @@
 \alias{import_gtfs}
 \title{Get dataframes of GTFS data.}
 \usage{
-import_gtfs(path, data_dir = tempdir(), local = FALSE, quiet = FALSE)
+import_gtfs(path, local = FALSE, quiet = FALSE)
 }
 \arguments{
 \item{local}{Boolean. If the paths are searching locally or not. Default is FALSE (that is, urls).}

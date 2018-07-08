@@ -184,15 +184,22 @@ list_files <- function(exdir, delete_files = FALSE, quiet = FALSE) {
     return(NULL)
   }
 
-  all_files <- list.files(exdir, full.names = TRUE)
-  return(all_files)
+  file_list <- list.files(exdir, full.names = TRUE)
+  return(file_list)
 }
 
 read_and_validate <- function(all_files, delete_files = FALSE, quiet = FALSE) {
+  file_list <- sapply(all_files,get_file_name)
+  file_validation_meta <- validate_files(file_list)
+  valid_files_meta <- file_validation_meta %>% 
+    dplyr::filter(spec != 'ext' & provided_status=="yes")
+  
   exec_env <- environment()
-
-  lapply(all_files, function(x) read_gtfs_files(x, 
-    assign_envir = exec_env, quiet = quiet))
+  
+  lapply(names(file_list[file_list %in% valid_files_meta$file]), 
+         function(x) read_gtfs_file(x, 
+                                    assign_envir = exec_env, 
+                                    quiet = quiet))
 
   ls_envir <- ls(envir = exec_env)
 
@@ -208,7 +215,7 @@ read_and_validate <- function(all_files, delete_files = FALSE, quiet = FALSE) {
   if(!quiet) message('...done.\n\n')
 
   # check if valid 'gtfs'
-  check <- validate_gtfs_structure(gtfs_list, return_gtfs_obj = FALSE, quiet = TRUE)
+  check <- validate_gtfs_structure(valid_files_meta, gtfs_list, return_gtfs_obj = FALSE, quiet = TRUE)
   valid <- all(check$all_req_files, check$all_req_fields_in_req_files)
 
   if(!quiet) message("Testing data structure...")
@@ -218,7 +225,7 @@ read_and_validate <- function(all_files, delete_files = FALSE, quiet = FALSE) {
   } else {
     if(!quiet) message("...failed. Invalid data structure.\n")
   }
-
+  gtfs_list$validation <- check 
   return(gtfs_list)
   
 }
@@ -231,23 +238,34 @@ read_and_validate <- function(all_files, delete_files = FALSE, quiet = FALSE) {
 #' @noRd
 #' @keywords internal
 
-read_gtfs_files <- function(file_path, assign_envir, quiet = FALSE) {
-
-  split_path <- strsplit(file_path, '/')
-  file_name <- split_path[[1]][length(split_path[[1]])]
-
-  prefix <- gsub('.txt|-new', '', file_name) 
-  # suffix '.*-new.txt' comes from trillium data
-  prefix <- gsub('\\-|\\.', '_', prefix)
+read_gtfs_file <- function(file_path, assign_envir, quiet = FALSE) {
+  prefix <- get_file_name(file_path)
   df_name <- paste0(prefix, '_df')
 
-  if(!quiet) message(paste0('Reading ', file_name))
+  if(!quiet) message(paste0('Reading ', df_name))
 
   new_df <- parse_gtfs(prefix, file_path, quiet = quiet) 
   # will have warning even though we fix problem
 
   assign(df_name, new_df, envir = assign_envir)
 
+}
+
+#' Function to get the gtfs table name from the file string
+#'
+#' @param file_path Character file path
+#' @return gtfs_table_name a character vector of file names and their full paths
+#' @noRd
+#' @keywords internal
+#' 
+get_file_name <- function(file_path) {
+  split_path <- strsplit(file_path, '/')
+  file_name <- split_path[[1]][length(split_path[[1]])]
+
+  prefix <- gsub('.txt|-new', '', file_name) 
+  # suffix '.*-new.txt' comes from trillium data
+  prefix <- gsub('\\-|\\.', '_', prefix)
+  return(prefix)
 }
 
 #' Function to better read in GTFS txt files
