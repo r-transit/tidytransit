@@ -1,6 +1,13 @@
-#' Get dataframes of GTFS data.
+#' Get and validate dataframes of General Transit Feed Specification (GTFS) data.
+#' 
+#' This function reads GTFS text files from a local or remote zip file. 
+#' It also validates the files against the GTFS specification by file, requirement status, and column name
+#' The data are returned as a list of dataframes and a validation object, 
+#' which contains details on whether all required files were found, 
+#' and which required and optional columns are present. 
+#' 
 #'
-#' @param paths Character. url links to zip files OR paths to local zip files. if to local path, then option `local` must be set to TRUE.
+#' @param path Character. url link to zip file OR path to local zip file. if to local path, then option `local` must be set to TRUE.
 #' @param local Boolean. If the paths are searching locally or not. Default is FALSE (that is, urls).
 #' @param quiet Boolean. Whether to see file download progress and files extract. FALSE by default.
 #'
@@ -9,7 +16,8 @@
 #' @export
 #' @examples 
 #' \dontrun{
-#' accra_gtfs <- import_gtfs("https://github.com/AFDLab4Dev/AccraMobility/raw/master/GTFS/GTFS_Accra.zip")
+#' u1 <- "https://github.com/AFDLab4Dev/AccraMobility/raw/master/GTFS/GTFS_Accra.zip"
+#' accra_gtfs <- import_gtfs(u1)
 #' }
 
 import_gtfs <- function(path, local = FALSE, quiet = FALSE) {
@@ -25,13 +33,6 @@ import_gtfs <- function(path, local = FALSE, quiet = FALSE) {
         unzip_file(quiet = quiet) %>%
           list_files(quiet = quiet) %>%
             read_and_validate()
-  }
-
-  # show note, which is suppressed in read_gtfs
-  if(!quiet) {
-    message("\n")
-    message('NOTE: Parsing errors and warnings while importing data can be extracted from any given dataframe with `attr(df, "problems")`.')
-    message("\n")
   }
 
   return(data_list) 
@@ -149,7 +150,7 @@ unzip_file <- function(zipfile, ex_dir=tempdir(), delete_zip = TRUE, quiet = FAL
 
   # create extraction folder
 
-  utils::unzip(f, exdir = ex_dir)
+  utils::unzip(f, exdir=ex_dir)
 
   file.remove(f)
 
@@ -170,33 +171,33 @@ unzip_file <- function(zipfile, ex_dir=tempdir(), delete_zip = TRUE, quiet = FAL
 
 #' Read files with a "txt" suffix in a folder into objects in memory and delete files
 #'
-#' @param exdir Character. Path to folder into which files were extracted.
+#' @param ex_dir Character. Path to folder into which files were extracted.
 #' @param delete_files Logical, whether to delete the files after extraction.  Does not delete by default.
 #' @param quiet Boolean. Whether to output messages and files found in folder.
 #' @keywords internal
-list_files <- function(exdir, delete_files = FALSE, quiet = FALSE) {
+list_files <- function(ex_dir, delete_files = FALSE, quiet = FALSE) {
 
   # check path
-  check <- try(normalizePath(exdir), silent=TRUE)
+  check <- try(normalizePath(ex_dir), silent=TRUE)
   if(assertthat::is.error(check)) {
     warn <- 'Invalid file path. NULL is returned.'
     if(!quiet) warning(warn)
     return(NULL)
   }
 
-  file_list <- list.files(exdir, full.names = TRUE)
+  file_list <- list.files(ex_dir, full.names = TRUE)
   return(file_list)
 }
 
-read_and_validate <- function(all_files, delete_files = FALSE, quiet = FALSE) {
-  file_list <- sapply(all_files,get_file_name)
+read_and_validate <- function(all_files, delete_files = TRUE, quiet = FALSE) {
+  file_list <- sapply(all_files,get_file_shortname)
   file_validation_meta <- validate_files(file_list)
   valid_files_meta <- file_validation_meta %>% 
     dplyr::filter(spec != 'ext' & provided_status=="yes")
-  
+  valid_filenames <- names(file_list[file_list %in% valid_files_meta$file])
   exec_env <- environment()
   
-  lapply(names(file_list[file_list %in% valid_files_meta$file]), 
+  lapply(valid_filenames, 
          function(x) read_gtfs_file(x, 
                                     assign_envir = exec_env, 
                                     quiet = quiet))
@@ -208,8 +209,7 @@ read_and_validate <- function(all_files, delete_files = FALSE, quiet = FALSE) {
   gtfs_list <- mget(df_list, envir = exec_env)
 
   if (delete_files) {
-    file.remove(all_files)
-    file.remove(exdir)
+    file.remove(valid_filenames)
   }
 
   if(!quiet) message('...done.\n\n')
@@ -239,7 +239,7 @@ read_and_validate <- function(all_files, delete_files = FALSE, quiet = FALSE) {
 #' @keywords internal
 
 read_gtfs_file <- function(file_path, assign_envir, quiet = FALSE) {
-  prefix <- get_file_name(file_path)
+  prefix <- get_file_shortname(file_path)
   df_name <- paste0(prefix, '_df')
 
   if(!quiet) message(paste0('Reading ', df_name))
@@ -258,7 +258,7 @@ read_gtfs_file <- function(file_path, assign_envir, quiet = FALSE) {
 #' @noRd
 #' @keywords internal
 #' 
-get_file_name <- function(file_path) {
+get_file_shortname <- function(file_path) {
   split_path <- strsplit(file_path, '/')
   file_name <- split_path[[1]][length(split_path[[1]])]
 

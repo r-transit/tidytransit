@@ -30,7 +30,8 @@ if(getRversion() >= "3.1.0") {
       'stop_name',
       'trip_id',
       'validation_details',
-      'validation_status'
+      'validation_status',
+      'provided_status'
     )
   )
 }
