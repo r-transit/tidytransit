@@ -10,29 +10,6 @@ working <- function() {
 	connecting(url)
 }
 
-# unzip_gtfs_files()
-test_that('Download, extract a GTFS zip file to temp or user-specified path from user-specified URL', {
-  if(working()==FALSE){
-    skip("no internet, skipping")
-  }
-  else {
-	url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
-	zip <- download_from_url(url)
-
-	# non-specified path
-	expect_true(dir.exists(unzip_file(zip))) # unzips to folder
-	expect_warning(unzip_file(zip, quiet=TRUE)) # folder already warning
-
-	# specified path
-	dir <- tempdir()
-	zip <- download_from_url(url, path = dir)
-	expect_true(file.exists(zip)) # zip file is found
-	expect_true(dir.exists(unzip_file(zip))) # unzips to folder
-	expect_warning(unzip_file(zip, quiet = TRUE)) # folder already exists warning
-  }
-})
-
-# read_gtfs()
 test_that('Reading GTFS files from unzipped folder', {
   if(working()==FALSE){
     skip("no internet, skipping")

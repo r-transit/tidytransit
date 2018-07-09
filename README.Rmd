@@ -19,13 +19,13 @@ knitr::opts_chunk$set(
 
 ## Description
 
-`trread` is a package for reading the GTFS data standard into R. It can read directly from URL's or flat files, and does some validation of the data structure against the specification.  
+`trread` is a package for reading data in the General Transit Feed Specification (GTFS) into R as a list of dataframes. It can read directly from URL's or flat files, and does some validation of the files and variables included against the specification. 
 
 ## Goal
 
 This is a highly simplified fork/piece of the [gtfsr](https://github.com/ropensci/gtfsr/) package. 
 
-The goal is to break that package into parts to simplify maintenance.  
+The goal is to break that package into parts to simplify maintenance.   
 
 ## Contributors
 

@@ -1,6 +1,6 @@
 Package: trread
 Type: Package
-Title: A Transit (GTFS) File Reader For R 
+Title: Transit File Reader 
 Version: 0.2.0
 Authors@R: c(
     person("Tom", "Buckley", role = c("aut", "cre"), email = "tom@tbuckl.com"),
