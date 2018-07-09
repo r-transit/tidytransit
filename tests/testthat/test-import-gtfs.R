@@ -24,11 +24,11 @@ test_that('Import a GTFS object from URL', {
   	# non-specified path
   	x <- import_gtfs(url, quiet=TRUE)
   	expect_is(x, 'gtfs') # should return 'list' object
-  	expect_warning(import_gtfs(not_zip, quiet=TRUE)) # not zip file warning
+  	expect_error(import_gtfs(not_zip, quiet=TRUE)) # not zip file warning
   
   	# valid path check
   	path <- "#!:D"
-  	expect_warning(import_gtfs(path)) # invalid path
+  	expect_error(import_gtfs(path)) # invalid path
   }
   
 })

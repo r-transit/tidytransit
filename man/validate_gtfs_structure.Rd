@@ -4,7 +4,8 @@
 \alias{validate_gtfs_structure}
 \title{Create validation list for a gtfs_obj. It provides an overview of the structure of all files that were imported.}
 \usage{
-validate_gtfs_structure(gtfs_obj, return_gtfs_obj = TRUE, quiet = FALSE)
+validate_gtfs_structure(file_validation_meta, gtfs_obj,
+  return_gtfs_obj = TRUE, quiet = FALSE)
 }
 \arguments{
 \item{gtfs_obj}{A GTFS list object with components agency_df, etc.}

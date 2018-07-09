@@ -1,86 +1,35 @@
-#' Download a zipped GTFS feed file from a url
+#' Get and validate dataframes of General Transit Feed Specification (GTFS) data.
+#' 
+#' This function reads GTFS text files from a local or remote zip file. 
+#' It also validates the files against the GTFS specification by file, requirement status, and column name
+#' The data are returned as a list of dataframes and a validation object, 
+#' which contains details on whether all required files were found, 
+#' and which required and optional columns are present. 
+#' 
 #'
-#' @param url Character URL of GTFS feed.
-#' @param path Character. Folder into which to put zipped file. If NULL, then save a tempfile
-#' @param quiet Boolean. Whether to see file download progress. FALSE by default.
-#'
-#' @return File path
-#' @importFrom dplyr %>%
-#'
-#' @keywords internal
-
-download_from_url <- function(url, path=NULL, quiet=FALSE) {
-
-  stopifnot(length(url) == 1)
-
-  # check if single element of dataframe was inputed. if so, convert to single value; error otherwise.
-  if(!is.null(dim(url))) {
-    if(all(dim(url) == c(1,1))) {
-      url <- unlist(url, use.names = FALSE)
-    } else {
-      stop('Please input a single url.')
-    }
-  }
-
-  # check if url links to a zip file
-  valid <- valid_url(url)
-  if(!valid) {
-    if(!quiet) {
-      warn1 <- sprintf("Link '%s' is invalid; failed to connect. NULL was returned.", url)
-      warning(warn1)
-    }
-    return(NULL)
-  }
-
-  # generate a temporary file path if no path is specified
-  if(is.null(path)) temp <- tempfile(fileext = ".zip") else temp <- file.path(path, 'gtfs_zip.zip')
-
-  r <- httr::GET(url)
-
-  # Get gtfs zip if url can be reach
-  if(httr::status_code(r) == 200) {
-    check <- try(utils::download.file(url, temp, quiet = quiet), silent=TRUE)
-    if(check %>% assertthat::is.error()) {
-      warn <- sprintf("Link '%s' failed to download. NULL was returned.", url)
-      warning(warn)
-      return(NULL)
-    }
-  } else {
-    warn <- sprintf("Link '%s' cannot be reached. NULL was returned.", url)
-    warning(warn)
-    return(NULL)
-  }
-
-  # return the temp path - for unzipping
-  return(temp)
-
-  path <- download_from_url(url = url, quiet = quiet)
-
-  # check path
-  check <- try(normalizePath(path), silent = TRUE)
-  if(assertthat::is.error(check)) {
-    warn <- 'Invalid file path. NULL is returned.'
-    if(!quiet) warning(warn)
-    return(NULL)
-  }
-  return(path)
-}
-
-#' Get dataframes of GTFS data.
-#'
-#' @param paths Character. url links to zip files OR paths to local zip files. if to local path, then option `local` must be set to TRUE.
+#' @param path Character. url link to zip file OR path to local zip file. if to local path, then option `local` must be set to TRUE.
 #' @param local Boolean. If the paths are searching locally or not. Default is FALSE (that is, urls).
 #' @param quiet Boolean. Whether to see file download progress and files extract. FALSE by default.
 #'
 #' @return Dataframes of GTFS data.
 #'
 #' @export
+#' @importFrom dplyr %>% arrange summarise group_by inner_join
 #' @examples 
-#' \dontrun{
-#' accra_gtfs <- import_gtfs("https://github.com/AFDLab4Dev/AccraMobility/raw/master/GTFS/GTFS_Accra.zip")
-#' }
+#' library(dplyr)
+#' u1 <- "https://github.com/AFDLab4Dev/AccraMobility/raw/master/GTFS/GTFS_Accra.zip"
+#' accra_gtfs <- import_gtfs(u1)
+#' attach(accra_gtfs)
+#' #list routes by the number of stops they have
+#' routes_df %>% inner_join(trips_df, by="route_id") %>%
+#'   inner_join(stop_times_df) %>% 
+#'     inner_join(stops_df, by="stop_id") %>% 
+#'       group_by(route_long_name) %>%
+#'         summarise(stop_count=n_distinct(stop_id)) %>%
+#'           arrange(desc(stop_count))
+#' 
 
-import_gtfs <- function(path, data_dir = tempdir(), local = FALSE, quiet = FALSE) {
+import_gtfs <- function(path, local = FALSE, quiet = FALSE) {
   if(local) {
     path <- normalizePath(path) 
     data_list <- path %>%
@@ -95,14 +44,67 @@ import_gtfs <- function(path, data_dir = tempdir(), local = FALSE, quiet = FALSE
             read_and_validate()
   }
 
-  # show note, which is suppressed in read_gtfs
-  if(!quiet) {
-    message("\n")
-    message('NOTE: Parsing errors and warnings while importing data can be extracted from any given dataframe with `attr(df, "problems")`.')
-    message("\n")
-  }
-
   return(data_list) 
+}
+
+#' Download a zipped GTFS feed file from a url
+#'
+#' @param url Character URL of GTFS feed.
+#' @param path Character. Folder into which to put zipped file. If NULL, then save a tempfile
+#' @param quiet Boolean. Whether to see file download progress. FALSE by default.
+#'
+#' @return File path
+#' @importFrom dplyr %>%
+#'
+#' @keywords internal
+
+download_from_url <- function(url, path=tempfile(fileext = ".zip"), quiet=FALSE) {
+  
+  stopifnot(length(url) == 1)
+  
+  # check if single element of dataframe was inputed. if so, convert to single value; error otherwise.
+  if(!is.null(dim(url))) {
+    if(all(dim(url) == c(1,1))) {
+      url <- unlist(url, use.names = FALSE)
+    } else {
+      stop('Please input a single url.')
+    }
+  }
+  
+  # check if url links to a zip file
+  valid <- valid_url(url)
+  if(!valid) {
+    if(!quiet) {
+      warn1 <- sprintf("Link '%s' is invalid; failed to connect. NULL was returned.", url)
+      warning(warn1)
+    }
+    return(NULL)
+  }
+  
+  r <- httr::GET(url)
+  
+  # Get gtfs zip if url can be reach
+  if(httr::status_code(r) == 200) {
+    check <- try(utils::download.file(url, path, quiet = quiet), silent=TRUE)
+    if(check %>% assertthat::is.error()) {
+      warn <- sprintf("Link '%s' failed to download. NULL was returned.", url)
+      warning(warn)
+      return(NULL)
+    }
+  } else {
+    warn <- sprintf("Link '%s' cannot be reached. NULL was returned.", url)
+    warning(warn)
+    return(NULL)
+  }
+  
+  # check path
+  check <- try(normalizePath(path), silent = TRUE)
+  if(assertthat::is.error(check)) {
+    warn <- 'Invalid file path. NULL is returned.'
+    if(!quiet) warning(warn)
+    return(NULL)
+  }
+  return(path)
 }
 
 #' Checks UTF-8-BOM encoding. Special thanks to @patperu for finding the issue and to @hrbrmstr for the code to help deal with the issue.
@@ -143,7 +145,7 @@ has_bom <- function(path, encoding="UTF-8") {
 #' 
 #' #TODO:NEEDS TO WRITE TO TEMPFILE
 
-unzip_file <- function(zipfile, delete_zip = TRUE, quiet = FALSE) {
+unzip_file <- function(zipfile, ex_dir=tempdir(), delete_zip = TRUE, quiet = FALSE) {
   f <- zipfile
 
   # check path
@@ -156,9 +158,8 @@ unzip_file <- function(zipfile, delete_zip = TRUE, quiet = FALSE) {
   f <- normalizePath(f)
 
   # create extraction folder
-  ex_dir <- file.path(dirname(f), strsplit(basename(f), "\\.")[[1]][1])
 
-  utils::unzip(f, exdir = ex_dir)
+  utils::unzip(f, exdir=ex_dir)
 
   file.remove(f)
 
@@ -179,29 +180,36 @@ unzip_file <- function(zipfile, delete_zip = TRUE, quiet = FALSE) {
 
 #' Read files with a "txt" suffix in a folder into objects in memory and delete files
 #'
-#' @param exdir Character. Path to folder into which files were extracted.
+#' @param ex_dir Character. Path to folder into which files were extracted.
 #' @param delete_files Logical, whether to delete the files after extraction.  Does not delete by default.
 #' @param quiet Boolean. Whether to output messages and files found in folder.
 #' @keywords internal
-list_files <- function(exdir, delete_files = FALSE, quiet = FALSE) {
+list_files <- function(ex_dir, delete_files = FALSE, quiet = FALSE) {
 
   # check path
-  check <- try(normalizePath(exdir), silent=TRUE)
+  check <- try(normalizePath(ex_dir), silent=TRUE)
   if(assertthat::is.error(check)) {
     warn <- 'Invalid file path. NULL is returned.'
     if(!quiet) warning(warn)
     return(NULL)
   }
 
-  all_files <- list.files(exdir, full.names = TRUE)
-  return(all_files)
+  file_list <- list.files(ex_dir, full.names = TRUE)
+  return(file_list)
 }
 
-read_and_validate <- function(all_files, delete_files = FALSE, quiet = FALSE) {
+read_and_validate <- function(all_files, delete_files = TRUE, quiet = FALSE) {
+  file_list <- sapply(all_files,get_file_shortname)
+  file_validation_meta <- validate_files(file_list)
+  valid_files_meta <- file_validation_meta %>% 
+    dplyr::filter(spec != 'ext' & provided_status=="yes")
+  valid_filenames <- names(file_list[file_list %in% valid_files_meta$file])
   exec_env <- environment()
-
-  lapply(all_files, function(x) read_gtfs_files(x, 
-    assign_envir = exec_env, quiet = quiet))
+  
+  lapply(valid_filenames, 
+         function(x) read_gtfs_file(x, 
+                                    assign_envir = exec_env, 
+                                    quiet = quiet))
 
   ls_envir <- ls(envir = exec_env)
 
@@ -210,14 +218,13 @@ read_and_validate <- function(all_files, delete_files = FALSE, quiet = FALSE) {
   gtfs_list <- mget(df_list, envir = exec_env)
 
   if (delete_files) {
-    file.remove(all_files)
-    file.remove(exdir)
+    file.remove(valid_filenames)
   }
 
   if(!quiet) message('...done.\n\n')
 
   # check if valid 'gtfs'
-  check <- validate_gtfs_structure(gtfs_list, return_gtfs_obj = FALSE, quiet = TRUE)
+  check <- validate_gtfs_structure(valid_files_meta, gtfs_list, return_gtfs_obj = FALSE, quiet = TRUE)
   valid <- all(check$all_req_files, check$all_req_fields_in_req_files)
 
   if(!quiet) message("Testing data structure...")
@@ -227,7 +234,7 @@ read_and_validate <- function(all_files, delete_files = FALSE, quiet = FALSE) {
   } else {
     if(!quiet) message("...failed. Invalid data structure.\n")
   }
-
+  gtfs_list$validation <- check 
   return(gtfs_list)
   
 }
@@ -240,23 +247,34 @@ read_and_validate <- function(all_files, delete_files = FALSE, quiet = FALSE) {
 #' @noRd
 #' @keywords internal
 
-read_gtfs_files <- function(file_path, assign_envir, quiet = FALSE) {
-
-  split_path <- strsplit(file_path, '/')
-  file_name <- split_path[[1]][length(split_path[[1]])]
-
-  prefix <- gsub('.txt|-new', '', file_name) 
-  # suffix '.*-new.txt' comes from trillium data
-  prefix <- gsub('\\-|\\.', '_', prefix)
+read_gtfs_file <- function(file_path, assign_envir, quiet = FALSE) {
+  prefix <- get_file_shortname(file_path)
   df_name <- paste0(prefix, '_df')
 
-  if(!quiet) message(paste0('Reading ', file_name))
+  if(!quiet) message(paste0('Reading ', df_name))
 
   new_df <- parse_gtfs(prefix, file_path, quiet = quiet) 
   # will have warning even though we fix problem
 
   assign(df_name, new_df, envir = assign_envir)
 
+}
+
+#' Function to get the gtfs table name from the file string
+#'
+#' @param file_path Character file path
+#' @return gtfs_table_name a character vector of file names and their full paths
+#' @noRd
+#' @keywords internal
+#' 
+get_file_shortname <- function(file_path) {
+  split_path <- strsplit(file_path, '/')
+  file_name <- split_path[[1]][length(split_path[[1]])]
+
+  prefix <- gsub('.txt|-new', '', file_name) 
+  # suffix '.*-new.txt' comes from trillium data
+  prefix <- gsub('\\-|\\.', '_', prefix)
+  return(prefix)
 }
 
 #' Function to better read in GTFS txt files
