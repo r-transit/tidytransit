@@ -53,7 +53,7 @@ Among the many [contributors](https://github.com/ropensci/gtfsr/graphs/contribut
 
 Fetch data for a bus system in Accra, Ghana from a URL.  
 
-```{r readme-body}
+```{r readme-body, eval=FALSE}
 library(trread)
 library(dplyr)
 
@@ -62,7 +62,7 @@ accra_gtfs <- import_gtfs("https://github.com/AFDLab4Dev/AccraMobility/raw/maste
 
 Count and list the number of stops per route. 
 
-```{r}
+```{r, eval=FALSE}
 attach(accra_gtfs)
 
 routes_df %>% inner_join(trips_df, by="route_id") %>%

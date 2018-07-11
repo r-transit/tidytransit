@@ -12,6 +12,7 @@ working <- function() {
 
 #import_gtfs()
 test_that('Import a GTFS object from URL', {
+  skip_on_cran()
   if(working()==FALSE){
       skip("no internet, skipping")
   }

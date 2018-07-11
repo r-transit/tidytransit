@@ -70,3 +70,9 @@ routes_df %>% inner_join(trips_df, by="route_id") %>%
 #> 10 Kasoa ↔ Korle Bu                 84
 #> # ... with 261 more rows
 ```
+
+## How GTFS Tables are Related
+
+[Danny Whalen](https://github.com/invisiblefunnel) made an excellent graph of the relationships among gtfs tables in the [partidge](https://github.com/remix/partridge) package for Python, copied below:
+
+![gtfs-relationship-diagram](/images/dependency-graph-d-whalen.png)

@@ -16,6 +16,7 @@ check <- function() {
 }
 
 check_metadata <- function(url) {
+  skip_on_cran()
   gtfs_obj1 <- import_gtfs(url)
   expect_true(gtfs_obj1$validation$all_req_files)
   
@@ -29,7 +30,7 @@ check_metadata <- function(url) {
 }
 
 test_that('Some minimal validation is performed and returned', {
-
+  skip_on_cran()
 	indx <- sapply(urls, working)
 	urls <- urls[indx] # keep only working urls
   sapply(urls,check_metadata)

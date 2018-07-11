@@ -11,6 +11,7 @@ working <- function() {
 }
 
 test_that('Reading GTFS files from unzipped folder', {
+  skip_on_cran()
   if(working()==FALSE){
     skip("no internet, skipping")
   }

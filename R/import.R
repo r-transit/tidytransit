@@ -15,11 +15,11 @@
 #'
 #' @export
 #' @importFrom dplyr %>% arrange summarise group_by inner_join
-#' @examples 
+#' @examples \dontrun{
 #' library(dplyr)
-#' u1 <- "https://github.com/AFDLab4Dev/AccraMobility/raw/master/GTFS/GTFS_Accra.zip"
-#' accra_gtfs <- import_gtfs(u1)
-#' attach(accra_gtfs)
+#' u1 <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
+#' sample_gtfs <- import_gtfs(u1)
+#' attach(sample_gtfs)
 #' #list routes by the number of stops they have
 #' routes_df %>% inner_join(trips_df, by="route_id") %>%
 #'   inner_join(stop_times_df) %>% 
@@ -27,7 +27,7 @@
 #'       group_by(route_long_name) %>%
 #'         summarise(stop_count=n_distinct(stop_id)) %>%
 #'           arrange(desc(stop_count))
-#' 
+#' }
 
 import_gtfs <- function(path, local = FALSE, quiet = FALSE) {
   if(local) {
