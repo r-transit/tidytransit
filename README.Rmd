@@ -65,10 +65,3 @@ routes_df %>% inner_join(trips_df, by="route_id") %>%
         summarise(stop_count=n_distinct(stop_id)) %>%
   arrange(desc(stop_count))
 ```
-
-
-## How GTFS Tables are Related
-
-[Danny Whalen](https://github.com/invisiblefunnel) made an excellent graph of the relationships among gtfs tables in the [partidge](https://github.com/remix/partridge) package for Python, copied below:
-
-![gtfs-relationship-diagram](/images/dependency-graph-d-whalen.png)
