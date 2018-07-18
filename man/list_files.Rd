@@ -4,12 +4,10 @@
 \alias{list_files}
 \title{Read files with a "txt" suffix in a folder into objects in memory and delete files}
 \usage{
-list_files(ex_dir, delete_files = FALSE, quiet = FALSE)
+list_files(ex_dir, quiet = FALSE)
 }
 \arguments{
 \item{ex_dir}{Character. Path to folder into which files were extracted.}
-
-\item{delete_files}{Logical, whether to delete the files after extraction.  Does not delete by default.}
 
 \item{quiet}{Boolean. Whether to output messages and files found in folder.}
 }

@@ -137,15 +137,16 @@ has_bom <- function(path, encoding="UTF-8") {
 #' Unzip a file and delete zip
 #'
 #' @param zipfile path to zipped file
-#' @param delete_zip Boolean. whether to delete the zipped file after extraction.  Deletes by default.
+#' @param ex_dir path to unzip file to-default tempdir()
 #' @param quiet Boolean. Whether to output files found in folder.
 #'
 #' @return file path to directory with gtfs .txt files
 #' @keywords internal
 #' 
-#' #TODO:NEEDS TO WRITE TO TEMPFILE
 
-unzip_file <- function(zipfile, ex_dir=tempdir(), delete_zip = TRUE, quiet = FALSE) {
+unzip_file <- function(zipfile, 
+                       ex_dir=tempdir(), 
+                       quiet = FALSE) {
   f <- zipfile
 
   # check path
@@ -181,10 +182,9 @@ unzip_file <- function(zipfile, ex_dir=tempdir(), delete_zip = TRUE, quiet = FAL
 #' Read files with a "txt" suffix in a folder into objects in memory and delete files
 #'
 #' @param ex_dir Character. Path to folder into which files were extracted.
-#' @param delete_files Logical, whether to delete the files after extraction.  Does not delete by default.
 #' @param quiet Boolean. Whether to output messages and files found in folder.
 #' @keywords internal
-list_files <- function(ex_dir, delete_files = FALSE, quiet = FALSE) {
+list_files <- function(ex_dir, quiet = FALSE) {
 
   # check path
   check <- try(normalizePath(ex_dir), silent=TRUE)
@@ -198,7 +198,7 @@ list_files <- function(ex_dir, delete_files = FALSE, quiet = FALSE) {
   return(file_list)
 }
 
-read_and_validate <- function(all_files, delete_files = TRUE, quiet = FALSE) {
+read_and_validate <- function(all_files, quiet = FALSE) {
   file_list <- sapply(all_files,get_file_shortname)
   file_validation_meta <- validate_files(file_list)
   valid_files_meta <- file_validation_meta %>% 
@@ -216,10 +216,6 @@ read_and_validate <- function(all_files, delete_files = TRUE, quiet = FALSE) {
   df_list <- ls_envir[grepl(pattern = '_df', x = ls_envir)]
 
   gtfs_list <- mget(df_list, envir = exec_env)
-
-  if (delete_files) {
-    file.remove(valid_filenames)
-  }
 
   if(!quiet) message('...done.\n\n')
 

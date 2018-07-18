@@ -44,7 +44,7 @@ test_that('Check if/how we are parsing files', {
   else {
     url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
     zip <- download_from_url(url)
-    folder <- unzip_file(zip, delete_zip = TRUE)
+    folder <- unzip_file(zip)
     files <- list.files(folder, full.names = TRUE)
     agency_file <- files[1]
     # empty file

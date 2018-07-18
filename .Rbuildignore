@@ -9,6 +9,7 @@
 ^README\.Rmd$
 ^README-.*\.png$
 ^README.html
+^README.md
 ^packrat/
 ^CONDUCT\.md$
 ^docs$
