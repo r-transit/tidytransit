@@ -1,24 +1,23 @@
 library(trread)
-context('Reading GTFS files/zip directory')
+context('Import and Validation')
 
-url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
+gtfs_example_url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
 
 working <- function() {
-  url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
-  connecting <- function(url) {
-    r <- base::try(httr::GET(url, httr::timeout(5)))
+  connecting <- function(gtfs_example_url) {
+    r <- base::try(httr::GET(gtfs_example_url, httr::timeout(5)))
     if(!assertthat::is.error(r)) r$status_code == 200 else FALSE
   }
-  connecting(url)
+  connecting(gtfs_example_url)
 }
 
-test_that('Downloading from url returns a file that exists', {
+test_that('Downloading a zip file from a gtfs_example_url returns a file', {
   skip_on_cran()
   if(working()==FALSE){
     skip("no internet, skipping")
   }
   else {  
-  zip <- trread::download_from_url(url)
+  zip <- trread::download_from_url(gtfs_example_url)
 
   expect_true(
     file.exists(zip)
@@ -33,7 +32,7 @@ test_that('Unzip and list GTFS files returns more than 4 files', {
   }
   else {
   
-  zip <- trread::download_from_url(url)
+  zip <- trread::download_from_url(gtfs_example_url)
   folder <- trread::unzip_file(zip)
   files <- trread::list_files(folder)
 
@@ -41,24 +40,23 @@ test_that('Unzip and list GTFS files returns more than 4 files', {
   }
 })
 
-test_that('Read and validate returns a list of class "gtfs" with a non-empty agency_df', {
+test_that('Read and validate returns a list of class "gtfs"', {
   skip_on_cran()
   if(working()==FALSE){
     skip("no internet, skipping")
   }
   else {
   
-  zip <- download_from_url(url)
+  zip <- download_from_url(gtfs_example_url)
   folder <- unzip_file(zip)
   files <- list_files(folder)
 
   expect_is(read_and_validate(files), 'gtfs')
-  expect_true(dim(files$agency_df)[1]>0)
   }
 })
 
 test_that('import-bad paths throw good errors', {
-  path <- "#!:D"
+  not_a_url <- "#!:D"
   expect_error(import_gtfs(path)) # invalid path
 })
 
@@ -68,7 +66,7 @@ test_that('import-empty txt files are not imported and non-empty ones are import
     skip("no internet, skipping")
   }
   else {
-    zip <- download_from_url(url)
+    zip <- download_from_url(gtfs_example_url)
     folder <- unzip_file(zip)
     files <- list.files(folder, full.names = TRUE)
     agency_file <- files[1]
@@ -90,10 +88,8 @@ test_that('the import_gtfs function works', {
       skip("no internet, skipping")
   }
   else {
-    url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
-  
     # non-specified path
-    x <- import_gtfs(url, quiet=TRUE)
+    x <- import_gtfs(gtfs_example_url, quiet=TRUE)
     expect_is(x, 'gtfs') # should return 'list' object
   }
   
@@ -118,24 +114,18 @@ test_that('the import_gtfs function fails gracefully', {
 
 test_that('Some minimal validation is performed and returned', {
   skip_on_cran()
-  indx <- sapply(urls, working)
-  urls <- urls[indx] # keep only working urls
-  sapply(urls,check_metadata)
+  if(working()){
+    gtfs_obj1 <- import_gtfs(gtfs_example_url)
+    expect_true(gtfs_obj1$validation$all_req_files)
+    
+    expect_true(dim(gtfs_obj1$validation$full_column_and_file_validation_df)[1]>0)
+    expect_true(dim(gtfs_obj1$validation$full_column_and_file_validation_df)[2]==10)
+    
+    x <- c("all_req_files", "all_req_fields_in_req_files", "all_req_fields_in_opt_files",
+           "full_column_and_file_validation_df")
+    
+    expect_true(table(x %in% names(gtfs_obj1$validation))[['TRUE']]==4) # check that it has required names
+  }
 })
-
-check_metadata <- function(url) {
-  skip_on_cran()
-  gtfs_obj1 <- import_gtfs(url)
-  expect_true(gtfs_obj1$validation$all_req_files)
-  
-  expect_true(dim(gtfs_obj1$validation$full_column_and_file_validation_df)[1]>0)
-  expect_true(dim(gtfs_obj1$validation$full_column_and_file_validation_df)[2]==10)
-  
-  x <- c("all_req_files", "all_req_fields_in_req_files", "all_req_fields_in_opt_files",
-         "full_column_and_file_validation_df")
-  
-  expect_true(table(x %in% names(gtfs_obj1$validation))[['TRUE']]==4) # check that it has required names
-}
-
 
 

@@ -75,8 +75,8 @@ download_from_url <- function(url, path=tempfile(fileext = ".zip"), quiet=FALSE)
   valid <- valid_url(url)
   if(!valid) {
     if(!quiet) {
-      warn1 <- sprintf("Link '%s' is invalid; failed to connect. NULL was returned.", url)
-      warning(warn1)
+      stop1 <- sprintf("Link '%s' is invalid; failed to connect. NULL was returned.", url)
+      stop(stop1)
     }
     return(NULL)
   }
