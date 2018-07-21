@@ -4,6 +4,7 @@ context('Import and Validation')
 gtfs_example_url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
 
 working <- function() {
+  skip_on_cran()
   connecting <- function(gtfs_example_url) {
     r <- base::try(httr::GET(gtfs_example_url, httr::timeout(5)))
     if(!assertthat::is.error(r)) r$status_code == 200 else FALSE
@@ -19,9 +20,7 @@ test_that('Downloading a zip file from a gtfs_example_url returns a file', {
   else {  
   zip <- trread::download_from_url(gtfs_example_url)
 
-  expect_true(
-    file.exists(zip)
-    )
+  expect_true(file.exists(zip))
   }
 })
 
@@ -47,27 +46,29 @@ test_that('Read and validate returns a list of class "gtfs"', {
   }
   else {
   
-  zip <- download_from_url(gtfs_example_url)
-  folder <- unzip_file(zip)
-  files <- list_files(folder)
+  zip <- trread::download_from_url(gtfs_example_url)
+  folder <- trread::unzip_file(zip)
+  files <- trread::list_files(folder)
 
   expect_is(read_and_validate(files), 'gtfs')
   }
 })
 
 test_that('import-bad paths throw good errors', {
+  skip_on_cran()
   not_a_url <- "#!:D"
   expect_error(import_gtfs(path)) # invalid path
 })
 
 # parse_gtfs()
 test_that('import-empty txt files are not imported and non-empty ones are imported', {
+  skip_on_cran()
   if(working()==FALSE){
     skip("no internet, skipping")
   }
   else {
-    zip <- download_from_url(gtfs_example_url)
-    folder <- unzip_file(zip)
+    zip <- trread::download_from_url(gtfs_example_url)
+    folder <- trread::unzip_file(zip)
     files <- list.files(folder, full.names = TRUE)
     agency_file <- files[1]
     # empty file
@@ -96,7 +97,7 @@ test_that('the import_gtfs function works', {
 })
 
 #import_gtfs()
-test_that('the import_gtfs function fails gracefully', {
+test_that('the import_gtfs function fails gracefully on bad urls', {
   skip_on_cran()
   if(working()==FALSE){
       skip("no internet, skipping")
@@ -115,7 +116,7 @@ test_that('the import_gtfs function fails gracefully', {
 test_that('Some minimal validation is performed and returned', {
   skip_on_cran()
   if(working()){
-    gtfs_obj1 <- import_gtfs(gtfs_example_url)
+    gtfs_obj1 <- trread::import_gtfs(gtfs_example_url)
     expect_true(gtfs_obj1$validation$all_req_files)
     
     expect_true(dim(gtfs_obj1$validation$full_column_and_file_validation_df)[1]>0)
