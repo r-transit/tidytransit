@@ -24,7 +24,7 @@ which contains details on whether all required files were found,
 and which required and optional columns are present.
 }
 \examples{
-\dontrun{
+\donttest{
 library(dplyr)
 u1 <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
 sample_gtfs <- import_gtfs(u1)

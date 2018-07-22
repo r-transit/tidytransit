@@ -18,7 +18,7 @@ test_that('Downloading a zip file from a gtfs_example_url returns a file', {
     skip("no internet, skipping")
   }
   else {  
-  zip <- trread::download_from_url(gtfs_example_url)
+  zip <- trread:::download_from_url(gtfs_example_url)
 
   expect_true(file.exists(zip))
   }
@@ -31,9 +31,9 @@ test_that('Unzip and list GTFS files returns more than 4 files', {
   }
   else {
   
-  zip <- trread::download_from_url(gtfs_example_url)
-  folder <- trread::unzip_file(zip)
-  files <- trread::list_files(folder)
+  zip <- trread:::download_from_url(gtfs_example_url)
+  folder <- trread:::unzip_file(zip)
+  files <- trread:::list_files(folder)
 
   expect_true(length(files)>4)
   }
@@ -46,9 +46,9 @@ test_that('Read and validate returns a list of class "gtfs"', {
   }
   else {
   
-  zip <- trread::download_from_url(gtfs_example_url)
-  folder <- trread::unzip_file(zip)
-  files <- trread::list_files(folder)
+  zip <- trread:::download_from_url(gtfs_example_url)
+  folder <- trread:::unzip_file(zip)
+  files <- trread:::list_files(folder)
 
   expect_is(read_and_validate(files), 'gtfs')
   }
@@ -67,8 +67,8 @@ test_that('import-empty txt files are not imported and non-empty ones are import
     skip("no internet, skipping")
   }
   else {
-    zip <- trread::download_from_url(gtfs_example_url)
-    folder <- trread::unzip_file(zip)
+    zip <- trread:::download_from_url(gtfs_example_url)
+    folder <- trread:::unzip_file(zip)
     files <- list.files(folder, full.names = TRUE)
     agency_file <- files[1]
     # empty file

@@ -15,7 +15,7 @@
 #'
 #' @export
 #' @importFrom dplyr %>% arrange summarise group_by inner_join
-#' @examples \dontrun{
+#' @examples \donttest{
 #' library(dplyr)
 #' u1 <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
 #' sample_gtfs <- import_gtfs(u1)
