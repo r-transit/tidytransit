@@ -23,13 +23,19 @@ package.
 
 ## Installation
 
-For now, you can install this package from GitHub using the devtools
+For now, we recommend installing this package from GitHub using the devtools
 package:
 
     if (!require(devtools)) {
         install.packages('devtools')
     }
     devtools::install_github('r-gtfs/trread')
+
+If you don't have devtools, you can also install from CRAN:
+
+`install.packages('trread')`
+
+Though be aware that the CRAN release includes [bug which deletes local source GTFS files on read](https://github.com/r-gtfs/trread/issues/3)
 
 ## Usage
 
