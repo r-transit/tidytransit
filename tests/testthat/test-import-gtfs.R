@@ -2,6 +2,7 @@ library(trread)
 context('Import and Validation')
 
 gtfs_example_url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
+local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "trread")
 
 working <- function() {
   skip_on_cran()
@@ -12,14 +13,13 @@ working <- function() {
   connecting(gtfs_example_url)
 }
 
-test_that('import_gtfs() imports a local file to a list of dataframes', {
-  gtfs_path <- 'inst/extdata/google_transit_nyc_subway.zip'
+test_that('import_gtfs() imports a local file to a list of dataframes and doesnt delete the source file', {
   gtfs_obj <- trread:::import_gtfs(
-    here::here(gtfs_path),
+    local_gtfs_path,
     local=TRUE)
   
   expect_is(gtfs_obj, 'gtfs')
-  expect_true(file.exists(here::here(gtfs_path)))
+  file.exists(local_gtfs_path)
 })
 
 test_that('Downloading a zip file from a gtfs_example_url returns a file', {

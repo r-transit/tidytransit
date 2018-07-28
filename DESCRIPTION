@@ -1,7 +1,7 @@
 Package: trread
 Type: Package
 Title: Transit File Reader 
-Version: 0.2.4
+Version: 0.2.5
 Authors@R: c(
     person("Tom", "Buckley", role = c("aut", "cre"), email = "tom@tbuckl.com"),
     person("Danton", "Noriega-Goodwin", role = c("aut"), email = "danton.noriega@gmail.com"),
