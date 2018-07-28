@@ -162,7 +162,6 @@ unzip_file <- function(zipfile,
 
   utils::unzip(f, exdir=ex_dir)
 
-  file.remove(f)
 
   if(length(list.files(ex_dir)) == 0) {
     warn <- "No files found after decompressing. NULL is returned."
