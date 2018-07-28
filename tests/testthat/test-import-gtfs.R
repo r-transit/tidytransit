@@ -12,6 +12,16 @@ working <- function() {
   connecting(gtfs_example_url)
 }
 
+test_that('import_gtfs() imports a local file to a list of dataframes', {
+  gtfs_path <- 'inst/extdata/google_transit_nyc_subway.zip'
+  gtfs_obj <- trread:::import_gtfs(
+    here::here(gtfs_path),
+    local=TRUE)
+  
+  expect_is(gtfs_obj, 'gtfs')
+  expect_true(file.exists(here::here(gtfs_path)))
+})
+
 test_that('Downloading a zip file from a gtfs_example_url returns a file', {
   skip_on_cran()
   if(working()==FALSE){
