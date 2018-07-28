@@ -35,7 +35,7 @@ If you don't have devtools, you can also install from CRAN:
 
 `install.packages('trread')`
 
-Though be aware that the CRAN release includes [a bug which deletes local source GTFS files on read](https://github.com/r-gtfs/trread/issues/3)
+Though be aware that the CRAN release includes [a bug for local file read](https://github.com/r-gtfs/trread/issues/3)
 
 ## Usage
 
