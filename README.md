@@ -78,14 +78,10 @@ List the stops with the shortest headways in the system.
 
 ``` r
 stop_frequency_summary <- stop_frequency(NYC, by_route=FALSE) %>%
-  inner_join(NYC$stops_df) %>%
-    select(stop_name, headway) %>%
+  inner_join(NYC$stops_df, by="stop_id") %>%
+    select(stop_name, direction_id, stop_id, headway) %>%
       arrange(headway)
 ```
-
-    ## Joining, by = "stop_id"
-
-    ## Adding missing grouping variables: `direction_id`, `stop_id`
 
 ``` r
 head(stop_frequency_summary)
