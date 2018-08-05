@@ -1,8 +1,7 @@
-library(trread)
 context('Import and Validation')
 
 gtfs_example_url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
-local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "trread")
+local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
 
 working <- function() {
   skip_on_cran()
@@ -14,7 +13,7 @@ working <- function() {
 }
 
 test_that('import_gtfs() imports a local file to a list of dataframes and doesnt delete the source file', {
-  gtfs_obj <- trread:::import_gtfs(
+  gtfs_obj <- tidytransit:::import_gtfs(
     local_gtfs_path,
     local=TRUE)
   
@@ -28,7 +27,7 @@ test_that('Downloading a zip file from a gtfs_example_url returns a file', {
     skip("no internet, skipping")
   }
   else {  
-  zip <- trread:::download_from_url(gtfs_example_url)
+  zip <- tidytransit:::download_from_url(gtfs_example_url)
 
   expect_true(file.exists(zip))
   }
@@ -41,9 +40,9 @@ test_that('Unzip and list GTFS files returns more than 4 files', {
   }
   else {
   
-  zip <- trread:::download_from_url(gtfs_example_url)
-  folder <- trread:::unzip_file(zip)
-  files <- trread:::list_files(folder)
+  zip <- tidytransit:::download_from_url(gtfs_example_url)
+  folder <- tidytransit:::unzip_file(zip)
+  files <- tidytransit:::list_files(folder)
 
   expect_true(length(files)>4)
   }
@@ -56,9 +55,9 @@ test_that('Read and validate returns a list of class "gtfs"', {
   }
   else {
   
-  zip <- trread:::download_from_url(gtfs_example_url)
-  folder <- trread:::unzip_file(zip)
-  files <- trread:::list_files(folder)
+  zip <- tidytransit:::download_from_url(gtfs_example_url)
+  folder <- tidytransit:::unzip_file(zip)
+  files <- tidytransit:::list_files(folder)
 
   expect_is(read_and_validate(files), 'gtfs')
   }
@@ -77,8 +76,8 @@ test_that('import-empty txt files are not imported and non-empty ones are import
     skip("no internet, skipping")
   }
   else {
-    zip <- trread:::download_from_url(gtfs_example_url)
-    folder <- trread:::unzip_file(zip)
+    zip <- tidytransit:::download_from_url(gtfs_example_url)
+    folder <- tidytransit:::unzip_file(zip)
     files <- list.files(folder, full.names = TRUE)
     agency_file <- files[1]
     # empty file
@@ -87,8 +86,8 @@ test_that('import-empty txt files are not imported and non-empty ones are import
     files <- list.files(folder, full.names = TRUE)
     empty_file <- files[1]
     
-    expect_null(trread:::parse_gtfs('_empty', empty_file)) # expect null since file is empty
-    expect_is(trread:::parse_gtfs('agency', agency_file), 'tbl_df') # check for tibble object
+    expect_null(tidytransit:::parse_gtfs('_empty', empty_file)) # expect null since file is empty
+    expect_is(tidytransit:::parse_gtfs('agency', agency_file), 'tbl_df') # check for tibble object
   }
 })
 
@@ -126,7 +125,7 @@ test_that('the import_gtfs function fails gracefully on bad urls', {
 test_that('Some minimal validation is performed and returned', {
   skip_on_cran()
   if(working()){
-    gtfs_obj1 <- trread::import_gtfs(gtfs_example_url)
+    gtfs_obj1 <- tidytransit::import_gtfs(gtfs_example_url)
     expect_true(gtfs_obj1$validation$all_req_files)
     
     expect_true(dim(gtfs_obj1$validation$full_column_and_file_validation_df)[1]>0)

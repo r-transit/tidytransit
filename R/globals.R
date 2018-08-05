@@ -31,7 +31,9 @@ if(getRversion() >= "3.1.0") {
       'trip_id',
       'validation_details',
       'validation_status',
-      'provided_status'
+      'provided_status',
+      'loc_lat',
+      'loc_lng'
     )
   )
 }

@@ -1,69 +1,145 @@
-[![Travis-CI Build Status](https://travis-ci.com/r-transit/trread.svg?branch=master)](https://travis-ci.com/r-transit/trread)
-[![cran version](https://www.r-pkg.org/badges/version/trread)](https://cran.r-project.org/package=trread)
+[![Travis-CI Build
+Status](https://travis-ci.com/r-transit/tidytransit.svg?branch=master)](https://travis-ci.com/r-transit/tidytransit)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/tidytransit)](https://cran.r-project.org/package=tidytransit)
 
-## Description
+<!-- MarkdownTOC bracket="round" autolink="true" -->
 
-`trread` is a package for reading the GTFS data standard into R. It can
-read directly from URL’s or flat files, and does some validation of the
-data structure against the specification.
+- [Goal](#goal)
+- [Installation](#installation)
+- [Examples](#examples)
+    - [Headways/Frequencies](#headwaysfrequencies)
+        - [Route Headways](#route-headways)
+        - [Stop Headways](#stop-headways)
+    - [Map Data](#map-data)
+        - [Map Route Frequencies](#map-route-frequencies)
+- [GTFS Table Relationships](#gtfs-table-relationships)
+- [Background](#background)
 
-## Goal
+<!-- /MarkdownTOC -->
 
-This is a highly simplified fork/piece of the
-[gtfsr](https://github.com/ropensci/gtfsr/) package.
+# Goal
 
-The goal is to break that package into parts to simplify maintenance.
+Use this packae to read, validate, analyze, and map data in the [General Transit Feed Specification](http://gtfs.org/) in R. 
 
-## Contributors
+# Installation
 
-Among the many
-[contributors](https://github.com/ropensci/gtfsr/graphs/contributors),
-[Danton Noriega](https://github.com/dantonnoriega) wrote much of this
-package.
-
-## Installation
-
-Install from CRAN:
-
-`install.packages('trread')`
-
-## Usage
-
-Fetch data for a bus system in Accra, Ghana from GitHub.
+Install from github using `devtools`:
 
 ``` r
-library(trread)
+if (!require(devtools)) {
+    install.packages('devtools')
+}
+devtools::install_github('r-transit/tidytransit')
+```
+
+# Examples
+
+Load required packages:
+
+``` r
+library(tidytransit)
 library(dplyr)
-
-accra_gtfs <- import_gtfs("https://github.com/AFDLab4Dev/AccraMobility/raw/master/GTFS/GTFS_Accra.zip")
-#> [1] "agency.txt"      "calendar.txt"    "feed_info.txt"   "frequencies.txt"
-#> [5] "routes.txt"      "shapes.txt"      "stop_times.txt"  "stops.txt"      
-#> [9] "trips.txt"
 ```
 
-Count and list the number of stops per route.
+## Headways/Frequencies
+
+Use NYC MTA subway schedule data to calculate headways by route, pulling directly from the MTA's URL.
 
 ``` r
-attach(accra_gtfs)
-
-routes_df %>% inner_join(trips_df, by="route_id") %>%
-  inner_join(stop_times_df) %>% 
-    inner_join(stops_df, by="stop_id") %>% 
-      group_by(route_long_name) %>%
-        summarise(stop_count=n_distinct(stop_id)) %>%
-  arrange(desc(stop_count))
-#> # A tibble: 271 x 2
-#>    route_long_name          stop_count
-#>    <chr>                         <int>
-#>  1 Kasoa ↔ Accra New Town          116
-#>  2 Omanjor ↔ Accra CMB             109
-#>  3 Manhean ↔ Accra CMB             105
-#>  4 Adeyman ↔ Abeka Lapaz           104
-#>  5 Ashongman ↔ Abeka Lapaz         101
-#>  6 Nungua ↔ Circle Odorna           91
-#>  7 Odorna ↔ Nungua                  91
-#>  8 Teshie-Nungua ↔ Achimota         91
-#>  9 Accra CMB ↔ Ablekuma             86
-#> 10 Kasoa ↔ Korle Bu                 84
-#> # ... with 261 more rows
+NYC <- import_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
 ```
+
+### Route Headways
+
+List the routes with the shortest median headways.
+
+``` r
+route_frequency_summary <- route_frequency(NYC) %>%
+  arrange(median_headways)
+
+fast_routes <- filter(route_frequency_summary, median_headways<25)
+
+knitr::kable(head(fast_routes))
+```
+
+| route\_id | median\_headways | mean\_headways | st\_dev\_headways | stop\_count |
+| :-------- | ---------------: | -------------: | ----------------: | ----------: |
+| GS        |                4 |              4 |              0.01 |           4 |
+| L         |                4 |              4 |              0.13 |          48 |
+| 1         |                5 |              5 |              0.14 |          76 |
+| 7         |                5 |              5 |              0.29 |          44 |
+| 6         |                6 |              7 |              2.84 |          76 |
+| E         |                6 |             23 |             53.01 |          48 |
+
+### Stop Headways
+
+List the stops with the shortest headways in the system.
+
+``` r
+stop_frequency_summary <- stop_frequency(NYC, by_route=FALSE) %>%
+  inner_join(NYC$stops_df) %>%
+    select(stop_name, headway) %>%
+      arrange(headway)
+```
+
+    ## Joining, by = "stop_id"
+
+    ## Adding missing grouping variables: `direction_id`, `stop_id`
+
+``` r
+head(stop_frequency_summary)
+```
+
+    ## # A tibble: 6 x 4
+    ## # Groups:   direction_id, stop_id [6]
+    ##   direction_id stop_id stop_name             headway
+    ##          <int> <chr>   <chr>                   <dbl>
+    ## 1            0 902N    Times Sq - 42 St         3.60
+    ## 2            1 901S    Grand Central - 42 St    3.60
+    ## 3            1 902S    Times Sq - 42 St         3.60
+    ## 4            0 901N    Grand Central - 42 St    3.61
+    ## 5            0 702N    Mets - Willets Point     3.72
+    ## 6            0 707N    Junction Blvd            3.72
+
+## Map Data
+
+Now lets turn the routes and stops tables in [`simple features`](https://github.com/r-spatial/sf) data frames:
+
+``` r
+NYC <- gtfs_as_sf(NYC)
+```
+
+This adds routes and stops tables with simple features/geometries to the list of NYC GTFS data. 
+
+### Map Route Frequencies
+
+Now we can join these frequencies to route geometries and plot them with
+base R.
+
+``` r
+routes_headways_sf <- right_join(NYC$sf_routes,fast_routes, by="route_id")
+routes_headways_sf_vars_only <- select(routes_headways_sf,-route_id)
+
+plot(routes_headways_sf_vars_only)
+```
+
+![](Readme_files/figure-gfm/plot1-1.png)<!-- -->
+
+# GTFS Table Relationships
+
+[Danny Whalen](https://github.com/invisiblefunnel) made a nice graph of
+the relationships among gtfs tables in the
+[partidge](https://github.com/remix/partridge) package for Python,
+copied below. This can be a very helpful guide as you try to get a grasp
+on the kinds of questions you might want to ask of transit schedule
+data.
+
+![gtfs-relationship-diagram](Readme_files/figure-gfm/dependency-graph.png)
+
+# Background
+
+In function, this package and the tools it imports take their inspiration from the [ROpenSci gtfsr](https://github.com/ropensci/gtfsr) package.
+
+My intention was to build smaller, simpler components that can be maintained, potentially more easily, by multiple people.
+

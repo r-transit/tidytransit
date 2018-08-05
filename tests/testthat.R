@@ -1,4 +1,4 @@
 library(testthat)
-library(trread)
+library(tidytransit)
 
-test_check("trread")
+test_check("tidytransit")

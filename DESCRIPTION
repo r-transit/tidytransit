@@ -1,15 +1,15 @@
-Package: trread
+Package: tidytransit
 Type: Package
-Title: Transit File Reader 
-Version: 0.2.5
+Title: Read, Validate, Analyze, and Map Files in the General Transit Feed Specification  
+Version: 0.2.2
 Authors@R: c(
     person("Tom", "Buckley", role = c("aut", "cre"), email = "tom@tbuckl.com"),
-    person("Danton", "Noriega-Goodwin", role = c("aut"), email = "danton.noriega@gmail.com"),
+    person("Danton", "Noriega-Goodwin", role = c("cph"), email = "danton.noriega@gmail.com"),
     person("Elaine", "McVey", role = c("aut"), email = "elaine.mcvey@transloc.com"),
-    person("Charles Hans", "Thompson", role = c("ctb"), email = "hans.thompson1@gmail.com"),
-    person("Michael", "Sumner", role = c("ctb"))
+    person("Charles Hans", "Thompson", role = c("cph"), email = "hans.thompson1@gmail.com"),
+    person("Michael", "Sumner", role = c("cph"))
   )
-Description: Read General Transit Feed Specification (GTFS) zipfiles into a list of R dataframes. Perform validation of the data structure against the specification. Please see the GTFS documentation here for more detail: <http://gtfs.org/>.
+Description: Read General Transit Feed Specification (GTFS) zipfiles into a list of R dataframes. Perform validation of the data structure against the specification. Analyze the headways and frequencies at routes and stops. Create maps and perform spatial analysis on the routes and stops. Please see the GTFS documentation here for more detail: <http://gtfs.org/>.
 License: GPL
 LazyData: TRUE
 Depends: R (>= 3.2.4)
@@ -23,13 +23,17 @@ Imports:
     stringr,
     assertthat,
     scales,
-    here
+    here,
+    rlang,
+    sf,
+    lubridate,
+    tidyr
 Suggests:
     testthat,
     knitr,
     rmarkdown
 RoxygenNote: 6.0.1
-URL: https://github.com/r-gtfs/trread
-BugReports: https://github.com/r-gtfs/trread/issues
+URL: https://github.com/r-transit/tidytransit
+BugReports: https://github.com/r-transit/tidytransit
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr

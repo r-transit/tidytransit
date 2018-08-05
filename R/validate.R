@@ -236,16 +236,18 @@ calendar_exception_fix <- function(all_val_df) {
   # see if missing calendar
   missing_calendar <- all_val_df %>%
     dplyr::filter(file == 'calendar') %>%
-    '$'('file_provided_status') %>%
-    unique() %>%
-    `==`('no')
+    dplyr::pull('file_provided_status') %>%
+    unique()
+  
+  missing_calendar <- c('no') %in% missing_calendar
 
   # see if calendar_dates file includes field `date`
   has_date_field <- all_val_df %>%
     dplyr::filter(file == 'calendar_dates') %>%
     dplyr::filter(field == 'date') %>%
-    '$'('field_provided_status') %>%
-    `==`('yes')
+    dplyr::pull('field_provided_status')
+
+  has_date_field <- c('yes') %in% missing_calendar
 
   # if missing calendar.txt but calendar_dates.txt has 'date' field, then update validation status of calendar to 'ok'
 

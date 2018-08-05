@@ -1,0 +1,102 @@
+---
+title: "Frequencies-and-Map-Data-from-GTFS"
+author: "Tom Buckley"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Frequencies-and-Map-Data-from-GTFS}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE, warning=FALSE, results='hide'}
+library(tidytransit)
+library(dplyr)
+```
+
+### Calculate Headways
+
+#### Import Data
+
+We'll use NYC MTA subway data to demonstrate headway calculations, pulling directly from their URL.
+
+A copy of these data are cached in the package for convenience and testing.
+
+```{r, message=FALSE, warning=FALSE, results='hide'}
+local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+NYC <- import_gtfs(local_gtfs_path, local=TRUE)
+```
+
+If you want to pull the file directly from the url you can also use:
+
+```{r, message=FALSE, warning=FALSE, results='hide', eval=FALSE}
+NYC <- import_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
+```
+
+### Headway Statistics along a Route
+
+List the routes with the shortest median headways. 
+
+```{r}
+route_frequency_summary <- route_frequency(NYC) %>%
+  arrange(median_headways)
+
+fast_routes <- filter(route_frequency_summary, median_headways<25)
+
+knitr::kable(head(fast_routes))
+```
+
+### Stop Headway Statistics
+
+List the stops with the shortest headways in the system. 
+
+```{r}
+stop_frequency_summary <- stop_frequency(NYC, by_route=FALSE) %>%
+  inner_join(NYC$stops_df, by="stop_id") %>%
+    select(stop_name, direction_id, stop_id, headway) %>%
+      arrange(headway)
+
+head(stop_frequency_summary)
+```
+
+### Map Data
+
+We can add map data to the feed by joining the shapes together around routes. 
+
+Lets see whats in the feed. 
+
+```{r}
+print(names(NYC))
+```
+
+Now lets turn the routes and stops tables in `simple features` data frames:
+
+```{r}
+NYC <- gtfs_as_sf(NYC)
+```
+
+These are the routes and stops tables with simple features/geometries.
+
+```{r}
+print(names(NYC))
+```
+
+Note that now there are two new tables in the data:
+
+- sf_routes  
+- sf_stops   
+
+### Map Route Frequencies
+
+Now we can join these frequencies to route geometries and plot them with base R. 
+
+```{r plot1}
+routes_headways_sf <- right_join(NYC$sf_routes,fast_routes, by="route_id")
+routes_headways_sf_vars_only <- select(routes_headways_sf,-route_id)
+
+plot(routes_headways_sf_vars_only)
+```
