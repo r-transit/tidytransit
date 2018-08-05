@@ -132,4 +132,4 @@ data.
 
 # Background
 
-In function, this package and the tools it imports take their inspiration from the [ROpenSci gtfsr](https://github.com/ropensci/gtfsr) package.
+In function, this package and the tools it imports take their inspiration, and some code, from the [ROpenSci gtfsr](https://github.com/ropensci/gtfsr) package.
