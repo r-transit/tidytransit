@@ -1,7 +1,7 @@
 [![Travis-CI Build
 Status](https://travis-ci.com/r-transit/tidytransit.svg?branch=master)](https://travis-ci.com/r-transit/tidytransit)
 [![CRAN
-status](https://www.r-pkg.org/badges/version/tidytransit)](https://cran.r-project.org/package=tidytransit)
+status](https://www.r-pkg.org/badges/version/tidytransit?)](https://cran.r-project.org/package=tidytransit)
 
 <!-- MarkdownTOC bracket="round" autolink="true" -->
 
