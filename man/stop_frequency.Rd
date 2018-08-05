@@ -2,7 +2,7 @@
 % Please edit documentation in R/frequencies.R
 \name{stop_frequency}
 \alias{stop_frequency}
-\title{for a trips df and a stop_times df, count the number of trips a bus takes through a given stop within a given time period}
+\title{Get Stop Frequency}
 \usage{
 stop_frequency(gtfs_obj, start_hour = 6, end_hour = 22, dow = c(1, 1, 1,
   1, 1, 0, 0), by_route = TRUE, wide = FALSE)
@@ -24,7 +24,7 @@ stop_frequency(gtfs_obj, start_hour = 6, end_hour = 22, dow = c(1, 1, 1,
 a dataframe of stops with a "Trips" variable representing the count trips taken through each stop for a route within a given time frame
 }
 \description{
-for a trips df and a stop_times df, count the number of trips a bus takes through a given stop within a given time period
+Get Stop Frequency
 }
 \examples{
 data(gtfs_obj)

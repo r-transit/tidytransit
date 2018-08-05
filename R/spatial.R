@@ -1,5 +1,5 @@
 library(sf)
-#' Get common simple features (sf) for a gtfsr object
+#' Add Simple Features for Stops and Routes to GTFS Object
 #'
 #' @param gtfs_obj a standard gtfsr object
 #' @return gtfs_obj a gtfsr object with a bunch of simple features tables
@@ -10,7 +10,7 @@ gtfs_as_sf <- function(gtfs_obj) {
   return(gtfs_obj)
 }
 
-#' Get a `sf` dataframe for gtfs routes
+#' Make Routes into Simple Features Lines
 #'
 #' @param gtfs_obj gtfsr object
 #' @param route_ids select routes to convert to simple features
@@ -39,7 +39,7 @@ routes_df_as_sf <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
   return(lines_sf)
 }
 
-#' Get a `sf` dataframe for gtfs stops
+#' Make Stops into Simple Features Points
 #'
 #' @param stops_df a gtfsr$stops_df dataframe
 #' @export
@@ -71,12 +71,8 @@ shape_as_sf_linestring <- function(df) {
 
 #' return an sf multilinestring with lat and long from gtfs for a route
 #' @param df the shapes_df dataframe from a gtfsr object
-#' @export
+#' @keywords internal
 #' @return a multilinestring simple feature geometry (sfg) for the routes
-#' @examples
-#' data(gtfs_obj)
-#' shapes_sfg <- shapes_df_as_sfg(gtfs_obj$shapes_df)
-#' plot(shapes_sfg[[1]])
 shapes_df_as_sfg <- function(df) {
   # as suggested by www.github.com/mdsumner
   l_dfs <- split(df, df$shape_id)

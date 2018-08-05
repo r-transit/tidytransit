@@ -2,7 +2,7 @@
 % Please edit documentation in R/spatial.R
 \name{stops_df_as_sf}
 \alias{stops_df_as_sf}
-\title{Get a \code{sf} dataframe for gtfs stops}
+\title{Make Stops into Simple Features Points}
 \usage{
 stops_df_as_sf(stops_df)
 }
@@ -13,7 +13,7 @@ stops_df_as_sf(stops_df)
 an sf dataframe for gtfs routes with a point column
 }
 \description{
-Get a \code{sf} dataframe for gtfs stops
+Make Stops into Simple Features Points
 }
 \examples{
 data(gtfs_obj)

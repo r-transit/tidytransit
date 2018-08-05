@@ -3,7 +3,7 @@
 \docType{data}
 \name{feedlist_df}
 \alias{feedlist_df}
-\title{GTFS URLs}
+\title{Dataframe of source GTFS data from Transitfeeds}
 \format{A data frame with 911 rows and 10 variables:
 \describe{
 \item{id}{the id of the feed on transitfeeds.com}

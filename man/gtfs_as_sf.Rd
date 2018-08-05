@@ -2,7 +2,7 @@
 % Please edit documentation in R/spatial.R
 \name{gtfs_as_sf}
 \alias{gtfs_as_sf}
-\title{Get common simple features (sf) for a gtfsr object}
+\title{Add Simple Features for Stops and Routes to GTFS Object}
 \usage{
 gtfs_as_sf(gtfs_obj)
 }
@@ -13,5 +13,5 @@ gtfs_as_sf(gtfs_obj)
 gtfs_obj a gtfsr object with a bunch of simple features tables
 }
 \description{
-Get common simple features (sf) for a gtfsr object
+Add Simple Features for Stops and Routes to GTFS Object
 }

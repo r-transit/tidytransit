@@ -2,7 +2,7 @@
 % Please edit documentation in R/spatial.R
 \name{routes_df_as_sf}
 \alias{routes_df_as_sf}
-\title{Get a \code{sf} dataframe for gtfs routes}
+\title{Make Routes into Simple Features Lines}
 \usage{
 routes_df_as_sf(gtfs_obj, route_ids = NULL, service_ids = NULL)
 }
@@ -17,7 +17,7 @@ routes_df_as_sf(gtfs_obj, route_ids = NULL, service_ids = NULL)
 an sf dataframe for gtfs routes with a multilinestring column
 }
 \description{
-Get a \code{sf} dataframe for gtfs routes
+Make Routes into Simple Features Lines
 }
 \examples{
 data(gtfs_obj)

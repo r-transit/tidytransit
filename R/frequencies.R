@@ -1,4 +1,4 @@
-#' for a trips df and a stop_times df, count the number of trips a bus takes through a given stop within a given time period
+#' Get Stop Frequency
 #' @param gtfs_obj a list of gtfs dataframes as read by the trread package.
 #' @param start_hour (optional) an integer indicating the start hour (default 7)
 #' @param end_hour (optional) an integer indicating the end hour (default 20)
@@ -70,7 +70,7 @@ stop_frequency <- function(gtfs_obj,
   return(stop_time_trips %>% tibble::as_tibble())
 }
 
-#' Get stop frequency for buses aggregated up to routes
+#' Get Route Frequency
 #' 
 #' should take: 
 #' @param gtfs_obj a list of gtfs dataframes as read by the trread package.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/frequencies.R
 \name{route_frequency}
 \alias{route_frequency}
-\title{Get stop frequency for buses aggregated up to routes}
+\title{Get Route Frequency}
 \usage{
 route_frequency(gtfs_obj, start_hour = 6, end_hour = 22, dow = c(1, 1, 1,
   1, 1, 0, 0))

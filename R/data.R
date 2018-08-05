@@ -1,4 +1,4 @@
-#' GTFS URLs
+#' Dataframe of source GTFS data from Transitfeeds
 #'
 #' A dataset containing a list of URLs for GTFS feeds
 #'
