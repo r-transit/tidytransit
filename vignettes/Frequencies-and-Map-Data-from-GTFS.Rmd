@@ -42,10 +42,10 @@ NYC <- import_gtfs("http://web.mta.info/developers/data/nyct/subway/google_trans
 List the routes with the shortest median headways. 
 
 ```{r}
-route_frequency_summary <- route_frequency(NYC) %>%
+get_route_frequency_summary <- get_route_frequency(NYC) %>%
   arrange(median_headways)
 
-fast_routes <- filter(route_frequency_summary, median_headways<25)
+fast_routes <- filter(get_route_frequency_summary, median_headways<25)
 
 knitr::kable(head(fast_routes))
 ```
@@ -55,7 +55,7 @@ knitr::kable(head(fast_routes))
 List the stops with the shortest headways in the system. 
 
 ```{r}
-stop_frequency_summary <- stop_frequency(NYC, by_route=FALSE) %>%
+stop_frequency_summary <- get_stop_frequency(NYC, by_route=FALSE) %>%
   inner_join(NYC$stops_df, by="stop_id") %>%
     select(stop_name, direction_id, stop_id, headway) %>%
       arrange(headway)

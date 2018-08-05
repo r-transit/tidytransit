@@ -13,11 +13,11 @@
 #' @importFrom tidyr spread
 #' @examples 
 #' data(gtfs_obj)
-#' stop_frequency_summary <- stop_frequency(gtfs_obj, by_route=FALSE)
+#' stop_frequency_summary <- get_stop_frequency(gtfs_obj, by_route=FALSE)
 #' x <- order(stop_frequency_summary$headway)
 #' head(stop_frequency_summary[x,])
 
-stop_frequency <- function(gtfs_obj,
+get_stop_frequency <- function(gtfs_obj,
                             start_hour=6,
                             end_hour=22,
                             dow=c(1,1,1,1,1,0,0),
@@ -81,21 +81,21 @@ stop_frequency <- function(gtfs_obj,
 #' @export
 #' @examples 
 #' data(gtfs_obj)
-#' route_frequency_summary <- route_frequency(gtfs_obj)
-#' x <- order(route_frequency_summary$median_headways)
-#' head(route_frequency_summary[x,])
+#' get_route_frequency_summary <- get_route_frequency(gtfs_obj)
+#' x <- order(get_route_frequency_summary$median_headways)
+#' head(get_route_frequency_summary[x,])
 
-route_frequency <- function(gtfs_obj,
+get_route_frequency <- function(gtfs_obj,
                             start_hour=6,
                             end_hour=22,
                             dow=c(1,1,1,1,1,0,0)) {
-  stop_frequency_df <- stop_frequency(gtfs_obj,
+  stop_frequency_df <- get_stop_frequency(gtfs_obj,
                                       start_hour, 
                                       end_hour,
                                       dow)  
   
   if (dim(stop_frequency_df)[[1]]!=0) {
-    route_frequency_df <- stop_frequency_df %>%
+    get_route_frequency_df <- stop_frequency_df %>%
       dplyr::group_by_('route_id') %>%
       dplyr::summarise(median_headways = as.integer(round(median(.data$headway),0)),
                        mean_headways = as.integer(round(mean(.data$headway),0)),
@@ -105,6 +105,6 @@ route_frequency <- function(gtfs_obj,
   {
     warning("agency gtfs has no published service for the specified period")
   }
-  return(route_frequency_df)
+  return(get_route_frequency_df)
 }
 

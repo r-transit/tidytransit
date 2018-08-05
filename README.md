@@ -55,10 +55,10 @@ NYC <- import_gtfs("http://web.mta.info/developers/data/nyct/subway/google_trans
 List the routes with the shortest median headways.
 
 ``` r
-route_frequency_summary <- route_frequency(NYC) %>%
+get_route_frequency_summary <- get_route_frequency(NYC) %>%
   arrange(median_headways)
 
-fast_routes <- filter(route_frequency_summary, median_headways<25)
+fast_routes <- filter(get_route_frequency_summary, median_headways<25)
 
 knitr::kable(head(fast_routes))
 ```
