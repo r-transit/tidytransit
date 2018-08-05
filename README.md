@@ -24,13 +24,10 @@ Use this package to read, validate, analyze, and map data in the [General Transi
 
 # Installation
 
-Install from github using `devtools`:
+Install from CRAN:
 
 ``` r
-if (!require(devtools)) {
-    install.packages('devtools')
-}
-devtools::install_github('r-transit/tidytransit')
+install.packages("tidytransit")
 ```
 
 # Examples
