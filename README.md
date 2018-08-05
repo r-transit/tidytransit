@@ -20,7 +20,7 @@ status](https://www.r-pkg.org/badges/version/tidytransit)](https://cran.r-projec
 
 # Goal
 
-Use this packae to read, validate, analyze, and map data in the [General Transit Feed Specification](http://gtfs.org/) in R. 
+Use this package to read, validate, analyze, and map data in the [General Transit Feed Specification](http://gtfs.org/) in R. 
 
 # Installation
 
@@ -136,6 +136,3 @@ data.
 # Background
 
 In function, this package and the tools it imports take their inspiration from the [ROpenSci gtfsr](https://github.com/ropensci/gtfsr) package.
-
-My intention was to build smaller, simpler components that can be maintained, potentially more easily, by multiple people.
-
