@@ -24,11 +24,21 @@ Use this package to read, validate, analyze, and map data in the [General Transi
 
 # Installation
 
-Install from CRAN:
+### tidytransit
 
-``` r
-install.packages("tidytransit")
-```
+[`tidytransit`](https://github.com/r-transit/tidytransit) requires a working installation of [sf](https://github.com/r-spatial/sf). 
+
+Install instructions [here](https://github.com/r-spatial/sf#installing). 
+
+Once [sf](https://github.com/r-spatial/sf) is installed, you can install from CRAN with: 
+
+`install.packages('tidytransit')`
+
+For some users, `sf` is impractical to install due to system level dependencies. For these users, [`trread`](https://github.com/r-transit/trread) may work better. It has more limited functionality, but it can read GTFS tables into R. 
+
+Install `trread` from CRAN with:
+
+`install.packages('trread')`
 
 # Examples
 
