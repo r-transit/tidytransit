@@ -24,11 +24,7 @@ Use this package to read, validate, analyze, and map data in the [General Transi
 
 # Installation
 
-### tidytransit
-
-[`tidytransit`](https://github.com/r-transit/tidytransit) requires a working installation of [sf](https://github.com/r-spatial/sf). 
-
-Install instructions [here](https://github.com/r-spatial/sf#installing). 
+This package requires a working installation of [sf](https://github.com/r-spatial/sf#installing). 
 
 Once [sf](https://github.com/r-spatial/sf) is installed, you can install from CRAN with: 
 
