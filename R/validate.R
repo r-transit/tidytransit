@@ -61,7 +61,7 @@ validate_gtfs_structure <- function(file_validation_meta, gtfs_obj, return_gtfs_
 #' @return Dataframe will one row for all required and optional files per spec, plus one row for any other files provided (file), with an indication of these categories (spec), and a yes/no/empty status (provided_status)
 #' @noRd
 
-validate_files <- function(gtfs_file_prefixes) {
+validate_file_list <- function(file_list) {
 
   # Per spec, these are the required and optional files
   all_req_files <- c('agency', 'stops', 'routes', 'trips', 'stop_times', 'calendar')
@@ -86,7 +86,7 @@ validate_files <- function(gtfs_file_prefixes) {
   all_spec_files <- c(all_req_files, all_opt_files)
 
   # Get the names of all the dfs in the list for a gtfs_obj
-  feed_names_file <- unname(gtfs_file_prefixes)
+  feed_names_file <- unname(file_list)
 
   # Determine whether any of the files provided are neither required nor optional
   extra_files <- feed_names_file[!(feed_names_file %in% all_spec_files)]
@@ -123,7 +123,7 @@ make_var_val <- function() {
 
 #' Validate variables provided vs spec
 #'
-#' @param file_validation_meta The dataframe output of validate_files for a single feed
+#' @param file_validation_meta The dataframe output of validate_file_list for a single feed
 #' @param gtfs_obj A 'gtfs' class object with components agency_df, etc.
 #'
 #' @return Dataframe with one record per file x column (columns in spec + any extra provided),
@@ -260,4 +260,21 @@ calendar_exception_fix <- function(all_val_df) {
 
   return(all_val_df)
 
+}
+
+validate_feed <- function(gtfs_list, quiet = FALSE) {
+  # check if valid 'gtfs'
+  check <- validate_gtfs_structure(valid_files_meta, gtfs_list, return_gtfs_obj = FALSE, quiet = TRUE)
+  valid <- all(check$all_req_files, check$all_req_fields_in_req_files)
+  
+  if(!quiet) message("Testing data structure...")
+  if(valid) {
+    class(gtfs_list) <- 'gtfs'
+    if(!quiet) message("...passed. Valid GTFS object.\n")
+  } else {
+    if(!quiet) message("...failed. Invalid data structure.\n")
+  }
+  gtfs_list$validation <- check 
+  return(gtfs_list)
+  
 }
