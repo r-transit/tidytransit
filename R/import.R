@@ -35,13 +35,13 @@ import_gtfs <- function(path, local = FALSE, quiet = FALSE) {
     data_list <- path %>%
       unzip_file(quiet=quiet) %>% 
          list_files(quiet=quiet) %>%
-            read_and_validate()
+            read_files()
   } else {
     data_list <- path %>%
       download_from_url(.) %>%
         unzip_file(quiet = quiet) %>%
           list_files(quiet = quiet) %>%
-            read_and_validate()
+            read_files()
   }
 
   return(data_list) 
@@ -139,7 +139,8 @@ has_bom <- function(path, encoding="UTF-8") {
 #' @param zipfile path to zipped file
 #' @param ex_dir path to unzip file to-default tempdir()
 #' @param quiet Boolean. Whether to output files found in folder.
-#'
+#' @importFrom tools %>% file_ext
+#' 
 #' @return file path to directory with gtfs .txt files
 #' @keywords internal
 #' 
@@ -148,7 +149,7 @@ unzip_file <- function(zipfile,
                        ex_dir=tempdir(), 
                        quiet = FALSE) {
   f <- zipfile
-
+  
   # check path
   if(try(path.expand(f), silent = TRUE) %>% assertthat::is.error()) {
     warn <- 'Invalid file path. NULL is returned.'
@@ -158,8 +159,12 @@ unzip_file <- function(zipfile,
 
   f <- normalizePath(f)
 
+  if(tools::file_ext(f) != "zip") {
+    if(!quiet) message('No zip file found, reading files from path.')
+    return(f)
+  }
+  
   # create extraction folder
-
   utils::unzip(f, exdir=ex_dir)
 
 
@@ -174,32 +179,31 @@ unzip_file <- function(zipfile,
   }
 
   return(ex_dir)
-
 }
 
 
-#' Read files with a "txt" suffix in a folder into objects in memory and delete files
+#' List all files in a directory
 #'
 #' @param ex_dir Character. Path to folder into which files were extracted.
 #' @param quiet Boolean. Whether to output messages and files found in folder.
 #' @keywords internal
-list_files <- function(ex_dir, quiet = FALSE) {
+list_files <- function(directory, quiet = FALSE) {
 
   # check path
-  check <- try(normalizePath(ex_dir), silent=TRUE)
+  check <- try(normalizePath(directory), silent=TRUE)
   if(assertthat::is.error(check)) {
     warn <- 'Invalid file path. NULL is returned.'
     if(!quiet) warning(warn)
     return(NULL)
   }
 
-  file_list <- list.files(ex_dir, full.names = TRUE)
+  file_list <- list.files(directory, full.names = TRUE)
   return(file_list)
 }
 
-read_and_validate <- function(all_files, quiet = FALSE) {
+read_files <- function(all_files, quiet = FALSE) {
   file_list <- sapply(all_files,get_file_shortname)
-  file_validation_meta <- validate_files(file_list)
+  file_validation_meta <- validate_file_list(file_list)
   valid_files_meta <- file_validation_meta %>% 
     dplyr::filter(spec != 'ext' & provided_status=="yes")
   valid_filenames <- names(file_list[file_list %in% valid_files_meta$file])
@@ -209,29 +213,16 @@ read_and_validate <- function(all_files, quiet = FALSE) {
          function(x) read_gtfs_file(x, 
                                     assign_envir = exec_env, 
                                     quiet = quiet))
-
-  ls_envir <- ls(envir = exec_env)
-
-  df_list <- ls_envir[grepl(pattern = '_df', x = ls_envir)]
-
-  gtfs_list <- mget(df_list, envir = exec_env)
-
-  if(!quiet) message('...done.\n\n')
-
-  # check if valid 'gtfs'
-  check <- validate_gtfs_structure(valid_files_meta, gtfs_list, return_gtfs_obj = FALSE, quiet = TRUE)
-  valid <- all(check$all_req_files, check$all_req_fields_in_req_files)
-
-  if(!quiet) message("Testing data structure...")
-  if(valid) {
-    class(gtfs_list) <- 'gtfs'
-    if(!quiet) message("...passed. Valid GTFS object.\n")
-  } else {
-    if(!quiet) message("...failed. Invalid data structure.\n")
-  }
-  gtfs_list$validation <- check 
-  return(gtfs_list)
   
+  ls_envir <- ls(envir = exec_env)
+  
+  df_list <- ls_envir[grepl(pattern = '_df', x = ls_envir)]
+  
+  gtfs_list <- mget(df_list, envir = exec_env)
+  
+  if(!quiet) message('...done.\n\n')
+  
+  return(gtfs_list)
 }
 
 #' Function to read all files into dataframes
@@ -248,7 +239,7 @@ read_gtfs_file <- function(file_path, assign_envir, quiet = FALSE) {
 
   if(!quiet) message(paste0('Reading ', df_name))
 
-  new_df <- parse_gtfs(prefix, file_path, quiet = quiet) 
+  new_df <- parse_gtfs_file(prefix, file_path, quiet = quiet) 
   # will have warning even though we fix problem
 
   assign(df_name, new_df, envir = assign_envir)
@@ -272,7 +263,7 @@ get_file_shortname <- function(file_path) {
   return(prefix)
 }
 
-#' Function to better read in GTFS txt files
+#' Parses one gtfs file
 #'
 #' @param prefix Character. gtfs file prefix (e.g. 'agency', 'stop_times', etc.)
 #' @param file_path Character. file path
@@ -281,7 +272,7 @@ get_file_shortname <- function(file_path) {
 #' @noRd
 #' @keywords internal
 
-parse_gtfs <- function(prefix, file_path, quiet = FALSE) {
+parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
 
   # only parse if file has any data, NULL o/w
   stopifnot(!is.na(file.size(file_path)))
