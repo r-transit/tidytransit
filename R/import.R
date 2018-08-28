@@ -1,3 +1,11 @@
+load_gtfs <- function(path) {
+  
+  file_list <- list_files(path)
+  gtfs_obj <- read_files(file_list)
+  
+  return(gtfs_obj)
+}
+
 #' Get and validate dataframes of General Transit Feed Specification (GTFS) data.
 #' 
 #' This function reads GTFS text files from a local or remote zip file. 
@@ -223,7 +231,7 @@ unzip_file <- function(zipfile,
 
 #' List all files in a directory
 #'
-#' @param ex_dir Character. Path to folder into which files were extracted.
+#' @param directory Character. Path to folder into which files were extracted.
 #' @param quiet Boolean. Whether to output messages and files found in folder.
 #' @keywords internal
 list_files <- function(directory, quiet = FALSE) {
