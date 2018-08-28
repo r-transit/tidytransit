@@ -111,7 +111,7 @@ plot(routes_sf)
 
 If you're curious about learning more about GTFS data, [Danny Whalen](https://github.com/invisiblefunnel) made a nice graph of
 the relationships among gtfs tables in the
-[partidge](https://github.com/remix/partridge) package for Python,
+[partridge](https://github.com/remix/partridge) package for Python,
 copied below. This can be a very helpful guide as you try to get a grasp
 on the kinds of questions you might want to ask of transit schedule
 data.
