@@ -1,38 +1,28 @@
-[![Travis-CI Build
-Status](https://travis-ci.com/r-transit/tidytransit.svg?branch=master)](https://travis-ci.com/r-transit/tidytransit)
-[![CRAN
-status](https://www.r-pkg.org/badges/version/tidytransit?)](https://cran.r-project.org/package=tidytransit)
+# tidytransit
 
-<!-- MarkdownTOC bracket="round" autolink="true" -->
+# [![Travis-CI Build
+# Status](https://travis-ci.com/r-transit/tidytransit.svg?branch=master)](https://travis-ci.com/r-transit/tidytransit)
+# [![CRAN
+# status](https://www.r-pkg.org/badges/version/tidytransit?)](https://cran.r-project.org/package=tidytransit)
 
-- [Goal](#goal)
-- [Installation](#installation)
-- [Examples](#examples)
-    - [Headways/Frequencies](#headwaysfrequencies)
-        - [Route Headways](#route-headways)
-        - [Stop Headways](#stop-headways)
-    - [Map Data](#map-data)
-        - [Map Route Frequencies](#map-route-frequencies)
-- [GTFS Table Relationships](#gtfs-table-relationships)
-- [Background](#background)
+tidytransit makes it easy to work with transit data by simplifying [General Transit Feed Specification](http://gtfs.org/) data into tidyverse and sf-friendly dataframes. Use it to map existing stops and routes, calculate transit frequencies, and validate transit feeds.
 
-<!-- /MarkdownTOC -->
-
-# Goal
-
-Use this package to read, validate, analyze, and map data in the [General Transit Feed Specification](http://gtfs.org/) in R. 
-
-# Installation
+## Installation
 
 This package requires a working installation of [sf](https://github.com/r-spatial/sf#installing). 
 
-Once [sf](https://github.com/r-spatial/sf) is installed, you can install from CRAN with: 
+``` r
+# Once sf is installed, you can install from CRAN with: 
+install.packages('tidytransit')
 
-`install.packages('tidytransit')`
+# For the development version from Github:
+# install.packages("devtools")
+devtools::install_github("r-transit/tidytransit")
+```
 
 For some users, `sf` is impractical to install due to system level dependencies. For these users, [`trread`](https://github.com/r-transit/trread) may work better. It has more limited functionality, but it can read GTFS tables into R. 
 
-# Examples
+## Usage
 
 Load required packages:
 
@@ -46,7 +36,7 @@ library(dplyr)
 Use NYC MTA subway schedule data to calculate headways by route, pulling directly from the MTA's URL.
 
 ``` r
-NYC <- import_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
+nyc <- import_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
 ```
 
 ### Route Headways
@@ -54,10 +44,11 @@ NYC <- import_gtfs("http://web.mta.info/developers/data/nyct/subway/google_trans
 List the routes with the shortest median headways.
 
 ``` r
-route_frequency_summary <- route_frequency(NYC) %>%
+nyc_route_freqs <- nyc %>% 
+  get_route_frequency() %>%
   arrange(median_headways)
 
-fast_routes <- filter(route_frequency_summary, median_headways<25)
+fast_routes <- filter(nyc_route_freqs, median_headways < 25)
 
 knitr::kable(head(fast_routes))
 ```
@@ -76,14 +67,15 @@ knitr::kable(head(fast_routes))
 List the stops with the shortest headways in the system.
 
 ``` r
-stop_frequency_summary <- stop_frequency(NYC, by_route=FALSE) %>%
-  inner_join(NYC$stops_df, by="stop_id") %>%
-    select(stop_name, direction_id, stop_id, headway) %>%
-      arrange(headway)
+nyc_stop_freqs <- nyc %>% 
+  get_stop_frequency(by_route = FALSE) %>%
+  inner_join(nyc$stops_df, by = "stop_id") %>%
+  select(stop_name, direction_id, stop_id, headway) %>%
+  arrange(headway)
 ```
 
 ``` r
-head(stop_frequency_summary)
+head(nyc_stop_freqs)
 ```
 
     ## # A tibble: 6 x 4
@@ -99,7 +91,7 @@ head(stop_frequency_summary)
 
 ## Map Data
 
-Now lets turn the routes and stops tables in [`simple features`](https://github.com/r-spatial/sf) data frames:
+Now let's turn the routes and stops tables in [`simple features`](https://github.com/r-spatial/sf) data frames:
 
 ``` r
 NYC <- gtfs_as_sf(NYC)
