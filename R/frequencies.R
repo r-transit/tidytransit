@@ -46,7 +46,7 @@ get_stop_frequency <- function(gtfs_obj,
                       .data$stop_id,
                       .data$service_id) %>%
       most_frequent_service() %>%
-      dplyr::summarise(departures = dplyr::n())
+      dplyr::summarise(departures = n())
   } 
   else if(by_route==TRUE) {
   stop_time_trips <- stop_time_trips %>%
@@ -55,7 +55,7 @@ get_stop_frequency <- function(gtfs_obj,
                     .data$stop_id,
                     .data$service_id) %>%
     most_frequent_service() %>%
-      dplyr::summarise(departures = dplyr::n())
+      dplyr::summarise(departures = n())
   }
   t1 <- end_hour - start_hour
   minutes1 <- 60*t1
@@ -100,7 +100,7 @@ get_route_frequency <- function(gtfs_obj,
       dplyr::summarise(median_headways = as.integer(round(median(.data$headway),0)),
                        mean_headways = as.integer(round(mean(.data$headway),0)),
                        st_dev_headways = round(sd(.data$headway),2),
-                       stop_count = dplyr::n())
+                       stop_count = n())
   } else
   {
     warning("agency gtfs has no published service for the specified period")
