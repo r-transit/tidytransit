@@ -1,7 +1,4 @@
-validate_gtfs <- function(gtfs_obj) {
-  validate_gtfs_structure(gtfs_obj$files_validation_result, gtfs_obj)
-}
-
+# validate_gtfs
 
 #' Create validation list for a gtfs_obj. It provides an overview of the structure of all files that were imported.
 #'
@@ -67,7 +64,9 @@ validate_gtfs_structure <- function(files_validation_result, gtfs_obj, return_gt
 #' @noRd
 
 validate_file_list <- function(file_list) {
-
+  
+  file_list <- sapply(file_list,get_file_shortname)
+  
   # Per spec, these are the required and optional files
   all_req_files <- c('agency', 'stops', 'routes', 'trips', 'stop_times', 'calendar')
   all_opt_files <- c(
@@ -92,7 +91,7 @@ validate_file_list <- function(file_list) {
 
   # Get the names of all the dfs in the list for a gtfs_obj
   feed_names_file <- unname(file_list)
-
+  
   # Determine whether any of the files provided are neither required nor optional
   extra_files <- feed_names_file[!(feed_names_file %in% all_spec_files)]
 
@@ -106,7 +105,6 @@ validate_file_list <- function(file_list) {
   files_validation_result <- files_validation_result %>%
     dplyr::mutate(provided_status = ifelse((file %in% 
                                            feed_names_file), 'yes', 'no'))
-  
   return(files_validation_result)
 }
 
@@ -140,7 +138,7 @@ make_var_val <- function() {
 
 #' Validate variables provided vs spec
 #'
-#' @param file_validation_meta The dataframe output of validate_file_list for a single feed
+#' @param files_validation_result The dataframe output of validate_file_list for a single feed
 #' @param gtfs_obj A 'gtfs' class object with components agency_df, etc.
 #'
 #' @return Dataframe with one record per file x column (columns in spec + any extra provided),
@@ -282,9 +280,9 @@ calendar_exception_fix <- function(all_val_df) {
 
 }
 
-validate_feed <- function(gtfs_list, quiet = FALSE) {
+validate_feed <- function(files_validation_result, gtfs_list, quiet = FALSE) {
   # check if valid 'gtfs'
-  check <- validate_gtfs_structure(valid_files_meta, gtfs_list, return_gtfs_obj = FALSE, quiet = TRUE)
+  check <- validate_gtfs_structure(files_validation_result, gtfs_list, return_gtfs_obj = FALSE, quiet = TRUE)
   valid <- all(check$all_req_files, check$all_req_fields_in_req_files)
   
   if(!quiet) message("Testing data structure...")
@@ -296,5 +294,4 @@ validate_feed <- function(gtfs_list, quiet = FALSE) {
   }
   gtfs_list$validation <- check 
   return(gtfs_list)
-  
 }

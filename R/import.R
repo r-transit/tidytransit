@@ -1,26 +1,7 @@
 load_gtfs <- function(path) {
   
-  # TODO 1) download zip
-  
-  # TODO 2) extract zip
-  directory <- path
-  
-  # 3) list files in directory
-  files_list <- list_files(directory)
-  file_validation_result <- validate_file_list(files_list)
-  
-  # 4) list valid files
-  valid_file_paths <- valid_file_paths(files_list)
-  
-  # 5) read valid files to data frames and combine those to list
-  gtfs_list <- read_files(valid_file_paths)
-  
-  # 6) create gtfs_obj
-  gtfs_obj <- c(gtfs_list, files_validation_result = list(file_validation_result))
-  class(gtfs_obj) <- "gtfs"
-  
-  # 7) validate gtfs_obj
-  validate_gtfs(gtfs_obj)
+  file_list <- list_files(path)
+  gtfs_obj <- read_files(file_list)
   
   return(gtfs_obj)
 }
