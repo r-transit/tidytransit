@@ -1,11 +1,13 @@
+[![Travis-CI Build
+Status](https://travis-ci.com/r-transit/tidytransit.svg?branch=master)](https://travis-ci.com/r-transit/tidytransit)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/tidytransit?)](https://cran.r-project.org/package=tidytransit)
+
 # tidytransit
 
-# [![Travis-CI Build
-# Status](https://travis-ci.com/r-transit/tidytransit.svg?branch=master)](https://travis-ci.com/r-transit/tidytransit)
-# [![CRAN
-# status](https://www.r-pkg.org/badges/version/tidytransit?)](https://cran.r-project.org/package=tidytransit)
+tidytransit makes it easy to work with transit data by simplifying [General Transit Feed Specification](http://gtfs.org/) data (the standard format for storing transit data) into tidyverse and sf-friendly dataframes. Use it to map existing stops and routes, calculate transit frequencies, and validate transit feeds.
 
-tidytransit makes it easy to work with transit data by simplifying [General Transit Feed Specification](http://gtfs.org/) data into tidyverse and sf-friendly dataframes. Use it to map existing stops and routes, calculate transit frequencies, and validate transit feeds.
+tidytransit is built on top of [gtfsr](https://github.com/ropensci/gtfsr). If you find that you need more granular control of the GTFS data you're working with, check out **gtfsr**.
 
 ## Installation
 
@@ -24,31 +26,23 @@ For some users, `sf` is impractical to install due to system level dependencies.
 
 ## Usage
 
-Load required packages:
+This example uses NYC MTA subway schedule data to identify shortest median headways by route, pulling data directly from the MTA's GTFS URL. 
 
 ``` r
 library(tidytransit)
 library(dplyr)
-```
 
-## Headways/Frequencies
-
-Use NYC MTA subway schedule data to calculate headways by route, pulling directly from the MTA's URL.
-
-``` r
+# Read in GTFS feed
 nyc <- import_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
-```
 
-### Route Headways
-
-List the routes with the shortest median headways.
-
-``` r
+# Get route frequencies
 nyc_route_freqs <- nyc %>% 
-  get_route_frequency() %>%
-  arrange(median_headways)
+  get_route_frequency()
 
-fast_routes <- filter(nyc_route_freqs, median_headways < 25)
+# Find routes with shortest median headways
+nyc_fastest_routes <- nyc_route_freqs %>% 
+  filter(median_headways < 25) %>% 
+  arrange(median_headways)
 
 knitr::kable(head(fast_routes))
 ```
@@ -62,9 +56,7 @@ knitr::kable(head(fast_routes))
 | 6         |                6 |              7 |              2.84 |          76 |
 | E         |                6 |             23 |             53.01 |          48 |
 
-### Stop Headways
-
-List the stops with the shortest headways in the system.
+You can also identify shortest headways by stop.
 
 ``` r
 nyc_stop_freqs <- nyc %>% 
@@ -89,12 +81,11 @@ head(nyc_stop_freqs)
     ## 5            0 702N    Mets - Willets Point     3.72
     ## 6            0 707N    Junction Blvd            3.72
 
-## Map Data
 
-Now let's turn the routes and stops tables in [`simple features`](https://github.com/r-spatial/sf) data frames:
+Perhaps you want to map the subway routes and stops. First, turn the routes and stops tables in [`simple features`](https://github.com/r-spatial/sf) data frames:
 
 ``` r
-NYC <- gtfs_as_sf(NYC)
+nyc_sf <- gtfs_as_sf(nyc)
 ```
 
 This adds routes and stops tables with simple features/geometries to the list of NYC GTFS data. 
