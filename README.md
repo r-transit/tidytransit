@@ -26,7 +26,9 @@ For some users, `sf` is impractical to install due to system level dependencies.
 
 ## Usage
 
-This example uses NYC MTA subway schedule data to identify shortest median headways by route, pulling data directly from the MTA's GTFS URL. 
+### Get Headways by Route
+
+This example uses NYC MTA subway schedule data to identify shortest median headways by route, pulling data directly from the MTA's GTFS URL.
 
 ``` r
 library(tidytransit)
@@ -56,6 +58,9 @@ knitr::kable(head(fast_routes))
 | 6         |                6 |              7 |              2.84 |          76 |
 | E         |                6 |             23 |             53.01 |          48 |
 
+
+### Get Headways by Stop
+
 You can also identify shortest headways by stop.
 
 ``` r
@@ -64,9 +69,7 @@ nyc_stop_freqs <- nyc %>%
   inner_join(nyc$stops_df, by = "stop_id") %>%
   select(stop_name, direction_id, stop_id, headway) %>%
   arrange(headway)
-```
 
-``` r
 head(nyc_stop_freqs)
 ```
 
@@ -82,39 +85,39 @@ head(nyc_stop_freqs)
     ## 6            0 707N    Junction Blvd            3.72
 
 
-Perhaps you want to map the subway routes and stops. First, turn the routes and stops tables in [`simple features`](https://github.com/r-spatial/sf) data frames:
+### Map Route Frequencies
+
+Perhaps you want to map subway routes and color-code each route by how often trains come. First, turn the routes and stops tables in [`simple features`](https://github.com/r-spatial/sf) data frames:
 
 ``` r
 nyc_sf <- gtfs_as_sf(nyc)
 ```
 
-This adds routes and stops tables with simple features/geometries to the list of NYC GTFS data. 
-
-### Map Route Frequencies
-
-Now we can join these frequencies to route geometries and plot them with
-base R.
+This adds routes and stops tables with simple features/geometries to the list of NYC GTFS data. You can then join frequencies to route geometries and plot them with base R.
 
 ``` r
-routes_headways_sf <- right_join(NYC$sf_routes,fast_routes, by="route_id")
-routes_headways_sf_vars_only <- select(routes_headways_sf,-route_id)
+routes_sf <- nyc_sf %>% 
+  right_join(nyc_fastest_routes, by = "route_id") %>% 
+  select(-route_id)
 
-plot(routes_headways_sf_vars_only)
+plot(routes_sf)
 ```
 
-![](Readme_files/figure-gfm/plot1-1.png)<!-- -->
+![headways-by-route](man/figures/plot1-1.png)<!-- -->
 
-# GTFS Table Relationships
+## Additional Information
 
-[Danny Whalen](https://github.com/invisiblefunnel) made a nice graph of
+### GTFS Table Relationships
+
+If you're curious about learning more about GTFS data, [Danny Whalen](https://github.com/invisiblefunnel) made a nice graph of
 the relationships among gtfs tables in the
 [partidge](https://github.com/remix/partridge) package for Python,
 copied below. This can be a very helpful guide as you try to get a grasp
 on the kinds of questions you might want to ask of transit schedule
 data.
 
-![gtfs-relationship-diagram](Readme_files/figure-gfm/dependency-graph.png)
+![gtfs-relationship-diagram](man/figures/dependency-graph.png)
 
-# Background
+### Background
 
 In function, this package and the tools it imports take their inspiration, and some code, from the [ROpenSci gtfsr](https://github.com/ropensci/gtfsr) package.
