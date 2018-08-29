@@ -1,7 +1,26 @@
 load_gtfs <- function(path) {
   
-  file_list <- list_files(path)
-  gtfs_obj <- read_files(file_list)
+  # TODO 1) download zip
+  
+  # TODO 2) extract zip
+  directory <- path
+  
+  # 3) list files in directory
+  files_list <- list_files(directory)
+  file_validation_result <- validate_file_list(files_list)
+  
+  # 4) list valid files
+  valid_file_paths <- valid_file_paths(files_list)
+  
+  # 5) read valid files to data frames and combine those to list
+  gtfs_list <- read_files(valid_file_paths)
+  
+  # 6) create gtfs_obj
+  gtfs_obj <- c(gtfs_list, files_validation_result = list(file_validation_result))
+  class(gtfs_obj) <- "gtfs"
+  
+  # 7) validate gtfs_obj
+  validate_gtfs(gtfs_obj)
   
   return(gtfs_obj)
 }
@@ -206,26 +225,40 @@ list_files <- function(directory, quiet = FALSE) {
   }
 
   file_list <- list.files(directory, full.names = TRUE)
-  return(file_list)
+  
+  named_file_list <- sapply(file_list,get_file_shortname)
+  
+  return(named_file_list)
 }
 
-read_files <- function(all_files, quiet = FALSE) {
-  file_list <- sapply(all_files,get_file_shortname)
-  file_validation_meta <- validate_file_list(file_list)
-  valid_files_meta <- file_validation_meta %>% 
-    dplyr::filter(spec != 'ext' & provided_status=="yes")
-  valid_filenames <- names(file_list[file_list %in% valid_files_meta$file])
+#' Function to read all files into dataframes
+#'
+#' @param file_path Character file path
+#' @param assign_envir Environment Object. Option of where to assign dataframes.
+#' @param quiet Boolean. Whether to output messages and files found in folder.
+#' @noRd
+#' @keywords internal
+
+read_files <- function(file_path_list, quiet = FALSE) {
+  # file_list <- sapply(all_files,get_file_shortname)
+  # files_validation_result <- validate_file_list(file_list)
+  # valid_files_meta <- files_validation_result %>%
+  #   dplyr::filter(spec != 'ext' & provided_status=="yes")
+  # 
+  # # browser()
+  # 
+  # valid_filenames <- names(file_list[file_list %in% valid_files_meta$file])
   exec_env <- environment()
-  
-  lapply(valid_filenames, 
+
+  # read valid files in environment
+  lapply(file_path_list, 
          function(x) read_gtfs_file(x, 
                                     assign_envir = exec_env, 
                                     quiet = quiet))
   
+  # combine all read objects of environment with "_df" to a list
   ls_envir <- ls(envir = exec_env)
-  
   df_list <- ls_envir[grepl(pattern = '_df', x = ls_envir)]
-  
   gtfs_list <- mget(df_list, envir = exec_env)
   
   if(!quiet) message('...done.\n\n')

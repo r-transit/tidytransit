@@ -12,14 +12,14 @@ working <- function() {
   connecting(gtfs_example_url)
 }
 
-test_that('import_gtfs() imports a local file to a list of dataframes and doesnt delete the source file', {
-  gtfs_obj <- tidytransit:::import_gtfs(
-    local_gtfs_path,
-    local=TRUE)
-  
-  expect_is(gtfs_obj, 'gtfs')
-  file.exists(local_gtfs_path)
-})
+# test_that('import_gtfs() imports a local file to a list of dataframes and doesnt delete the source file', {
+#   gtfs_obj <- tidytransit:::import_gtfs(
+#     local_gtfs_path,
+#     local=TRUE)
+# 
+#   expect_is(gtfs_obj, 'gtfs')
+#   file.exists(local_gtfs_path)
+# })
 
 test_that('Downloading a zip file from a gtfs_example_url returns a file', {
   skip_on_cran()
