@@ -1,4 +1,7 @@
-# validate_gtfs
+validate_gtfs <- function(gtfs_obj) {
+  validate_gtfs_structure(gtfs_obj$files_validation_result, gtfs_obj)
+}
+
 
 #' Create validation list for a gtfs_obj. It provides an overview of the structure of all files that were imported.
 #'
@@ -58,7 +61,7 @@ validate_gtfs_structure <- function(files_validation_result, gtfs_obj, return_gt
 
 #' For a list of files, return information about whether they are part of the GTFS spec.
 #'
-#' @param gtfs_obj A 'gtfs' class object with components agency_df, etc.
+#' @param file_list A list of files to be checked
 #'
 #' @return Dataframe will one row for all required and optional files per spec, plus one row for any other files provided (file), with an indication of these categories (spec), and a yes/no/empty status (provided_status)
 #' @noRd
@@ -105,7 +108,19 @@ validate_file_list <- function(file_list) {
   files_validation_result <- files_validation_result %>%
     dplyr::mutate(provided_status = ifelse((file %in% 
                                            feed_names_file), 'yes', 'no'))
+  
   return(files_validation_result)
+}
+
+valid_file_paths <- function(files_list) {
+  files_list_shortnames <- sapply(files_list,get_file_shortname)
+  files_validation_result <- validate_file_list(files_list)
+  valid_files_meta <- files_validation_result %>% 
+    dplyr::filter(spec != 'ext' & provided_status=="yes")
+  
+  valid_filenames <- names(files_list[files_list %in% valid_files_meta$file])
+
+  return(valid_filenames)
 }
 
 #' Create dataframe of GTFS variable spec info
@@ -139,7 +154,10 @@ validate_vars <- function(files_validation_result, gtfs_obj) {
 
   stopifnot(any(class(files_validation_result) == 'tbl_df'))
 
-  # Generate the df of files and fields per the GTFS spec
+  # files_validation_result <- gtfs_obj$files_validation_result
+  gtfs_obj <- gtfs_obj[which(names(gtfs_obj) != "files_validation_result")]
+  
+  t# Generate the df of files and fields per the GTFS spec
   spec_vars_df <- make_var_val() %>%
     dplyr::rename(field_spec = spec)
 
@@ -154,6 +172,7 @@ validate_vars <- function(files_validation_result, gtfs_obj) {
 
   val_cols <- val_files_df$file
   val_cols_df <- paste0(val_cols, '_df')
+
 
   # List variables provided for each file and join to determine field_provided
   for (j in val_cols_df) {
@@ -225,7 +244,6 @@ validate_vars <- function(files_validation_result, gtfs_obj) {
 
 
   return(all_val_df)
-
 }
 
 #' checks for the missing calendar.txt 
