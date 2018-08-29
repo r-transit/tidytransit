@@ -1,4 +1,7 @@
-# validate_gtfs
+validate_gtfs <- function(gtfs_obj) {
+  validate_gtfs_structure(gtfs_obj$files_validation_result, gtfs_obj)
+}
+
 
 #' Create validation list for a gtfs_obj. It provides an overview of the structure of all files that were imported.
 #'
@@ -105,6 +108,7 @@ validate_file_list <- function(file_list) {
   files_validation_result <- files_validation_result %>%
     dplyr::mutate(provided_status = ifelse((file %in% 
                                            feed_names_file), 'yes', 'no'))
+  
   return(files_validation_result)
 }
 
