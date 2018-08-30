@@ -8,6 +8,8 @@ gtfs_as_sf(gtfs_obj, quiet)
 }
 \arguments{
 \item{gtfs_obj}{a standard gtfsr object}
+
+\item{quiet}{boolean whether to print status messages}
 }
 \value{
 gtfs_obj a gtfsr object with a bunch of simple features tables
