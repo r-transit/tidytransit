@@ -35,14 +35,6 @@ more limited functionality, but it can read GTFS tables into R.
 
 Please see the [tutorial](https://s3-us-west-2.amazonaws.com/tidytransit.r-transit.org/articles/tidytransit-instroduction.html) or the [reference](https://s3-us-west-2.amazonaws.com/tidytransit.r-transit.org/reference/index.html). 
 
-## GTFS Table Relationships
-
-![gtfs-relationship-diagram](man/figures/dependency-graph.png)
-source: [Danny
-Whalen](https://github.com/invisiblefunnel) via the 
-[partridge](https://github.com/remix/partridge) package for Python
-
-
 # Background
 
 tidytransit is a
