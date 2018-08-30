@@ -16,4 +16,3 @@
 ^_pkgdown\.yml$
 ^data-raw/
 ^README_files/
-man/figures
