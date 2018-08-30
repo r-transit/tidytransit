@@ -3,6 +3,9 @@
 Status](https://travis-ci.com/r-transit/tidytransit.svg?branch=master)](https://travis-ci.com/r-transit/tidytransit)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/tidytransit?)](https://cran.r-project.org/package=tidytransit)
+[![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active) 
+[![](https://cranlogs.r-pkg.org/badges/tidytransit)](https://cran.r-project.org/package=tidytransit)
+
 
 # tidytransit
 
@@ -43,7 +46,9 @@ tidytransit is a
 [CRAN](https://cran.r-project.org/), with frequency/headway calculation
 functions. 
 
-While it is presently a fork, it is possible that it could be merged with gtfsr at some point in the future (feel free to open an issue regarding a request like this, either here or at gtfsr). 
+# Contributing
+
+If you would like to contribute please feel free to issue a pull request or [open an issue](https://github.com/r-transit/tidytransit/issues/new).
 
 # Contributors
 
