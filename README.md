@@ -96,7 +96,7 @@ nyc <- gtfs_as_sf(nyc)
 This adds routes and stops tables with simple features/geometries to the list of NYC GTFS data. You can then join frequencies to route geometries and plot them with base R.
 
 ``` r
-routes_sf <- nyc$routes_sf %>% 
+routes_sf <- nyc$sf_routes %>% 
   right_join(nyc_fastest_routes, by = "route_id") %>% 
   select(-route_id)
 
