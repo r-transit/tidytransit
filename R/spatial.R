@@ -2,6 +2,7 @@ library(sf)
 #' Add Simple Features for Stops and Routes to GTFS Object
 #'
 #' @param gtfs_obj a standard gtfsr object
+#' @quiet boolean whether to print status messages
 #' @return gtfs_obj a gtfsr object with a bunch of simple features tables
 #' @export
 gtfs_as_sf <- function(gtfs_obj, quiet) {
