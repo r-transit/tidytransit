@@ -53,6 +53,6 @@ If you would like to contribute please feel free to issue a pull request or [ope
 # Contributors
 
 Among the many
-[contributors](https://github.com/ropensci/gtfsr/graphs/contributors),
+[contributors](https://github.com/r-transit/tidytransit/graphs/contributors),
 [Danton Noriega](https://github.com/dantonnoriega) wrote much of this
 package.
