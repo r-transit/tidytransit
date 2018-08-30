@@ -90,13 +90,13 @@ head(nyc_stop_freqs)
 Perhaps you want to map subway routes and color-code each route by how often trains come. First, turn the routes and stops tables in [`simple features`](https://github.com/r-spatial/sf) data frames:
 
 ``` r
-nyc_sf <- gtfs_as_sf(nyc)
+nyc <- gtfs_as_sf(nyc)
 ```
 
 This adds routes and stops tables with simple features/geometries to the list of NYC GTFS data. You can then join frequencies to route geometries and plot them with base R.
 
 ``` r
-routes_sf <- nyc_sf %>% 
+routes_sf <- nyc$routes_sf %>% 
   right_join(nyc_fastest_routes, by = "route_id") %>% 
   select(-route_id)
 
