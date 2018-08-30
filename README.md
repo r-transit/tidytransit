@@ -20,14 +20,19 @@ frequencies, and validate transit feeds.
 This package requires a working installation of
 [sf](https://github.com/r-spatial/sf#installing).
 
-``` r
-# Once sf is installed, you can install from CRAN with: 
-install.packages('tidytransit')
-
+Users are encouraged to install the development version for now:
+```
 # For the development version from Github:
 # install.packages("devtools")
 devtools::install_github("r-transit/tidytransit")
 ```
+
+A CRAN version is also available:
+
+``` r
+install.packages('tidytransit')
+```
+
 
 For some users, `sf` is impractical to install due to system level
 dependencies. For these users,
@@ -37,6 +42,8 @@ more limited functionality, but it can read GTFS tables into R.
 # Usage
 
 Please see the [tutorial](https://s3-us-west-2.amazonaws.com/tidytransit.r-transit.org/articles/tidytransit-instroduction.html) or the [reference](https://s3-us-west-2.amazonaws.com/tidytransit.r-transit.org/reference/index.html). 
+
+Note that there were some minor API changes between the last CRAN version and the current development version which make the web-based docs slightly different from the CRAN docs. 
 
 # Background
 
