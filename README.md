@@ -7,7 +7,7 @@ status](https://www.r-pkg.org/badges/version/tidytransit?)](https://cran.r-proje
 
 tidytransit makes it easy to work with transit data by simplifying [General Transit Feed Specification](http://gtfs.org/) data (the standard format for storing transit data) into tidyverse and sf-friendly dataframes. Use it to map existing stops and routes, calculate transit frequencies, and validate transit feeds.
 
-tidytransit is a [fork](https://en.wikipedia.org/wiki/Fork_(software_development)) of [gtfsr](https://github.com/ropensci/gtfsr), published to CRAN, with frequency calculation functions, and without GTFS-specific interactive cartography features. 
+tidytransit is a [fork](https://en.wikipedia.org/wiki/Fork_(software_development)) of [gtfsr](https://github.com/ropensci/gtfsr), published to [CRAN](https://cran.r-project.org/), with frequency calculation functions, and without GTFS-specific interactive cartography features. 
 
 ## Installation
 
