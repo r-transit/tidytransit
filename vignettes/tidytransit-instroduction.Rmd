@@ -127,7 +127,7 @@ copied below. This can be a very helpful guide as you try to get a grasp
 on the kinds of questions you might want to ask of transit schedule
 data.
 
-![gtfs-relationship-diagram](../man/figures/dependency-graph.png)
+![gtfs-relationship-diagram](figures/dependency-graph.png)
 
 ### Background
 
