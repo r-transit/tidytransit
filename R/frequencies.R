@@ -1,5 +1,5 @@
 #' Get Stop Frequency
-#' @param gtfs_obj a list of gtfs dataframes as read by the trread package.
+#' @param gtfs_obj a list of gtfs dataframes as read by import_gtfs().
 #' @param start_hour (optional) an integer indicating the start hour (default 7)
 #' @param end_hour (optional) an integer indicating the end hour (default 20)
 #' @param dow (optional) integer vector indicating which days of week to calculate for. default is weekday, e.g. c(1,1,1,1,1,0,0)
