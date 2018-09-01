@@ -109,7 +109,11 @@ download_from_url <- function(url, path=tempfile(fileext = ".zip"), quiet=FALSE)
   return(path)
 }
 
-#' Checks UTF-8-BOM encoding. Special thanks to @patperu for finding the issue and to @hrbrmstr for the code to help deal with the issue.
+#' Checks UTF-8-BOM encoding.
+#' 
+#' Special thanks to @patperu for finding the issue and 
+#' to @hrbrmstr for the code to help deal with the issue.
+#' 
 #' @param path the path the the text file
 #' @param encoding can be one of \code{UTF-8}, \code{UTF-16} or \code{UTF-16BE}.
 #'        Although a BOM could be used with UTF-32 and other encodings, such
