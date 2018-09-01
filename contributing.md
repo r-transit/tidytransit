@@ -1,9 +1,15 @@
 # Contributing 
 
-The goal of this guide is to help you get up and contributing to ggplot2 as quickly as possible. The guide is divided into two main pieces:
+You can contribute by:
 
 1. Filing a bug report or feature request in an issue.
 1. Suggesting a change via a pull request.
+
+# Contributors
+
+When you contribute, please add your name to the DESCRIPTION file here:
+
+https://github.com/r-transit/tidytransit/blob/master/DESCRIPTION#L6-L15
 
 ## Issues
 
