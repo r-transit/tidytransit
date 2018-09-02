@@ -9,7 +9,7 @@ working <- function() {
   connecting(url)
 }
 
-#import_gtfs()
+#read_gtfs()
 test_that('the metadata from transitfeeds is a data frame that is not empty', {
   skip_on_cran()
   tfkey <- Sys.getenv('TRANSITFEED_API')

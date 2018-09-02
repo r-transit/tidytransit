@@ -8,7 +8,7 @@ get_stop_frequency(gtfs_obj, start_hour = 6, end_hour = 22,
   dow = c(1, 1, 1, 1, 1, 0, 0), by_route = TRUE, wide = FALSE)
 }
 \arguments{
-\item{gtfs_obj}{a list of gtfs dataframes as read by import_gtfs().}
+\item{gtfs_obj}{a list of gtfs dataframes as read by read_gtfs().}
 
 \item{start_hour}{(optional) an integer indicating the start hour (default 7)}
 

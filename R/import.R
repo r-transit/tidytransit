@@ -18,7 +18,7 @@
 #' @examples \donttest{
 #' library(dplyr)
 #' u1 <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
-#' sample_gtfs <- import_gtfs(u1)
+#' sample_gtfs <- read_gtfs(u1)
 #' attach(sample_gtfs)
 #' #list routes by the number of stops they have
 #' routes_df %>% inner_join(trips_df, by="route_id") %>%
@@ -29,7 +29,7 @@
 #'           arrange(desc(stop_count))
 #' }
 
-import_gtfs <- function(path, local = FALSE, quiet = FALSE) {
+read_gtfs <- function(path, local = FALSE, quiet = FALSE) {
   if(local) {
     path <- normalizePath(path) 
     data_list <- path %>%

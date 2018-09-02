@@ -12,8 +12,8 @@ working <- function() {
   connecting(gtfs_example_url)
 }
 
-test_that('import_gtfs() imports a local file to a list of dataframes and doesnt delete the source file', {
-  gtfs_obj <- tidytransit:::import_gtfs(
+test_that('read_gtfs() imports a local file to a list of dataframes and doesnt delete the source file', {
+  gtfs_obj <- tidytransit:::read_gtfs(
     local_gtfs_path,
     local=TRUE)
   
@@ -66,7 +66,7 @@ test_that('Read and validate returns a list of class "gtfs"', {
 test_that('import-bad paths throw good errors', {
   skip_on_cran()
   not_a_url <- "#!:D"
-  expect_error(import_gtfs(path)) # invalid path
+  expect_error(read_gtfs(path)) # invalid path
 })
 
 # parse_gtfs()
@@ -91,22 +91,22 @@ test_that('import-empty txt files are not imported and non-empty ones are import
   }
 })
 
-#import_gtfs()
-test_that('the import_gtfs function works', {
+#read_gtfs()
+test_that('the read_gtfs function works', {
   skip_on_cran()
   if(working()==FALSE){
       skip("no internet, skipping")
   }
   else {
     # non-specified path
-    x <- import_gtfs(gtfs_example_url, quiet=TRUE)
+    x <- read_gtfs(gtfs_example_url, quiet=TRUE)
     expect_is(x, 'gtfs') # should return 'list' object
   }
   
 })
 
-#import_gtfs()
-test_that('the import_gtfs function fails gracefully on bad urls', {
+#read_gtfs()
+test_that('the read_gtfs function fails gracefully on bad urls', {
   skip_on_cran()
   if(working()==FALSE){
       skip("no internet, skipping")
@@ -116,8 +116,8 @@ test_that('the import_gtfs function fails gracefully on bad urls', {
     bad_url <- "https://developers.google.com/transit/gtfs/examples/sample-feed-bad.zip"
   
     # non-specified path
-    expect_error(import_gtfs(not_zip, quiet=TRUE))
-    expect_error(import_gtfs(bad_url, quiet=TRUE)) # not zip file warning
+    expect_error(read_gtfs(not_zip, quiet=TRUE))
+    expect_error(read_gtfs(bad_url, quiet=TRUE)) # not zip file warning
   }
   
 })
@@ -125,7 +125,7 @@ test_that('the import_gtfs function fails gracefully on bad urls', {
 test_that('Some minimal validation is performed and returned', {
   skip_on_cran()
   if(working()){
-    gtfs_obj1 <- tidytransit::import_gtfs(gtfs_example_url)
+    gtfs_obj1 <- tidytransit::read_gtfs(gtfs_example_url)
     expect_true(gtfs_obj1$validation$all_req_files)
     
     expect_true(dim(gtfs_obj1$validation$full_column_and_file_validation_df)[1]>0)
