@@ -10,6 +10,8 @@ Authors@R: c(
     person("Patrick", "Hausmann", role = c("ctb"), email = "patrick.hausmann@covimo.de"),
     person("Bob", "Rudis", role = c("ctb"), email = "bob@rud.is"),
     person("Mark", "Padgham", role = c("ctb"), email = "mark.padgham@email.com"),
+    person("Kearey", "Smith", role = c("ctb")),
+    person("Dave", "Vautin", role = c("ctb")),
     person("Elaine", "McVey", role = c("cph"), email = "elaine.mcvey@transloc.com"),
     person("Charles Hans", "Thompson", role = c("cph"), email = "hans.thompson1@gmail.com"),
     person("Michael", "Sumner", role = c("cph"))
