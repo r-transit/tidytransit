@@ -418,11 +418,12 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
       }
 
     } else {
-      csv <- quote(readr::read_csv(file = file_path, col_types = coltypes, col_names = colnms, skip = 1L))
-      prob <- quote(readr::problems(readr::read_csv(file = file_path, col_types = coltypes, col_names = colnms, skip = 1L)))
-      df <- trigger_suppressWarnings(eval(csv), quiet)
-      probs <- trigger_suppressWarnings(eval(prob), quiet)
-
+      df <- readr::read_csv(file = file_path, 
+                            col_types = coltypes, 
+                            col_names = colnms, 
+                            skip = 1L)
+      probs <- readr::problems(df)
+      
       if(dim(probs)[1] > 0) attributes(df) <- append(attributes(df), list(problems = probs))
     }
 
