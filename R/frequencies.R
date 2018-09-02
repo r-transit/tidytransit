@@ -81,6 +81,7 @@ get_stop_frequency <- function(gtfs_obj,
 #' @param gtfs_obj a list of gtfs dataframes as read by the trread package.
 #' @param start_hour (optional) an integer, default 6 (6 am)
 #' @param end_hour (optional) an integer, default 22 (10 pm)
+#' @param quiet default FALSE. whether to echo process messages
 #' @param dow (optional) an integeger vector with days of week. monday=1. default: c(1,1,1,1,1,0,0)
 #' @return route_headways a dataframe of route headways
 #' @export

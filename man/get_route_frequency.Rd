@@ -5,7 +5,7 @@
 \title{Get Route Frequency}
 \usage{
 get_route_frequency(gtfs_obj, start_hour = 6, end_hour = 22,
-  dow = c(1, 1, 1, 1, 1, 0, 0))
+  quiet = FALSE, dow = c(1, 1, 1, 1, 1, 0, 0))
 }
 \arguments{
 \item{gtfs_obj}{a list of gtfs dataframes as read by the trread package.}
@@ -13,6 +13,8 @@ get_route_frequency(gtfs_obj, start_hour = 6, end_hour = 22,
 \item{start_hour}{(optional) an integer, default 6 (6 am)}
 
 \item{end_hour}{(optional) an integer, default 22 (10 pm)}
+
+\item{quiet}{default FALSE. whether to echo process messages}
 
 \item{dow}{(optional) an integeger vector with days of week. monday=1. default: c(1,1,1,1,1,0,0)}
 }
