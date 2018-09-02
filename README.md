@@ -41,9 +41,11 @@ more limited functionality, but it can read GTFS tables into R.
 
 # Usage
 
-Please see the [tutorial](http://tidytransit.r-transit.org/articles/introduction.html) or the [reference](http://tidytransit.r-transit.org/reference/index.html). 
+Please see:
 
-Note that there were some minor API changes between the last CRAN version and the current development version which make the web-based docs slightly different from the CRAN docs. 
+- [the tutorial](http://tidytransit.r-transit.org/articles/introduction.html)   
+- [the reference](http://tidytransit.r-transit.org/reference/index.html).   
+
 
 # Background
 
