@@ -19,14 +19,14 @@ get_route_frequency(gtfs_obj, start_hour = 6, end_hour = 22,
 \item{dow}{(optional) an integeger vector with days of week. monday=1. default: c(1,1,1,1,1,0,0)}
 }
 \value{
-route_headways a dataframe of route headways
+a gtfs_obj with a dataframe of routes with variables for headway/frequency for a route within a given time frame
 }
 \description{
 should take:
 }
 \examples{
 data(gtfs_obj)
-get_route_frequency_summary <- get_route_frequency(gtfs_obj)
-x <- order(get_route_frequency_summary$median_headways)
-head(get_route_frequency_summary[x,])
+gtfs_obj <- get_route_frequency(gtfs_obj)
+x <- order(gtfs_obj$routes_frequency_df$median_headways)
+head(gtfs_obj$routes_frequency_df[x,])
 }

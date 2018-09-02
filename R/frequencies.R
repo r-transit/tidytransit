@@ -6,16 +6,16 @@
 #' @param by_route default TRUE, if FALSE then calculate headway for any line coming through the stop in the same direction on the same schedule. 
 #' @param wide (optional) if true, then return a wide rather than tidy data frame
 #' @export
-#' @return a dataframe of stops with a "Trips" variable representing the count trips taken through each stop for a route within a given time frame
+#' @return a gtfs_obj with a dataframe of stops with a "Trips" variable representing the count trips taken through each stop for a route within a given time frame
 #' @importFrom dplyr %>%
 #' @importFrom rlang .data !! := quo enquo
 #' @importFrom stats median sd
 #' @importFrom tidyr spread
 #' @examples 
 #' data(gtfs_obj)
-#' stop_frequency_summary <- get_stop_frequency(gtfs_obj, by_route=FALSE)
-#' x <- order(stop_frequency_summary$headway)
-#' head(stop_frequency_summary[x,])
+#' gtfs_obj <- get_stop_frequency(gtfs_obj)
+#' x <- order(gtfs_obj$stops_frequency_df$headway)
+#' head(gtfs_obj$stops_frequency_df[x,])
 
 get_stop_frequency <- function(gtfs_obj,
                             start_hour=6,
@@ -83,13 +83,13 @@ get_stop_frequency <- function(gtfs_obj,
 #' @param end_hour (optional) an integer, default 22 (10 pm)
 #' @param quiet default FALSE. whether to echo process messages
 #' @param dow (optional) an integeger vector with days of week. monday=1. default: c(1,1,1,1,1,0,0)
-#' @return route_headways a dataframe of route headways
+#' @return a gtfs_obj with a dataframe of routes with variables for headway/frequency for a route within a given time frame
 #' @export
 #' @examples 
 #' data(gtfs_obj)
-#' get_route_frequency_summary <- get_route_frequency(gtfs_obj)
-#' x <- order(get_route_frequency_summary$median_headways)
-#' head(get_route_frequency_summary[x,])
+#' gtfs_obj <- get_route_frequency(gtfs_obj)
+#' x <- order(gtfs_obj$routes_frequency_df$median_headways)
+#' head(gtfs_obj$routes_frequency_df[x,])
 
 get_route_frequency <- function(gtfs_obj,
                             start_hour=6,

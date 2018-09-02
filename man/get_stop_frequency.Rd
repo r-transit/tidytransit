@@ -21,14 +21,14 @@ get_stop_frequency(gtfs_obj, start_hour = 6, end_hour = 22,
 \item{wide}{(optional) if true, then return a wide rather than tidy data frame}
 }
 \value{
-a dataframe of stops with a "Trips" variable representing the count trips taken through each stop for a route within a given time frame
+a gtfs_obj with a dataframe of stops with a "Trips" variable representing the count trips taken through each stop for a route within a given time frame
 }
 \description{
 Get Stop Frequency
 }
 \examples{
 data(gtfs_obj)
-stop_frequency_summary <- get_stop_frequency(gtfs_obj, by_route=FALSE)
-x <- order(stop_frequency_summary$headway)
-head(stop_frequency_summary[x,])
+gtfs_obj <- get_stop_frequency(gtfs_obj)
+x <- order(gtfs_obj$stops_frequency_df$headway)
+head(gtfs_obj$stops_frequency_df[x,])
 }

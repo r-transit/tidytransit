@@ -1,0 +1,112 @@
+---
+title: "introduction"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{tidytransit-introduction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+[
+![Travis-CI Build
+Status](https://travis-ci.com/r-transit/tidytransit.svg?branch=master)](https://travis-ci.com/r-transit/tidytransit)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/tidytransit?)](https://cran.r-project.org/package=tidytransit)
+
+tidytransit makes it easy to work with transit data by simplifying [General Transit Feed Specification](http://gtfs.org/) data (the standard format for storing transit data) into tidyverse and sf-friendly dataframes. Use it to map existing stops and routes, calculate transit frequencies, and validate transit feeds.
+
+tidytransit is a [fork](https://en.wikipedia.org/wiki/Fork_(software_development)) of [gtfsr](https://github.com/ropensci/gtfsr), published to [CRAN](https://cran.r-project.org/), with frequency calculation functions, and without GTFS-specific interactive cartography features. 
+
+## Installation
+
+This package requires a working installation of [sf](https://github.com/r-spatial/sf#installing). 
+
+```{r, eval=FALSE}
+# Once sf is installed, you can install from CRAN with: 
+install.packages('tidytransit')
+
+# For the development version from Github:
+# install.packages("devtools")
+devtools::install_github("r-transit/tidytransit")
+```
+
+For some users, `sf` is impractical to install due to system level dependencies. For these users, [`trread`](https://github.com/r-transit/trread) may work better. It has more limited functionality, but it can read GTFS tables into R. 
+
+## Usage
+
+### Import GTFS data
+
+```{r}
+library(tidytransit)
+library(dplyr)
+
+# Read in GTFS feed
+# here we use a feed included in the package, but note that you can read directly from the New York City Metropolitan Transit Authority using the following URL:
+# nyc <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
+
+local_gtfs_path <- system.file("extdata", 
+                               "google_transit_nyc_subway.zip", 
+                               package = "tidytransit")
+nyc <- read_gtfs(local_gtfs_path, 
+                   local=TRUE)
+```
+
+Tidytransit attempts to convert GTFS feeds into simple features dataframes and frequency/headway dataframes upon import of the GTFS data. 
+
+Below we discuss methods and data available for the gtfs object as read by tidytransit. 
+
+### View Headways by Route
+
+Filter to routes with shortest median headways
+
+```{r}
+head(nyc$routes_frequency_df)
+```
+
+| route\_id | median\_headways | mean\_headways | st\_dev\_headways | stop\_count |
+| :-------- | ---------------: | -------------: | ----------------: | ----------: |
+| GS        |                4 |              4 |              0.01 |           4 |
+| L         |                4 |              4 |              0.13 |          48 |
+| 1         |                5 |              5 |              0.14 |          76 |
+| 7         |                5 |              5 |              0.29 |          44 |
+| 6         |                6 |              7 |              2.84 |          76 |
+| E         |                6 |             23 |             53.01 |          48 |
+
+### View Headways by Stop
+
+You can also identify shortest headways by stop.
+
+```{r}
+head(nyc$stops_frequency_df)
+```
+
+    ## # A tibble: 6 x 4
+    ## # Groups:   direction_id, stop_id [6]
+    ##   direction_id stop_id stop_name             headway
+    ##          <int> <chr>   <chr>                   <dbl>
+    ## 1            0 902N    Times Sq - 42 St         3.60
+    ## 2            1 901S    Grand Central - 42 St    3.60
+    ## 3            1 902S    Times Sq - 42 St         3.60
+    ## 4            0 901N    Grand Central - 42 St    3.61
+    ## 5            0 702N    Mets - Willets Point     3.72
+    ## 6            0 707N    Junction Blvd            3.72
+
+
+### Map Route Frequencies
+
+Perhaps you want to map subway routes and color-code each route by how often trains come. 
+
+```{r}
+plot(nyc)
+```
+
+## Additional Information
+
+### GTFS Table Relationships
+
+![gtfs-relationship-diagram](figures/GTFS_class_diagram.svg.png)
+Source: Wikimedia, user -stk. 

@@ -33,7 +33,11 @@ if(getRversion() >= "3.1.0") {
       'validation_status',
       'provided_status',
       'loc_lat',
-      'loc_lng'
+      'loc_lng',
+      'median_headways', 
+      'mean_headways', 
+      'st_dev_headways', 
+      'stop_count'
     )
   )
 }

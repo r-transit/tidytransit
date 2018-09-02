@@ -100,3 +100,4 @@ planner_buffer <- function(df_sf1,dist="h",crs=26910) {
   df3 <- sf::st_buffer(df2,dist=distance)
   return(df3)
 }
+
