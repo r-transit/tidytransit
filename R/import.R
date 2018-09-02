@@ -51,7 +51,7 @@ read_gtfs <- function(path, local = FALSE, quiet = FALSE) {
   return(data_list) 
 }
 
-#' Get and validate dataframes of General Transit Feed Specification (GTFS) data.
+#' This function is deprecated. Please use read_gtfs
 #' 
 #' This function reads GTFS text files from a local or remote zip file. 
 #' It also validates the files against the GTFS specification by file, requirement status, and column name
@@ -65,7 +65,6 @@ read_gtfs <- function(path, local = FALSE, quiet = FALSE) {
 #' @param quiet Boolean. Whether to see file download progress and files extract. FALSE by default.
 #'
 #' @return Dataframes of GTFS data.
-#' @rdname pkg-deprecated
 #'
 #' @export
 #' @importFrom dplyr %>% arrange summarise group_by inner_join

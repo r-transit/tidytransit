@@ -2,7 +2,7 @@
 % Please edit documentation in R/import.R
 \name{import_gtfs}
 \alias{import_gtfs}
-\title{Get and validate dataframes of General Transit Feed Specification (GTFS) data.}
+\title{This function is deprecated. Please use read_gtfs}
 \usage{
 import_gtfs(path, local = FALSE, quiet = FALSE)
 }
