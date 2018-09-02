@@ -1,4 +1,3 @@
-library(sf)
 #' Add Simple Features for Stops and Routes to GTFS Object
 #'
 #' @param gtfs_obj a standard gtfsr object
