@@ -36,14 +36,16 @@ read_gtfs <- function(path, local = FALSE, quiet = FALSE) {
       unzip_file(quiet=quiet) %>% 
          list_files(quiet=quiet) %>%
             read_and_validate() %>%
-              gtfs_as_sf(quiet=quiet)
+              get_route_frequency() %>%
+                gtfs_as_sf(quiet=quiet)
   } else {
     data_list <- path %>%
       download_from_url(.) %>%
         unzip_file(quiet = quiet) %>%
           list_files(quiet = quiet) %>%
             read_and_validate() %>%
-              gtfs_as_sf(quiet=quiet)
+              get_route_frequency() %>%
+                gtfs_as_sf(quiet=quiet)
   }
 
   return(data_list) 

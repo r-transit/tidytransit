@@ -67,7 +67,12 @@ get_stop_frequency <- function(gtfs_obj,
       tibble::rowid_to_column() %>%
       tidyr::spread(.data$direction, .data$headway, sep="_")
   }
-  return(stop_time_trips %>% tibble::as_tibble())
+  stops_frequency_df <- stop_time_trips %>% 
+    tibble::as_tibble()
+  
+  gtfs_obj$stops_frequency_df <- stops_frequency_df
+  
+  return(gtfs_obj)
 }
 
 #' Get Route Frequency
@@ -88,14 +93,13 @@ get_stop_frequency <- function(gtfs_obj,
 get_route_frequency <- function(gtfs_obj,
                             start_hour=6,
                             end_hour=22,
+                            quiet = FALSE,
                             dow=c(1,1,1,1,1,0,0)) {
-  stop_frequency_df <- get_stop_frequency(gtfs_obj,
-                                      start_hour, 
-                                      end_hour,
-                                      dow)  
+  if(!quiet) message('Calculating route and stop headways using defaults (6 am to 10 pm for weekday service).')
+  gtfs_obj <- get_stop_frequency(gtfs_obj,start_hour,end_hour,dow)  
   
-  if (dim(stop_frequency_df)[[1]]!=0) {
-    get_route_frequency_df <- stop_frequency_df %>%
+  if (dim(gtfs_obj$stops_frequency_df)[[1]]!=0) {
+    gtfs_obj$routes_frequency_df <- gtfs_obj$stops_frequency_df %>%
       dplyr::group_by_('route_id') %>%
       dplyr::summarise(median_headways = as.integer(round(median(.data$headway),0)),
                        mean_headways = as.integer(round(mean(.data$headway),0)),
@@ -105,6 +109,6 @@ get_route_frequency <- function(gtfs_obj,
   {
     warning("agency gtfs has no published service for the specified period")
   }
-  return(get_route_frequency_df)
+  return(gtfs_obj)
 }
 
