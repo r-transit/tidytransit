@@ -4,7 +4,8 @@
 \alias{download_from_url}
 \title{Download a zipped GTFS feed file from a url}
 \usage{
-download_from_url(url, path = tempfile(fileext = ".zip"), quiet = FALSE)
+download_from_url(url, path = tempfile(fileext = ".zip"),
+  quiet = FALSE)
 }
 \arguments{
 \item{url}{Character URL of GTFS feed.}

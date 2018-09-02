@@ -47,7 +47,15 @@ library(tidytransit)
 library(dplyr)
 
 # Read in GTFS feed
-nyc <- import_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
+# here we use a feed included in the package, but note that you can read directly from the New York City Metropolitan Transit Authority using the following URL:
+#nyc <- import_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
+
+local_gtfs_path <- system.file("extdata", 
+                               "google_transit_nyc_subway.zip", 
+                               package = "tidytransit")
+nyc <- import_gtfs(local_gtfs_path, 
+                   local=TRUE)
+
 
 # Get route frequencies
 nyc_route_freqs <- nyc %>% 

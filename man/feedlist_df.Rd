@@ -8,8 +8,8 @@
 \describe{
 \item{id}{the id of the feed on transitfeeds.com}
 \item{t}{title of the feed}
-\item{loc_id}{title of the feed}
-\item{loc_pid}{the id of the feed on transitfeeds.com}
+\item{loc_id}{location id}
+\item{loc_pid}{location placeid of the feed on transitfeeds.com}
 \item{loc_t}{the title of the location}
 \item{loc_n}{the shortname fo the location}
 \item{loc_lat}{the location latitude}

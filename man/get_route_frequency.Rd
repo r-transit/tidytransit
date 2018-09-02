@@ -4,8 +4,8 @@
 \alias{get_route_frequency}
 \title{Get Route Frequency}
 \usage{
-get_route_frequency(gtfs_obj, start_hour = 6, end_hour = 22, dow = c(1, 1,
-  1, 1, 1, 0, 0))
+get_route_frequency(gtfs_obj, start_hour = 6, end_hour = 22,
+  dow = c(1, 1, 1, 1, 1, 0, 0))
 }
 \arguments{
 \item{gtfs_obj}{a list of gtfs dataframes as read by the trread package.}
