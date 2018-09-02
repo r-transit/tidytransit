@@ -10,6 +10,8 @@ vignette: >
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidytransit)
+library(dplyr)
 ```
 [
 ![Travis-CI Build
@@ -38,12 +40,9 @@ For some users, `sf` is impractical to install due to system level dependencies.
 
 ## Usage
 
-### Import GTFS data
+### Read GTFS data
 
 ```{r}
-library(tidytransit)
-library(dplyr)
-
 # Read in GTFS feed
 # here we use a feed included in the package, but note that you can read directly from the New York City Metropolitan Transit Authority using the following URL:
 # nyc <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
@@ -59,9 +58,19 @@ Tidytransit attempts to convert GTFS feeds into simple features dataframes and f
 
 Below we discuss methods and data available for the gtfs object as read by tidytransit. 
 
-### View Headways by Route
+### Plot
 
-Filter to routes with shortest median headways
+Perhaps you want to map subway routes and color-code each route by how often trains come. 
+
+```{r}
+plot(nyc)
+```
+
+### Headways by Route
+
+View the headways along routes as a dataframe. `routes_frequency_df` is added to the list of gtfs dataframes read in by `read_gtfs`.
+
+Use the GTFS Table Relationships diagram below to join these data to relevant data, for example, the more detailed route names on the `routes_df`. 
 
 ```{r}
 head(nyc$routes_frequency_df)
@@ -76,9 +85,9 @@ head(nyc$routes_frequency_df)
 | 6         |                6 |              7 |              2.84 |          76 |
 | E         |                6 |             23 |             53.01 |          48 |
 
-### View Headways by Stop
+### Headways by Stop
 
-You can also identify shortest headways by stop.
+View the headways at stops. `stops_frequency_df` is added to the list of gtfs dataframes read in by `read_gtfs`.   
 
 ```{r}
 head(nyc$stops_frequency_df)
@@ -94,17 +103,6 @@ head(nyc$stops_frequency_df)
     ## 4            0 901N    Grand Central - 42 St    3.61
     ## 5            0 702N    Mets - Willets Point     3.72
     ## 6            0 707N    Junction Blvd            3.72
-
-
-### Map Route Frequencies
-
-Perhaps you want to map subway routes and color-code each route by how often trains come. 
-
-```{r}
-plot(nyc)
-```
-
-## Additional Information
 
 ### GTFS Table Relationships
 
