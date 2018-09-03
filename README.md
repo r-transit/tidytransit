@@ -20,7 +20,7 @@ frequencies, and validate transit feeds.
 This package requires a working installation of
 [sf](https://github.com/r-spatial/sf#installing).
 
-Users are encouraged to install the development version for now:
+Due to a major [bug](https://github.com/r-transit/tidytransit/issues/15) in the current CRAN version, users are encouraged to install the development version for now:
 ```
 # For the development version from Github:
 # install.packages("devtools")
