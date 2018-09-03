@@ -15,7 +15,6 @@ knitr::opts_chunk$set(
 )
 library(dplyr)
 library(tidytransit)
-library(ggplot2)
 ```
 
 ## GTFS Table Relationships
