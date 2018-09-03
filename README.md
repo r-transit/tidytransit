@@ -17,19 +17,18 @@ frequencies, and validate transit feeds. tidytransit reads the [General Transit 
 This package requires a working installation of
 [sf](https://github.com/r-spatial/sf#installing).
 
-Due to a major [bug](https://github.com/r-transit/tidytransit/issues/15) in the current CRAN version, users are encouraged to install the development version for now:
-```
-# For the development version from Github:
-# install.packages("devtools")
-devtools::install_github("r-transit/tidytransit")
-```
-
-A CRAN version is also available:
+A CRAN version is available:
 
 ``` r
 install.packages('tidytransit')
 ```
 
+For the development version from Github:
+
+```
+# install.packages("devtools")
+devtools::install_github("r-transit/tidytransit")
+```
 
 For some users, `sf` is impractical to install due to system level
 dependencies. For these users,
