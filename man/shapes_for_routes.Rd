@@ -4,16 +4,16 @@
 \alias{shapes_for_routes}
 \title{Get a set of shapes for a set of routes}
 \usage{
-shapes_for_routes(g1, route_ids, select_service_ids, directional = FALSE)
+shapes_for_routes(g1, route_ids, service_ids, directional = FALSE)
 }
 \arguments{
 \item{route_ids}{the ids of the routes}
 
+\item{service_ids}{the service for which to get stops}
+
 \item{directional}{if the routes should by related to a route direction (e.g. inbound, outbound) - currently not implemented}
 
 \item{a}{dataframe output by join_mega_and_hf_routes()}
-
-\item{service_id}{the service for which to get stops}
 }
 \value{
 shapes for routes
