@@ -1,0 +1,130 @@
+---
+title: "GTFS Tables"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(dplyr)
+library(tidytransit)
+library(ggplot2)
+```
+
+## GTFS Table Relationships
+
+![gtfs-relationship-diagram](figures/GTFS_class_diagram.svg.png)
+Source: Wikimedia, user -stk. 
+
+## Additional tables calculated by tidytransit
+
+
+In addition to the tables described above, tidytransit attempts to calculate the following tables when one uses read_gtfs():
+
+- routes_sf
+- stops_sf
+- routes_frequencies_df
+- stops_frequencies_df
+
+tidytransit prints a message regarding these tables on read. 
+
+```{r}
+# Read in GTFS feed
+# here we use a feed included in the package, but note that you can read directly from the New York City Metropolitan Transit Authority using the following URL:
+# nyc <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
+
+local_gtfs_path <- system.file("extdata", 
+                               "google_transit_nyc_subway.zip", 
+                               package = "tidytransit")
+nyc <- read_gtfs(local_gtfs_path, 
+                   local=TRUE)
+```
+
+## Join Calculated Tables to GTFS Tables
+
+Each of these can be joined back to standard GTFS tables, or to each other, with more information using either route_id or stop_id. 
+
+For example, joining the standard routes table, with the 'route_shortname' variable to routes_frequencies_df. 
+
+```{r}
+routes_df_frequencies <- nyc$routes_df %>% 
+  dplyr::inner_join(nyc$routes_frequency_df, by = "route_id") %>% 
+  dplyr::select(route_long_name,
+                median_headways, 
+                 mean_headways, 
+                 st_dev_headways, 
+                 stop_count)
+head(routes_df_frequencies)
+```
+
+You can do the same with 'simple features tables'. 
+
+For example, under the hood, plot(gtfs_obj) is doing this:
+
+```{r}
+routes_sf_frequencies <- nyc$routes_sf %>% 
+  dplyr::inner_join(nyc$routes_frequency_df, by = "route_id") %>% 
+  dplyr::select(median_headways, 
+                 mean_headways, 
+                 st_dev_headways, 
+                 stop_count)
+plot(routes_sf_frequencies)
+```
+
+## Headways at Stops for a Route
+
+A more complex example of cross-table joins is to pull the stops and their headways for a given route. 
+
+This simple question is a great way to begin to understand a lot about the GTFS data model. 
+
+First, we'll need to find a 'service_id', which will tell us which stops a route passes through on a given day of the week and year. 
+
+When calculating frequencies, tidytransit tries to guess which service_id is representative of a standard weekday by walking through [a set of steps](https://github.com/r-transit/tidytransit/blob/master/R/frequencies.R#L34-L59). Below we'll just do some of this manually. 
+
+First, lets look at the calendar_df. 
+
+```{r}
+head(sample_n(nyc$calendar_df,10))
+```
+
+Then we'll pull a random route_id and set of service_ids that run on Mondays. 
+
+```{r}
+select_service_id <- filter(nyc$calendar_df,monday==1) %>% pull(service_id)
+select_route_id <- sample_n(nyc$routes_df,1) %>% pull(route_id)
+```
+
+Now we'll filter down through the data model to just stops for that route and service_ids. 
+
+```{r}
+some_trips <- nyc$trips_df %>%
+  filter(route_id %in% select_route_id & service_id %in% select_service_id)
+
+some_stop_times <- nyc$stop_times_df %>% 
+  filter(trip_id %in% some_trips$trip_id) 
+
+some_stops <- nyc$stops_sf %>%
+  filter(stop_id %in% some_stop_times$stop_id)
+```
+
+Before we plot them, lets pull the frequency calculations from the calculated table onto their geometries. 
+
+```{r}
+some_stops_freq_sf <- some_stops %>%
+  left_join(nyc$stops_frequency_df, by="stop_id") %>%
+  select(headway)
+plot(some_stops_freq_sf)
+```
+
+We may--in fact, we probably will--see some surprising outliers for headway calculations in this plot. 
+
+Calculating headways at stops is tricky for a number of reasons. One reason is that these calculations can be determined by schedules of service. 
+
+But hopefully now you have a better understanding of how you can use the GTFS data model to communicate about these questions. 

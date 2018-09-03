@@ -103,8 +103,3 @@ head(nyc$stops_frequency_df)
     ## 4            0 901N    Grand Central - 42 St    3.61
     ## 5            0 702N    Mets - Willets Point     3.72
     ## 6            0 707N    Junction Blvd            3.72
-
-### GTFS Table Relationships
-
-![gtfs-relationship-diagram](figures/GTFS_class_diagram.svg.png)
-Source: Wikimedia, user -stk. 

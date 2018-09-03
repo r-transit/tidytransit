@@ -112,3 +112,22 @@ shapes_for_routes <- function(g1, route_ids, select_service_ids, directional=FAL
   return(df_routes)
 }
 
+#` Get a set of stops for a route
+#' @param a dataframe output by join_mega_and_hf_routes()
+#' @param route_id the id of the route
+#' @param service_id the service for which to get stops 
+#' @return stops for a route
+#' @export
+get_stops_for_route <- function(g1, select_route_id, select_service_id) {
+  some_trips <- g1$trips_df %>%
+    filter(route_id %in% select_route_id & service_id %in% select_service_id)
+  
+  some_stop_times <- g1$stop_times_df %>% 
+    filter(trip_id %in% some_trips$trip_id) 
+  
+  some_stops <- g1$stops_df %>%
+    filter(stop_id %in% some_stop_times$stop_id)
+  
+  some_stops$route_id <- select_route_id
+  return(some_stops)
+}
