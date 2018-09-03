@@ -42,20 +42,29 @@ count_service_trips <- function(trips) {
         tibble::as_tibble()
 }
 
-#' Get a set of stops for a given set of service ids
+#' Get a set of stops for a given set of service ids and route ids
 #' 
-#' @param g1 gtfsr object
+#' @param gtfs_obj as read by read_gtfs()
 #' @param service_ids the service for which to get stops 
+#' @param route_ids the route_ids for which to get stops 
 #' @return stops for a given service
-#' @keywords internal
-stops_for_service <- function(g1, select_service_id) {
-  some_trips <- g1$trips_df %>%
-    dplyr::filter(.data$service_id %in% select_service_id)
+#' @export
+#' @examples \donttest{
+#' local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+#' nyc <- read_gtfs(local_gtfs_path,local=TRUE)
+#' select_service_id <- filter(nyc$calendar_df,monday==1) %>% pull(service_id)
+#' select_route_id <- sample_n(nyc$routes_df,1) %>% pull(route_id)
+#' filtered_stops_df <- filter_stops(nyc,select_service_id,select_route_id)
+#' }
+filter_stops <- function(gtfs_obj, select_service_ids, select_route_ids) {
+  some_trips <- gtfs_obj$trips_df %>%
+    dplyr::filter(.data$service_id %in% select_service_ids &
+                    .data$route_id %in% select_route_ids)
   
-  some_stop_times <- g1$stop_times_df %>% 
+  some_stop_times <- gtfs_obj$stop_times_df %>% 
     dplyr::filter(.data$trip_id %in% some_trips$trip_id) 
   
-  some_stops <- g1$stops_df %>%
+  some_stops <- gtfs_obj$stops_df %>%
     dplyr::filter(.data$stop_id %in% some_stop_times$stop_id)
   
   return(some_stops)
