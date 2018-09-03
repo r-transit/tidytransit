@@ -30,7 +30,7 @@ routes_df_as_sf <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
                                          by="shape_id")
 
   lines_df <- dplyr::distinct(routes_latlong_df, .data$route_id)
-
+  lines_df <- lines_df[order(lines_df$route_id),]
   list_of_line_tibbles <- split(routes_latlong_df, routes_latlong_df$route_id)
   list_of_multilinestrings <- lapply(list_of_line_tibbles, shapes_df_as_sfg)
 
