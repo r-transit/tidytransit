@@ -59,11 +59,25 @@ validate_gtfs_structure <- function(files_validation_result, gtfs_obj, return_gt
 
 }
 
+is_files_validation_result <- function(files_validation_result) {
+  cnames <- colnames(files_validation_result)
+  return(
+    length(cnames) == 3 &
+      "file" %in% cnames &
+      "spec" %in% cnames &
+      "provided_status" %in% cnames &
+      is.logical(files_validation_result$provided_status)
+    ) 
+}
+
 #' For a list of files, return information about whether they are part of the GTFS spec.
 #'
 #' @param file_list A list of files to be checked
 #'
-#' @return Dataframe will one row for all required and optional files per spec, plus one row for any other files provided (file), with an indication of these categories (spec), and a yes/no/empty status (provided_status)
+#' @return Dataframe will one row for all required and optional files per spec, 
+#'         plus one row for any other files provided (file), 
+#'         with an indication of these categories (spec), 
+#'         and a wheter the file is provided (provided)
 #' @noRd
 
 validate_file_list <- function(file_list) {
@@ -106,8 +120,7 @@ validate_file_list <- function(file_list) {
                                  rep('ext', times = length(extra_files))))
 
   files_validation_result <- files_validation_result %>%
-    dplyr::mutate(provided_status = ifelse((file %in% 
-                                           feed_names_file), 'yes', 'no'))
+    dplyr::mutate(provided_status = (file %in% feed_names_file))
   
   return(files_validation_result)
 }
@@ -116,7 +129,7 @@ valid_file_paths <- function(files_list) {
   files_list_shortnames <- sapply(files_list,get_file_shortname)
   files_validation_result <- validate_file_list(files_list)
   valid_files_meta <- files_validation_result %>% 
-    dplyr::filter(spec != 'ext' & provided_status=="yes")
+    dplyr::filter(spec != 'ext' & provided_status)
   
   valid_filenames <- names(files_list[files_list %in% valid_files_meta$file])
 
@@ -152,7 +165,8 @@ make_var_val <- function() {
 
 validate_vars <- function(files_validation_result, gtfs_obj) {
 
-  stopifnot(any(class(files_validation_result) == 'tbl_df'))
+  stopifnot(any(class(files_validation_result) == 'tbl_df'),
+    is_files_validation_result(files_validation_result))
 
   # files_validation_result <- gtfs_obj$files_validation_result
   gtfs_obj <- gtfs_obj[which(names(gtfs_obj) != "files_validation_result")]
@@ -192,7 +206,7 @@ validate_vars <- function(files_validation_result, gtfs_obj) {
       temp_vars_df <- dplyr::data_frame(file = rep(gsub('_df', '', j), 
                                                    length(temp_names)), 
                                         field = temp_names, 
-                                        field_provided_status = ifelse(provided_status, 'no', 'yes'))
+                                        field_provided_status = !provided_status)
     }
 
     val_vars_df <- dplyr::bind_rows(val_vars_df, temp_vars_df)
@@ -233,10 +247,10 @@ validate_vars <- function(files_validation_result, gtfs_obj) {
 
   all_val_df <- all_val_df %>%
     dplyr::mutate(validation_details = NA) %>% # default to NA
-    dplyr::mutate(validation_details = replace(validation_details, file_provided_status != 'yes' & file_spec == 'opt', 'missing_opt_file')) %>% # optional file missing
-    dplyr::mutate(validation_details = replace(validation_details, file_provided_status != 'yes' & file_spec == 'req', 'missing_req_file')) %>% # req file missing
-    dplyr::mutate(validation_details = replace(validation_details, file_provided_status == 'yes' & field_spec == 'req' & field_provided_status != 'yes', 'missing_req_field')) %>%
-    dplyr::mutate(validation_details = replace(validation_details, file_provided_status == 'yes' & field_spec == 'opt' & field_provided_status != 'yes', 'missing_opt_field'))
+    dplyr::mutate(validation_details = replace(validation_details, !file_provided_status & file_spec == 'opt', 'missing_opt_file')) %>% # optional file missing
+    dplyr::mutate(validation_details = replace(validation_details, !file_provided_status & file_spec == 'req', 'missing_req_file')) %>% # req file missing
+    dplyr::mutate(validation_details = replace(validation_details, file_provided_status & field_spec == 'req' & field_provided_status != 'yes', 'missing_req_field')) %>%
+    dplyr::mutate(validation_details = replace(validation_details, file_provided_status & field_spec == 'opt' & field_provided_status != 'yes', 'missing_opt_field'))
 
 
   all_val_df <- all_val_df %>%
