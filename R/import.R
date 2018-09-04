@@ -7,7 +7,7 @@ load_gtfs <- function(path) {
   
   # 3) list files in directory
   files_list <- list_files(directory)
-  file_validation_result <- validate_file_list(files_list)
+  files_validation_result <- validate_file_list(files_list)
   
   # 4) list valid files
   valid_file_paths <- valid_file_paths(files_list)
@@ -16,7 +16,8 @@ load_gtfs <- function(path) {
   gtfs_list <- read_files(valid_file_paths)
   
   # 6) create gtfs_obj
-  gtfs_obj <- c(gtfs_list, files_validation_result = list(file_validation_result))
+  gtfs_obj <- gtfs_list
+  attributes(gtfs_obj) <- append(attributes(gtfs_obj), list(files_validation_result = files_validation_result))
   class(gtfs_obj) <- "gtfs"
   
   # 7) validate gtfs_obj
@@ -286,7 +287,7 @@ read_files <- function(file_path_list, quiet = FALSE) {
   # file_list <- sapply(all_files,get_file_shortname)
   # files_validation_result <- validate_file_list(file_list)
   # valid_files_meta <- files_validation_result %>%
-  #   dplyr::filter(spec != 'ext' & provided_status=="yes")
+  #   dplyr::filter(spec != 'ext' & provided_status)
   # 
   # # browser()
   # 
