@@ -92,22 +92,24 @@ validate_file_list <- function(file_list) {
   # Per spec, these are the required and optional files
   all_req_files <- c('agency', 'stops', 'routes', 'trips', 'stop_times', 'calendar')
   all_opt_files <- c(
-    'calendar_attributes',
     'calendar_dates',
-    'directions',
     'fare_attributes',
-    'fare_rider_categories',
     'fare_rules',
-    'farezone_attributes',
-    'feed_info',
+    'shapes',
     'frequencies',
+    'transfers',
+    'feed_info'
+  )
+  other_opt_files <- c(
+    'calendar_attributes',
+    'directions',
+    'fare_rider_categories',
+    'farezone_attributes',
     'rider_categories',
     'route_directions',
-    'shapes',
     'stop_attributes',
     'timetable_stop_order',
-    'timetables',
-    'transfers'
+    'timetables'
   )
   all_spec_files <- c(all_req_files, all_opt_files)
 
@@ -140,17 +142,6 @@ filepaths_to_read <- function(directory, files_validation_result) {
   paste0(directory, "/", files, ".txt")
 }
 
-valid_file_paths <- function(files_list) {
-  files_list_shortnames <- sapply(files_list,get_file_shortname)
-  files_validation_result <- validate_file_list(files_list)
-  valid_files_meta <- files_validation_result %>% 
-    dplyr::filter(spec != 'ext' & provided_status)
-  
-  valid_filenames <- names(files_list[files_list %in% valid_files_meta$file])
-
-  return(valid_filenames)
-}
-
 #' Create dataframe of GTFS variable spec info
 #' @noRd
 
@@ -164,6 +155,8 @@ make_var_val <- function() {
   all_val_df <- mapply(function(x,y) dplyr::mutate(.data=x, file = y), x = all_val_df, y = nms, SIMPLIFY=FALSE) %>%
     dplyr::bind_rows() # assign new variable 'file' to each tbl_df based on names
 
+  all_val_df$. <- NULL
+  
   return(all_val_df)
 
 }
@@ -188,7 +181,8 @@ validate_vars <- function(gtfs_obj) {
 
   # the files that are provided for this gtfs_obj
   val_files_df <- files_validation_result %>%
-    dplyr::rename(file_spec = spec, file_provided_status = provided_status)
+    dplyr::rename(file_spec = spec, file_provided_status = provided_status) %>% 
+    filter(file_provided_status)
 
   # Join file level data with variable level data - for files that were provided
   vars_df <- suppressMessages(dplyr::left_join(val_files_df, spec_vars_df))
@@ -237,21 +231,22 @@ validate_vars <- function(gtfs_obj) {
   sub_all_val_df <- all_val_df %>%
     dplyr::filter(!is.na(field_spec))
 
-  case_df <- all_val_df %>%
-    dplyr::filter(is.na(field_spec))
+  non_csv_df <- all_val_df %>%
+    dplyr::filter(is.na(field_spec) & is.na(field)) # NA field point to non-csv files
 
-  case_df <- case_df %>%
-    dplyr::mutate(field_spec = 'ext') %>%
+  case_df <- all_val_df %>%
+    dplyr::filter(is.na(field_spec) & !is.na(field))
+
+  case_df <- case_df %>% dplyr::mutate(field_spec = 'ext')%>% 
     dplyr::group_by(file) %>%
     dplyr::mutate(file_spec = unique(sub_all_val_df$file_spec[sub_all_val_df$file == unique(file)]),
            file_provided_status = unique(sub_all_val_df$file_provided_status[sub_all_val_df$file == unique(file)]))
-
 
   # 2) field_provided_status is NA for spec fields not provided in files provided
   sub_all_val_df$field_provided_status[is.na(sub_all_val_df$field_provided_status)] <- FALSE
 
   # Put filled in parts back together
-  all_val_df <- dplyr::bind_rows(sub_all_val_df, case_df)
+  all_val_df <- dplyr::bind_rows(sub_all_val_df, case_df, non_csv_df)
   if (nrow(all_val_df) != orig_rows) stop('Handling of special cases failed.')
 
   # Check overall status for required files/fields

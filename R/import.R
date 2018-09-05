@@ -71,10 +71,9 @@ read_gtfs <- function(path, local = FALSE, quiet = FALSE) {
   gtfs_obj <- create_gtfs_object(path, quiet = quiet)
   
   # TODO move to "gtfs enrichment" function
-  gtfs_obj <- get_route_frequency() %>%
-    gtfs_as_sf(quiet=quiet)
+  gtfs_obj <- get_route_frequency(gtfs_obj) %>% gtfs_as_sf(quiet=quiet)
   
-  return(data_list) 
+  return(gtfs_obj) 
 }
 
 #' This function is deprecated. Please use read_gtfs
