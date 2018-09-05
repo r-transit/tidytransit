@@ -15,11 +15,9 @@ validate_gtfs_structure <- function(gtfs_obj, return_gtfs_obj = TRUE, quiet = FA
     return(NULL)
   }
 
-  if(!quiet) message(gtfs_obj$agency_df$agency_name)
-
   files_validation_result <- attributes(gtfs_obj)$files_validation_result
   
-  all_val_df <- validate_vars(files_validation_result, gtfs_obj = gtfs_obj) %>%
+  all_val_df <- validate_vars(gtfs_obj) %>%
     calendar_exception_fix()
 
   probs_subset <- all_val_df %>% dplyr::filter(validation_status == 'problem') # subset of only problems
@@ -180,15 +178,11 @@ make_var_val <- function() {
 #'
 #' @noRd
 
-validate_vars <- function(files_validation_result, gtfs_obj) {
+validate_vars <- function(gtfs_obj) {
 
-  stopifnot(any(class(files_validation_result) == 'tbl_df'),
-    is_files_validation_result(files_validation_result))
+  files_validation_result <- attributes(gtfs_obj)$files_validation_result
 
-  # files_validation_result <- gtfs_obj$files_validation_result
-  gtfs_obj <- gtfs_obj[which(names(gtfs_obj) != "files_validation_result")]
-  
-  t# Generate the df of files and fields per the GTFS spec
+  # Generate the df of files and fields per the GTFS spec
   spec_vars_df <- make_var_val() %>%
     dplyr::rename(field_spec = spec)
 
