@@ -6,7 +6,7 @@ contribute.
 We also expect that contributors to this project will not harass one another.
 
 Examples of harrassment include, but are not limited to,
-the use of secual language or imagery, derogatory comments, racism, 
+the use of sexual language or imagery, derogatory comments, racism, 
 personal attacks, trolling, insults, and harassment.
 
 Contributors are responsible for responding to such comments, commits, code, 
