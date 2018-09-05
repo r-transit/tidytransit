@@ -1,5 +1,9 @@
 #' Create a gtfs object from all files within a directory
 create_gtfs_object <- function(directory_path, quiet = F) {
+  if(tools::file_ext(directory_path) == "zip") {
+    warning("found zip file instead of directory")
+    return(NULL)
+  }
   # 1) list files in directory
   directory <- normalizePath(directory_path)
   files_list <- list_files(directory)
@@ -278,14 +282,6 @@ list_files <- function(directory, quiet = FALSE) {
 #' @keywords internal
 
 read_files <- function(file_path_list, quiet = FALSE) {
-  # file_list <- sapply(all_files,get_file_shortname)
-  # files_validation_result <- validate_file_list(file_list)
-  # valid_files_meta <- files_validation_result %>%
-  #   dplyr::filter(spec != 'ext' & provided_status)
-  # 
-  # # browser()
-  # 
-  # valid_filenames <- names(file_list[file_list %in% valid_files_meta$file])
   exec_env <- environment()
 
   # read valid files in environment
@@ -376,6 +372,8 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
       return(df)
     }
 
+    # browser()
+    
     ## read.csv supports UTF-8-BOM. use this to get field names.
     small_df <- suppressWarnings(utils::read.csv(file_path, nrows = 10, stringsAsFactors = FALSE)) # get a small df to find how many cols are needed
 
@@ -414,9 +412,8 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
 
     } else {
       df <- readr::read_csv(file = file_path, 
-                            col_types = coltypes, 
-                            col_names = colnms, 
-                            skip = 1L)
+                            col_types = coltypes
+        )
       probs <- readr::problems(df)
       
       if(dim(probs)[1] > 0) attributes(df) <- append(attributes(df), list(problems = probs))
