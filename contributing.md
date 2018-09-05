@@ -23,5 +23,5 @@ To contribute a change to tidytransit, you follow these steps:
 1. Push branch to github and issue pull request (PR).
 1. Discuss the pull request.
 1. Iterate until either we accept the PR or decide that it's not
-   a good fit for ggplot2.
+   a good fit.
 
