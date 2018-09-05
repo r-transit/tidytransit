@@ -1,8 +1,3 @@
-validate_gtfs <- function(gtfs_obj) {
-  validate_gtfs_structure(gtfs_obj$files_validation_result, gtfs_obj)
-}
-
-
 #' Create validation list for a gtfs_obj. It provides an overview of the structure of all files that were imported.
 #'
 #' @param gtfs_obj A GTFS list object with components agency_df, etc.
@@ -14,16 +9,18 @@ validate_gtfs <- function(gtfs_obj) {
 #'
 #' @keywords internal
 
-validate_gtfs_structure <- function(files_validation_result, gtfs_obj, return_gtfs_obj = TRUE, quiet = FALSE) {
+validate_gtfs_structure <- function(gtfs_obj, return_gtfs_obj = TRUE, quiet = FALSE) {
   if (length(gtfs_obj) == 0) {
-    warning('Empty gtfs_obj.')
+    warning('Empty gtfs_obj')
     return(NULL)
   }
 
   if(!quiet) message(gtfs_obj$agency_df$agency_name)
 
+  files_validation_result <- attributes(gtfs_obj)$files_validation_result
+  
   all_val_df <- validate_vars(files_validation_result, gtfs_obj = gtfs_obj) %>%
-    calendar_exception_fix
+    calendar_exception_fix()
 
   probs_subset <- all_val_df %>% dplyr::filter(validation_status == 'problem') # subset of only problems
 
@@ -49,7 +46,7 @@ validate_gtfs_structure <- function(files_validation_result, gtfs_obj, return_gt
   }
 
   # update gtfs_obj attributes with validation data
-  attributes(gtfs_obj) <- append(attributes(gtfs_obj), list(validate = validate_list))
+  attributes(gtfs_obj) <- append(attributes(gtfs_obj), list(feed_validation_result = validate_list))
 
   if (return_gtfs_obj) {
     return(gtfs_obj)
@@ -63,11 +60,21 @@ is_files_validation_result <- function(files_validation_result) {
   cnames <- colnames(files_validation_result)
   return(
     length(cnames) == 3 &
-      "file" %in% cnames &
-      "spec" %in% cnames &
-      "provided_status" %in% cnames &
+      'file' %in% cnames &
+      'spec' %in% cnames &
+      'provided_status' %in% cnames &
       is.logical(files_validation_result$provided_status)
     ) 
+}
+
+is_gtfs_obj <- function(gtfs_obj) {
+  obj_attributes <- attributes(gtfs_obj)
+  return(
+    class(gtfs_obj) == "gtfs" &
+    !is.null(obj_attributes$names) &
+    !is.null(obj_attributes$files_validation_result) &
+    !is.null(obj_attributes$feed_validation_result)
+  )
 }
 
 #' For a list of files, return information about whether they are part of the GTFS spec.
@@ -123,6 +130,16 @@ validate_file_list <- function(file_list) {
     dplyr::mutate(provided_status = (file %in% feed_names_file))
   
   return(files_validation_result)
+}
+
+filepaths_to_read <- function(directory, files_validation_result) {
+  stopifnot(is_files_validation_result(files_validation_result))
+  
+  files <- files_validation_result %>% 
+    filter(spec %in% c('req', 'opt') & provided_status) %>% 
+    pull(file)
+  
+  paste0(directory, "/", files, ".txt")
 }
 
 valid_file_paths <- function(files_list) {
@@ -187,7 +204,6 @@ validate_vars <- function(files_validation_result, gtfs_obj) {
   val_cols <- val_files_df$file
   val_cols_df <- paste0(val_cols, '_df')
 
-
   # List variables provided for each file and join to determine field_provided
   for (j in val_cols_df) {
 
@@ -198,15 +214,18 @@ validate_vars <- function(files_validation_result, gtfs_obj) {
     if (is.null(temp_df) || is.null(temp_names) || all(is.na(temp_names))) {
       temp_vars_df <- dplyr::data_frame(file = gsub('_df', '', j), 
                                         field = NA, 
-                                        field_provided_status = 'none')
+                                        field_provided_status = FALSE)
     } else {
-      provided_status <- temp_df %>%
-        dplyr::summarize_all(dplyr::funs(is_empty = all(is.na(.))))
+      empty_field_status <- temp_df %>%
+        dplyr::summarize_all(dplyr::funs(all(is.na(.)))) %>% 
+        gather(key=field, value=is_empty_field)
 
       temp_vars_df <- dplyr::data_frame(file = rep(gsub('_df', '', j), 
                                                    length(temp_names)), 
-                                        field = temp_names, 
-                                        field_provided_status = !provided_status)
+                                        field = temp_names)
+      
+      temp_vars_df <- dplyr::inner_join(temp_vars_df, empty_field_status, by='field') %>% 
+        mutate(field_provided_status = !is_empty_field, is_empty_field = NULL)
     }
 
     val_vars_df <- dplyr::bind_rows(val_vars_df, temp_vars_df)
@@ -235,7 +254,7 @@ validate_vars <- function(files_validation_result, gtfs_obj) {
 
 
   # 2) field_provided_status is NA for spec fields not provided in files provided
-  sub_all_val_df$field_provided_status[is.na(sub_all_val_df$field_provided_status)] <- 'no'
+  sub_all_val_df$field_provided_status[is.na(sub_all_val_df$field_provided_status)] <- FALSE
 
   # Put filled in parts back together
   all_val_df <- dplyr::bind_rows(sub_all_val_df, case_df)
@@ -249,13 +268,11 @@ validate_vars <- function(files_validation_result, gtfs_obj) {
     dplyr::mutate(validation_details = NA) %>% # default to NA
     dplyr::mutate(validation_details = replace(validation_details, !file_provided_status & file_spec == 'opt', 'missing_opt_file')) %>% # optional file missing
     dplyr::mutate(validation_details = replace(validation_details, !file_provided_status & file_spec == 'req', 'missing_req_file')) %>% # req file missing
-    dplyr::mutate(validation_details = replace(validation_details, file_provided_status & field_spec == 'req' & field_provided_status != 'yes', 'missing_req_field')) %>%
-    dplyr::mutate(validation_details = replace(validation_details, file_provided_status & field_spec == 'opt' & field_provided_status != 'yes', 'missing_opt_field'))
-
+    dplyr::mutate(validation_details = replace(validation_details, file_provided_status & field_spec == 'req' & !field_provided_status, 'missing_req_field')) %>%
+    dplyr::mutate(validation_details = replace(validation_details, file_provided_status & field_spec == 'opt' & !field_provided_status, 'missing_opt_field'))
 
   all_val_df <- all_val_df %>%
-    dplyr::mutate(validation_status = replace(validation_status, grepl('req_file', validation_details), 'problem'))
-
+  dplyr::mutate(validation_status = replace(validation_status, grepl('req_file', validation_details), 'problem'))
 
   return(all_val_df)
 }
