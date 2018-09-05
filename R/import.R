@@ -1,25 +1,22 @@
-load_gtfs <- function(path) {
-  # TODO 1) download zip
-  
-  # TODO 2) extract zip
-  directory <- normalizePath(path)
-
-  # 3) list files in directory
+#' Create a gtfs object from all files within a directory
+create_gtfs_object <- function(directory_path, quiet = F) {
+  # 1) list files in directory
+  directory <- normalizePath(directory_path)
   files_list <- list_files(directory)
   files_validation_result <- validate_file_list(files_list)
   
-  # 4) list valid files
+  # 2) list valid files
   valid_file_paths <- filepaths_to_read(directory, files_validation_result)
   
-  # 5) read valid files to data frames and combine those to list
-  gtfs_list <- read_files(valid_file_paths)
+  # 3) read valid files to data frames and combine those to a list
+  gtfs_list <- read_files(valid_file_paths, quiet = quiet)
   
-  # 6) add files_validation result to gtfs_obj attributes
+  # 4) add files_validation result to gtfs_list attributes
   attributes(gtfs_list) <- append(attributes(gtfs_list), list(files_validation_result = files_validation_result))
-  class(gtfs_list) <- "gtfs"
   
-  # 7) validate and create gtfs_obj
-  gtfs_obj <- validate_gtfs_structure(gtfs_list)
+  # 5) validate and create gtfs_obj
+  gtfs_obj <- validate_gtfs_structure(gtfs_list, return_gtfs_obj = TRUE, quiet = quiet)
+  class(gtfs_obj) <- "gtfs"
   
   stopifnot(is_gtfs_obj(gtfs_obj))
   
@@ -57,20 +54,22 @@ load_gtfs <- function(path) {
 #'           arrange(desc(stop_count))
 #' }
 read_gtfs <- function(path, local = FALSE, quiet = FALSE) {
-  if(local) {
-    path <- normalizePath(path) 
-    data_list <- path %>%
-      unzip_file(quiet=quiet) %>% 
-         list_files(quiet=quiet) %>%
-            read_files()
-  } else {
-    data_list <- path %>%
-      download_from_url(.) %>%
-        unzip_file(quiet = quiet) %>%
-          list_files(quiet = quiet) %>%
-            read_files()
+  # download zip file
+  if(!local) {
+    path <- download_from_url(url = path, quiet = quiet)
   }
 
+  # extract zip file
+  if(tools::file_ext(path) == "zip") {
+    path <- unzip_file(path, quiet=quiet)
+  }
+  
+  gtfs_obj <- create_gtfs_object(path, quiet = quiet)
+  
+  # TODO move to "gtfs enrichment" function
+  gtfs_obj <- get_route_frequency() %>%
+    gtfs_as_sf(quiet=quiet)
+  
   return(data_list) 
 }
 
