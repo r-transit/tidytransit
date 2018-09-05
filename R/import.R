@@ -1,27 +1,27 @@
 load_gtfs <- function(path) {
-  
   # TODO 1) download zip
   
   # TODO 2) extract zip
-  directory <- path
-  
+  directory <- normalizePath(path)
+
   # 3) list files in directory
   files_list <- list_files(directory)
   files_validation_result <- validate_file_list(files_list)
   
   # 4) list valid files
-  valid_file_paths <- valid_file_paths(files_list)
+  valid_file_paths <- filepaths_to_read(directory, files_validation_result)
   
   # 5) read valid files to data frames and combine those to list
   gtfs_list <- read_files(valid_file_paths)
   
-  # 6) create gtfs_obj
-  gtfs_obj <- gtfs_list
-  attributes(gtfs_obj) <- append(attributes(gtfs_obj), list(files_validation_result = files_validation_result))
-  class(gtfs_obj) <- "gtfs"
+  # 6) add files_validation result to gtfs_obj attributes
+  attributes(gtfs_list) <- append(attributes(gtfs_list), list(files_validation_result = files_validation_result))
+  class(gtfs_list) <- "gtfs"
   
-  # 7) validate gtfs_obj
-  validate_gtfs(gtfs_obj)
+  # 7) validate and create gtfs_obj
+  gtfs_obj <- validate_gtfs_structure(gtfs_list)
+  
+  stopifnot(is_gtfs_obj(gtfs_obj))
   
   return(gtfs_obj)
 }
@@ -56,7 +56,6 @@ load_gtfs <- function(path) {
 #'         summarise(stop_count=n_distinct(stop_id)) %>%
 #'           arrange(desc(stop_count))
 #' }
-
 read_gtfs <- function(path, local = FALSE, quiet = FALSE) {
   if(local) {
     path <- normalizePath(path) 
