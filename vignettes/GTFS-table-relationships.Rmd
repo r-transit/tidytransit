@@ -27,12 +27,17 @@ Source: Wikimedia, user -stk.
 
 In addition to the tables described above, tidytransit attempts to calculate the following tables when one uses read_gtfs():
 
+### Simple Features
+
 - routes_sf
 - stops_sf
+
+### Frequencies/Headways
+
 - routes_frequencies_df
 - stops_frequencies_df
 
-tidytransit prints a message regarding these tables on read. 
+tidytransit prints a message regarding these tables on reading any GTFS file. 
 
 ```{r}
 # Read in GTFS feed
@@ -46,17 +51,17 @@ nyc <- read_gtfs(local_gtfs_path,
                    local=TRUE)
 ```
 
-## Join Calculated Tables to GTFS Tables
+## Example GTFS Table Joins
 
-Each of these can be joined back to standard GTFS tables, or to each other, with more information using either route_id or stop_id. 
+### Route Frequencies to Routes
 
 For example, joining the standard routes table, with the 'route_shortname' variable to routes_frequencies_df. 
 
 ```{r}
 routes_df_frequencies <- nyc$routes_df %>% 
-  dplyr::inner_join(nyc$routes_frequency_df, by = "route_id") %>% 
-  dplyr::select(route_long_name,
-                median_headways, 
+  inner_join(nyc$routes_frequency_df, by = "route_id") %>% 
+          select(route_long_name,
+                 median_headways, 
                  mean_headways, 
                  st_dev_headways, 
                  stop_count)
@@ -69,15 +74,15 @@ For example, under the hood, plot(gtfs_obj) is doing this:
 
 ```{r}
 routes_sf_frequencies <- nyc$routes_sf %>% 
-  dplyr::inner_join(nyc$routes_frequency_df, by = "route_id") %>% 
-  dplyr::select(median_headways, 
+      inner_join(nyc$routes_frequency_df, by = "route_id") %>% 
+          select(median_headways, 
                  mean_headways, 
                  st_dev_headways, 
                  stop_count)
 plot(routes_sf_frequencies)
 ```
 
-## Headways at Stops for a Route
+### Headways at Stops for a Route
 
 A more complex example of cross-table joins is to pull the stops and their headways for a given route. 
 
