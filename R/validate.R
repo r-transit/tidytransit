@@ -1,3 +1,63 @@
+validate_gtfs <- function(gtfs_obj) {
+
+  meta <- get_gtfs_meta()
+  validation_result <- tibble::tibble()
+  
+  # check files => data frames
+  for(dfname in names(gtfs_obj)) {
+    # substr instead of replacing _df in case of weird filenames
+    df <- gtfs_obj[[dfname]]
+    file <- substr(dfname, 1, nchar(dfname)-3)
+    fmeta <- meta[[file]]
+    
+    # validate file
+    file_provided_status <- F
+    file_spec <- 'ext'
+    if(!is.null(fmeta)) {
+      file_provided_status <- T
+      file_spec <- fmeta$file_spec
+      
+      # validate fields
+      df_validation <- tibble::tibble(file, file_spec, file_provided_status, field = fmeta$field, field_spec = fmeta$field_spec, field_provided_status = F)
+      for(colname in colnames(df)) {
+        if(colname %in% fmeta$field) {
+          df_validation <- df_validation %>% dplyr::mutate(field_provided_status = replace(field_provided_status, field == colname, T))
+        } else {
+          df_validation <- df_validation %>% add_row(file, file_spec, file_provided_status, field = colname, field_spec = 'ext', field_provided_status = T)
+        }
+      }
+    } else {
+      # extra file
+      cnames <- colnames(df)
+      if(is.null(cnames) | length(cnames) == 1) {
+        cnames <- NA
+      }
+      df_validation <- tibble::tibble(file, file_spec, file_provided_status, field = cnames, field_spec = 'ext', field_provided_status = T)
+    }
+    validation_result <- rbind(validation_result, df_validation)
+  }
+  
+  validation_result$validation_status <- 'ok'
+  validation_result$validation_details <- NA
+  
+  validation_result <- validation_result %>% 
+    dplyr::mutate(validation_details = NA) %>% # default to NA
+    dplyr::mutate(validation_details = replace(validation_details, !file_provided_status & file_spec == 'opt', 'missing_opt_file')) %>% # optional file missing
+    dplyr::mutate(validation_details = replace(validation_details, !file_provided_status & file_spec == 'req', 'missing_req_file')) %>% # req file missing
+    dplyr::mutate(validation_details = replace(validation_details, file_provided_status & field_spec == 'req' & !field_provided_status, 'missing_req_field')) %>%
+    dplyr::mutate(validation_details = replace(validation_details, file_provided_status & field_spec == 'opt' & !field_provided_status, 'missing_opt_field'))
+
+  validation_result <- validation_result %>% 
+    dplyr::mutate(validation_status = replace(validation_status, validation_details == 'missing_req_file', 'problem')) %>% 
+    dplyr::mutate(validation_status = replace(validation_status, validation_details == 'missing_req_field', 'problem')) %>% 
+    dplyr::mutate(validation_status = replace(validation_status, !is.na(validation_details), 'info'))
+  
+  # assign validation result to gtfs_obj
+  attributes(gtfs_obj) <- append(attributes(gtfs_obj), list(validation_result = validation_result))
+  
+  return(gtfs_obj)
+}
+
 #' Create validation list for a gtfs_obj. It provides an overview of the structure of all files that were imported.
 #'
 #' @param gtfs_obj A GTFS list object with components agency_df, etc.
@@ -70,8 +130,7 @@ is_gtfs_obj <- function(gtfs_obj) {
   return(
     class(gtfs_obj) == "gtfs" &
     !is.null(obj_attributes$names) &
-    !is.null(obj_attributes$files_validation_result) &
-    !is.null(obj_attributes$feed_validation_result)
+    !is.null(obj_attributes$validation_result)
   )
 }
 
