@@ -1,4 +1,7 @@
 #' Create a gtfs object from all files within a directory
+#' @param directory_path path containing the unzipped txt feed files
+#' 
+#' @return a gtfs object
 create_gtfs_object <- function(directory_path, quiet = F) {
   if(tools::file_ext(directory_path) == "zip") {
     warning("found zip file instead of directory")
