@@ -35,7 +35,8 @@ Imports:
     rlang,
     sf,
     lubridate,
-    tidyr
+    tidyr,
+    tools
 Suggests:
     testthat,
     knitr,
