@@ -37,6 +37,17 @@ validate_gtfs <- function(gtfs_obj) {
     validation_result <- rbind(validation_result, df_validation)
   }
   
+  # checks for the missing calendar.txt exception, see https://developers.google.com/transit/gtfs/reference/#calendar_datestxt
+  # if the exception is TRUE, then calendar has its file spec set to 'extra' and calendar_dates is required
+  calendar_exists <- validation_result %>% filter(file == "calendar") %>% pull(file_provided_status) %>% all()
+  if(!calendar_exists) {
+    validation_result <- validation_result %>% 
+      dplyr::mutate(file_spec = replace(file_spec, file == 'calendar', 'ext')) %>% 
+      dplyr::mutate(file_spec = replace(file_spec, file == 'calendar_dates', 'req'))
+  }
+  
+  
+  # check existign files and fields
   validation_result$validation_status <- 'ok'
   validation_result$validation_details <- NA
   
