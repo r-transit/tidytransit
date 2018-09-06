@@ -20,7 +20,24 @@ validate_gtfs <- function(gtfs_obj) {
   validation_result <- validation_result %>% 
     dplyr::mutate(validation_status = replace(validation_status, validation_details == 'missing_req_file', 'problem')) %>% 
     dplyr::mutate(validation_status = replace(validation_status, validation_details == 'missing_req_field', 'problem')) %>% 
-    dplyr::mutate(validation_status = replace(validation_status, !is.na(validation_details), 'info'))
+    dplyr::mutate(validation_status = replace(validation_status, validation_details == 'missing_opt_file', 'info')) %>%
+    dplyr::mutate(validation_status = replace(validation_status, validation_details == 'missing_opt_field', 'info')) 
+  
+  problems <- validation_result %>% filter(validation_status == 'problem')
+  if(nrow(problems) > 0) {
+    missing_req_files <- problems %>% filter(validation_details == 'missing_req_file') %>% pull(file) %>% unique()
+    if(length(missing_req_files) > 0) {
+      w <- paste0("Invalid feed. Missing required file(s): ", paste(missing_req_files, collapse=", "))
+      warning(w)
+    }
+    missing_req_fields <- problems %>% filter(validation_details == 'missing_req_field') %>% pull(field)
+    if(length(missing_req_fields) > 0) {
+      w <- paste0("Invalid feed. Missing required field(s): ", paste(missing_req_fields, collapse=", "))
+      warning(w)
+    }
+  } else {
+    message("Valid gtfs data structure")
+  }
   
   # assign validation result to gtfs_obj
   attributes(gtfs_obj) <- append(attributes(gtfs_obj), list(validation_result = validation_result))
@@ -36,8 +53,13 @@ validate_gtfs_structure <- function(gtfs_obj) {
   meta <- get_gtfs_meta()
   structure <- tibble::tibble()
   
-  # check files => data frames
-  for(dfname in names(gtfs_obj)) {
+  all_df_names <- c(
+    names(gtfs_obj), # available dfs
+    paste0(names(meta), "_df") # # dfs specified
+  ) %>% unique()
+  
+  # check available data frames
+  for(dfname in all_df_names) {
     # substr instead of replacing _df in case of weird filenames
     df <- gtfs_obj[[dfname]]
     file <- substr(dfname, 1, nchar(dfname)-3)
@@ -46,33 +68,40 @@ validate_gtfs_structure <- function(gtfs_obj) {
     # validate file
     file_provided_status <- F
     file_spec <- 'ext'
-    if(!is.null(fmeta)) {
-      file_provided_status <- T
-      file_spec <- fmeta$file_spec
-      
-      # validate fields
-      df_validation <- tibble::tibble(file, file_spec, file_provided_status, field = fmeta$field, field_spec = fmeta$field_spec, field_provided_status = F)
-      for(colname in colnames(df)) {
-        if(colname %in% fmeta$field) {
-          df_validation <- df_validation %>% dplyr::mutate(field_provided_status = replace(field_provided_status, field == colname, T))
-        } else {
-          df_validation <- df_validation %>% add_row(file, file_spec, file_provided_status, field = colname, field_spec = 'ext', field_provided_status = T)
-        }
-      }
-    } else {
-      # extra file
+    
+    # extra file
+    if(is.null(fmeta)) {
       cnames <- colnames(df)
       if(is.null(cnames) | length(cnames) == 1) {
         cnames <- NA
       }
       df_validation <- tibble::tibble(file, file_spec, file_provided_status, field = cnames, field_spec = 'ext', field_provided_status = T)
     }
+    # spec file
+    else {
+      file_spec <- fmeta$file_spec
+      df_validation <- tibble::tibble(file, file_spec, file_provided_status, field = fmeta$field, field_spec = fmeta$field_spec, field_provided_status = F)
+      
+      if(!is.null(df)) {
+        file_provided_status <- T
+        # validate fields
+        df_validation <- tibble::tibble(file, file_spec, file_provided_status, field = fmeta$field, field_spec = fmeta$field_spec, field_provided_status = F)
+        for(colname in colnames(df)) {
+          if(colname %in% fmeta$field) {
+            df_validation <- df_validation %>% dplyr::mutate(field_provided_status = replace(field_provided_status, field == colname, T))
+          } else {
+            df_validation <- df_validation %>% tibble::add_row(file, file_spec, file_provided_status, field = colname, field_spec = 'ext', field_provided_status = T)
+          }
+        }
+      }
+    }
+   
     structure <- rbind(structure, df_validation)
   }
   
   # checks for the missing calendar.txt exception, see https://developers.google.com/transit/gtfs/reference/#calendar_datestxt
   # if the exception is TRUE, then calendar has its file spec set to 'extra' and calendar_dates is required
-  calendar_exists <- structure %>% filter(file == "calendar") %>% pull(file_provided_status) %>% all()
+  calendar_exists <- structure %>% filter(file == "calendar") %>% dplyr::pull(file_provided_status) %>% all()
   if(!calendar_exists) {
     structure <- structure %>% 
       dplyr::mutate(file_spec = replace(file_spec, file == 'calendar', 'ext')) %>% 

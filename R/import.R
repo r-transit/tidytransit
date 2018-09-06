@@ -11,6 +11,9 @@ create_gtfs_object <- function(directory_path, quiet = F) {
   # 1) list files in directory
   directory <- normalizePath(directory_path)
   files_list <- list.files(directory, full.names = TRUE)
+  if(length(files_list) == 0) {
+    stop(sprintf("No files found in directory '%s'", directory))
+  }
 
   # 2) read files to data frames and combine those to a list
   gtfs_obj <- read_files(files_list, quiet = quiet)
@@ -68,7 +71,7 @@ read_gtfs <- function(path, local = FALSE, quiet = FALSE) {
   gtfs_obj <- create_gtfs_object(path, quiet = quiet)
   
   # TODO move to "gtfs enrichment" function
-  gtfs_obj <- get_route_frequency(gtfs_obj) %>% gtfs_as_sf(quiet=quiet)
+  # gtfs_obj <- get_route_frequency(gtfs_obj) %>% gtfs_as_sf(quiet=quiet)
   
   return(gtfs_obj) 
 }
