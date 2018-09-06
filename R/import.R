@@ -356,17 +356,23 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
     # check if a file is empty. If so, return NULL.
     L <- suppressWarnings(length(scan(file_path, what = "", quiet = TRUE, sep = '\n')))
     if(L < 1) {
-      s <- sprintf("File '%s' is empty. Returning NULL.\n", basename(file_path))
+      s <- sprintf("   File '%s' is empty.", basename(file_path))
       message(s)
       return(NULL)
     }
 
     # if no meta data is found for a file type but file is not empty, read as is.
     if(is.null(meta)) {
-      s <- sprintf("File %s not recognized, reading file as csv", basename(file_path))
+      s <- sprintf("   File %s not recognized, trying to read file as csv", basename(file_path))
       message(s)
-      csv <- quote(readr::read_csv(file = file_path))
-      df <- suppressMessages(trigger_suppressWarnings(eval(csv), quiet))
+
+      tryCatch({
+        df <- suppressMessages(readr::read_csv(file = file_path))
+      }, error = function(error_condition) {
+        s <- sprintf("   File could not be read as csv.", basename(file_path))
+        message(s)
+        return(NULL)
+      })
       return(df)
     }
 
