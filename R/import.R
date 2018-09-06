@@ -4,23 +4,17 @@ create_gtfs_object <- function(directory_path, quiet = F) {
     warning("found zip file instead of directory")
     return(NULL)
   }
+  
   # 1) list files in directory
   directory <- normalizePath(directory_path)
-  files_list <- list_files(directory)
-  files_validation_result <- validate_file_list(files_list)
-  
-  # 2) list valid files
-  valid_file_paths <- filepaths_to_read(directory, files_validation_result)
-  
-  # 3) read valid files to data frames and combine those to a list
-  gtfs_list <- read_files(valid_file_paths, quiet = quiet)
-  
-  # 4) add files_validation result to gtfs_list attributes
-  attributes(gtfs_list) <- append(attributes(gtfs_list), list(files_validation_result = files_validation_result))
-  
-  # 5) validate and create gtfs_obj
-  gtfs_obj <- validate_gtfs_structure(gtfs_list, return_gtfs_obj = TRUE, quiet = quiet)
+  files_list <- list.files(directory, full.names = TRUE)
+
+  # 2) read files to data frames and combine those to a list
+  gtfs_obj <- read_files(files_list, quiet = quiet)
   class(gtfs_obj) <- "gtfs"
+  
+  # 3) validate feed (result is stored in gtfs_obj)
+  gtfs_obj <- validate_gtfs(gtfs_obj)
   
   stopifnot(is_gtfs_obj(gtfs_obj))
   
@@ -250,7 +244,7 @@ unzip_file <- function(zipfile,
 }
 
 
-#' List all files in a directory
+#' List all files in a directory (deprecated)
 #'
 #' @param directory Character. Path to folder into which files were extracted.
 #' @param quiet Boolean. Whether to output messages and files found in folder.
@@ -313,11 +307,12 @@ read_gtfs_file <- function(file_path, assign_envir, quiet = FALSE) {
 
   if(!quiet) message(paste0('Reading ', df_name))
 
-  new_df <- parse_gtfs_file(prefix, file_path, quiet = quiet) 
+  new_df <- parse_gtfs_file(prefix, file_path, quiet = quiet)
   # will have warning even though we fix problem
 
-  assign(df_name, new_df, envir = assign_envir)
-
+  if(!is.null(new_df)) {
+    assign(df_name, new_df, envir = assign_envir)
+  }
 }
 
 #' Function to get the gtfs table name from the file string
@@ -356,23 +351,22 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
     meta <- get_gtfs_meta()[[prefix]]
 
     # check if a file is empty. If so, return NULL.
-    if(length(scan(file_path, what = "", quiet = TRUE, sep = '\n')) < 1) {
+    L <- suppressWarnings(length(scan(file_path, what = "", quiet = TRUE, sep = '\n')))
+    if(L < 1) {
       s <- sprintf("File '%s' is empty. Returning NULL.\n", basename(file_path))
       message(s)
-      return()
+      return(NULL)
     }
 
     # if no meta data is found for a file type but file is not empty, read as is.
     if(is.null(meta)) {
-      s <- sprintf("File %s not recognized. No meta data exists. Reading file as csv.\n", basename(file_path))
+      s <- sprintf("File %s not recognized, reading file as csv", basename(file_path))
       message(s)
       csv <- quote(readr::read_csv(file = file_path))
       df <- suppressMessages(trigger_suppressWarnings(eval(csv), quiet))
       return(df)
     }
 
-    # browser()
-    
     ## read.csv supports UTF-8-BOM. use this to get field names.
     small_df <- suppressWarnings(utils::read.csv(file_path, nrows = 10, stringsAsFactors = FALSE)) # get a small df to find how many cols are needed
 
