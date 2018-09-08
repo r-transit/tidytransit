@@ -6,7 +6,7 @@ Authors@R: c(
     person("Tom", "Buckley", role = c("aut", "cre"), email = "tom@tbuckl.com"),
     person("Danton", "Noriega-Goodwin", role = c("aut"), email = "danton.noriega@gmail.com"),
     person("Angela", "Li", role = c("aut"), email = "angela@rladies.org"),
-    person("Flavio", "Poletti", role = c("ctb"), email = "flavio.poletti@hotmail.ch"),
+    person("Flavio", "Poletti", role = c("aut"), email = "flavio.poletti@hotmail.ch"),
     person("Patrick", "Hausmann", role = c("ctb"), email = "patrick.hausmann@covimo.de"),
     person("Bob", "Rudis", role = c("ctb"), email = "bob@rud.is"),
     person("Mark", "Padgham", role = c("ctb"), email = "mark.padgham@email.com"),

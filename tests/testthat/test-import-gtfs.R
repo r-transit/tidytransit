@@ -48,21 +48,6 @@ test_that('Unzip and list GTFS files returns more than 4 files', {
   }
 })
 
-test_that('Read and validate returns a list of class "gtfs"', {
-  skip_on_cran()
-  if(working()==FALSE){
-    skip("no internet, skipping")
-  }
-  else {
-  
-  zip <- tidytransit:::download_from_url(gtfs_example_url)
-  folder <- tidytransit:::unzip_file(zip)
-  files <- tidytransit:::list_files(folder)
-
-  expect_is(read_and_validate(files), 'gtfs')
-  }
-})
-
 test_that('import-bad paths throw good errors', {
   skip_on_cran()
   not_a_url <- "#!:D"
@@ -126,15 +111,9 @@ test_that('Some minimal validation is performed and returned', {
   skip_on_cran()
   if(working()){
     gtfs_obj1 <- tidytransit::read_gtfs(gtfs_example_url)
-    expect_true(gtfs_obj1$validation$all_req_files)
     
-    expect_true(dim(gtfs_obj1$validation$full_column_and_file_validation_df)[1]>0)
-    expect_true(dim(gtfs_obj1$validation$full_column_and_file_validation_df)[2]==10)
-    
-    x <- c("all_req_files", "all_req_fields_in_req_files", "all_req_fields_in_opt_files",
-           "full_column_and_file_validation_df")
-    
-    expect_true(table(x %in% names(gtfs_obj1$validation))[['TRUE']]==4) # check that it has required names
+    expect_true(dim(attributes(gtfs_obj1)$validation_result)[1]>0)
+    expect_true(dim(attributes(gtfs_obj1)$validation_result)[2]>0)
   }
 })
 
