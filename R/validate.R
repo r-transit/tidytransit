@@ -25,12 +25,12 @@ validate_gtfs <- function(gtfs_obj) {
   
   problems <- validation_result %>% filter(validation_status == 'problem')
   if(nrow(problems) > 0) {
-    missing_req_files <- problems %>% filter(validation_details == 'missing_req_file') %>% pull(file) %>% unique()
+    missing_req_files <- problems %>% filter(validation_details == 'missing_req_file') %>% dplyr::pull(file) %>% unique()
     if(length(missing_req_files) > 0) {
       w <- paste0("Invalid feed. Missing required file(s): ", paste(missing_req_files, collapse=", "))
       warning(w)
     }
-    missing_req_fields <- problems %>% filter(validation_details == 'missing_req_field') %>% pull(field)
+    missing_req_fields <- problems %>% filter(validation_details == 'missing_req_field') %>% dplyr::pull(field)
     if(length(missing_req_fields) > 0) {
       w <- paste0("Invalid feed. Missing required field(s): ", paste(missing_req_fields, collapse=", "))
       warning(w)
@@ -116,7 +116,6 @@ is_gtfs_obj <- function(gtfs_obj) {
   obj_attributes <- attributes(gtfs_obj)
   return(
     class(gtfs_obj) == "gtfs" &
-    !is.null(obj_attributes$names) &
     !is.null(obj_attributes$validation_result)
   )
 }

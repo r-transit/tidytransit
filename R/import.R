@@ -1,32 +1,8 @@
 #' Create a gtfs object from all files within a directory
-#' @param directory_path path containing the unzipped txt feed files
+#' @param pafiles_in_zip character vector, paths to the unzipped txt feed files
 #' 
 #' @return a gtfs object
-create_gtfs_object <- function(directory_path, quiet = F) {
-  if(tools::file_ext(directory_path) == "zip") {
-    warning("found zip file instead of directory")
-    return(NULL)
-  }
-  
-  # 1) list files in directory
-  directory <- normalizePath(directory_path)
-  files_list <- list.files(directory, full.names = TRUE)
-  if(length(files_list) == 0) {
-    stop(sprintf("No files found in directory '%s'", directory))
-  }
-
-  # 2) read files to data frames and combine those to a list
-  gtfs_obj <- read_files(files_list, quiet = quiet)
-  class(gtfs_obj) <- "gtfs"
-  
-  # 3) validate feed (result is stored in gtfs_obj)
-  gtfs_obj <- validate_gtfs(gtfs_obj)
-  
-  stopifnot(is_gtfs_obj(gtfs_obj))
-  
-  return(gtfs_obj)
-}
-
+ 
 #' Get and validate dataframes of General Transit Feed Specification (GTFS) data.
 #' 
 #' This function reads GTFS text files from a local or remote zip file. 
@@ -65,10 +41,15 @@ read_gtfs <- function(path, local = FALSE, quiet = FALSE) {
 
   # extract zip file
   if(tools::file_ext(path) == "zip") {
-    path <- unzip_file(path, quiet=quiet)
+    tmpdirpath <- unzip_file(path, quiet=quiet)
   }
   
-  gtfs_obj <- create_gtfs_object(path, quiet = quiet)
+  file_list_df <- zip::zip_list(path)
+  if(length(file_list_df$filename) == 0) {
+    stop(sprintf("No files found in zip"))
+  }
+  
+  gtfs_obj <- create_gtfs_object(tmpdirpath, file_list_df$filename, quiet = quiet)
   
   # TODO move to "gtfs enrichment" function
   # gtfs_obj <- get_route_frequency(gtfs_obj) %>% gtfs_as_sf(quiet=quiet)
@@ -205,7 +186,7 @@ has_bom <- function(path, encoding="UTF-8") {
 #' Unzip a file and delete zip
 #'
 #' @param zipfile path to zipped file
-#' @param ex_dir path to unzip file to-default tempdir()
+#' @param tmpdirpath path to unzip file to-default tempdir()
 #' @param quiet Boolean. Whether to output files found in folder.
 #' @importFrom tools %>% file_ext
 #' 
@@ -214,7 +195,7 @@ has_bom <- function(path, encoding="UTF-8") {
 #' 
 
 unzip_file <- function(zipfile, 
-                       ex_dir=tempdir(), 
+                       tmpdirpath=tempdir(), 
                        quiet = FALSE) {
   f <- zipfile
   
@@ -233,43 +214,20 @@ unzip_file <- function(zipfile,
   }
   
   # create extraction folder
-  utils::unzip(f, exdir=ex_dir)
+  utils::unzip(f, exdir=tmpdirpath)
 
 
-  if(length(list.files(ex_dir)) == 0) {
+  if(length(list.files(tmpdirpath)) == 0) {
     warn <- "No files found after decompressing. NULL is returned."
     return(NULL)
   }
 
   if(!quiet) {
-    message(sprintf("Unzipped the following files to directory '%s'...", ex_dir))
-    list.files(ex_dir) %>% print
+    message(sprintf("Unzipped the following files to directory '%s'...", tmpdirpath))
+    list.files(tmpdirpath) %>% print
   }
 
-  return(ex_dir)
-}
-
-
-#' List all files in a directory (deprecated)
-#'
-#' @param directory Character. Path to folder into which files were extracted.
-#' @param quiet Boolean. Whether to output messages and files found in folder.
-#' @keywords internal
-list_files <- function(directory, quiet = FALSE) {
-
-  # check path
-  check <- try(normalizePath(directory), silent=TRUE)
-  if(assertthat::is.error(check)) {
-    warn <- 'Invalid file path. NULL is returned.'
-    if(!quiet) warning(warn)
-    return(NULL)
-  }
-
-  file_list <- list.files(directory, full.names = TRUE)
-  
-  named_file_list <- sapply(file_list,get_file_shortname)
-  
-  return(named_file_list)
+  return(tmpdirpath)
 }
 
 #' Function to read all files into dataframes
@@ -280,24 +238,24 @@ list_files <- function(directory, quiet = FALSE) {
 #' @noRd
 #' @keywords internal
 
-read_files <- function(file_path_list, quiet = FALSE) {
-  exec_env <- environment()
-
-  # read valid files in environment
-  lapply(file_path_list, 
-         function(x) read_gtfs_file(x, 
-                                    assign_envir = exec_env, 
-                                    quiet = quiet))
-  
-  # combine all read objects of environment with "_df" to a list
-  ls_envir <- ls(envir = exec_env)
-  df_list <- ls_envir[grepl(pattern = '_df', x = ls_envir)]
-  gtfs_list <- mget(df_list, envir = exec_env)
-  
+create_gtfs_object <- function(tmpdirpath, file_paths, quiet = FALSE) {
+  df_names <- vapply(file_paths,get_file_shortname,FUN.VALUE = "")
+  gtfs_obj <- lapply(file_paths, 
+                   function(x) read_gtfs_file(x, 
+                                              tmpdirpath, 
+                                              quiet = quiet))
+  names(gtfs_obj) <- unname(df_names)
   if(!quiet) message('...done.\n\n')
   
-  return(gtfs_list)
+  class(gtfs_obj) <- "gtfs"
+  
+  gtfs_obj <- validate_gtfs(gtfs_obj)
+  
+  stopifnot(is_gtfs_obj(gtfs_obj))
+  
+  return(gtfs_obj)
 }
+
 
 #' Function to read all files into dataframes
 #'
@@ -307,24 +265,21 @@ read_files <- function(file_path_list, quiet = FALSE) {
 #' @noRd
 #' @keywords internal
 
-read_gtfs_file <- function(file_path, assign_envir, quiet = FALSE) {
-  prefix <- get_file_shortname(file_path)
-  df_name <- paste0(prefix, '_df')
+read_gtfs_file <- function(file_path, tmpdirpath, assign_envir, quiet = FALSE) {
+  df_name <- get_file_shortname(file_path)
 
   if(!quiet) message(paste0('Reading ', df_name))
 
-  new_df <- parse_gtfs_file(prefix, file_path, quiet = quiet)
-  # will have warning even though we fix problem
+  full_file_path <- paste0(tmpdirpath,"/",file_path)
+  new_df <- parse_gtfs_file(df_name, full_file_path, quiet = quiet)
 
-  if(!is.null(new_df)) {
-    assign(df_name, new_df, envir = assign_envir)
-  }
+  return(new_df)
 }
 
 #' Function to get the gtfs table name from the file string
 #'
 #' @param file_path Character file path
-#' @return gtfs_table_name a character vector of file names and their full paths
+#' @return df_name a character vector of the df_name for the file
 #' @noRd
 #' @keywords internal
 #' 
@@ -335,7 +290,8 @@ get_file_shortname <- function(file_path) {
   prefix <- gsub('.txt|-new', '', file_name) 
   # suffix '.*-new.txt' comes from trillium data
   prefix <- gsub('\\-|\\.', '_', prefix)
-  return(prefix)
+  df_name <- paste0(prefix, '_df')  
+  return(df_name)
 }
 
 #' Parses one gtfs file

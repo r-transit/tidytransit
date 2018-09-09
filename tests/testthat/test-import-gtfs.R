@@ -71,8 +71,8 @@ test_that('import-empty txt files are not imported and non-empty ones are import
     files <- list.files(folder, full.names = TRUE)
     empty_file <- files[1]
     
-    expect_null(tidytransit:::parse_gtfs('_empty', empty_file)) # expect null since file is empty
-    expect_is(tidytransit:::parse_gtfs('agency', agency_file), 'tbl_df') # check for tibble object
+    expect_null(tidytransit:::parse_gtfs_file('_empty', empty_file)) # expect null since file is empty
+    expect_is(tidytransit:::parse_gtfs_file('agency', agency_file), 'tbl_df') # check for tibble object
   }
 })
 
