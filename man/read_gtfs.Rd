@@ -4,7 +4,8 @@
 \alias{read_gtfs}
 \title{Get and validate dataframes of General Transit Feed Specification (GTFS) data.}
 \usage{
-read_gtfs(path, local = FALSE, quiet = FALSE)
+read_gtfs(path, local = FALSE, quiet = TRUE, geometry = FALSE,
+  frequency = FALSE)
 }
 \arguments{
 \item{path}{Character. url link to zip file OR path to local zip file. if to local path, then option \code{local} must be set to TRUE.}
@@ -12,9 +13,13 @@ read_gtfs(path, local = FALSE, quiet = FALSE)
 \item{local}{Boolean. If the paths are searching locally or not. Default is FALSE (that is, urls).}
 
 \item{quiet}{Boolean. Whether to see file download progress and files extract. FALSE by default.}
+
+\item{geometry}{Boolean. Whether to add simple feature dataframes of routes and stops to the gtfs object}
+
+\item{frequency}{Boolean. Whether to add frequency/headway calculations to the gtfs object}
 }
 \value{
-Dataframes of GTFS data.
+A GTFS object. That is, a list of dataframes of GTFS data.
 }
 \description{
 This function reads GTFS text files from a local or remote zip file.

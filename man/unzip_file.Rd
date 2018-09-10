@@ -4,12 +4,12 @@
 \alias{unzip_file}
 \title{Unzip a file and delete zip}
 \usage{
-unzip_file(zipfile, ex_dir = tempdir(), quiet = FALSE)
+unzip_file(zipfile, tmpdirpath = tempdir(), quiet = FALSE)
 }
 \arguments{
 \item{zipfile}{path to zipped file}
 
-\item{ex_dir}{path to unzip file to-default tempdir()}
+\item{tmpdirpath}{path to unzip file to-default tempdir()}
 
 \item{quiet}{Boolean. Whether to output files found in folder.}
 }
