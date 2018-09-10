@@ -1,8 +1,3 @@
-#' Create a gtfs object from all files within a directory
-#' @param pafiles_in_zip character vector, paths to the unzipped txt feed files
-#' 
-#' @return a gtfs object
- 
 #' Get and validate dataframes of General Transit Feed Specification (GTFS) data.
 #' 
 #' This function reads GTFS text files from a local or remote zip file. 
@@ -15,8 +10,10 @@
 #' @param path Character. url link to zip file OR path to local zip file. if to local path, then option `local` must be set to TRUE.
 #' @param local Boolean. If the paths are searching locally or not. Default is FALSE (that is, urls).
 #' @param quiet Boolean. Whether to see file download progress and files extract. FALSE by default.
+#' @param geometry Boolean. Whether to add simple feature dataframes of routes and stops to the gtfs object
+#' @param frequency Boolean. Whether to add frequency/headway calculations to the gtfs object
 #'
-#' @return Dataframes of GTFS data.
+#' @return A GTFS object. That is, a list of dataframes of GTFS data.
 #'
 #' @export
 #' @importFrom dplyr %>% arrange summarise group_by inner_join
@@ -269,12 +266,12 @@ create_gtfs_object <- function(tmpdirpath, file_paths, quiet = FALSE) {
 #' Function to read all files into dataframes
 #'
 #' @param file_path Character file path
-#' @param assign_envir Environment Object. Option of where to assign dataframes.
+#' @param tmpdirpath path for the tmpdir files
 #' @param quiet Boolean. Whether to output messages and files found in folder.
 #' @noRd
 #' @keywords internal
 
-read_gtfs_file <- function(file_path, tmpdirpath, assign_envir, quiet = FALSE) {
+read_gtfs_file <- function(file_path, tmpdirpath, quiet = FALSE) {
   prefix <- get_file_shortname(file_path)
 
   if(!quiet) message(paste0('Reading ', df_name))

@@ -2,6 +2,10 @@
 #' whether the file is required ('req'), optional ('opt') or an extra 
 #' file ('ext'). The same is applied for each field. The validation_status
 #' column points problems with files/fiels. 
+#' @param gtfs_obj A GTFS list object with components agency_df, etc.
+#' @return gtfs_obj with a validation summary dataframe as an attribute 
+#' 
+#' @noRd
 validate_gtfs <- function(gtfs_obj) {
 
   validation_result <- validate_gtfs_structure(gtfs_obj)
@@ -48,6 +52,8 @@ validate_gtfs <- function(gtfs_obj) {
 #' Create validation table for a gtfs_obj. It provides an overview of the structure of all files that were imported.
 #'
 #' @param gtfs_obj A GTFS list object with components agency_df, etc.
+#' @return validation_dataframe
+#' @noRd
 validate_gtfs_structure <- function(gtfs_obj) {
 
   meta <- get_gtfs_meta()
@@ -111,7 +117,9 @@ validate_gtfs_structure <- function(gtfs_obj) {
   return(structure)
 }
 
-#' Basic check if a given list is a gtfs object 
+#' Basic check if a given list is a gtfs object
+#' @param gtfs_obj as read by read_gtfs()
+#' @noRd
 is_gtfs_obj <- function(gtfs_obj) {
   obj_attributes <- attributes(gtfs_obj)
   return(
