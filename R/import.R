@@ -196,7 +196,7 @@ has_bom <- function(path, encoding="UTF-8") {
 #' @param zipfile path to zipped file
 #' @param tmpdirpath path to unzip file to-default tempdir()
 #' @param quiet Boolean. Whether to output files found in folder.
-#' @importFrom tools %>% file_ext
+#' @importFrom tools file_ext
 #' 
 #' @return file path to directory with gtfs .txt files
 #' @keywords internal
