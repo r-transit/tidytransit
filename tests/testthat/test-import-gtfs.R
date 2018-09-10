@@ -33,21 +33,6 @@ test_that('Downloading a zip file from a gtfs_example_url returns a file', {
   }
 })
 
-test_that('Unzip and list GTFS files returns more than 4 files', {
-  skip_on_cran()
-  if(working()==FALSE){
-    skip("no internet, skipping")
-  }
-  else {
-  
-  zip <- tidytransit:::download_from_url(gtfs_example_url)
-  folder <- tidytransit:::unzip_file(zip)
-  files <- tidytransit:::list_files(folder)
-
-  expect_true(length(files)>4)
-  }
-})
-
 test_that('import-bad paths throw good errors', {
   skip_on_cran()
   not_a_url <- "#!:D"

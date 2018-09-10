@@ -2,23 +2,13 @@
 % Please edit documentation in R/validate.R
 \name{validate_gtfs_structure}
 \alias{validate_gtfs_structure}
-\title{Create validation list for a gtfs_obj. It provides an overview of the structure of all files that were imported.}
+\title{Create validation table for a gtfs_obj. It provides an overview of the structure of all files that were imported.}
 \usage{
-validate_gtfs_structure(file_validation_meta, gtfs_obj,
-  return_gtfs_obj = TRUE, quiet = FALSE)
+validate_gtfs_structure(gtfs_obj)
 }
 \arguments{
 \item{gtfs_obj}{A GTFS list object with components agency_df, etc.}
-
-\item{return_gtfs_obj}{Boolean. If TRUE, returns gtfs_obj list with a 'validate' attribute appended (TRUE by default),
-if FALSE, returns validate list only}
-
-\item{quiet}{Boolean. Option to suppress any messages, prints, etc}
-}
-\value{
-A gtfs_obj list object with attribute 'validate' or just a list containing validation data
 }
 \description{
-Create validation list for a gtfs_obj. It provides an overview of the structure of all files that were imported.
+Create validation table for a gtfs_obj. It provides an overview of the structure of all files that were imported.
 }
-\keyword{internal}

@@ -1,4 +1,4 @@
-context("Frequencies are calculates correctly")
+context("Frequencies are calculated correctly")
 
 test_that("Stop frequencies (headways) for included data are as expected", {
   gtfs_obj <- get_stop_frequency(gtfs_obj, by_route=FALSE)

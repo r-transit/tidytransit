@@ -2,9 +2,10 @@
 % Please edit documentation in R/import.R
 \name{read_gtfs}
 \alias{read_gtfs}
-\title{Get and validate dataframes of General Transit Feed Specification (GTFS) data.}
+\title{Create a gtfs object from all files within a directory}
 \usage{
-read_gtfs(path, local = FALSE, quiet = FALSE)
+read_gtfs(path, local = FALSE, quiet = TRUE, geometry = FALSE,
+  frequency = FALSE)
 }
 \arguments{
 \item{path}{Character. url link to zip file OR path to local zip file. if to local path, then option \code{local} must be set to TRUE.}
@@ -12,16 +13,23 @@ read_gtfs(path, local = FALSE, quiet = FALSE)
 \item{local}{Boolean. If the paths are searching locally or not. Default is FALSE (that is, urls).}
 
 \item{quiet}{Boolean. Whether to see file download progress and files extract. FALSE by default.}
+
+\item{pafiles_in_zip}{character vector, paths to the unzipped txt feed files}
 }
 \value{
-Dataframes of GTFS data.
-}
-\description{
+a gtfs object
+Get and validate dataframes of General Transit Feed Specification (GTFS) data.
+
 This function reads GTFS text files from a local or remote zip file.
 It also validates the files against the GTFS specification by file, requirement status, and column name
 The data are returned as a list of dataframes and a validation object,
 which contains details on whether all required files were found,
 and which required and optional columns are present.
+
+Dataframes of GTFS data.
+}
+\description{
+Create a gtfs object from all files within a directory
 }
 \examples{
 \donttest{

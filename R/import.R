@@ -33,7 +33,10 @@
 #'         summarise(stop_count=n_distinct(stop_id)) %>%
 #'           arrange(desc(stop_count))
 #' }
-read_gtfs <- function(path, local = FALSE, quiet = FALSE) {
+read_gtfs <- function(path, local = FALSE, 
+                      quiet = TRUE, 
+                      geometry=FALSE,
+                      frequency=FALSE) {
   # download zip file
   if(!local) {
     path <- download_from_url(url = path, quiet = quiet)
@@ -51,8 +54,13 @@ read_gtfs <- function(path, local = FALSE, quiet = FALSE) {
   
   gtfs_obj <- create_gtfs_object(tmpdirpath, file_list_df$filename, quiet = quiet)
   
-  # TODO move to "gtfs enrichment" function
-  # gtfs_obj <- get_route_frequency(gtfs_obj) %>% gtfs_as_sf(quiet=quiet)
+  if(geometry) {
+    gtfs_obj <- gtfs_as_sf(gtfs_obj,quiet=quiet)
+  }
+  
+  if(frequency) {
+    gtfs_obj <- get_route_frequency(gtfs_obj) 
+  }
   
   return(gtfs_obj) 
 }
@@ -239,7 +247,8 @@ unzip_file <- function(zipfile,
 #' @keywords internal
 
 create_gtfs_object <- function(tmpdirpath, file_paths, quiet = FALSE) {
-  df_names <- vapply(file_paths,get_file_shortname,FUN.VALUE = "")
+  prefixes <- vapply(file_paths,get_file_shortname,FUN.VALUE = "")
+  df_names <- paste(prefixes,"_df",sep="")
   gtfs_obj <- lapply(file_paths, 
                    function(x) read_gtfs_file(x, 
                                               tmpdirpath, 
@@ -266,12 +275,12 @@ create_gtfs_object <- function(tmpdirpath, file_paths, quiet = FALSE) {
 #' @keywords internal
 
 read_gtfs_file <- function(file_path, tmpdirpath, assign_envir, quiet = FALSE) {
-  df_name <- get_file_shortname(file_path)
+  prefix <- get_file_shortname(file_path)
 
   if(!quiet) message(paste0('Reading ', df_name))
 
   full_file_path <- paste0(tmpdirpath,"/",file_path)
-  new_df <- parse_gtfs_file(df_name, full_file_path, quiet = quiet)
+  new_df <- parse_gtfs_file(prefix, full_file_path, quiet = quiet)
 
   return(new_df)
 }
@@ -290,8 +299,7 @@ get_file_shortname <- function(file_path) {
   prefix <- gsub('.txt|-new', '', file_name) 
   # suffix '.*-new.txt' comes from trillium data
   prefix <- gsub('\\-|\\.', '_', prefix)
-  df_name <- paste0(prefix, '_df')  
-  return(df_name)
+  return(prefix)
 }
 
 #' Parses one gtfs file
