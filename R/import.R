@@ -42,10 +42,10 @@ read_gtfs <- function(path, local = FALSE,
   # extract zip file
   if(tools::file_ext(path) == "zip") {
     tmpdirpath <- unzip_file(path, quiet=quiet)
+    file_list_df <- zip::zip_list(path)
   }
   
-  file_list_df <- zip::zip_list(path)
-  if(length(file_list_df$filename) == 0) {
+  if(!exists("file_list_df")) {
     stop(sprintf("No files found in zip"))
   }
   
