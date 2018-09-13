@@ -38,13 +38,11 @@ read_gtfs <- function(path, local = FALSE,
   if(!local) {
     path <- download_from_url(url = path, quiet = quiet)
   }
-
-  # extract zip file
-  if(tools::file_ext(path) == "zip") {
-    tmpdirpath <- unzip_file(path, quiet=quiet)
-    file_list_df <- zip::zip_list(path)
-  }
   
+  # extract zip file
+  tmpdirpath <- unzip_file(path, quiet=quiet)
+  
+  file_list_df <- zip::zip_list(path)
   if(!exists("file_list_df")) {
     stop(sprintf("No files found in zip"))
   }
