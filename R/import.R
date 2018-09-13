@@ -38,25 +38,16 @@ read_gtfs <- function(path, local = FALSE,
   if(!local) {
     path <- download_from_url(url = path, quiet = quiet)
   }
-
+  
   # extract zip file
-  if(tools::file_ext(path) == "zip") {
-    tmpdirpath <- unzip_file(path, quiet=quiet)
-    file_list_df <- zip::zip_list(path)
-    if(!exists("file_list_df")) {
-      stop(sprintf("No files found in zip"))
-    }
-    
-    file_list <- file_list_df$filename
-  } else if(local) {
-    # Reading files from local directory
-    tmpdirpath <- path
-    file_list <- list.files(path)
-  } else {
-    stop(sprintf("No zip file or local directory"))
+  tmpdirpath <- unzip_file(path, quiet=quiet)
+  
+  file_list_df <- zip::zip_list(path)
+  if(!exists("file_list_df")) {
+    stop(sprintf("No files found in zip"))
   }
   
-  gtfs_obj <- create_gtfs_object(tmpdirpath, file_list, quiet = quiet)
+  gtfs_obj <- create_gtfs_object(tmpdirpath, file_list_df$filename, quiet = quiet)
   
   if(geometry) {
     gtfs_obj <- gtfs_as_sf(gtfs_obj,quiet=quiet)
