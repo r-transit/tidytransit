@@ -250,7 +250,7 @@ create_gtfs_object <- function(tmpdirpath, file_paths, quiet = FALSE) {
                                               quiet = quiet))
   names(gtfs_obj) <- unname(df_names)
   if(!quiet) message('...done.\n\n')
-  
+  gtfs_obj[sapply(gtfs_obj, is.null)] <- NULL
   class(gtfs_obj) <- "gtfs"
   
   gtfs_obj <- validate_gtfs(gtfs_obj)
@@ -319,20 +319,20 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
     L <- suppressWarnings(length(scan(file_path, what = "", quiet = TRUE, sep = '\n')))
     if(L < 1) {
       s <- sprintf("   File '%s' is empty.", basename(file_path))
-      message(s)
+      if(!quiet) message(s)
       return(NULL)
     }
 
     # if no meta data is found for a file type but file is not empty, read as is.
     if(is.null(meta)) {
       s <- sprintf("   File %s not recognized, trying to read file as csv", basename(file_path))
-      message(s)
+      if(!quiet) message(s)
 
       tryCatch({
         df <- suppressMessages(readr::read_csv(file = file_path))
       }, error = function(error_condition) {
         s <- sprintf("   File could not be read as csv.", basename(file_path))
-        message(s)
+        if(!quiet) message(s)
         return(NULL)
       })
       return(df)
