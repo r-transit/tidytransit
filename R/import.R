@@ -244,15 +244,17 @@ unzip_file <- function(zipfile,
 create_gtfs_object <- function(tmpdirpath, file_paths, quiet = FALSE) {
   prefixes <- vapply(file_paths,get_file_shortname,FUN.VALUE = "")
   df_names <- paste(prefixes,"_df",sep="")
+  if(!quiet) message('Reading files in feed...\n')
   gtfs_obj <- lapply(file_paths, 
                    function(x) read_gtfs_file(x, 
                                               tmpdirpath, 
                                               quiet = quiet))
   names(gtfs_obj) <- unname(df_names)
-  if(!quiet) message('...done.\n\n')
   gtfs_obj[sapply(gtfs_obj, is.null)] <- NULL
   class(gtfs_obj) <- "gtfs"
+  if(!quiet) message('Reading files in feed... done.\n\n')
   
+    
   gtfs_obj <- validate_gtfs(gtfs_obj)
   
   stopifnot(is_gtfs_obj(gtfs_obj))
@@ -272,7 +274,7 @@ create_gtfs_object <- function(tmpdirpath, file_paths, quiet = FALSE) {
 read_gtfs_file <- function(file_path, tmpdirpath, quiet = FALSE) {
   prefix <- get_file_shortname(file_path)
 
-  if(!quiet) message(paste0('Reading ', df_name))
+  if(!quiet) message(paste0('Reading ', prefix))
 
   full_file_path <- paste0(tmpdirpath,"/",file_path)
   new_df <- parse_gtfs_file(prefix, full_file_path, quiet = quiet)
@@ -325,7 +327,7 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
 
     # if no meta data is found for a file type but file is not empty, read as is.
     if(is.null(meta)) {
-      s <- sprintf("   File %s not recognized, trying to read file as csv", basename(file_path))
+      s <- sprintf("   File %s not recognized, trying to read file as csv.", basename(file_path))
       if(!quiet) message(s)
 
       tryCatch({
