@@ -27,6 +27,23 @@ filter_stop_times_by_hour <- function(stop_times,
   return(stop_times)
 }
 
+#' Adds columns to stop_times (arrival_time, departure_time) and frequencies (start_time_hms, end_time_hms)
+#' with times converted with lubridate::hms().
+#' 
+#' @return gtfs_obj with added hms times columns for stop_times_df and frequencies_df
+#' @importFrom lubridate hms
+create_hms_times <- function(gtfs_obj) {
+  gtfs_obj$stop_times_df$arrival_time_hms <- lubridate::hms(gtfs_obj$stop_times_df$arrival_time, quiet=T)
+  gtfs_obj$stop_times_df$departure_time_hms <- lubridate::hms(gtfs_obj$stop_times_df$departure_time, quiet=T)
+  
+  if(!is.null(gtfs_obj$frequencies_df)) {
+    gtfs_obj$frequencies_df$start_time_hms <- lubridate::hms(gtfs_obj$frequencies_df$start_time, quiet=T)
+    gtfs_obj$frequencies_df$end_time_hms <- lubridate::hms(gtfs_obj$frequencies_df$end_time, quiet=T)
+  }
+  
+  return(gtfs_obj)
+}
+
 #' Create a m:n table showing which service runs on which date.
 #' 
 #' @return gtfs_obj with added date_service data frame
