@@ -357,14 +357,14 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
     coltypes[!is.na(indx)] <- meta$coltype[indx[!is.na(indx)]] # valid cols found in small_df
 
     ## get colclasses for use in read.csv (useful when UTF-8-BOM encoding is found)
-    colclasses <- sapply(coltypes, switch, c = "character", i = "integer", d = "double")
+    colclasses <- sapply(coltypes, switch, c = "character", i = "integer", d = "double", "D" = "Date")
 
     ## collapse coltypes for use in read_csv
     coltypes <- coltypes %>% paste(collapse = "")
 
     ## switch function for when BOMs exist
     converttype <- function(x, y) {
-      switch(x, character = as.character(y), integer = as.integer(y), double = as.double(y))
+      switch(x, character = as.character(y), integer = as.integer(y), double = as.double(y), Date = ymd(y))
     }
 
     if (has_bom(file_path)) { # check for BOM. if yes, use read.csv()
