@@ -26,11 +26,11 @@ get_gtfs_meta <- function() {
   
   # routes
   assign("routes", list())
-  routes$field <- c('route_id', 'agency_id', 'route_short_name', 'route_long_name', 'route_desc', 'route_type', 'route_url', 'route_color', 'route_text_color', 'route_sort_order', 'min_headway_minutes')
-  routes$field_spec <- c('req', 'opt', 'req', 'req', 'opt', 'req', 'opt', 'opt', 'opt', 'opt', 'opt')
+  routes$field <- c('route_id', 'agency_id', 'route_short_name', 'route_long_name', 'route_desc', 'route_type', 'route_url', 'route_color', 'route_text_color', 'route_sort_order')
+  routes$field_spec <- c('req', 'opt', 'req', 'req', 'opt', 'req', 'opt', 'opt', 'opt', 'opt')
   names(routes$field_spec) <- routes$field
   routes$coltype <- rep('c', length(routes$field))
-  routes$coltype[routes$field %in% c('route_type', 'route_sort_order', 'min_headway_minutes')] <- 'i'
+  routes$coltype[routes$field %in% c('route_type', 'route_sort_order')] <- 'i'
   routes$file_spec <- 'req'
   
   # trips
