@@ -33,7 +33,7 @@ filter_stop_times_by_hour <- function(stop_times,
 create_date_service <- function(gtfs_obj) {
   stopifnot(is_gtfs_obj(gtfs_obj))
   
-  # table to connect every date to corresponding services
+  # table to connect every date to corresponding services (all dates from earliest to latest)
   dates <- tibble(
     date = seq(
       min(gtfs_obj$calendar_df$start_date),
@@ -43,24 +43,28 @@ create_date_service <- function(gtfs_obj) {
     weekday = tolower(weekdays(date))
   )
   
-  # set services by weekdays
+  # gather services by weekdays
   service_ids_weekdays <-
     gather(
-      gtfs_obj$calendar_df %>% select(-start_date, -end_date),
+      gtfs_obj$calendar_df,
       key = "weekday",
       value = "bool",
-      -service_id
+      -c(service_id, start_date, end_date)
     ) %>%
     filter(bool == 1) %>% select(-bool)
   
-  date_service_df <- full_join(dates, service_ids_weekdays, by="weekday") %>% select(-weekday)
+  # set services to dates according to weekdays and start/end date
+  date_service_df <- full_join(dates, service_ids_weekdays, by="weekday") %>% 
+    filter(date > start_date & date < end_date) %>% 
+    select(-weekday, -start_date, -end_date)
   
-  # additions (1) and exceptions (2)
+  # add calendar_dates additions (1) 
   additions = gtfs_obj$calendar_dates_df %>% filter(exception_type == 1) %>% select(-exception_type)
   if(nrow(additions) > 0) {
     date_service_df <- full_join(date_service_df, additions, by=c("date", "service_id"))
   }
-  
+
+  # remove calendar_dates exceptions (2) 
   exceptions = gtfs_obj$calendar_dates_df %>% filter(exception_type == 2) %>% select(-exception_type)
   if(nrow(exceptions) > 0) {
     date_service_df <- anti_join(date_service_df, exceptions, by=c("date", "service_id"))
