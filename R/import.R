@@ -252,7 +252,7 @@ create_gtfs_object <- function(tmpdirpath, file_paths, quiet = FALSE) {
   names(gtfs_obj) <- unname(df_names)
   gtfs_obj[sapply(gtfs_obj, is.null)] <- NULL
   class(gtfs_obj) <- "gtfs"
-  if(!quiet) message('Reading files in feed... done.\n\n')
+  if(!quiet) message('Reading files in feed... done.\n')
   
     
   gtfs_obj <- validate_gtfs(gtfs_obj, quiet = quiet)
@@ -364,7 +364,7 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
 
     ## switch function for when BOMs exist
     converttype <- function(x, y) {
-      switch(x, character = as.character(y), integer = as.integer(y), double = as.double(y), Date = ymd(y))
+      switch(x, character = as.character(y), integer = as.integer(y), double = as.double(y), Date = lubridate::ymd(y))
     }
 
     if (has_bom(file_path)) { # check for BOM. if yes, use read.csv()

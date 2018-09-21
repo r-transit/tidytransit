@@ -39,8 +39,8 @@ validate_gtfs <- function(gtfs_obj, quiet = T) {
       w <- paste0("Invalid feed. Missing required field(s): ", paste(missing_req_fields, collapse=", "))
       warning(w)
     }
-  } else {
-    if(!quiet) message("Valid gtfs data structure")
+  } else if(!quiet) {
+    message("Valid gtfs data structure.")
   }
   
   # assign validation result to gtfs_obj
