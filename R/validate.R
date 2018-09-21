@@ -6,7 +6,7 @@
 #' @return gtfs_obj with a validation summary dataframe as an attribute 
 #' 
 #' @noRd
-validate_gtfs <- function(gtfs_obj) {
+validate_gtfs <- function(gtfs_obj, quiet = T) {
 
   validation_result <- validate_gtfs_structure(gtfs_obj)
   
@@ -40,7 +40,7 @@ validate_gtfs <- function(gtfs_obj) {
       warning(w)
     }
   } else {
-    message("Valid gtfs data structure")
+    if(!quiet) message("Valid gtfs data structure")
   }
   
   # assign validation result to gtfs_obj

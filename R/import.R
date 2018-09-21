@@ -255,9 +255,11 @@ create_gtfs_object <- function(tmpdirpath, file_paths, quiet = FALSE) {
   if(!quiet) message('Reading files in feed... done.\n\n')
   
     
-  gtfs_obj <- validate_gtfs(gtfs_obj)
+  gtfs_obj <- validate_gtfs(gtfs_obj, quiet = quiet)
   
   stopifnot(is_gtfs_obj(gtfs_obj))
+  
+  if(!quiet) message("Reading gtfs feed completed.\n\n")
   
   return(gtfs_obj)
 }
