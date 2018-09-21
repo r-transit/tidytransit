@@ -26,3 +26,47 @@ filter_stop_times_by_hour <- function(stop_times,
                      lubridate::hour(stop_times_dt$departure_time) < end_hour,]
   return(stop_times)
 }
+
+#' Create a m:n table showing which service runs on which date.
+#' 
+#' @return gtfs_obj with added date_service data frame
+create_date_service <- function(gtfs_obj) {
+  stopifnot(is_gtfs_obj(gtfs_obj))
+  
+  # table to connect every date to corresponding services
+  dates <- tibble(
+    date = seq(
+      min(gtfs_obj$calendar_df$start_date),
+      max(gtfs_obj$calendar_df$end_date),
+      1
+    ),
+    weekday = tolower(weekdays(date))
+  )
+  
+  # set services by weekdays
+  service_ids_weekdays <-
+    gather(
+      gtfs_obj$calendar_df %>% select(-start_date, -end_date),
+      key = "weekday",
+      value = "bool",
+      -service_id
+    ) %>%
+    filter(bool == 1) %>% select(-bool)
+  
+  date_service_df <- full_join(dates, service_ids_weekdays, by="weekday") %>% select(-weekday)
+  
+  # additions (1) and exceptions (2)
+  additions = gtfs_obj$calendar_dates_df %>% filter(exception_type == 1) %>% select(-exception_type)
+  if(nrow(additions) > 0) {
+    date_service_df <- full_join(date_service_df, additions, by=c("date", "service_id"))
+  }
+  
+  exceptions = gtfs_obj$calendar_dates_df %>% filter(exception_type == 2) %>% select(-exception_type)
+  if(nrow(exceptions) > 0) {
+    date_service_df <- anti_join(date_service_df, exceptions, by=c("date", "service_id"))
+  }
+  
+  gtfs_obj$date_service <- date_service_df
+  
+  return(gtfs_obj)
+}
