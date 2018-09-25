@@ -343,31 +343,38 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
     }
 
     ## read.csv supports UTF-8-BOM. use this to get field names.
-    small_df <- suppressWarnings(utils::read.csv(file_path, nrows = 10, stringsAsFactors = FALSE)) # get a small df to find how many cols are needed
+    small_df <- suppressWarnings(utils::read.csv(file_path, nrows = 5, stringsAsFactors = FALSE)) # get a small df to find how many cols are needed
 
     ## get correct coltype, if possible
     coltypes <- rep('c', dim(small_df)[2]) # create 'c' as coltype defaults
     names(coltypes) <- names(small_df) %>% tolower()
     indx <- match(names(coltypes), meta$field)  # indx from valid cols in meta$field. NAs will return for invalid cols
 
-    colnms <- meta$field[indx] # get expected/required names for columns. these are imposed.
-
     ## !is.na(indx) = valid col in 'coltype' found in meta$field
     ## indx[!is.na(indx)] = location in 'meta$coltype' where corresponding type is found
     coltypes[!is.na(indx)] <- meta$coltype[indx[!is.na(indx)]] # valid cols found in small_df
 
-    ## get colclasses for use in read.csv (useful when UTF-8-BOM encoding is found)
-    colclasses <- sapply(coltypes, switch, c = "character", i = "integer", d = "double", "D" = "Date")
-
-    ## collapse coltypes for use in read_csv
-    coltypes <- coltypes %>% paste(collapse = "")
-
-    ## switch function for when BOMs exist
-    converttype <- function(x, y) {
-      switch(x, character = as.character(y), integer = as.integer(y), double = as.double(y), Date = lubridate::ymd(y))
-    }
-
+    # use col_*() notation for column types
+    coltypes <-
+      sapply(
+        coltypes,
+        switch,
+        "c" = readr::col_character(),
+        "i" = readr::col_integer(),
+        "d" = readr::col_double(),
+        "D" = readr::col_date(format = "%Y%m%d")
+      )
+    
     if (has_bom(file_path)) { # check for BOM. if yes, use read.csv()
+      ## switch function
+      converttype <- function(x, y) {
+        switch(x, character = as.character(y), integer = as.integer(y), double = as.double(y), Date = lubridate::ymd(y))
+      }
+      colnms <- meta$field[indx] # get expected/required names for columns. these are imposed.
+      
+      ## get colclasses
+      colclasses <- sapply(coltypes, switch, c = "character", i = "integer", d = "double", "D" = "Date")
+      
       csv <- quote(utils::read.csv(file_path, col.names = colnms, stringsAsFactors= FALSE))
       df <- try(suppressWarnings(eval(csv)) %>%
           mapply(converttype, x = colclasses, y = ., SIMPLIFY = FALSE) %>% # ensure proper column types
@@ -377,14 +384,19 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
         probs <- "Error during import. Likely encoding error. Note that utils::read.csv() was used, not readr::read_csv()."
         attributes(df) <- append(attributes(df), list(problems = probs))
       }
-
     } else {
-      df <- readr::read_csv(file = file_path, 
-                            col_types = coltypes
+      df <- suppressWarnings(
+        readr::read_csv(file = file_path, 
+          col_types = coltypes
         )
+      )
       probs <- readr::problems(df)
       
-      if(dim(probs)[1] > 0) attributes(df) <- append(attributes(df), list(problems = probs))
+      if(dim(probs)[1] > 0) {
+        attributes(df) <- append(attributes(df), list(problems = probs))
+        warning("Parsing failures while reading feed")
+        print(probs)
+      }
     }
 
     return(df)
