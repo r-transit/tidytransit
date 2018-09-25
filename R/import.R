@@ -394,7 +394,7 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
       
       if(dim(probs)[1] > 0) {
         attributes(df) <- append(attributes(df), list(problems = probs))
-        warning("Parsing failures while reading feed")
+        warning(paste0("Parsing failures while reading ", prefix))
         print(probs)
       }
     }
