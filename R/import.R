@@ -346,18 +346,18 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
     small_df <- suppressWarnings(utils::read.csv(file_path, nrows = 5, stringsAsFactors = FALSE)) # get a small df to find how many cols are needed
 
     ## get correct coltype, if possible
-    coltypes <- rep('c', dim(small_df)[2]) # create 'c' as coltype defaults
-    names(coltypes) <- names(small_df) %>% tolower()
-    indx <- match(names(coltypes), meta$field)  # indx from valid cols in meta$field. NAs will return for invalid cols
+    coltypes_character <- rep('c', dim(small_df)[2]) # create 'c' as coltype defaults
+    names(coltypes_character) <- names(small_df) %>% tolower()
+    indx <- match(names(coltypes_character), meta$field)  # indx from valid cols in meta$field. NAs will return for invalid cols
 
     ## !is.na(indx) = valid col in 'coltype' found in meta$field
     ## indx[!is.na(indx)] = location in 'meta$coltype' where corresponding type is found
-    coltypes[!is.na(indx)] <- meta$coltype[indx[!is.na(indx)]] # valid cols found in small_df
+    coltypes_character[!is.na(indx)] <- meta$coltype[indx[!is.na(indx)]] # valid cols found in small_df
 
     # use col_*() notation for column types
     coltypes <-
       sapply(
-        coltypes,
+        coltypes_character,
         switch,
         "c" = readr::col_character(),
         "i" = readr::col_integer(),
@@ -373,7 +373,7 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
       colnms <- meta$field[indx] # get expected/required names for columns. these are imposed.
       
       ## get colclasses
-      colclasses <- sapply(coltypes, switch, c = "character", i = "integer", d = "double", "D" = "Date")
+      colclasses <- sapply(coltypes_character, switch, c = "character", i = "integer", d = "double", "D" = "Date")
       
       csv <- quote(utils::read.csv(file_path, col.names = colnms, stringsAsFactors= FALSE))
       df <- try(suppressWarnings(eval(csv)) %>%
