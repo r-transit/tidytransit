@@ -27,12 +27,17 @@ filter_stop_times_by_hour <- function(stop_times,
   return(stop_times)
 }
 
-#' Adds columns to stop_times (arrival_time, departure_time) and frequencies (start_time_hms, end_time_hms)
+#' Add lubridate::hms columns to feed
+#' 
+#' Adds columns to stop_times (arrival_time_hms, departure_time_hms) and frequencies (start_time_hms, end_time_hms)
 #' with times converted with lubridate::hms().
 #' 
 #' @return gtfs_obj with added hms times columns for stop_times_df and frequencies_df
+#' @export
 #' @importFrom lubridate hms
-create_hms_times <- function(gtfs_obj) {
+set_hms_times <- function(gtfs_obj) {
+  stopifnot(is_gtfs_obj(gtfs_obj))
+  
   gtfs_obj$stop_times_df$arrival_time_hms <- lubridate::hms(gtfs_obj$stop_times_df$arrival_time, quiet=T)
   gtfs_obj$stop_times_df$departure_time_hms <- lubridate::hms(gtfs_obj$stop_times_df$departure_time, quiet=T)
   
@@ -44,14 +49,22 @@ create_hms_times <- function(gtfs_obj) {
   return(gtfs_obj)
 }
 
-#' Create a m:n table showing which service runs on which date.
+#' Create a m:n data frame indicating which service runs on which date.
 #' 
+#' @examples \donttest{
+#' library(dplyr)
+#' u1 <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
+#' sample_gtfs <- read_gtfs(u1) %>% set_date_service_table()
+#' # count the number of services running on each date
+#' sample_gtfs$date_service %>% group_by(date) %>% count()
+#' }
 #' @return gtfs_obj with added date_service data frame
-create_date_service <- function(gtfs_obj) {
+#' @export
+set_date_service_table <- function(gtfs_obj) {
   stopifnot(is_gtfs_obj(gtfs_obj))
   
   # table to connect every date to corresponding services (all dates from earliest to latest)
-  dates <- tibble(
+  dates <- dplyr::tibble(
     date = seq(
       min(gtfs_obj$calendar_df$start_date),
       max(gtfs_obj$calendar_df$end_date),
@@ -62,29 +75,29 @@ create_date_service <- function(gtfs_obj) {
   
   # gather services by weekdays
   service_ids_weekdays <-
-    gather(
+    tidyr::gather(
       gtfs_obj$calendar_df,
       key = "weekday",
       value = "bool",
       -c(service_id, start_date, end_date)
     ) %>%
-    filter(bool == 1) %>% select(-bool)
+    dplyr::filter(bool == 1) %>% dplyr::select(-bool)
   
   # set services to dates according to weekdays and start/end date
-  date_service_df <- full_join(dates, service_ids_weekdays, by="weekday") %>% 
-    filter(date > start_date & date < end_date) %>% 
-    select(-weekday, -start_date, -end_date)
+  date_service_df <- dplyr::full_join(dates, service_ids_weekdays, by="weekday") %>% 
+    dplyr::filter(date > start_date & date < end_date) %>% 
+    dplyr::select(-weekday, -start_date, -end_date)
   
   # add calendar_dates additions (1) 
   additions = gtfs_obj$calendar_dates_df %>% filter(exception_type == 1) %>% select(-exception_type)
   if(nrow(additions) > 0) {
-    date_service_df <- full_join(date_service_df, additions, by=c("date", "service_id"))
+    date_service_df <- dplyr::full_join(date_service_df, additions, by=c("date", "service_id"))
   }
 
   # remove calendar_dates exceptions (2) 
   exceptions = gtfs_obj$calendar_dates_df %>% filter(exception_type == 2) %>% select(-exception_type)
   if(nrow(exceptions) > 0) {
-    date_service_df <- anti_join(date_service_df, exceptions, by=c("date", "service_id"))
+    date_service_df <- dplyr::anti_join(date_service_df, exceptions, by=c("date", "service_id"))
   }
   
   gtfs_obj$date_service <- date_service_df
