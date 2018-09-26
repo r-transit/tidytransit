@@ -26,11 +26,11 @@ get_gtfs_meta <- function() {
   
   # routes
   assign("routes", list())
-  routes$field <- c('route_id', 'agency_id', 'route_short_name', 'route_long_name', 'route_desc', 'route_type', 'route_url', 'route_color', 'route_text_color', 'route_sort_order', 'min_headway_minutes')
-  routes$field_spec <- c('req', 'opt', 'req', 'req', 'opt', 'req', 'opt', 'opt', 'opt', 'opt', 'opt')
+  routes$field <- c('route_id', 'agency_id', 'route_short_name', 'route_long_name', 'route_desc', 'route_type', 'route_url', 'route_color', 'route_text_color', 'route_sort_order')
+  routes$field_spec <- c('req', 'opt', 'req', 'req', 'opt', 'req', 'opt', 'opt', 'opt', 'opt')
   names(routes$field_spec) <- routes$field
   routes$coltype <- rep('c', length(routes$field))
-  routes$coltype[routes$field %in% c('route_type', 'route_sort_order', 'min_headway_minutes')] <- 'i'
+  routes$coltype[routes$field %in% c('route_type', 'route_sort_order')] <- 'i'
   routes$file_spec <- 'req'
   
   # trips
@@ -59,7 +59,8 @@ get_gtfs_meta <- function() {
   calendar$field_spec[2] <- 'opt'
   names(calendar$field_spec) <- calendar$field
   calendar$coltype <- rep('i', length(calendar$field))
-  calendar$coltype[calendar$field %in% c('service_id', 'service_name', 'start_date', 'end_date')] <- 'c'
+  calendar$coltype[calendar$field %in% c('service_id', 'service_name')] <- 'c'
+  calendar$coltype[calendar$field %in% c('start_date', 'end_date')] <- 'D'
   calendar$file_spec <- 'req'
 
   # optional files ----------------------------------------------------------
@@ -71,6 +72,7 @@ get_gtfs_meta <- function() {
   names(calendar_dates$field_spec) <- calendar_dates$field
   calendar_dates$coltype <- rep('c', length(calendar_dates$field))
   calendar_dates$coltype[calendar_dates$field %in% c('exception_type')] <- 'i'
+  calendar_dates$coltype[calendar_dates$field %in% c('date')] <- 'D'
   calendar_dates$file_spec <- 'opt'
   
   # fare_attributes
@@ -128,6 +130,7 @@ get_gtfs_meta <- function() {
   feed_info$field_spec[c(2:4)] <- 'req'
   names(feed_info$field_spec) <- feed_info$field
   feed_info$coltype <- rep('c', length(feed_info$field))
+  feed_info$coltype[transfers$field %in% c('feed_start_date', 'feed_end_date')] <- 'D'
   feed_info$file_spec <- 'opt'
   
   meta <- list(agency, stops, routes, trips, stop_times, calendar, calendar_dates, fare_attributes, fare_rules, shapes, frequencies, transfers, feed_info)

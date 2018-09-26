@@ -84,8 +84,8 @@ read_gtfs <- function(path, local = FALSE,
 #' attach(sample_gtfs)
 #' #list routes by the number of stops they have
 #' routes_df %>% inner_join(trips_df, by="route_id") %>%
-#'   inner_join(stop_times_df) %>% 
-#'     inner_join(stops_df, by="stop_id") %>% 
+#'   inner_join(stop_times_df) %>%
+#'     inner_join(stops_df, by="stop_id") %>%
 #'       group_by(route_long_name) %>%
 #'         summarise(stop_count=n_distinct(stop_id)) %>%
 #'           arrange(desc(stop_count))
@@ -244,18 +244,22 @@ unzip_file <- function(zipfile,
 create_gtfs_object <- function(tmpdirpath, file_paths, quiet = FALSE) {
   prefixes <- vapply(file_paths,get_file_shortname,FUN.VALUE = "")
   df_names <- paste(prefixes,"_df",sep="")
+  if(!quiet) message('Reading files in feed...\n')
   gtfs_obj <- lapply(file_paths, 
                    function(x) read_gtfs_file(x, 
                                               tmpdirpath, 
                                               quiet = quiet))
   names(gtfs_obj) <- unname(df_names)
-  if(!quiet) message('...done.\n\n')
-  
+  gtfs_obj[sapply(gtfs_obj, is.null)] <- NULL
   class(gtfs_obj) <- "gtfs"
+  if(!quiet) message('Reading files in feed... done.\n')
   
-  gtfs_obj <- validate_gtfs(gtfs_obj)
+    
+  gtfs_obj <- validate_gtfs(gtfs_obj, quiet = quiet)
   
   stopifnot(is_gtfs_obj(gtfs_obj))
+  
+  if(!quiet) message("Reading gtfs feed completed.\n\n")
   
   return(gtfs_obj)
 }
@@ -272,7 +276,7 @@ create_gtfs_object <- function(tmpdirpath, file_paths, quiet = FALSE) {
 read_gtfs_file <- function(file_path, tmpdirpath, quiet = FALSE) {
   prefix <- get_file_shortname(file_path)
 
-  if(!quiet) message(paste0('Reading ', df_name))
+  if(!quiet) message(paste0('Reading ', prefix))
 
   full_file_path <- paste0(tmpdirpath,"/",file_path)
   new_df <- parse_gtfs_file(prefix, full_file_path, quiet = quiet)
@@ -319,51 +323,58 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
     L <- suppressWarnings(length(scan(file_path, what = "", quiet = TRUE, sep = '\n')))
     if(L < 1) {
       s <- sprintf("   File '%s' is empty.", basename(file_path))
-      message(s)
+      if(!quiet) message(s)
       return(NULL)
     }
 
     # if no meta data is found for a file type but file is not empty, read as is.
     if(is.null(meta)) {
-      s <- sprintf("   File %s not recognized, trying to read file as csv", basename(file_path))
-      message(s)
+      s <- sprintf("   File %s not recognized, trying to read file as csv.", basename(file_path))
+      if(!quiet) message(s)
 
       tryCatch({
         df <- suppressMessages(readr::read_csv(file = file_path))
       }, error = function(error_condition) {
         s <- sprintf("   File could not be read as csv.", basename(file_path))
-        message(s)
+        if(!quiet) message(s)
         return(NULL)
       })
       return(df)
     }
 
     ## read.csv supports UTF-8-BOM. use this to get field names.
-    small_df <- suppressWarnings(utils::read.csv(file_path, nrows = 10, stringsAsFactors = FALSE)) # get a small df to find how many cols are needed
+    small_df <- suppressWarnings(utils::read.csv(file_path, nrows = 5, stringsAsFactors = FALSE)) # get a small df to find how many cols are needed
 
     ## get correct coltype, if possible
-    coltypes <- rep('c', dim(small_df)[2]) # create 'c' as coltype defaults
-    names(coltypes) <- names(small_df) %>% tolower()
-    indx <- match(names(coltypes), meta$field)  # indx from valid cols in meta$field. NAs will return for invalid cols
-
-    colnms <- meta$field[indx] # get expected/required names for columns. these are imposed.
+    coltypes_character <- rep('c', dim(small_df)[2]) # create 'c' as coltype defaults
+    names(coltypes_character) <- names(small_df) %>% tolower()
+    indx <- match(names(coltypes_character), meta$field)  # indx from valid cols in meta$field. NAs will return for invalid cols
 
     ## !is.na(indx) = valid col in 'coltype' found in meta$field
     ## indx[!is.na(indx)] = location in 'meta$coltype' where corresponding type is found
-    coltypes[!is.na(indx)] <- meta$coltype[indx[!is.na(indx)]] # valid cols found in small_df
+    coltypes_character[!is.na(indx)] <- meta$coltype[indx[!is.na(indx)]] # valid cols found in small_df
 
-    ## get colclasses for use in read.csv (useful when UTF-8-BOM encoding is found)
-    colclasses <- sapply(coltypes, switch, c = "character", i = "integer", d = "double")
-
-    ## collapse coltypes for use in read_csv
-    coltypes <- coltypes %>% paste(collapse = "")
-
-    ## switch function for when BOMs exist
-    converttype <- function(x, y) {
-      switch(x, character = as.character(y), integer = as.integer(y), double = as.double(y))
-    }
-
+    # use col_*() notation for column types
+    coltypes <-
+      sapply(
+        coltypes_character,
+        switch,
+        "c" = readr::col_character(),
+        "i" = readr::col_integer(),
+        "d" = readr::col_double(),
+        "D" = readr::col_date(format = "%Y%m%d")
+      )
+    
     if (has_bom(file_path)) { # check for BOM. if yes, use read.csv()
+      ## switch function
+      converttype <- function(x, y) {
+        switch(x, character = as.character(y), integer = as.integer(y), double = as.double(y), Date = lubridate::ymd(y))
+      }
+      colnms <- meta$field[indx] # get expected/required names for columns. these are imposed.
+      
+      ## get colclasses
+      colclasses <- sapply(coltypes_character, switch, c = "character", i = "integer", d = "double", "D" = "Date")
+      
       csv <- quote(utils::read.csv(file_path, col.names = colnms, stringsAsFactors= FALSE))
       df <- try(suppressWarnings(eval(csv)) %>%
           mapply(converttype, x = colclasses, y = ., SIMPLIFY = FALSE) %>% # ensure proper column types
@@ -373,14 +384,19 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
         probs <- "Error during import. Likely encoding error. Note that utils::read.csv() was used, not readr::read_csv()."
         attributes(df) <- append(attributes(df), list(problems = probs))
       }
-
     } else {
-      df <- readr::read_csv(file = file_path, 
-                            col_types = coltypes
+      df <- suppressWarnings(
+        readr::read_csv(file = file_path, 
+          col_types = coltypes
         )
+      )
       probs <- readr::problems(df)
       
-      if(dim(probs)[1] > 0) attributes(df) <- append(attributes(df), list(problems = probs))
+      if(dim(probs)[1] > 0) {
+        attributes(df) <- append(attributes(df), list(problems = probs))
+        warning(paste0("Parsing failures while reading ", prefix))
+        print(probs)
+      }
     }
 
     return(df)
