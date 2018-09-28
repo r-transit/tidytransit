@@ -74,7 +74,7 @@ set_hms_times <- function(gtfs_obj) {
 get_date_service_table <- function(gtfs_obj) {
   stopifnot(is_gtfs_obj(gtfs_obj))
   
-  if(all(is.na(gtfs_obj$calendar_df$start_date)) & all(is.na(gtfs_obj$calendar_df$start_date))) {
+  if(all(is.na(gtfs_obj$calendar_df$start_date)) & all(is.na(gtfs_obj$calendar_df$end_date))) {
     # TODO validate no start_date and end_date defined in calendar.txt
     date_service_df <- dplyr::tibble(date=lubridate::ymd("19700101"), service_id="x") %>% dplyr::filter(service_id != "x")
   } else {
@@ -100,20 +100,22 @@ get_date_service_table <- function(gtfs_obj) {
     
     # set services to dates according to weekdays and start/end date
     date_service_df <- dplyr::full_join(dates, service_ids_weekdays, by="weekday") %>% 
-      dplyr::filter(date > start_date & date < end_date) %>% 
+      dplyr::filter(date >= start_date & date <= end_date) %>% 
       dplyr::select(-weekday, -start_date, -end_date)
   }
   
-  # add calendar_dates additions (1) 
-  additions = gtfs_obj$calendar_dates_df %>% filter(exception_type == 1) %>% select(-exception_type)
-  if(nrow(additions) > 0) {
-    date_service_df <- dplyr::full_join(date_service_df, additions, by=c("date", "service_id"))
-  }
-  
-  # remove calendar_dates exceptions (2) 
-  exceptions = gtfs_obj$calendar_dates_df %>% filter(exception_type == 2) %>% select(-exception_type)
-  if(nrow(exceptions) > 0) {
-    date_service_df <- dplyr::anti_join(date_service_df, exceptions, by=c("date", "service_id"))
+  if(!is.null(gtfs_obj$calendar_dates_df)) {
+    # add calendar_dates additions (1)
+    additions = gtfs_obj$calendar_dates_df %>% filter(exception_type == 1) %>% select(-exception_type)
+    if(nrow(additions) > 0) {
+      date_service_df <- dplyr::full_join(date_service_df, additions, by=c("date", "service_id"))
+    }
+    
+    # remove calendar_dates exceptions (2) 
+    exceptions = gtfs_obj$calendar_dates_df %>% filter(exception_type == 2) %>% select(-exception_type)
+    if(nrow(exceptions) > 0) {
+      date_service_df <- dplyr::anti_join(date_service_df, exceptions, by=c("date", "service_id"))
+    }
   }
   
   if(nrow(date_service_df) == 0) {
