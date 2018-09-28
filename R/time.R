@@ -38,12 +38,19 @@ filter_stop_times_by_hour <- function(stop_times,
 set_hms_times <- function(gtfs_obj) {
   stopifnot(is_gtfs_obj(gtfs_obj))
   
-  gtfs_obj$stop_times_df$arrival_time_hms <- lubridate::hms(gtfs_obj$stop_times_df$arrival_time, quiet=T)
-  gtfs_obj$stop_times_df$departure_time_hms <- lubridate::hms(gtfs_obj$stop_times_df$departure_time, quiet=T)
+  str_to_seconds <- function(hhmmss_str) {
+    sapply(
+      strsplit(hhmmss_str, ":"), 
+      function(Y) { sum(as.numeric(Y) * c(3600, 60, 1)) }
+      )
+  }
+  
+  gtfs_obj$stop_times_df$arrival_time_hms <- hms::hms(str_to_seconds(gtfs_obj$stop_times_df$arrival_time))
+  gtfs_obj$stop_times_df$departure_time_hms <- hms::hms(str_to_seconds(gtfs_obj$stop_times_df$departure_time))
   
   if(!is.null(gtfs_obj$frequencies_df)) {
-    gtfs_obj$frequencies_df$start_time_hms <- lubridate::hms(gtfs_obj$frequencies_df$start_time, quiet=T)
-    gtfs_obj$frequencies_df$end_time_hms <- lubridate::hms(gtfs_obj$frequencies_df$end_time, quiet=T)
+    gtfs_obj$frequencies_df$start_time_hms <- hms::hms(str_to_seconds(gtfs_obj$frequencies_df$start_time))
+    gtfs_obj$frequencies_df$end_time_hms <- hms::hms(str_to_seconds(gtfs_obj$frequencies_df$end_time))
   }
   
   return(gtfs_obj)
