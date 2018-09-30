@@ -38,7 +38,12 @@ if(getRversion() >= "3.1.0") {
       'median_headways', 
       'mean_headways', 
       'st_dev_headways', 
-      'stop_count'
+      'stop_count',
+      'bool',
+      'start_date',
+      'end_date',
+      'weekday',
+      'exception_type'
     )
   )
 }

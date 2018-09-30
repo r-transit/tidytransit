@@ -33,7 +33,7 @@ filter_stop_times_by_hour <- function(stop_times,
 #' with times converted with lubridate::hms().
 #' 
 #' @return gtfs_obj with added hms times columns for stop_times_df and frequencies_df
-#' @export
+#' @keywords internal
 #' @importFrom lubridate hms
 set_hms_times <- function(gtfs_obj) {
   stopifnot(is_gtfs_obj(gtfs_obj))
@@ -49,18 +49,22 @@ set_hms_times <- function(gtfs_obj) {
   return(gtfs_obj)
 }
 
-#' Create a m:n data frame indicating which service runs on which date.
+#' Returns all possible date/service_id combinations as a data frame
 #' 
-#' @examples \donttest{
-#' library(dplyr)
-#' u1 <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
-#' sample_gtfs <- read_gtfs(u1) %>% set_date_service_table()
-#' # count the number of services running on each date
-#' sample_gtfs$date_service %>% group_by(date) %>% count()
-#' }
+#' Use it to summarise service. For example, get a count of the number of services for a date. See example. 
 #' @return gtfs_obj with added date_service data frame
+#' @param gtfs_obj a gtfs_object as read by read_gtfs
 #' @export
-set_date_service_table <- function(gtfs_obj) {
+#' @examples 
+#' library(dplyr)
+#' local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+#' nyc <- tidytransit:::read_gtfs(local_gtfs_path, local=TRUE)
+#' nyc_services_by_date <- nyc %>% get_date_service_table()
+#' # count the number of services running on each date
+#' nyc_services_by_date %>% group_by(date) %>% count()
+#'
+
+get_date_service_table <- function(gtfs_obj) {
   stopifnot(is_gtfs_obj(gtfs_obj))
   
   if(all(is.na(gtfs_obj$calendar_df$start_date)) & all(is.na(gtfs_obj$calendar_df$start_date))) {
@@ -109,7 +113,5 @@ set_date_service_table <- function(gtfs_obj) {
     warning("No start and end dates defined in feed")
   }
   
-  gtfs_obj$date_service <- date_service_df
-  
-  return(gtfs_obj)
+  return(date_service_df)
 }

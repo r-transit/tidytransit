@@ -3,6 +3,7 @@
 S3method(plot,gtfs)
 export(count_service_trips)
 export(filter_stops)
+export(get_date_service_table)
 export(get_feedlist)
 export(get_route_frequency)
 export(get_stop_frequency)
