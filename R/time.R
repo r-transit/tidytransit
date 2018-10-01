@@ -59,7 +59,7 @@ set_hms_times <- function(gtfs_obj) {
 #' Returns all possible date/service_id combinations as a data frame
 #' 
 #' Use it to summarise service. For example, get a count of the number of services for a date. See example. 
-#' @return gtfs_obj with added date_service data frame
+#' @return a date_service data frame
 #' @param gtfs_obj a gtfs_object as read by read_gtfs
 #' @export
 #' @examples 
