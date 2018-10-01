@@ -27,14 +27,14 @@ filter_stop_times_by_hour <- function(stop_times,
   return(stop_times)
 }
 
-#' Add lubridate::hms columns to feed
+#' Add hms::hms columns to feed
 #' 
 #' Adds columns to stop_times (arrival_time_hms, departure_time_hms) and frequencies (start_time_hms, end_time_hms)
-#' with times converted with lubridate::hms().
+#' with times converted with hms::hms().
 #' 
 #' @return gtfs_obj with added hms times columns for stop_times_df and frequencies_df
 #' @keywords internal
-#' @importFrom lubridate hms
+#' @importFrom hms hms
 set_hms_times <- function(gtfs_obj) {
   stopifnot(is_gtfs_obj(gtfs_obj))
   
