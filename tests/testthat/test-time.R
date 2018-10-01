@@ -32,7 +32,7 @@ test_that('set_hms_times() works with valid data', {
   expect_is(gtest$frequencies_df$end_time, "character")
 })
 
-test_that('set_date_service_table() uses the right dates', { 
+test_that('get_date_service_table() uses the right dates', { 
   gtest <- create_empty_gtfs_obj()
   gtest$calendar_df <- dplyr::tibble(
     service_id = "s1",
@@ -46,14 +46,14 @@ test_that('set_date_service_table() uses the right dates', {
     start_date = lubridate::ymd("20180101"), # monday
     end_date = lubridate::ymd("20180131")) # wednesday
 
-  gtest <- tidytransit::set_date_service_table(gtest)
+  date_service <- tidytransit::get_date_service_table(gtest)
   
-  expect_true(lubridate::ymd("20180101") %in% gtest$date_service$date)
-  expect_false(lubridate::ymd("20180102") %in% gtest$date_service$date)
-  expect_true(lubridate::ymd("20180131") %in% gtest$date_service$date)
+  expect_true(lubridate::ymd("20180101") %in% date_service$date)
+  expect_false(lubridate::ymd("20180102") %in% date_service$date)
+  expect_true(lubridate::ymd("20180131") %in% date_service$date)
 })
 
-test_that('set_date_service_table() works with additions and exceptions', { 
+test_that('get_date_service_table() works with additions and exceptions', { 
   gtest <- create_empty_gtfs_obj()
   gtest$calendar_df <- dplyr::tibble(
     service_id = c("wdays", "wend"),
@@ -72,23 +72,23 @@ test_that('set_date_service_table() works with additions and exceptions', {
     exception_type = c(2, 1)
   )
   
-  gtest <- tidytransit::set_date_service_table(gtest)
+  date_service <- tidytransit::get_date_service_table(gtest)
   
   # exception
-  mar14 <- gtest$date_service[gtest$date_service$date == lubridate::ymd("20180613"),]
+  mar14 <- date_service[date_service$date == lubridate::ymd("20180613"),]
   expect_equal(nrow(mar14), 0)
   
   # addition
-  feb26 <- gtest$date_service[gtest$date_service$date == lubridate::ymd("20180226"),] # monday
+  feb26 <- date_service[date_service$date == lubridate::ymd("20180226"),] # monday
   expect_equal(nrow(feb26), 2)
   
   # overlaps
-  apr05 <- gtest$date_service[gtest$date_service$date == lubridate::ymd("20180405"),] # thursday
+  apr05 <- date_service[date_service$date == lubridate::ymd("20180405"),] # thursday
   expect_equal(apr05 %>% dplyr::group_by(date) %>% dplyr::count() %>% dplyr::pull(n), 1)
-  apr06 <- gtest$date_service[gtest$date_service$date == lubridate::ymd("20180406"),] # friday
+  apr06 <- date_service[date_service$date == lubridate::ymd("20180406"),] # friday
   expect_equal(apr06 %>% dplyr::group_by(date) %>% dplyr::count() %>% dplyr::pull(n), 2)
   
-  range <- gtest$date_service %>% 
+  range <- date_service %>% 
     dplyr::group_by(service_id) %>% 
     dplyr::summarise(min = min(date), max=max(date))
   expect_equal(range[range$service_id == "wdays", "min"], dplyr::tibble(min=lubridate::ymd("20180201")))

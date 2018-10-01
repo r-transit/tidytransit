@@ -74,6 +74,10 @@ set_hms_times <- function(gtfs_obj) {
 get_date_service_table <- function(gtfs_obj) {
   stopifnot(is_gtfs_obj(gtfs_obj))
   
+  weekday <- function(date) {
+    c("sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday")[as.POSIXlt(date)$wday + 1]
+  }
+  
   if(all(is.na(gtfs_obj$calendar_df$start_date)) & all(is.na(gtfs_obj$calendar_df$end_date))) {
     # TODO validate no start_date and end_date defined in calendar.txt
     date_service_df <- dplyr::tibble(date=lubridate::ymd("19700101"), service_id="x") %>% dplyr::filter(service_id != "x")
@@ -85,7 +89,7 @@ get_date_service_table <- function(gtfs_obj) {
         max(gtfs_obj$calendar_df$end_date, na.rm = T),
         1
       ),
-      weekday = tolower(weekdays(date))
+      weekday = weekday(date)
     )
     
     # gather services by weekdays
