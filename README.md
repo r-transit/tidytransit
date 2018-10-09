@@ -5,6 +5,8 @@ Status](https://travis-ci.com/r-transit/tidytransit.svg?branch=master)](https://
 status](http://www.r-pkg.org/badges/version-ago/tidytransit?)](https://cran.r-project.org/package=tidytransit)
 [![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active) 
 [![](https://cranlogs.r-pkg.org/badges/tidytransit)](https://cran.r-project.org/package=tidytransit)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/tidytransit)](http://cranlogs.r-pkg.org/badges/grand-total/tidytransit)
+
 
 # tidytransit
 
