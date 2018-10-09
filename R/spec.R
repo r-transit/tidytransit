@@ -120,7 +120,7 @@ get_gtfs_meta <- function() {
   transfers$field_spec <- c('req', 'req', 'req', 'opt')
   names(transfers$field_spec) <- transfers$field
   transfers$coltype <- rep('c', length(transfers$field))
-  transfers$coltype[transfers$field %in% c('exception_type')] <- 'i'
+  transfers$coltype[transfers$field %in% c('exception_type', 'min_transfer_time')] <- 'i'
   transfers$file_spec <- 'opt'
   
   # feed_info
