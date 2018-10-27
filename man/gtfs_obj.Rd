@@ -4,10 +4,15 @@
 \name{gtfs_obj}
 \alias{gtfs_obj}
 \title{Example GTFS data}
+\format{An object of class \code{gtfs} of length 22.}
+\usage{
+gtfs_obj
+}
 \description{
 Data obtained from
 \url{http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip}.
 }
 \seealso{
-convert_gtfs_routes_to_sf
+read_gtfs
 }
+\keyword{datasets}

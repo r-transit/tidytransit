@@ -5,7 +5,8 @@
 \title{Get Stop Frequency}
 \usage{
 get_stop_frequency(gtfs_obj, start_hour = 6, end_hour = 22,
-  dow = c(1, 1, 1, 1, 1, 0, 0), by_route = TRUE, wide = FALSE)
+  service_id = "", dow = c(1, 1, 1, 1, 1, 0, 0), by_route = TRUE,
+  wide = FALSE)
 }
 \arguments{
 \item{gtfs_obj}{a list of gtfs dataframes as read by read_gtfs().}
@@ -13,6 +14,8 @@ get_stop_frequency(gtfs_obj, start_hour = 6, end_hour = 22,
 \item{start_hour}{(optional) an integer indicating the start hour (default 7)}
 
 \item{end_hour}{(optional) an integer indicating the end hour (default 20)}
+
+\item{service_id}{(optional) a string from the calendar_df dataframe identifying a particular service schedule.}
 
 \item{dow}{(optional) integer vector indicating which days of week to calculate for. default is weekday, e.g. c(1,1,1,1,1,0,0)}
 

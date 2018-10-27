@@ -18,11 +18,21 @@
 #' @source \url{http://www.transitfeeds.com/}
 "feedlist_df"
 
+#' Dataframe of route type id's and the names of the types (e.g. "Cable Car")
+#'
+#' @docType data
+#' @format A data frame with 122 rows and 2 variables:
+#' \describe{
+#'   \item{id}{the id of route type}
+#'   \item{name}{name of the gtfs route type}
+#' }
+#' @source \url{https://gist.github.com/derhuerst/b0243339e22c310bee2386388151e11e}
+"route_type_names_df"
+
 #' Example GTFS data
 #' 
 #' Data obtained from 
 #' \url{http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip}. 
-#' @name gtfs_obj
 #' @docType data
-#' @seealso convert_gtfs_routes_to_sf
-NULL 
+#' @seealso read_gtfs
+"gtfs_obj" 
