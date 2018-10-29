@@ -13,9 +13,6 @@ matrix:
           r: release
           dist: trusty
         - os: linux
-          r: devel
-          dist: trusty
-        - os: linux
           r: oldrel
           dist: trusty
 
