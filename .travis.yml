@@ -11,8 +11,7 @@ matrix:
     include:
         - os: linux
           r: release
-          dist: trusty # 14.04
-          env: R_CODECOV=true
+          dist: trusty
         - os: linux
           r: devel
           dist: trusty
