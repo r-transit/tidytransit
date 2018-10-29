@@ -6,34 +6,20 @@ sudo: required
 cache: packages
 #group: edge # https://blog.travis-ci.com/2017-06-19-trusty-updates-2017-Q2
 
-# precise fails because unmet deps in libgdal-dev can not be installed
-
+env:
 matrix:
-    allow_failures: # temporarily enabled. TODO: disable
-        -os: osx
     include:
         - os: linux
           r: release
-          dist: trusty # 14.04
-        - os: linux
-          r: devel
           dist: trusty
         - os: linux
           r: oldrel
           dist: trusty
-        - os: osx
-          r: release
-          before_install: ''
-          disable_homebrew: true
-          #- os: osx
-          #r: devel
-          #before_install: ''
-          #disable_homebrew: true
 
 before_install:
-    - sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable --yes
-    - sudo apt-get --yes --force-yes update -qq
-    - sudo apt-get install --yes libproj-dev libgeos-dev libgdal-dev libudunits2-dev
+  - sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable --yes
+  - sudo apt-get --yes --force-yes update -qq
+  - sudo apt-get install --yes libproj-dev libgeos-dev libgdal-dev libudunits2-dev
 
 notifications:
   email:
@@ -43,7 +29,7 @@ notifications:
 r_packages:
     - devtools
 r_github_packages:
-      - jimhester/covr
+    - jimhester/covr
 
 after_success:
     - Rscript -e "covr::codecov(line_exclusions = list('src/rapidxml.h','src/rapidxml_print.h'))"
