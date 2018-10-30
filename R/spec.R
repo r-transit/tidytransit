@@ -21,7 +21,7 @@ get_gtfs_meta <- function() {
   names(stops$field_spec) <- stops$field
   stops$coltype <- rep('c', length(stops$field))
   stops$coltype[which(stops$field %in% c('stop_lat', 'stop_lon'))] <- 'd' # double
-  stops$coltype[which(stops$field %in% c('location_type', 'wheelchair_boarding'))] <- 'i' #integers
+  stops$coltype[which(stops$field %in% c('location_type', 'parent_station', 'wheelchair_boarding'))] <- 'i' #integers
   stops$file_spec <- 'req'
   
   # routes
@@ -54,12 +54,11 @@ get_gtfs_meta <- function() {
   
   # calendar
   assign("calendar", list())
-  calendar$field <- c('service_id', 'service_name', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'start_date', 'end_date')
+  calendar$field <- c('service_id', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'start_date', 'end_date')
   calendar$field_spec <- rep('req', times = length(calendar$field))
-  calendar$field_spec[2] <- 'opt'
   names(calendar$field_spec) <- calendar$field
   calendar$coltype <- rep('i', length(calendar$field))
-  calendar$coltype[calendar$field %in% c('service_id', 'service_name')] <- 'c'
+  calendar$coltype[calendar$field %in% c('service_id')] <- 'c'
   calendar$coltype[calendar$field %in% c('start_date', 'end_date')] <- 'D'
   calendar$file_spec <- 'req'
 
@@ -120,14 +119,13 @@ get_gtfs_meta <- function() {
   transfers$field_spec <- c('req', 'req', 'req', 'opt')
   names(transfers$field_spec) <- transfers$field
   transfers$coltype <- rep('c', length(transfers$field))
-  transfers$coltype[transfers$field %in% c('exception_type', 'min_transfer_time')] <- 'i'
+  transfers$coltype[transfers$field %in% c('min_transfer_time')] <- 'i'
   transfers$file_spec <- 'opt'
   
   # feed_info
   assign("feed_info", list())
-  feed_info$field <- c('feed_id', 'feed_publisher_name', 'feed_publisher_url', 'feed_lang', 'feed_version', 'feed_license', 'feed_contact_email', 'feed_contact_url', 'feed_start_date', 'feed_end_date')
-  feed_info$field_spec <- rep('opt', times = length(feed_info$field))
-  feed_info$field_spec[c(2:4)] <- 'req'
+  feed_info$field <- c('feed_publisher_name', 'feed_publisher_url', 'feed_lang', 'feed_start_date', 'feed_end_date', 'feed_version', 'feed_contact_email', 'feed_contact_url')
+  feed_info$field_spec <- c('req', 'req', 'req', 'opt', 'opt', 'opt', 'opt', 'opt')
   names(feed_info$field_spec) <- feed_info$field
   feed_info$coltype <- rep('c', length(feed_info$field))
   feed_info$coltype[transfers$field %in% c('feed_start_date', 'feed_end_date')] <- 'D'
