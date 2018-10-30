@@ -21,7 +21,7 @@ get_gtfs_meta <- function() {
   names(stops$field_spec) <- stops$field
   stops$coltype <- rep('c', length(stops$field))
   stops$coltype[which(stops$field %in% c('stop_lat', 'stop_lon'))] <- 'd' # double
-  stops$coltype[which(stops$field %in% c('location_type', 'parent_station', 'wheelchair_boarding'))] <- 'i' #integers
+  stops$coltype[which(stops$field %in% c('location_type', 'wheelchair_boarding'))] <- 'i' #integers
   stops$file_spec <- 'req'
   
   # routes
