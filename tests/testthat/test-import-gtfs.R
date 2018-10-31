@@ -85,8 +85,8 @@ test_that('the read_gtfs function fails gracefully on bad urls', {
     bad_url <- "https://developers.google.com/transit/gtfs/examples/sample-feed-bad.zip"
   
     # non-specified path
-    expect_error(read_gtfs(not_zip, quiet=TRUE))
-    expect_error(read_gtfs(bad_url, quiet=TRUE)) # not zip file warning
+    expect_error(tidytransit::read_gtfs(not_zip, quiet=TRUE))
+    expect_error(tidytransit::read_gtfs(bad_url, quiet=TRUE)) # not zip file warning
   }
   
 })
