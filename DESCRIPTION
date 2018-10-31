@@ -36,6 +36,7 @@ Imports:
     rlang,
     sf,
     lubridate,
+    hms,
     tidyr,
     tools
 Suggests:
