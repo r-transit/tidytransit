@@ -26,7 +26,7 @@ test_that('Downloading a zip file from a gtfs_example_url returns a file', {
     skip("no internet, skipping")
   }
   else {  
-  zip <- tidytransit:::download_from_url(gtfs_example_url)
+  zip <- tidytransit:::download_from_url(gtfs_example_url, quiet = T)
 
   expect_true(file.exists(zip))
   }
