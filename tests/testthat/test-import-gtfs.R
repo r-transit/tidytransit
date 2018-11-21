@@ -1,10 +1,9 @@
 context('Import and Validation')
 
-gtfs_example_url <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
+gtfs_example_url <- "https://github.com/r-transit/tidytransit/raw/master/inst/extdata/sample-feed-fixed.zip"
 local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
 
 working <- function() {
-  skip_on_cran()
   connecting <- function(gtfs_example_url) {
     r <- base::try(httr::GET(gtfs_example_url, httr::timeout(5)))
     if(!assertthat::is.error(r)) r$status_code == 200 else FALSE
@@ -23,11 +22,11 @@ test_that('read_gtfs() imports a local file to a list of dataframes and doesnt d
 
 test_that('Downloading a zip file from a gtfs_example_url returns a file', {
   skip_on_cran()
-  if(working()==FALSE){
+  if(!working()){
     skip("no internet, skipping")
   }
   else {  
-  zip <- tidytransit:::download_from_url(gtfs_example_url)
+  zip <- tidytransit:::download_from_url(gtfs_example_url, quiet = T)
 
   expect_true(file.exists(zip))
   }
@@ -42,7 +41,7 @@ test_that('import-bad paths throw good errors', {
 # parse_gtfs()
 test_that('import-empty txt files are not imported and non-empty ones are imported', {
   skip_on_cran()
-  if(working()==FALSE){
+  if(!working()){
     skip("no internet, skipping")
   }
   else {
@@ -64,7 +63,7 @@ test_that('import-empty txt files are not imported and non-empty ones are import
 #read_gtfs()
 test_that('the read_gtfs function works', {
   skip_on_cran()
-  if(working()==FALSE){
+  if(!working()){
       skip("no internet, skipping")
   }
   else {
@@ -78,7 +77,7 @@ test_that('the read_gtfs function works', {
 #read_gtfs()
 test_that('the read_gtfs function fails gracefully on bad urls', {
   skip_on_cran()
-  if(working()==FALSE){
+  if(!working()){
       skip("no internet, skipping")
   }
   else {
@@ -86,8 +85,8 @@ test_that('the read_gtfs function fails gracefully on bad urls', {
     bad_url <- "https://developers.google.com/transit/gtfs/examples/sample-feed-bad.zip"
   
     # non-specified path
-    expect_error(read_gtfs(not_zip, quiet=TRUE))
-    expect_error(read_gtfs(bad_url, quiet=TRUE)) # not zip file warning
+    expect_error(tidytransit::read_gtfs(not_zip, quiet=TRUE))
+    expect_error(tidytransit::read_gtfs(bad_url, quiet=TRUE)) # not zip file warning
   }
   
 })

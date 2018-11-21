@@ -19,7 +19,7 @@
 #' @importFrom dplyr %>% arrange summarise group_by inner_join
 #' @examples \donttest{
 #' library(dplyr)
-#' u1 <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
+#' u1 <- "https://github.com/r-transit/tidytransit/raw/master/inst/extdata/sample-feed-fixed.zip"
 #' sample_gtfs <- read_gtfs(u1)
 #' attach(sample_gtfs)
 #' #list routes by the number of stops they have
@@ -37,6 +37,7 @@ read_gtfs <- function(path, local = FALSE,
   # download zip file
   if(!local) {
     path <- download_from_url(url = path, quiet = quiet)
+    if(is.null(path)) { return() }
   }
   
   # extract zip file
@@ -79,7 +80,7 @@ read_gtfs <- function(path, local = FALSE,
 #' @importFrom dplyr %>% arrange summarise group_by inner_join
 #' @examples \donttest{
 #' library(dplyr)
-#' u1 <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
+#' u1 <- "https://github.com/r-transit/tidytransit/raw/master/inst/extdata/sample-feed-fixed.zip"
 #' sample_gtfs <- import_gtfs(u1)
 #' attach(sample_gtfs)
 #' #list routes by the number of stops they have
@@ -120,13 +121,9 @@ download_from_url <- function(url, path=tempfile(fileext = ".zip"), quiet=FALSE)
   }
   
   # check if url links to a zip file
-  valid <- valid_url(url)
-  if(!valid) {
-    if(!quiet) {
-      stop1 <- sprintf("Link '%s' is invalid; failed to connect. NULL was returned.", url)
-      stop(stop1)
-    }
-    return(NULL)
+  if(!valid_url(url)) {
+    stop1 <- sprintf("Link '%s' is invalid; failed to connect.", url)
+    stop(stop1)
   }
   
   r <- httr::GET(url)
@@ -149,7 +146,7 @@ download_from_url <- function(url, path=tempfile(fileext = ".zip"), quiet=FALSE)
   check <- try(normalizePath(path), silent = TRUE)
   if(assertthat::is.error(check)) {
     warn <- 'Invalid file path. NULL is returned.'
-    if(!quiet) warning(warn)
+    warning(warn)
     return(NULL)
   }
   return(path)
