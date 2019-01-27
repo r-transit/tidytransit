@@ -27,10 +27,10 @@ filter_stop_times_by_hour <- function(stop_times,
   return(stop_times)
 }
 
-#' Add hms::hms columns to feed
+#' Add hours, minutes, seconds columns to feed
 #' 
 #' Adds columns to stop_times (arrival_time_hms, departure_time_hms) and frequencies (start_time_hms, end_time_hms)
-#' with times converted with hms::hms().
+#' with times converted with lubridate::hms().
 #' 
 #' @return gtfs_obj with added hms times columns for stop_times_df and frequencies_df
 #' @keywords internal
@@ -45,12 +45,12 @@ set_hms_times <- function(gtfs_obj) {
       )
   }
   
-  gtfs_obj$stop_times_df$arrival_time_hms <- hms::hms(str_to_seconds(gtfs_obj$stop_times_df$arrival_time))
-  gtfs_obj$stop_times_df$departure_time_hms <- hms::hms(str_to_seconds(gtfs_obj$stop_times_df$departure_time))
+  gtfs_obj$stop_times_df$arrival_time_hms <- lubridate::hms(str_to_seconds(gtfs_obj$stop_times_df$arrival_time))
+  gtfs_obj$stop_times_df$departure_time_hms <- lubridate::hms(str_to_seconds(gtfs_obj$stop_times_df$departure_time))
   
   if(!is.null(gtfs_obj$frequencies_df)) {
-    gtfs_obj$frequencies_df$start_time_hms <- hms::hms(str_to_seconds(gtfs_obj$frequencies_df$start_time))
-    gtfs_obj$frequencies_df$end_time_hms <- hms::hms(str_to_seconds(gtfs_obj$frequencies_df$end_time))
+    gtfs_obj$frequencies_df$start_time_hms <- lubridate::hms(str_to_seconds(gtfs_obj$frequencies_df$start_time))
+    gtfs_obj$frequencies_df$end_time_hms <- lubridate::hms(str_to_seconds(gtfs_obj$frequencies_df$end_time))
   }
   
   return(gtfs_obj)

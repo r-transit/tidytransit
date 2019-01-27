@@ -24,7 +24,7 @@ test_that('set_hms_times() works with valid data', {
   expect_is(gtest$stop_times_df$arrival_time, "character")
   expect_is(gtest$stop_times_df$departure_time, "character")
   expect_false(is.na(gtest$stop_times_df$arrival_time_hms[3]))
-  expect_equal(gtest$stop_times_df$departure_time_hms[3], hms::hms(26*3600+10*60+30))
+  expect_equal(gtest$stop_times_df$departure_time_hms[3], lubridate::hms(26*3600+10*60+30))
   
   expect_is(gtest$frequencies_df$start_time_hms, "hms")
   expect_is(gtest$frequencies_df$end_time_hms, "hms")

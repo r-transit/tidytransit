@@ -2,7 +2,7 @@
 % Please edit documentation in R/time.R
 \name{set_hms_times}
 \alias{set_hms_times}
-\title{Add hms::hms columns to feed}
+\title{Add lubridate::hms columns to feed}
 \usage{
 set_hms_times(gtfs_obj)
 }
@@ -11,6 +11,6 @@ gtfs_obj with added hms times columns for stop_times_df and frequencies_df
 }
 \description{
 Adds columns to stop_times (arrival_time_hms, departure_time_hms) and frequencies (start_time_hms, end_time_hms)
-with times converted with hms::hms().
+with times converted with lubridate::hms().
 }
 \keyword{internal}
