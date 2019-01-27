@@ -10,7 +10,7 @@ get_date_service_table(gtfs_obj)
 \item{gtfs_obj}{a gtfs_object as read by read_gtfs}
 }
 \value{
-gtfs_obj with added date_service data frame
+a date_service data frame
 }
 \description{
 Use it to summarise service. For example, get a count of the number of services for a date. See example.

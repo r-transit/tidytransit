@@ -31,7 +31,7 @@ and which required and optional columns are present.
 \examples{
 \donttest{
 library(dplyr)
-u1 <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zip"
+u1 <- "https://github.com/r-transit/tidytransit/raw/master/inst/extdata/sample-feed-fixed.zip"
 sample_gtfs <- read_gtfs(u1)
 attach(sample_gtfs)
 #list routes by the number of stops they have

@@ -38,6 +38,6 @@ service_by_dow <- function(calendar_df,
 count_service_trips <- function(trips) {
   trips %>%
     dplyr::group_by(.data$service_id) %>% 
-      dplyr::mutate(service_trips = n()) %>%
+      dplyr::mutate(service_trips = dplyr::n()) %>%
         tibble::as_tibble()
 }
