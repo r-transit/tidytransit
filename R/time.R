@@ -2,13 +2,16 @@
 #' 
 #' @param stop_times_df a gtfsr$stop_times_df dataframe
 #' @return an dataframe with arrival and departure time set to lubridate types
-#' @keywords internal
 #' @importFrom lubridate hms
+#' @examples 
+#' stop_times_df <- gt_as_dt(gtfs_obj$stop_times_df)
+#' hours_v <- hour(stop_times_df$departure_time)
+#' histogram(hours_v)
 gt_as_dt <- function(stop_times_df) {
   stop_times_dt <- stop_times_df %>% 
     dplyr::mutate(
-      departure_time = lubridate::hms(.data$departure_time, quiet = TRUE),
-      arrival_time = lubridate::hms(.data$arrival_time, quiet = TRUE)
+      departure_time = lubridate::hms(.data$departure_time),
+      arrival_time = lubridate::hms(.data$arrival_time)
     )
   return(stop_times_dt)
 }
@@ -25,35 +28,6 @@ filter_stop_times_by_hour <- function(stop_times,
   stop_times <- stop_times[lubridate::hour(stop_times_dt$arrival_time) > start_hour &
       lubridate::hour(stop_times_dt$departure_time) < end_hour,]
   return(stop_times)
-}
-
-#' Add hms::hms columns to feed
-#' 
-#' Adds columns to stop_times (arrival_time_hms, departure_time_hms) and frequencies (start_time_hms, end_time_hms)
-#' with times converted with hms::hms().
-#' 
-#' @return gtfs_obj with added hms times columns for stop_times_df and frequencies_df
-#' @keywords internal
-#' @importFrom hms hms
-set_hms_times <- function(gtfs_obj) {
-  stopifnot(is_gtfs_obj(gtfs_obj))
-  
-  str_to_seconds <- function(hhmmss_str) {
-    sapply(
-      strsplit(hhmmss_str, ":"), 
-      function(Y) { sum(as.numeric(Y) * c(3600, 60, 1)) }
-      )
-  }
-  
-  gtfs_obj$stop_times_df$arrival_time_hms <- hms::hms(str_to_seconds(gtfs_obj$stop_times_df$arrival_time))
-  gtfs_obj$stop_times_df$departure_time_hms <- hms::hms(str_to_seconds(gtfs_obj$stop_times_df$departure_time))
-  
-  if(!is.null(gtfs_obj$frequencies_df)) {
-    gtfs_obj$frequencies_df$start_time_hms <- hms::hms(str_to_seconds(gtfs_obj$frequencies_df$start_time))
-    gtfs_obj$frequencies_df$end_time_hms <- hms::hms(str_to_seconds(gtfs_obj$frequencies_df$end_time))
-  }
-  
-  return(gtfs_obj)
 }
 
 #' Returns all possible date/service_id combinations as a data frame
