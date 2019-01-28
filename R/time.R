@@ -5,12 +5,7 @@
 #' @keywords internal
 #' @importFrom lubridate hms
 gt_as_dt <- function(stop_times_df) {
-  stop_times_dt <- stop_times_df %>% 
-    dplyr::mutate(
-      departure_time = lubridate::hms(.data$departure_time, quiet = TRUE),
-      arrival_time = lubridate::hms(.data$arrival_time, quiet = TRUE)
-    )
-  return(stop_times_dt)
+  stop("This method is deprecated, use set_hms_time on the feed instead")
 }
 
 #' Filter stop times by hour of the day
@@ -21,10 +16,10 @@ gt_as_dt <- function(stop_times_df) {
 filter_stop_times_by_hour <- function(stop_times, 
   start_hour, 
   end_hour) {
-  stop_times_dt <- gt_as_dt(stop_times)
-  stop_times <- stop_times[lubridate::hour(stop_times_dt$arrival_time) > start_hour &
-      lubridate::hour(stop_times_dt$departure_time) < end_hour,]
-  return(stop_times)
+  # TODO use set_hms_times during import to avoid errors here?
+  stopifnot("arrival_time_hms" %in% colnames(stop_times), "departure_time_hms" %in% colnames(stop_times))
+  # it might be easier to just accept hms() objects
+  stop_times %>% filter(arrival_time_hms > hms::hms(hours = start_hour) & departure_time_hms < hms::hms(hours = end_hour))
 }
 
 #' Add hms::hms columns to feed

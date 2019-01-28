@@ -25,6 +25,8 @@ get_stop_frequency <- function(gtfs_obj,
                             dow=c(1,1,1,1,1,0,0),
                             by_route=TRUE,
                             wide=FALSE) {
+  gtfs_obj <- tidytransit:::set_hms_times(gtfs_obj)
+  
   trips <- gtfs_obj$trips_df 
   stop_times <- gtfs_obj$stop_times_df
   calendar <- gtfs_obj$calendar_df
@@ -63,6 +65,8 @@ get_stop_frequency <- function(gtfs_obj,
     most_frequent_service() %>%
       dplyr::summarise(departures = dplyr::n())
   }
+  # TODO we should only use seconds or hms objects to avoid confusion
+  # TODO is this the right way to calculate the average headway during a timespan? 
   t1 <- end_hour - start_hour
   minutes1 <- 60*t1
   stop_time_trips$headway <- round(minutes1/stop_time_trips$departures,digits=4)
