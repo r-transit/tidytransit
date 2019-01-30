@@ -123,7 +123,7 @@ validate_gtfs_structure <- function(gtfs_obj) {
 is_gtfs_obj <- function(gtfs_obj) {
   obj_attributes <- attributes(gtfs_obj)
   return(
-    class(gtfs_obj) == "gtfs" &
-    !is.null(obj_attributes$validation_result)
+    class(gtfs_obj) == "gtfs" # &
+    # !is.null(obj_attributes$validation_result)
   )
 }

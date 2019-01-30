@@ -3,14 +3,8 @@
 #' @param stop_times_df a gtfsr$stop_times_df dataframe
 #' @return an dataframe with arrival and departure time set to lubridate types
 #' @keywords internal
-#' @importFrom lubridate hms
 gt_as_dt <- function(stop_times_df) {
-  stop_times_dt <- stop_times_df %>% 
-    dplyr::mutate(
-      departure_time = lubridate::hms(.data$departure_time, quiet = TRUE),
-      arrival_time = lubridate::hms(.data$arrival_time, quiet = TRUE)
-    )
-  return(stop_times_dt)
+  stop("This method is deprecated, use set_hms_time on the feed instead")
 }
 
 #' Filter stop times by hour of the day
@@ -21,10 +15,10 @@ gt_as_dt <- function(stop_times_df) {
 filter_stop_times_by_hour <- function(stop_times, 
   start_hour, 
   end_hour) {
-  stop_times_dt <- gt_as_dt(stop_times)
-  stop_times <- stop_times[lubridate::hour(stop_times_dt$arrival_time) > start_hour &
-      lubridate::hour(stop_times_dt$departure_time) < end_hour,]
-  return(stop_times)
+  # TODO use set_hms_times during import to avoid errors here?
+  stopifnot("arrival_time_hms" %in% colnames(stop_times), "departure_time_hms" %in% colnames(stop_times))
+  # it might be easier to just accept hms() objects
+  stop_times %>% filter(arrival_time_hms > hms::hms(hours = start_hour) & departure_time_hms < hms::hms(hours = end_hour))
 }
 
 #' Add hms::hms columns to feed
@@ -48,10 +42,13 @@ set_hms_times <- function(gtfs_obj) {
   gtfs_obj$stop_times_df$arrival_time_hms <- hms::hms(str_to_seconds(gtfs_obj$stop_times_df$arrival_time))
   gtfs_obj$stop_times_df$departure_time_hms <- hms::hms(str_to_seconds(gtfs_obj$stop_times_df$departure_time))
   
-  if(!is.null(gtfs_obj$frequencies_df)) {
-    gtfs_obj$frequencies_df$start_time_hms <- hms::hms(str_to_seconds(gtfs_obj$frequencies_df$start_time))
-    gtfs_obj$frequencies_df$end_time_hms <- hms::hms(str_to_seconds(gtfs_obj$frequencies_df$end_time))
-  }
+  # TODO: figure out where to put these lines.  
+  # right now they are being called before the data frame it operates on exists
+  # also, i think we need an "exists" check for the frequencies_df rather than an !is.null
+  # if(!is.null(gtfs_obj$frequencies_df) & nrow(gtfs_obj$frequencies_df) > 0) {
+  #   gtfs_obj$frequencies_df$start_time_hms <- hms::hms(str_to_seconds(gtfs_obj$frequencies_df$start_time))
+  #   gtfs_obj$frequencies_df$end_time_hms <- hms::hms(str_to_seconds(gtfs_obj$frequencies_df$end_time))
+  # }
   
   return(gtfs_obj)
 }

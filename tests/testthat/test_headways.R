@@ -10,7 +10,7 @@ test_that("Stop frequencies (headways) for included data are as expected", {
 test_that("Route frequencies (headways) for included data are as expected", {
   gtfs_obj <- get_route_frequency(gtfs_obj)
   rf <- gtfs_obj$routes_frequency_df
-  expect_equal(rf[rf$route_id==1679,]$median_headways, 26)
+  expect_equal(rf[rf$route_id==1679,]$median_headways, 24)
 })
 
 test_that("Route frequencies (headways) can be calculated for included data for a particular service id", {
