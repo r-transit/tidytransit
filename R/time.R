@@ -107,13 +107,13 @@ get_date_service_table <- function(gtfs_obj) {
   
   if(!is.null(gtfs_obj$calendar_dates_df)) {
     # add calendar_dates additions (1)
-    additions = gtfs_obj$calendar_dates_df %>% filter(exception_type == 1) %>% select(-exception_type)
+    additions = gtfs_obj$calendar_dates_df %>% filter(exception_type == 1) %>% dplyr::select(-exception_type)
     if(nrow(additions) > 0) {
       date_service_df <- dplyr::full_join(date_service_df, additions, by=c("date", "service_id"))
     }
     
     # remove calendar_dates exceptions (2) 
-    exceptions = gtfs_obj$calendar_dates_df %>% filter(exception_type == 2) %>% select(-exception_type)
+    exceptions = gtfs_obj$calendar_dates_df %>% dplyr::filter(exception_type == 2) %>% dplyr::select(-exception_type)
     if(nrow(exceptions) > 0) {
       date_service_df <- dplyr::anti_join(date_service_df, exceptions, by=c("date", "service_id"))
     }
