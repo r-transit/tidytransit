@@ -306,6 +306,7 @@ get_file_shortname <- function(file_path) {
 #' @return Dataframe of parsed GTFS file.
 #' @noRd
 #' @keywords internal
+#' @importFrom data.table fread
 
 parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
 
@@ -330,7 +331,7 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
       if(!quiet) message(s)
 
       tryCatch({
-        df <- suppressMessages(readr::read_csv(file = file_path))
+        df <- suppressMessages(data.table::fread(file = file_path, sep=","))
       }, error = function(error_condition) {
         s <- sprintf("   File could not be read as csv.", basename(file_path))
         if(!quiet) message(s)
