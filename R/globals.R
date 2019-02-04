@@ -43,7 +43,9 @@ if(getRversion() >= "3.1.0") {
       'start_date',
       'end_date',
       'weekday',
-      'exception_type'
+      'exception_type',
+      'arrival_time_hms',
+      'departure_time_hms'
     )
   )
 }
