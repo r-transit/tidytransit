@@ -230,13 +230,17 @@ clear_api_key <- gtfs_api_key$clear
 
 set_api_key <- gtfs_api_key$set
 
+api_check <- function() {
+  if(!gtfs_api_key$has())
+      stop("API key not found. Please obtain a key from transitfeeds.com, ",
+           "and set using function 'set_api_key()'")
+}
 
 #' Get API key
 #' @keywords internal
 
 get_api_key <- function() {
-  if(!gtfs_api_key$has()) stop("API key not found. Please set your API key using function 'set_api_key()'")
-
+  api_check()
   gtfs_api_key$get()
 
 }
@@ -249,14 +253,12 @@ get_api_key <- function() {
 #' @keywords internal
 
 has_api_key <- function() {
-
-  if(!gtfs_api_key$has()) stop("API Key not found. Please set your API key using function 'set_api_key()'.")
-
+  api_check()
   api_key <- gtfs_api_key$get()
 
   valid_api_key <- grepl('[[:alnum:]]{8}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{4}\\-[[:alnum:]]{12}', api_key)
   if(!valid_api_key) {
-    stop(sprintf("API key '%s' is invalid. API keys are 36 characters long with pattern XXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX. Please set your API key using function 'set_api_key()'", api_key))
+    stop(sprintf("API key '%s' is invalid. API keys for transitfeeds.com are 36 characters long with pattern XXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX. Please set your API key using function 'set_api_key()'", api_key))
   } else valid_api_key
 }
 
