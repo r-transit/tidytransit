@@ -1,9 +1,9 @@
 ---
-title: "introduction"
+title: "Introduction"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{tidytransit-introduction}
+  %\VignetteIndexEntry{tidytransit-Introduction}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
