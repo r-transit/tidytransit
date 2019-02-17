@@ -6,9 +6,9 @@
 #' @export
 gtfs_as_sf <- function(gtfs_obj, quiet) {
   if(!quiet) message('Converting stops to simple features ')
-  gtfs_obj$stops_sf <- try(stops_df_as_sf(gtfs_obj$stops_df))
+  gtfs_obj$stops_sf <- try(get_stop_geometry(gtfs_obj$stops_df))
   if(!quiet) message('Converting routes to simple features ')
-  gtfs_obj$routes_sf <- try(routes_df_as_sf(gtfs_obj))
+  gtfs_obj$routes_sf <- try(get_route_geometry(gtfs_obj))
   return(gtfs_obj)
 }
 
@@ -21,9 +21,9 @@ gtfs_as_sf <- function(gtfs_obj, quiet) {
 #' @return an sf dataframe for gtfs routes with a multilinestring column
 #' @examples
 #' data(gtfs_obj)
-#' routes_sf <- routes_df_as_sf(gtfs_obj)
+#' routes_sf <- get_route_geometry(gtfs_obj)
 #' plot(routes_sf[1,])
-routes_df_as_sf <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
+get_route_geometry <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
   shape_route_service_df <- shape_route_service(gtfs_obj, route_ids = route_ids, service_ids = service_ids)
   routes_latlong_df <- dplyr::inner_join(gtfs_obj$shapes_df,
                                          shape_route_service_df,
@@ -49,9 +49,9 @@ routes_df_as_sf <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
 #' @examples
 #' data(gtfs_obj)
 #' some_stops <- gtfs_obj$stops_df[sample(nrow(gtfs_obj$stops_df), 40),]
-#' some_stops_sf <- stops_df_as_sf(some_stops)
+#' some_stops_sf <- get_stop_geometry(some_stops)
 #' plot(some_stops_sf)
-stops_df_as_sf <- function(stops_df) {
+get_stop_geometry <- function(stops_df) {
   stops_sf <- sf::st_as_sf(stops_df,
                            coords = c("stop_lon", "stop_lat"),
                            crs = 4326)
@@ -101,3 +101,14 @@ planner_buffer <- function(df_sf1,dist="h",crs=26910) {
   return(df3)
 }
 
+#' This function is deprecated. Please use get_stop_geometry
+stops_df_as_sf <- function(stops_df) {
+  .Deprecated("stops_df_as_sf") #include a package argument, too
+  get_stop_geometry(stops_df)
+}
+
+#' This function is deprecated. Please use get_route_geometry
+routes_df_as_sf <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
+  .Deprecated("routes_df_as_sf") #include a package argument, too
+  get_route_geometry(gtfs_obj, route_ids = NULL, service_ids = NULL)
+}
