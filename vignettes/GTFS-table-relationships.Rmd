@@ -115,7 +115,7 @@ some_trips <- nyc$trips %>%
 some_stop_times <- nyc$stop_times %>% 
   filter(trip_id %in% some_trips$trip_id) 
 
-some_stops <- nyc$stops_sf %>%
+some_stops <- nyc$stops %>%
   filter(stop_id %in% some_stop_times$stop_id)
 ```
 
