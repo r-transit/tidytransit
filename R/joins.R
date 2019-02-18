@@ -2,7 +2,7 @@
 #' @param gtfs_obj a gtfs object
 #' @param route_ids the routes for which to join the tables together - required, but not sure why this can't just be any/all routes in routes_df
 #' @param service_ids - an optional filter for a certain service-default NULL
-#' @return shapes_routes_service_df - a dataframe in which routes, services, and shape_ids are all joined
+#' @return shapes_routes_service - a dataframe in which routes, services, and shape_ids are all joined
 #' @keywords internal
 #' @importFrom dplyr %>% group_by filter
 #' @importFrom rlang !! .data :=

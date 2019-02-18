@@ -24,14 +24,14 @@ gtfs_as_sf <- function(gtfs_obj, quiet) {
 #' routes_sf <- routes_df_as_sf(gtfs_obj)
 #' plot(routes_sf[1,])
 routes_df_as_sf <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
-  shape_route_service_df <- shape_route_service(gtfs_obj, route_ids = route_ids, service_ids = service_ids)
-  routes_latlong_df <- dplyr::inner_join(gtfs_obj$shapes,
-                                         shape_route_service_df,
+  shape_route_service <- shape_route_service(gtfs_obj, route_ids = route_ids, service_ids = service_ids)
+  routes_latlong <- dplyr::inner_join(gtfs_obj$shapes,
+                                         shape_route_service,
                                          by="shape_id")
 
-  lines_df <- dplyr::distinct(routes_latlong_df, .data$route_id)
+  lines_df <- dplyr::distinct(routes_latlong, .data$route_id)
   lines_df <- lines_df[order(lines_df$route_id),]
-  list_of_line_tibbles <- split(routes_latlong_df, routes_latlong_df$route_id)
+  list_of_line_tibbles <- split(routes_latlong, routes_latlong$route_id)
   list_of_multilinestrings <- lapply(list_of_line_tibbles, shapes_df_as_sfg)
 
   lines_df$geometry <- sf::st_sfc(list_of_multilinestrings, crs = 4326)
@@ -51,8 +51,8 @@ routes_df_as_sf <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
 #' some_stops <- gtfs_obj$stops[sample(nrow(gtfs_obj$stops), 40),]
 #' some_stops_sf <- stops_df_as_sf(some_stops)
 #' plot(some_stops_sf)
-stops_df_as_sf <- function(stops_df) {
-  stops_sf <- sf::st_as_sf(stops_df,
+stops_df_as_sf <- function(stops) {
+  stops_sf <- sf::st_as_sf(stops,
                            coords = c("stop_lon", "stop_lat"),
                            crs = 4326)
   return(stops_sf)

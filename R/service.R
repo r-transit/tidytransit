@@ -16,17 +16,17 @@ most_frequent_service <- function(trips) {
 #' @param dow default to "weekday" (1,1,1,1,1,0,0)
 #' @return service ids that match the schedule specified
 #' @keywords internal
-service_by_dow <- function(calendar_df,
+service_by_dow <- function(calendar,
                            dow=c(1,1,1,1,1,0,0)){
-  calendar_df <- subset(calendar_df, 
-                        calendar_df$monday == dow[1] & 
-                        calendar_df$tuesday == dow[2] & 
-                        calendar_df$wednesday == dow[3] & 
-                        calendar_df$thursday == dow[4] & 
-                        calendar_df$friday == dow[5] &
-                        calendar_df$saturday == dow[6] &
-                        calendar_df$sunday == dow[7])
-  return(calendar_df$service_id)
+  calendar <- subset(calendar, 
+                        calendar$monday == dow[1] & 
+                        calendar$tuesday == dow[2] & 
+                        calendar$wednesday == dow[3] & 
+                        calendar$thursday == dow[4] & 
+                        calendar$friday == dow[5] &
+                        calendar$saturday == dow[6] &
+                        calendar$sunday == dow[7])
+  return(calendar$service_id)
 }
 
 #' Summarise the number of trips per service

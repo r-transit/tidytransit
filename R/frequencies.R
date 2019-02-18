@@ -2,7 +2,7 @@
 #' @param gtfs_obj a list of gtfs dataframes as read by read_gtfs().
 #' @param start_hour (optional) an integer indicating the start hour (default 7)
 #' @param end_hour (optional) an integer indicating the end hour (default 20)
-#' @param service_id (optional) a string from the calendar_df dataframe identifying a particular service schedule.
+#' @param service_id (optional) a string from the calendar dataframe identifying a particular service schedule.
 #' @param dow (optional) integer vector indicating which days of week to calculate for. default is weekday, e.g. c(1,1,1,1,1,0,0)
 #' @param by_route default TRUE, if FALSE then calculate headway for any line coming through the stop in the same direction on the same schedule. 
 #' @param wide (optional) if true, then return a wide rather than tidy data frame
@@ -92,7 +92,7 @@ get_stop_frequency <- function(gtfs_obj,
 #' @param start_hour (optional) an integer, default 6 (6 am)
 #' @param end_hour (optional) an integer, default 22 (10 pm)
 #' @param quiet default FALSE. whether to echo process messages
-#' @param service_id (optional) a string from the calendar_df dataframe identifying a particular service schedule.
+#' @param service_id (optional) a string from the calendar dataframe identifying a particular service schedule.
 #' @param dow (optional) an integeger vector with days of week. monday=1. default: c(1,1,1,1,1,0,0)
 #' @return a gtfs_obj with a dataframe of routes with variables for headway/frequency for a route within a given time frame
 #' @export

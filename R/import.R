@@ -23,7 +23,7 @@
 #' sample_gtfs <- read_gtfs(u1)
 #' attach(sample_gtfs)
 #' #list routes by the number of stops they have
-#' routes_df %>% inner_join(trips_df, by="route_id") %>%
+#' routes %>% inner_join(trips, by="route_id") %>%
 #'   inner_join(stop_times) %>% 
 #'     inner_join(stops, by="stop_id") %>% 
 #'       group_by(route_long_name) %>%
@@ -84,7 +84,7 @@ read_gtfs <- function(path, local = FALSE,
 #' sample_gtfs <- import_gtfs(u1)
 #' attach(sample_gtfs)
 #' #list routes by the number of stops they have
-#' routes_df %>% inner_join(trips_df, by="route_id") %>%
+#' routes %>% inner_join(trips, by="route_id") %>%
 #'   inner_join(stop_times) %>%
 #'     inner_join(stops, by="stop_id") %>%
 #'       group_by(route_long_name) %>%

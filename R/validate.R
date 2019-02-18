@@ -51,7 +51,7 @@ validate_gtfs <- function(gtfs_obj, quiet = T) {
 
 #' Create validation table for a gtfs_obj. It provides an overview of the structure of all files that were imported.
 #'
-#' @param gtfs_obj A GTFS list object with components agency_df, etc.
+#' @param gtfs_obj A GTFS list object with components agency, stops, etc.
 #' @return validation_dataframe
 #' @noRd
 validate_gtfs_structure <- function(gtfs_obj) {
@@ -66,7 +66,6 @@ validate_gtfs_structure <- function(gtfs_obj) {
   
   # check available data frames
   for(dfname in all_df_names) {
-    # substr instead of replacing _df in case of weird filenames
     df <- gtfs_obj[[dfname]]
     file <- dfname
     fmeta <- meta[[file]]
