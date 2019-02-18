@@ -336,7 +336,6 @@ tfeeds_parse_getfeedlist <- function(req) {
   feeds_df <-dplyr::bind_rows(feeds_flat)
 
   feeds_df
-
 }
 
 #' Extract location dataframe from transitfeeds getLocation API
@@ -361,7 +360,7 @@ tfeeds_parse_getlocation <- function(req) {
   identical(parsed_content$results, 'locations')
 
   # extract location data into a dataframe
-  loc_df <-dplyr::bind_rows(parsed_content$results$locations)
+  loc_df <- dplyr::bind_rows(parsed_content$results$locations)
 
   loc_df
 

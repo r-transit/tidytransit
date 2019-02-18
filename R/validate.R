@@ -2,7 +2,7 @@
 #' whether the file is required ('req'), optional ('opt') or an extra 
 #' file ('ext'). The same is applied for each field. The validation_status
 #' column points problems with files/fiels. 
-#' @param gtfs_obj A GTFS list object with components agency_df, etc.
+#' @param gtfs_obj A GTFS list object with components agency, stops, etc.
 #' @return gtfs_obj with a validation summary dataframe as an attribute 
 #' 
 #' @noRd
@@ -68,7 +68,7 @@ validate_gtfs_structure <- function(gtfs_obj) {
   for(dfname in all_df_names) {
     # substr instead of replacing _df in case of weird filenames
     df <- gtfs_obj[[dfname]]
-    file <- substr(dfname, 1, nchar(dfname)-3)
+    file <- dfname
     fmeta <- meta[[file]]
     
     # validate file

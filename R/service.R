@@ -31,7 +31,7 @@ service_by_dow <- function(calendar_df,
 
 #' Summarise the number of trips per service
 #' 
-#' @param gtfsr object
+#' @param trips trips data frame
 #' @return count of service by id
 #' @export
 #' @keywords internal

@@ -15,7 +15,7 @@
 #' @examples 
 #' data(gtfs_obj)
 #' gtfs_obj <- get_stop_frequency(gtfs_obj)
-#' x <- order(gtfs_obj$stops_frequency_df$headway)
+#' x <- order(gtfs_obj$stops_frequency$headway)
 #' head(gtfs_obj$stops_frequency_df[x,])
 
 get_stop_frequency <- function(gtfs_obj,
@@ -27,9 +27,9 @@ get_stop_frequency <- function(gtfs_obj,
                             wide=FALSE) {
   gtfs_obj <- set_hms_times(gtfs_obj)
   
-  trips <- gtfs_obj$trips_df 
-  stop_times <- gtfs_obj$stop_times_df
-  calendar <- gtfs_obj$calendar_df
+  trips <- gtfs_obj$trips
+  stop_times <- gtfs_obj$stop_times
+  calendar <- gtfs_obj$calendar
 
   stop_times <- filter_stop_times_by_hour(stop_times, 
                                           start_hour, 
@@ -77,10 +77,10 @@ get_stop_frequency <- function(gtfs_obj,
       tibble::rowid_to_column() %>%
       tidyr::spread(.data$direction, .data$headway, sep="_")
   }
-  stops_frequency_df <- stop_time_trips %>% 
+  stops_frequency <- stop_time_trips %>% 
     tibble::as_tibble()
   
-  gtfs_obj$stops_frequency_df <- stops_frequency_df
+  gtfs_obj$stops_frequency <- stops_frequency
   
   return(gtfs_obj)
 }
@@ -99,8 +99,8 @@ get_stop_frequency <- function(gtfs_obj,
 #' @examples 
 #' data(gtfs_obj)
 #' gtfs_obj <- get_route_frequency(gtfs_obj)
-#' x <- order(gtfs_obj$routes_frequency_df$median_headways)
-#' head(gtfs_obj$routes_frequency_df[x,])
+#' x <- order(gtfs_obj$routes_frequency$median_headways)
+#' head(gtfs_obj$routes_frequency[x,])
 
 get_route_frequency <- function(gtfs_obj,
                             start_hour=6,
@@ -109,17 +109,17 @@ get_route_frequency <- function(gtfs_obj,
                             service_id = "",
                             dow=c(1,1,1,1,1,0,0)) {
   if(!quiet) message('Calculating route and stop headways.')
+  # TODO use set_* if gtfs_obj is changed/appended?
   gtfs_obj <- get_stop_frequency(gtfs_obj,start_hour,end_hour,service_id,dow)  
   
-  if (dim(gtfs_obj$stops_frequency_df)[[1]]!=0) {
-    gtfs_obj$routes_frequency_df <- gtfs_obj$stops_frequency_df %>%
+  if (dim(gtfs_obj$stops_frequency)[[1]]!=0) {
+    gtfs_obj$routes_frequency <- gtfs_obj$stops_frequency %>%
       dplyr::group_by_('route_id') %>%
       dplyr::summarise(median_headways = as.integer(round(median(.data$headway),0)),
                        mean_headways = as.integer(round(mean(.data$headway),0)),
                        st_dev_headways = round(sd(.data$headway),2),
                        stop_count = dplyr::n())
-  } else
-  {
+  } else {
     warning("failed to calculate frequency--try passing a service_id from calendar_df")
   }
   return(gtfs_obj)
