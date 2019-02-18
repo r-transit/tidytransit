@@ -80,7 +80,6 @@ routes_sf_frequencies <- nyc$routes_sf %>%
                  mean_headways, 
                  st_dev_headways, 
                  stop_count)
-plot(routes_sf_frequencies)
 ```
 
 ### Headways at Stops for a Route

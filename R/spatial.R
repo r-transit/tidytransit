@@ -102,12 +102,33 @@ planner_buffer <- function(df_sf1,dist="h",crs=26910) {
 }
 
 #' This function is deprecated. Please use get_stop_geometry
+#' Make Stops into Simple Features Points
+#'
+#' @param stops_df a gtfsr$stops_df dataframe
+#' @export
+#' @return an sf dataframe for gtfs routes with a point column
+#' @examples
+#' data(gtfs_obj)
+#' some_stops <- gtfs_obj$stops_df[sample(nrow(gtfs_obj$stops_df), 40),]
+#' some_stops_sf <- stops_df_as_sf(some_stops)
+#' plot(some_stops_sf)
 stops_df_as_sf <- function(stops_df) {
   .Deprecated("stops_df_as_sf") #include a package argument, too
   get_stop_geometry(stops_df)
 }
 
 #' This function is deprecated. Please use get_route_geometry
+#' Make Routes into Simple Features Lines
+#'
+#' @param gtfs_obj gtfsr object
+#' @param route_ids select routes to convert to simple features
+#' @param service_ids select service_ids to convert to simple features
+#' @export
+#' @return an sf dataframe for gtfs routes with a multilinestring column
+#' @examples
+#' data(gtfs_obj)
+#' routes_sf <- routes_df_as_sf(gtfs_obj)
+#' plot(routes_sf[1,])
 routes_df_as_sf <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
   .Deprecated("routes_df_as_sf") #include a package argument, too
   get_route_geometry(gtfs_obj, route_ids = NULL, service_ids = NULL)

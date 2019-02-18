@@ -2,10 +2,27 @@
 % Please edit documentation in R/spatial.R
 \name{routes_df_as_sf}
 \alias{routes_df_as_sf}
-\title{This function is deprecated. Please use get_route_geometry}
+\title{This function is deprecated. Please use get_route_geometry
+Make Routes into Simple Features Lines}
 \usage{
 routes_df_as_sf(gtfs_obj, route_ids = NULL, service_ids = NULL)
 }
+\arguments{
+\item{gtfs_obj}{gtfsr object}
+
+\item{route_ids}{select routes to convert to simple features}
+
+\item{service_ids}{select service_ids to convert to simple features}
+}
+\value{
+an sf dataframe for gtfs routes with a multilinestring column
+}
 \description{
 This function is deprecated. Please use get_route_geometry
+Make Routes into Simple Features Lines
+}
+\examples{
+data(gtfs_obj)
+routes_sf <- routes_df_as_sf(gtfs_obj)
+plot(routes_sf[1,])
 }

@@ -2,10 +2,24 @@
 % Please edit documentation in R/spatial.R
 \name{stops_df_as_sf}
 \alias{stops_df_as_sf}
-\title{This function is deprecated. Please use get_stop_geometry}
+\title{This function is deprecated. Please use get_stop_geometry
+Make Stops into Simple Features Points}
 \usage{
 stops_df_as_sf(stops_df)
 }
+\arguments{
+\item{stops_df}{a gtfsr$stops_df dataframe}
+}
+\value{
+an sf dataframe for gtfs routes with a point column
+}
 \description{
 This function is deprecated. Please use get_stop_geometry
+Make Stops into Simple Features Points
+}
+\examples{
+data(gtfs_obj)
+some_stops <- gtfs_obj$stops_df[sample(nrow(gtfs_obj$stops_df), 40),]
+some_stops_sf <- stops_df_as_sf(some_stops)
+plot(some_stops_sf)
 }
