@@ -61,7 +61,7 @@ validate_gtfs_structure <- function(gtfs_obj) {
   
   all_df_names <- c(
     names(gtfs_obj), # available dfs
-    paste0(names(meta), "_df") # # dfs specified
+    names(meta) # # dfs specified
   ) %>% unique()
   
   # check available data frames

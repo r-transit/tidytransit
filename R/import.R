@@ -240,7 +240,7 @@ unzip_file <- function(zipfile,
 
 create_gtfs_object <- function(tmpdirpath, file_paths, quiet = FALSE) {
   prefixes <- vapply(file_paths,get_file_shortname,FUN.VALUE = "")
-  df_names <- paste(prefixes,"_df",sep="")
+  df_names <- prefixes
   if(!quiet) message('Reading files in feed...\n')
   gtfs_obj <- lapply(file_paths, 
                    function(x) read_gtfs_file(x, 
