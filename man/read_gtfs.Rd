@@ -35,9 +35,9 @@ u1 <- "https://github.com/r-transit/tidytransit/raw/master/inst/extdata/sample-f
 sample_gtfs <- read_gtfs(u1)
 attach(sample_gtfs)
 #list routes by the number of stops they have
-routes_df \%>\% inner_join(trips_df, by="route_id") \%>\%
-  inner_join(stop_times_df) \%>\% 
-    inner_join(stops_df, by="stop_id") \%>\% 
+routes \%>\% inner_join(trips, by="route_id") \%>\%
+  inner_join(stop_times) \%>\% 
+    inner_join(stops, by="stop_id") \%>\% 
       group_by(route_long_name) \%>\%
         summarise(stop_count=n_distinct(stop_id)) \%>\%
           arrange(desc(stop_count))

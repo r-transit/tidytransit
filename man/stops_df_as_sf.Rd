@@ -4,10 +4,10 @@
 \alias{stops_df_as_sf}
 \title{Make Stops into Simple Features Points}
 \usage{
-stops_df_as_sf(stops_df)
+stops_df_as_sf(stops)
 }
 \arguments{
-\item{stops_df}{a gtfsr$stops_df dataframe}
+\item{stops}{a gtfs$stops dataframe}
 }
 \value{
 an sf dataframe for gtfs routes with a point column
@@ -17,7 +17,7 @@ Make Stops into Simple Features Points
 }
 \examples{
 data(gtfs_obj)
-some_stops <- gtfs_obj$stops_df[sample(nrow(gtfs_obj$stops_df), 40),]
+some_stops <- gtfs_obj$stops[sample(nrow(gtfs_obj$stops), 40),]
 some_stops_sf <- stops_df_as_sf(some_stops)
 plot(some_stops_sf)
 }

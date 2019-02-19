@@ -44,8 +44,9 @@ Suggests:
     testthat,
     knitr,
     rmarkdown
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 URL: https://github.com/r-transit/tidytransit
 BugReports: https://github.com/r-transit/tidytransit
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
+Encoding: UTF-8

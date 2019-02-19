@@ -7,7 +7,7 @@
 set_hms_times(gtfs_obj)
 }
 \value{
-gtfs_obj with added hms times columns for stop_times_df and frequencies_df
+gtfs_obj with added hms times columns for stop_times and frequencies
 }
 \description{
 Adds columns to stop_times (arrival_time_hms, departure_time_hms) and frequencies (start_time_hms, end_time_hms)

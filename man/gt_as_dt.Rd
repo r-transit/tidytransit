@@ -2,17 +2,19 @@
 % Please edit documentation in R/time.R
 \name{gt_as_dt}
 \alias{gt_as_dt}
-\title{Get a dataframe with lubridate dates for the gtfs stop_times_df}
+\title{Get a dataframe with lubridate dates for the gtfs stop_times.
+This method is deprecated, use set_hms_time on the feed instead}
 \usage{
-gt_as_dt(stop_times_df)
+gt_as_dt(stop_times)
 }
 \arguments{
-\item{stop_times_df}{a gtfsr$stop_times_df dataframe}
+\item{stop_times}{a gtfs_obj$stop_times dataframe}
 }
 \value{
 an dataframe with arrival and departure time set to lubridate types
 }
 \description{
-Get a dataframe with lubridate dates for the gtfs stop_times_df
+Get a dataframe with lubridate dates for the gtfs stop_times.
+This method is deprecated, use set_hms_time on the feed instead
 }
 \keyword{internal}

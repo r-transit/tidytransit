@@ -16,7 +16,7 @@ get_route_frequency(gtfs_obj, start_hour = 6, end_hour = 22,
 
 \item{quiet}{default FALSE. whether to echo process messages}
 
-\item{service_id}{(optional) a string from the calendar_df dataframe identifying a particular service schedule.}
+\item{service_id}{(optional) a string from the calendar dataframe identifying a particular service schedule.}
 
 \item{dow}{(optional) an integeger vector with days of week. monday=1. default: c(1,1,1,1,1,0,0)}
 }
@@ -29,6 +29,6 @@ should take:
 \examples{
 data(gtfs_obj)
 gtfs_obj <- get_route_frequency(gtfs_obj)
-x <- order(gtfs_obj$routes_frequency_df$median_headways)
-head(gtfs_obj$routes_frequency_df[x,])
+x <- order(gtfs_obj$routes_frequency$median_headways)
+head(gtfs_obj$routes_frequency[x,])
 }
