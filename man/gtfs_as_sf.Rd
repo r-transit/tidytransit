@@ -7,12 +7,12 @@
 gtfs_as_sf(gtfs_obj, quiet)
 }
 \arguments{
-\item{gtfs_obj}{a standard gtfsr object}
+\item{gtfs_obj}{a standard tidytransit gtfs object}
 
 \item{quiet}{boolean whether to print status messages}
 }
 \value{
-gtfs_obj a gtfsr object with a bunch of simple features tables
+gtfs_obj a tidytransit gtfs object with a bunch of simple features tables
 }
 \description{
 Add Simple Features for Stops and Routes to GTFS Object

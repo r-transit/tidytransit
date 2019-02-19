@@ -70,12 +70,12 @@ plot(nyc)
 
 ### Headways by Route
 
-View the headways along routes as a dataframe. `routes_frequency_df` is added to the list of gtfs dataframes read in by `read_gtfs`.
+View the headways along routes as a dataframe. `routes_frequency` is added to the list of gtfs dataframes read in by `read_gtfs`.
 
-Use the GTFS Table Relationships diagram below to join these data to relevant data, for example, the more detailed route names on the `routes_df`. 
+Use the GTFS Table Relationships diagram below to join these data to relevant data, for example, the more detailed route names on the `routes`. 
 
 ```{r}
-head(nyc$routes_frequency_df)
+head(nyc$routes_frequency)
 ```
 
 | route\_id | median\_headways | mean\_headways | st\_dev\_headways | stop\_count |
@@ -89,10 +89,10 @@ head(nyc$routes_frequency_df)
 
 ### Headways by Stop
 
-View the headways at stops. `stops_frequency_df` is added to the list of gtfs dataframes read in by `read_gtfs`.   
+View the headways at stops. `stops_frequency` is added to the list of gtfs dataframes read in by `read_gtfs`.   
 
 ```{r}
-head(nyc$stops_frequency_df)
+head(nyc$stops_frequency)
 ```
 
     ## # A tibble: 6 x 4

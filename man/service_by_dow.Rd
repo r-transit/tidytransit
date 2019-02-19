@@ -4,7 +4,7 @@
 \alias{service_by_dow}
 \title{Filter a gtfs calendar dataframe to service ids for specific days of the week.}
 \usage{
-service_by_dow(calendar_df, dow = c(1, 1, 1, 1, 1, 0, 0))
+service_by_dow(calendar, dow = c(1, 1, 1, 1, 1, 0, 0))
 }
 \arguments{
 \item{dow}{default to "weekday" (1,1,1,1,1,0,0)}

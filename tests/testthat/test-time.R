@@ -9,32 +9,32 @@ create_empty_gtfs_obj <- function() {
 
 test_that('set_hms_times() works with valid data', {
   gtest <- create_empty_gtfs_obj()
-  gtest$stop_times_df <- dplyr::tibble(
+  gtest$stop_times <- dplyr::tibble(
     arrival_time = c("08:00:00", "14:00:00", "26:10:00"),
     departure_time = c("08:00:10", "14:00:20", "26:10:30"))
-  # gtest$frequencies_df = dplyr::tibble(
+  # gtest$frequencies = dplyr::tibble(
   #   start_time = c("06:00:00"),
   #   end_time = c("12:00:00")
   # )
 
   gtest <- set_hms_times(gtest)  
   
-  expect_is(gtest$stop_times_df$arrival_time_hms, "hms")
-  expect_is(gtest$stop_times_df$departure_time_hms, "hms")
-  expect_is(gtest$stop_times_df$arrival_time, "character")
-  expect_is(gtest$stop_times_df$departure_time, "character")
-  expect_false(is.na(gtest$stop_times_df$arrival_time_hms[3]))
-  expect_equal(gtest$stop_times_df$departure_time_hms[3], hms::hms(26*3600+10*60+30))
+  expect_is(gtest$stop_times$arrival_time_hms, "hms")
+  expect_is(gtest$stop_times$departure_time_hms, "hms")
+  expect_is(gtest$stop_times$arrival_time, "character")
+  expect_is(gtest$stop_times$departure_time, "character")
+  expect_false(is.na(gtest$stop_times$arrival_time_hms[3]))
+  expect_equal(gtest$stop_times$departure_time_hms[3], hms::hms(26*3600+10*60+30))
   
-  # expect_is(gtest$frequencies_df$start_time_hms, "hms")
-  # expect_is(gtest$frequencies_df$end_time_hms, "hms")
-  # expect_is(gtest$frequencies_df$start_time, "character")
-  # expect_is(gtest$frequencies_df$end_time, "character")
+  # expect_is(gtest$frequencies$start_time_hms, "hms")
+  # expect_is(gtest$frequencies$end_time_hms, "hms")
+  # expect_is(gtest$frequencies$start_time, "character")
+  # expect_is(gtest$frequencies$end_time, "character")
 })
 
 test_that('get_date_service_table() uses the right dates', { 
   gtest <- create_empty_gtfs_obj()
-  gtest$calendar_df <- dplyr::tibble(
+  gtest$calendar <- dplyr::tibble(
     service_id = "s1",
     monday = 1,
     tuesday = 0,
@@ -55,7 +55,7 @@ test_that('get_date_service_table() uses the right dates', {
 
 test_that('get_date_service_table() works with additions and exceptions', { 
   gtest <- create_empty_gtfs_obj()
-  gtest$calendar_df <- dplyr::tibble(
+  gtest$calendar <- dplyr::tibble(
     service_id = c("wdays", "wend"),
     monday = c(1, 0),
     tuesday = c(1, 0),
@@ -66,7 +66,7 @@ test_that('get_date_service_table() works with additions and exceptions', {
     sunday = c(0, 1),
     start_date = c(lubridate::ymd("20180201"), lubridate::ymd("20180401")),
     end_date = c(lubridate::ymd("20180430"), lubridate::ymd("20180430")))
-  gtest$calendar_dates_df = dplyr::tibble(
+  gtest$calendar_dates = dplyr::tibble(
     service_id = c("wdays", "wend"),
     date = c(lubridate::ymd("20180314"), lubridate::ymd("20180226")),
     exception_type = c(2, 1)

@@ -1,15 +1,16 @@
-#' Get a dataframe with lubridate dates for the gtfs stop_times_df 
+#' Get a dataframe with lubridate dates for the gtfs stop_times. 
+#' This method is deprecated, use set_hms_time on the feed instead
 #' 
-#' @param stop_times_df a gtfsr$stop_times_df dataframe
+#' @param stop_times a gtfs_obj$stop_times dataframe
 #' @return an dataframe with arrival and departure time set to lubridate types
 #' @keywords internal
-gt_as_dt <- function(stop_times_df) {
+gt_as_dt <- function(stop_times) {
   stop("This method is deprecated, use set_hms_time on the feed instead")
 }
 
 #' Filter stop times by hour of the day
 #' 
-#' @param stop_times_df a gtfsr$stop_times_df dataframe with lubridate arrival_time and departure_time
+#' @param stop_times a gtfs_obj$stop_times dataframe with lubridate arrival_time and departure_time
 #' @return dataframe with only stop times within the hours specified, with time columns as lubridate periods
 #' @keywords internal
 filter_stop_times_by_hour <- function(stop_times, 
@@ -26,7 +27,7 @@ filter_stop_times_by_hour <- function(stop_times,
 #' Adds columns to stop_times (arrival_time_hms, departure_time_hms) and frequencies (start_time_hms, end_time_hms)
 #' with times converted with hms::hms().
 #' 
-#' @return gtfs_obj with added hms times columns for stop_times_df and frequencies_df
+#' @return gtfs_obj with added hms times columns for stop_times and frequencies
 #' @keywords internal
 #' @importFrom hms hms
 set_hms_times <- function(gtfs_obj) {
@@ -39,15 +40,15 @@ set_hms_times <- function(gtfs_obj) {
       )
   }
   
-  gtfs_obj$stop_times_df$arrival_time_hms <- hms::hms(str_to_seconds(gtfs_obj$stop_times_df$arrival_time))
-  gtfs_obj$stop_times_df$departure_time_hms <- hms::hms(str_to_seconds(gtfs_obj$stop_times_df$departure_time))
+  gtfs_obj$stop_times$arrival_time_hms <- hms::hms(str_to_seconds(gtfs_obj$stop_times$arrival_time))
+  gtfs_obj$stop_times$departure_time_hms <- hms::hms(str_to_seconds(gtfs_obj$stop_times$departure_time))
   
   # TODO: figure out where to put these lines.  
   # right now they are being called before the data frame it operates on exists
-  # also, i think we need an "exists" check for the frequencies_df rather than an !is.null
-  # if(!is.null(gtfs_obj$frequencies_df) & nrow(gtfs_obj$frequencies_df) > 0) {
-  #   gtfs_obj$frequencies_df$start_time_hms <- hms::hms(str_to_seconds(gtfs_obj$frequencies_df$start_time))
-  #   gtfs_obj$frequencies_df$end_time_hms <- hms::hms(str_to_seconds(gtfs_obj$frequencies_df$end_time))
+  # also, i think we need an "exists" check for the frequencies rather than an !is.null
+  # if(!is.null(gtfs_obj$frequencies) & nrow(gtfs_obj$frequencies) > 0) {
+  #   gtfs_obj$frequencies$start_time_hms <- hms::hms(str_to_seconds(gtfs_obj$frequencies$start_time))
+  #   gtfs_obj$frequencies$end_time_hms <- hms::hms(str_to_seconds(gtfs_obj$frequencies$end_time))
   # }
   
   return(gtfs_obj)
@@ -75,15 +76,15 @@ get_date_service_table <- function(gtfs_obj) {
     c("sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday")[as.POSIXlt(date)$wday + 1]
   }
   
-  if(all(is.na(gtfs_obj$calendar_df$start_date)) & all(is.na(gtfs_obj$calendar_df$end_date))) {
+  if(all(is.na(gtfs_obj$calendar$start_date)) & all(is.na(gtfs_obj$calendar$end_date))) {
     # TODO validate no start_date and end_date defined in calendar.txt
     date_service_df <- dplyr::tibble(date=lubridate::ymd("19700101"), service_id="x") %>% dplyr::filter(service_id != "x")
   } else {
     # table to connect every date to corresponding services (all dates from earliest to latest)
     dates <- dplyr::tibble(
       date = seq(
-        min(gtfs_obj$calendar_df$start_date, na.rm = T),
-        max(gtfs_obj$calendar_df$end_date, na.rm = T),
+        min(gtfs_obj$calendar$start_date, na.rm = T),
+        max(gtfs_obj$calendar$end_date, na.rm = T),
         1
       ),
       weekday = weekday(date)
@@ -92,7 +93,7 @@ get_date_service_table <- function(gtfs_obj) {
     # gather services by weekdays
     service_ids_weekdays <-
       tidyr::gather(
-        gtfs_obj$calendar_df,
+        gtfs_obj$calendar,
         key = "weekday",
         value = "bool",
         -c(service_id, start_date, end_date)
@@ -105,15 +106,15 @@ get_date_service_table <- function(gtfs_obj) {
       dplyr::select(-weekday, -start_date, -end_date)
   }
   
-  if(!is.null(gtfs_obj$calendar_dates_df)) {
+  if(!is.null(gtfs_obj$calendar_dates)) {
     # add calendar_dates additions (1)
-    additions = gtfs_obj$calendar_dates_df %>% filter(exception_type == 1) %>% dplyr::select(-exception_type)
+    additions = gtfs_obj$calendar_dates %>% filter(exception_type == 1) %>% dplyr::select(-exception_type)
     if(nrow(additions) > 0) {
       date_service_df <- dplyr::full_join(date_service_df, additions, by=c("date", "service_id"))
     }
     
     # remove calendar_dates exceptions (2) 
-    exceptions = gtfs_obj$calendar_dates_df %>% dplyr::filter(exception_type == 2) %>% dplyr::select(-exception_type)
+    exceptions = gtfs_obj$calendar_dates %>% dplyr::filter(exception_type == 2) %>% dplyr::select(-exception_type)
     if(nrow(exceptions) > 0) {
       date_service_df <- dplyr::anti_join(date_service_df, exceptions, by=c("date", "service_id"))
     }

@@ -16,7 +16,7 @@ shape_route_service(gtfs_obj, route_ids = NULL, service_ids = NULL)
 }}
 }
 \value{
-shapes_routes_service_df - a dataframe in which routes, services, and shape_ids are all joined
+shapes_routes_service - a dataframe in which routes, services, and shape_ids are all joined
 }
 \description{
 Join the shapes, trips and routes tables together - also checks on some potential errors in the data and warns accordingly

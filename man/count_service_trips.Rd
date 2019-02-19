@@ -7,7 +7,7 @@
 count_service_trips(trips)
 }
 \arguments{
-\item{gtfsr}{object}
+\item{trips}{trips data frame}
 }
 \value{
 count of service by id

@@ -15,7 +15,7 @@ get_stop_frequency(gtfs_obj, start_hour = 6, end_hour = 22,
 
 \item{end_hour}{(optional) an integer indicating the end hour (default 20)}
 
-\item{service_id}{(optional) a string from the calendar_df dataframe identifying a particular service schedule.}
+\item{service_id}{(optional) a string from the calendar dataframe identifying a particular service schedule.}
 
 \item{dow}{(optional) integer vector indicating which days of week to calculate for. default is weekday, e.g. c(1,1,1,1,1,0,0)}
 
@@ -32,6 +32,6 @@ Get Stop Frequency
 \examples{
 data(gtfs_obj)
 gtfs_obj <- get_stop_frequency(gtfs_obj)
-x <- order(gtfs_obj$stops_frequency_df$headway)
+x <- order(gtfs_obj$stops_frequency$headway)
 head(gtfs_obj$stops_frequency_df[x,])
 }
