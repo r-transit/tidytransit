@@ -43,13 +43,10 @@ set_hms_times <- function(gtfs_obj) {
   gtfs_obj$stop_times$arrival_time_hms <- hms::hms(str_to_seconds(gtfs_obj$stop_times$arrival_time))
   gtfs_obj$stop_times$departure_time_hms <- hms::hms(str_to_seconds(gtfs_obj$stop_times$departure_time))
   
-  # TODO: figure out where to put these lines.  
-  # right now they are being called before the data frame it operates on exists
-  # also, i think we need an "exists" check for the frequencies rather than an !is.null
-  # if(!is.null(gtfs_obj$frequencies) & nrow(gtfs_obj$frequencies) > 0) {
-  #   gtfs_obj$frequencies$start_time_hms <- hms::hms(str_to_seconds(gtfs_obj$frequencies$start_time))
-  #   gtfs_obj$frequencies$end_time_hms <- hms::hms(str_to_seconds(gtfs_obj$frequencies$end_time))
-  # }
+  if(exists("frequencies", where=gtfs_obj) && !is.null(gtfs_obj$frequencies) && nrow(gtfs_obj$frequencies) > 0) {
+    gtfs_obj$frequencies$start_time_hms <- hms::hms(str_to_seconds(gtfs_obj$frequencies$start_time))
+    gtfs_obj$frequencies$end_time_hms <- hms::hms(str_to_seconds(gtfs_obj$frequencies$end_time))
+  }
   
   return(gtfs_obj)
 }
