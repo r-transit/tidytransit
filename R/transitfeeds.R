@@ -1,14 +1,3 @@
-# Purpose -----------------------------------------------------------------
-
-# Functions to use transitfeeds API to get a GTFS feed -
-#   mostly this means a good way to explore the metadata and get the url(s)
-#   of the feeds for download
-# These should collectively allow a user to
-# - get a df of locations with descriptions and lat/lng coords
-# - get a df of feeds (either by location or complete) with urls
-# - download the feed from a url as a zip
-
-
 #' Get list of all available feeds from transitfeeds API
 #' @importFrom magrittr "%>%"
 #' @importFrom magrittr "%<>%"
@@ -225,7 +214,7 @@ gtfs_api_key <- tools_api_key()
 #' @keywords internal
 clear_api_key <- gtfs_api_key$clear
 
-#' Set API key for recall
+#' Set TransitFeeds API key for recall
 #' @export
 
 set_api_key <- gtfs_api_key$set
