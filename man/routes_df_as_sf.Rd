@@ -8,7 +8,7 @@ Make Routes into Simple Features Lines}
 routes_df_as_sf(gtfs_obj, route_ids = NULL, service_ids = NULL)
 }
 \arguments{
-\item{gtfs_obj}{tidytransit gtfs object}
+\item{gtfs_obj}{gtfsr object}
 
 \item{route_ids}{select routes to convert to simple features}
 
@@ -23,6 +23,6 @@ Make Routes into Simple Features Lines
 }
 \examples{
 data(gtfs_obj)
-routes_sf <- routes_df_as_sf(gtfs_obj)
+routes_sf <- get_route_geometry(gtfs_obj)
 plot(routes_sf[1,])
 }

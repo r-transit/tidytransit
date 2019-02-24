@@ -7,7 +7,7 @@
 get_route_geometry(gtfs_obj, route_ids = NULL, service_ids = NULL)
 }
 \arguments{
-\item{gtfs_obj}{gtfsr object}
+\item{gtfs_obj}{tidytransit gtfs object}
 
 \item{route_ids}{select routes to convert to simple features}
 
