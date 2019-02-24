@@ -24,7 +24,7 @@ plot.gtfs <- function(x, ...) {
                      stop_count)
   } else {
     message('Calculating headways and spatial features. This may take a while')
-      x$routes_sf <- routes_df_as_sf(x)
+      x$routes_sf <- get_route_geometry(x)
       x <- get_route_frequency(x)
       routes_sf_frequencies <- x$routes_sf %>% 
         dplyr::inner_join(x$routes_frequency, by = "route_id") %>% 
