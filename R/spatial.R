@@ -6,9 +6,9 @@
 #' @export
 gtfs_as_sf <- function(gtfs_obj, quiet) {
   if(!quiet) message('Converting stops to simple features ')
-  gtfs_obj$stops_sf <- try(stops_df_as_sf(gtfs_obj$stops))
+  gtfs_obj$stops_sf <- try(get_stop_geometry(gtfs_obj$stops))
   if(!quiet) message('Converting routes to simple features ')
-  gtfs_obj$routes_sf <- try(routes_df_as_sf(gtfs_obj))
+  gtfs_obj$routes_sf <- try(get_route_geometry(gtfs_obj))
   return(gtfs_obj)
 }
 
@@ -21,22 +21,22 @@ gtfs_as_sf <- function(gtfs_obj, quiet) {
 #' @return an sf dataframe for gtfs routes with a multilinestring column
 #' @examples
 #' data(gtfs_obj)
-#' routes_sf <- routes_df_as_sf(gtfs_obj)
+#' routes_sf <- get_route_geometry(gtfs_obj)
 #' plot(routes_sf[1,])
-routes_df_as_sf <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
+get_route_geometry <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
   shape_route_service <- shape_route_service(gtfs_obj, route_ids = route_ids, service_ids = service_ids)
   routes_latlong <- dplyr::inner_join(gtfs_obj$shapes,
                                          shape_route_service,
                                          by="shape_id")
 
-  lines_df <- dplyr::distinct(routes_latlong, .data$route_id)
-  lines_df <- lines_df[order(lines_df$route_id),]
+  lines <- dplyr::distinct(routes_latlong, .data$route_id)
+  lines <- lines[order(lines$route_id),]
   list_of_line_tibbles <- split(routes_latlong, routes_latlong$route_id)
-  list_of_multilinestrings <- lapply(list_of_line_tibbles, shapes_df_as_sfg)
+  list_of_multilinestrings <- lapply(list_of_line_tibbles, shapes_as_sfg)
 
-  lines_df$geometry <- sf::st_sfc(list_of_multilinestrings, crs = 4326)
+  lines$geometry <- sf::st_sfc(list_of_multilinestrings, crs = 4326)
 
-  lines_sf <- sf::st_as_sf(lines_df)
+  lines_sf <- sf::st_as_sf(lines)
   lines_sf$geometry <- sf::st_as_sfc(sf::st_as_text(lines_sf$geometry), crs=4326)
   return(lines_sf)
 }
@@ -49,9 +49,9 @@ routes_df_as_sf <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
 #' @examples
 #' data(gtfs_obj)
 #' some_stops <- gtfs_obj$stops[sample(nrow(gtfs_obj$stops), 40),]
-#' some_stops_sf <- stops_df_as_sf(some_stops)
+#' some_stops_sf <- get_stop_geometry(some_stops)
 #' plot(some_stops_sf)
-stops_df_as_sf <- function(stops) {
+get_stop_geometry <- function(stops) {
   stops_sf <- sf::st_as_sf(stops,
                            coords = c("stop_lon", "stop_lat"),
                            crs = 4326)
@@ -59,7 +59,7 @@ stops_df_as_sf <- function(stops) {
 }
 
 #' return an sf linestring with lat and long from gtfs
-#' @param df dataframe from the gtfsr shapes_df split() on shape_id
+#' @param df dataframe from the gtfsr shapes split() on shape_id
 #' @noRd
 #' @return st_linestring (sfr) object
 shape_as_sf_linestring <- function(df) {
@@ -72,10 +72,10 @@ shape_as_sf_linestring <- function(df) {
 }
 
 #' return an sf multilinestring with lat and long from gtfs for a route
-#' @param df the shapes_df dataframe from a gtfsr object
+#' @param df the shapes dataframe from a gtfsr object
 #' @keywords internal
 #' @return a multilinestring simple feature geometry (sfg) for the routes
-shapes_df_as_sfg <- function(df) {
+shapes_as_sfg <- function(df) {
   # as suggested by www.github.com/mdsumner
   l_dfs <- split(df, df$shape_id)
 
@@ -101,3 +101,35 @@ planner_buffer <- function(df_sf1,dist="h",crs=26910) {
   return(df3)
 }
 
+#' This function is deprecated. Please use get_stop_geometry
+#' Make Stops into Simple Features Points
+#'
+#' @param stops a gtfsr$stops dataframe
+#' @export
+#' @return an sf dataframe for gtfs routes with a point column
+#' @examples
+#' data(gtfs_obj)
+#' some_stops <- gtfs_obj$stops[sample(nrow(gtfs_obj$stops), 40),]
+#' some_stops_sf <- stops_as_sf(some_stops)
+#' plot(some_stops_sf)
+stops_as_sf <- function(stops) {
+  .Deprecated("stops_as_sf") #include a package argument, too
+  get_stop_geometry(stops)
+}
+
+#' This function is deprecated. Please use get_route_geometry
+#' Make Routes into Simple Features Lines
+#'
+#' @param gtfs_obj gtfsr object
+#' @param route_ids select routes to convert to simple features
+#' @param service_ids select service_ids to convert to simple features
+#' @export
+#' @return an sf dataframe for gtfs routes with a multilinestring column
+#' @examples
+#' data(gtfs_obj)
+#' routes_sf <- routes_as_sf(gtfs_obj)
+#' plot(routes_sf[1,])
+routes_as_sf <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
+  .Deprecated("routes_as_sf") #include a package argument, too
+  get_route_geometry(gtfs_obj, route_ids = NULL, service_ids = NULL)
+}

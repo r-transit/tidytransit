@@ -2,7 +2,8 @@
 % Please edit documentation in R/spatial.R
 \name{stops_df_as_sf}
 \alias{stops_df_as_sf}
-\title{Make Stops into Simple Features Points}
+\title{This function is deprecated. Please use get_stop_geometry
+Make Stops into Simple Features Points}
 \usage{
 stops_df_as_sf(stops)
 }
@@ -13,6 +14,7 @@ stops_df_as_sf(stops)
 an sf dataframe for gtfs routes with a point column
 }
 \description{
+This function is deprecated. Please use get_stop_geometry
 Make Stops into Simple Features Points
 }
 \examples{
