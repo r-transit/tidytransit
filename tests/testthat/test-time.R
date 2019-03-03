@@ -7,7 +7,7 @@ create_empty_gtfs_obj <- function() {
   return(g)
 }
 
-test_that('set_hms_times() works with valid data', {
+test_that('gtfs_set_hms_times() works with valid data', {
   gtest <- create_empty_gtfs_obj()
   gtest$stop_times <- dplyr::tibble(
     arrival_time = c("08:00:00", "14:00:00", "26:10:00"),
@@ -17,14 +17,15 @@ test_that('set_hms_times() works with valid data', {
     end_time = c("12:00:00")
   )
 
-  gtest <- set_hms_times(gtest)  
+  gtest <- gtfs_set_hms_times(gtest)  
   
   expect_is(gtest$stop_times$arrival_time_hms, "hms")
   expect_is(gtest$stop_times$departure_time_hms, "hms")
   expect_is(gtest$stop_times$arrival_time, "character")
   expect_is(gtest$stop_times$departure_time, "character")
   expect_false(is.na(gtest$stop_times$arrival_time_hms[3]))
-  expect_equal(gtest$stop_times$departure_time_hms[3], hms::hms(26*3600+10*60+30))
+  expect_equal(gtest$stop_times$departure_time_hms[3], 
+               hms::hms(26*3600+10*60+30))
   
   expect_is(gtest$frequencies$start_time_hms, "hms")
   expect_is(gtest$frequencies$end_time_hms, "hms")
@@ -84,13 +85,23 @@ test_that('get_date_service_table() works with additions and exceptions', {
   
   # overlaps
   apr05 <- date_service[date_service$date == lubridate::ymd("20180405"),] # thursday
-  expect_equal(apr05 %>% dplyr::group_by(date) %>% dplyr::count() %>% dplyr::pull(n), 1)
-  apr06 <- date_service[date_service$date == lubridate::ymd("20180406"),] # friday
-  expect_equal(apr06 %>% dplyr::group_by(date) %>% dplyr::count() %>% dplyr::pull(n), 2)
+  expect_equal(apr05 %>% dplyr::group_by(date) %>% 
+                 dplyr::count() %>% 
+                 dplyr::pull(n), 1)
+  apr06 <- date_service[
+    date_service$date == lubridate::ymd("20180406"), ] # friday
+  expect_equal(apr06 %>% 
+               dplyr::group_by(date) %>% 
+               dplyr::count() %>% 
+               dplyr::pull(n), 2)
   
   range <- date_service %>% 
     dplyr::group_by(service_id) %>% 
     dplyr::summarise(min = min(date), max=max(date))
-  expect_equal(range[range$service_id == "wdays", "min"], dplyr::tibble(min=lubridate::ymd("20180201")))
-  expect_equal(range[range$service_id == "wend", "max"], dplyr::tibble(max=lubridate::ymd("20180429")))
+  expect_equal(range[
+    range$service_id == "wdays", "min"], 
+    dplyr::tibble(min=lubridate::ymd("20180201")))
+  expect_equal(
+    range[range$service_id == "wend", "max"], 
+    dplyr::tibble(max=lubridate::ymd("20180429")))
 })

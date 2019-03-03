@@ -35,29 +35,27 @@ read_gtfs <- function(path, local = FALSE,
                       geometry=FALSE,
                       frequency=FALSE) {
   # download zip file
-  if(!local) {
+  if (!local) {
     path <- download_from_url(url = path, quiet = quiet)
-    if(is.null(path)) { return() }
+    if (is.null(path)){ 
+      return() 
+    }
   }
-  
   # extract zip file
   tmpdirpath <- unzip_file(path, quiet=quiet)
-  
   file_list_df <- zip::zip_list(path)
-  if(!exists("file_list_df")) {
+  if (!exists("file_list_df")) {
     stop(sprintf("No files found in zip"))
   }
-  
-  gtfs_obj <- create_gtfs_object(tmpdirpath, file_list_df$filename, quiet = quiet)
-  
+  gtfs_obj <- create_gtfs_object(tmpdirpath, 
+                                 file_list_df$filename, 
+                                 quiet = quiet)
   if(geometry) {
     gtfs_obj <- gtfs_as_sf(gtfs_obj,quiet=quiet)
   }
-  
   if(frequency) {
     gtfs_obj <- get_route_frequency(gtfs_obj) 
   }
-  
   return(gtfs_obj) 
 }
 
@@ -107,11 +105,14 @@ import_gtfs <- function(path, local = FALSE, quiet = FALSE) {
 #'
 #' @keywords internal
 
-download_from_url <- function(url, path=tempfile(fileext = ".zip"), quiet=FALSE) {
+download_from_url <- function(url,
+                              path=tempfile(fileext = ".zip"),
+                              quiet=FALSE) {
   
   stopifnot(length(url) == 1)
   
-  # check if single element of dataframe was inputed. if so, convert to single value; error otherwise.
+  # check if single element of dataframe 
+  # was inputed. if so, convert to single value; error otherwise.
   if(!is.null(dim(url))) {
     if(all(dim(url) == c(1,1))) {
       url <- unlist(url, use.names = FALSE)
@@ -252,7 +253,7 @@ create_gtfs_object <- function(tmpdirpath, file_paths, quiet = FALSE) {
   if(!quiet) message('Reading files in feed... done.\n')
   
     
-  gtfs_obj <- validate_gtfs(gtfs_obj, quiet = quiet)
+  gtfs_obj <- gtfs_validate(gtfs_obj, quiet = quiet)
   
   stopifnot(is_gtfs_obj(gtfs_obj))
   
@@ -379,7 +380,10 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
           tibble::as_tibble())
 
       if(any(class(df) %in% "try-error")) {
-        probs <- "Error during import. Likely encoding error. Note that utils::read.csv() was used, not readr::read_csv()."
+        probs <- "Error during import. 
+                  Likely encoding error. 
+                  Note that utils::read.csv() 
+                  was used, not readr::read_csv()."
         attributes(df) <- append(attributes(df), list(problems = probs))
       }
     } else {

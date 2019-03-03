@@ -37,7 +37,10 @@ get_route_geometry <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
   lines$geometry <- sf::st_sfc(list_of_multilinestrings, crs = 4326)
 
   lines_sf <- sf::st_as_sf(lines)
-  lines_sf$geometry <- sf::st_as_sfc(sf::st_as_text(lines_sf$geometry), crs=4326)
+  lines_sf$geometry <- 
+    sf::st_as_sfc(
+    sf::st_as_text(
+      lines_sf$geometry), crs=4326)
   return(lines_sf)
 }
 

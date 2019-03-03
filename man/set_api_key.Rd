@@ -2,10 +2,10 @@
 % Please edit documentation in R/transitfeeds.R
 \name{set_api_key}
 \alias{set_api_key}
-\title{Set API key for recall}
+\title{Set TransitFeeds API key for recall}
 \usage{
 set_api_key()
 }
 \description{
-Set API key for recall
+Set TransitFeeds API key for recall
 }

@@ -1,7 +1,10 @@
 context('Import and Validation')
 
-gtfs_example_url <- "https://github.com/r-transit/tidytransit/raw/master/inst/extdata/sample-feed-fixed.zip"
-local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+gtfs_example_url <- 
+  "https://github.com/r-transit/tidytransit/raw/master/inst/extdata/sample-feed-fixed.zip"
+local_gtfs_path <- system.file("extdata", 
+                               "google_transit_nyc_subway.zip", 
+                               package = "tidytransit")
 
 working <- function() {
   connecting <- function(gtfs_example_url) {

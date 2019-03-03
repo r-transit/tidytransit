@@ -3,8 +3,8 @@
 #' @noRd
 
 rmfolder <- function(folder) {
-	lapply(list.files(folder, full.names=TRUE), file.remove)
-	file.remove(folder)
+  lapply(list.files(folder, full.names=TRUE), file.remove)
+  file.remove(folder)
 }
 
 #' Used to check if a url is valid

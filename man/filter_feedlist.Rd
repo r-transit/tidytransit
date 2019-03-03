@@ -12,7 +12,8 @@ filter_feedlist(feedlist_df, test_url = FALSE)
 \item{test_url}{Boolean. Whether to test if the url connects or not. FALSE by default (can take a while).}
 }
 \value{
-A dataframe of feed metadata for all feeds in input that are downloadable
+A dataframe of feed metadata
+for all feeds in input that are downloadable
 }
 \description{
 Filter a feedlist to include only valid urls (ending in .zip and connect)
