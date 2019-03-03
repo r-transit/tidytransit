@@ -1,7 +1,10 @@
-context('Import and Validation')
+context("Import and Validation")
 
-gtfs_example_url <- "https://github.com/r-transit/tidytransit/raw/master/inst/extdata/sample-feed-fixed.zip"
-local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+gtfs_example_url <- 
+  "https://github.com/r-transit/tidytransit/raw/master/inst/extdata/sample-feed-fixed.zip"
+local_gtfs_path <- system.file("extdata", 
+                               "google_transit_nyc_subway.zip", 
+                               package = "tidytransit")
 
 working <- function() {
   connecting <- function(gtfs_example_url) {
@@ -11,16 +14,18 @@ working <- function() {
   connecting(gtfs_example_url)
 }
 
-test_that('read_gtfs() imports a local file to a list of dataframes and doesnt delete the source file', {
+test_that("read_gtfs() imports a local file to a 
+          list of dataframes and doesnt 
+          delete the source file", {
   gtfs_obj <- tidytransit:::read_gtfs(
     local_gtfs_path,
     local=TRUE)
   
-  expect_is(gtfs_obj, 'gtfs')
+  expect_is(gtfs_obj, "gtfs")
   file.exists(local_gtfs_path)
 })
 
-test_that('Downloading a zip file from a gtfs_example_url returns a file', {
+test_that("Downloading a zip file from a gtfs_example_url returns a file", {
   skip_on_cran()
   if(!working()){
     skip("no internet, skipping")
@@ -32,14 +37,14 @@ test_that('Downloading a zip file from a gtfs_example_url returns a file', {
   }
 })
 
-test_that('import-bad paths throw good errors', {
+test_that("import-bad paths throw good errors", {
   skip_on_cran()
   not_a_url <- "#!:D"
   expect_error(read_gtfs(path)) # invalid path
 })
 
-# parse_gtfs()
-test_that('import-empty txt files are not imported and non-empty ones are imported', {
+test_that("import-empty txt files are not 
+          imported and non-empty ones are imported", {
   skip_on_cran()
   if(!working()){
     skip("no internet, skipping")
@@ -50,18 +55,21 @@ test_that('import-empty txt files are not imported and non-empty ones are import
     files <- list.files(folder, full.names = TRUE)
     agency_file <- files[1]
     # empty file
-    empty <- ''
-    write(empty, file.path(folder, '_empty.txt'))
+    empty <- ""
+    write(empty, file.path(folder, "_empty.txt"))
     files <- list.files(folder, full.names = TRUE)
     empty_file <- files[1]
     
-    expect_null(tidytransit:::parse_gtfs_file('_empty', empty_file)) # expect null since file is empty
-    expect_is(tidytransit:::parse_gtfs_file('agency', agency_file), 'tbl_df') # check for tibble object
+    expect_null(
+      tidytransit:::parse_gtfs_file("_empty", 
+                                    empty_file))
+    expect_is(
+      tidytransit:::parse_gtfs_file("agency", 
+                                    agency_file), "tbl_df") 
   }
 })
 
-#read_gtfs()
-test_that('the read_gtfs function works', {
+test_that("the read_gtfs function works", {
   skip_on_cran()
   if(!working()){
       skip("no internet, skipping")
@@ -69,13 +77,12 @@ test_that('the read_gtfs function works', {
   else {
     # non-specified path
     x <- read_gtfs(gtfs_example_url, quiet=TRUE)
-    expect_is(x, 'gtfs') # should return 'list' object
+    expect_is(x, "gtfs") # should return 'list' object
   }
   
 })
 
-#read_gtfs()
-test_that('the read_gtfs function fails gracefully on bad urls', {
+test_that("the read_gtfs function fails gracefully on bad urls", {
   skip_on_cran()
   if(!working()){
       skip("no internet, skipping")
@@ -91,7 +98,7 @@ test_that('the read_gtfs function fails gracefully on bad urls', {
   
 })
 
-test_that('Some minimal validation is performed and returned', {
+test_that("Some minimal validation is performed and returned", {
   skip_on_cran()
   if(working()){
     gtfs_obj1 <- tidytransit::read_gtfs(gtfs_example_url)

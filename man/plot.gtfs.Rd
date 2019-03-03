@@ -16,10 +16,10 @@ Plot GTFS object routes and their frequencies
 }
 \examples{
 \donttest{
-local_gtfs_path <- system.file("extdata", 
-                              "google_transit_nyc_subway.zip", 
+local_gtfs_path <- system.file("extdata",
+                              "google_transit_nyc_subway.zip",
                               package = "tidytransit")
-nyc <- read_gtfs(local_gtfs_path, 
+nyc <- read_gtfs(local_gtfs_path,
                 local=TRUE)
 plot(nyc)
 }

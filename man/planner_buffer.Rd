@@ -17,6 +17,6 @@ planner_buffer(df_sf1, dist = "h", crs = 26910)
 a simple features data frame with planner buffers
 }
 \description{
-merges gtfsr objects
+merges gtfs objects
 }
 \keyword{internal}

@@ -8,7 +8,7 @@ Make Stops into Simple Features Points}
 stops_df_as_sf(stops)
 }
 \arguments{
-\item{stops}{a gtfsr$stops dataframe}
+\item{stops}{a gtfs$stops dataframe}
 }
 \value{
 an sf dataframe for gtfs routes with a point column

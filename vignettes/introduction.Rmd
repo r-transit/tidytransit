@@ -36,7 +36,7 @@ install.packages('tidytransit')
 devtools::install_github("r-transit/tidytransit")
 ```
 
-For some users, `sf` is impractical to install due to system level dependencies. For these users, [`trread`](https://github.com/r-transit/trread) may work better. It has more limited functionality, but it can read GTFS tables into R. 
+For some users, `sf` is impractical to install due to system level dependencies. For these users, [`trread`](https://github.com/r-transit/trread) may work better. Its tidytransit without geospatial (GDAL) tools. 
 
 ## Usage
 
