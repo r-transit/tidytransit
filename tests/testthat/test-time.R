@@ -1,4 +1,4 @@
-context('Time manipulation')
+context("Time manipulation")
 
 create_empty_gtfs_obj <- function() {
   g <- list()
@@ -7,7 +7,7 @@ create_empty_gtfs_obj <- function() {
   return(g)
 }
 
-test_that('gtfs_set_hms_times() works with valid data', {
+test_that("gtfs_set_hms_times() works with valid data", {
   gtest <- create_empty_gtfs_obj()
   gtest$stop_times <- dplyr::tibble(
     arrival_time = c("08:00:00", "14:00:00", "26:10:00"),
@@ -25,7 +25,7 @@ test_that('gtfs_set_hms_times() works with valid data', {
   expect_is(gtest$stop_times$departure_time, "character")
   expect_false(is.na(gtest$stop_times$arrival_time_hms[3]))
   expect_equal(gtest$stop_times$departure_time_hms[3], 
-               hms::hms(26*3600+10*60+30))
+               hms::hms(26 * 3600 + 10 * 60 + 30))
   
   expect_is(gtest$frequencies$start_time_hms, "hms")
   expect_is(gtest$frequencies$end_time_hms, "hms")
@@ -33,7 +33,7 @@ test_that('gtfs_set_hms_times() works with valid data', {
   expect_is(gtest$frequencies$end_time, "character")
 })
 
-test_that('get_date_service_table() uses the right dates', { 
+test_that("get_date_service_table() uses the right dates", {
   gtest <- create_empty_gtfs_obj()
   gtest$calendar <- dplyr::tibble(
     service_id = "s1",
@@ -54,7 +54,7 @@ test_that('get_date_service_table() uses the right dates', {
   expect_true(lubridate::ymd("20180131") %in% date_service$date)
 })
 
-test_that('get_date_service_table() works with additions and exceptions', { 
+test_that("get_date_service_table() works with additions and exceptions", { 
   gtest <- create_empty_gtfs_obj()
   gtest$calendar <- dplyr::tibble(
     service_id = c("wdays", "wend"),
@@ -65,9 +65,11 @@ test_that('get_date_service_table() works with additions and exceptions', {
     friday = c(1, 1),
     saturday = c(0, 1),
     sunday = c(0, 1),
-    start_date = c(lubridate::ymd("20180201"), lubridate::ymd("20180401")),
-    end_date = c(lubridate::ymd("20180430"), lubridate::ymd("20180430")))
-  gtest$calendar_dates = dplyr::tibble(
+    start_date = c(lubridate::ymd("20180201"), 
+                   lubridate::ymd("20180401")),
+    end_date = c(lubridate::ymd("20180430"), 
+                 lubridate::ymd("20180430")))
+  gtest$calendar_dates <- dplyr::tibble(
     service_id = c("wdays", "wend"),
     date = c(lubridate::ymd("20180314"), lubridate::ymd("20180226")),
     exception_type = c(2, 1)
@@ -76,15 +78,18 @@ test_that('get_date_service_table() works with additions and exceptions', {
   date_service <- tidytransit:::get_date_service_table(gtest)
   
   # exception
-  mar14 <- date_service[date_service$date == lubridate::ymd("20180613"),]
+  mar14 <- date_service[
+    date_service$date == lubridate::ymd("20180613"),]
   expect_equal(nrow(mar14), 0)
   
   # addition
-  feb26 <- date_service[date_service$date == lubridate::ymd("20180226"),] # monday
+  feb26 <- date_service[
+    date_service$date == lubridate::ymd("20180226"),] # monday
   expect_equal(nrow(feb26), 2)
   
   # overlaps
-  apr05 <- date_service[date_service$date == lubridate::ymd("20180405"),] # thursday
+  apr05 <- date_service[
+    date_service$date == lubridate::ymd("20180405"), ]
   expect_equal(apr05 %>% dplyr::group_by(date) %>% 
                  dplyr::count() %>% 
                  dplyr::pull(n), 1)
@@ -97,11 +102,11 @@ test_that('get_date_service_table() works with additions and exceptions', {
   
   range <- date_service %>% 
     dplyr::group_by(service_id) %>% 
-    dplyr::summarise(min = min(date), max=max(date))
+    dplyr::summarise(min = min(date), max = max(date))
   expect_equal(range[
     range$service_id == "wdays", "min"], 
-    dplyr::tibble(min=lubridate::ymd("20180201")))
+    dplyr::tibble(min = lubridate::ymd("20180201")))
   expect_equal(
     range[range$service_id == "wend", "max"], 
-    dplyr::tibble(max=lubridate::ymd("20180429")))
+    dplyr::tibble(max = lubridate::ymd("20180429")))
 })

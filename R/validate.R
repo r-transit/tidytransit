@@ -11,49 +11,56 @@ gtfs_validate <- function(gtfs_obj, quiet = T) {
   validation_result <- validate_gtfs_structure(gtfs_obj)
   
   # check existing files and fields
-  validation_result$validation_status <- 'ok'
+  validation_result$validation_status <- "ok"
   validation_result$validation_details <- NA
   
   validation_result <- validation_result %>% 
     dplyr::mutate(validation_details = NA) %>% # default to NA
     dplyr::mutate(validation_details = 
                     replace(validation_details, !file_provided_status & 
-                              file_spec == 'req', 'missing_req_file')) %>% # req file missing
+                              file_spec == "req", "missing_req_file")) %>% # req file missing
     dplyr::mutate(validation_details = 
                     replace(validation_details, !file_provided_status & 
-                              file_spec == 'opt', 'missing_opt_file')) %>% # optional file missing
+                              file_spec == "opt", "missing_opt_file")) %>% # optional file missing
     dplyr::mutate(validation_details = 
                     replace(validation_details, file_provided_status & 
-                              field_spec == 'req' & !field_provided_status, 'missing_req_field')) %>%
+                              field_spec == "req" & !field_provided_status, "missing_req_field")) %>%
     dplyr::mutate(validation_details = 
                     replace(validation_details, file_provided_status & 
-                              field_spec == 'opt' & !field_provided_status, 'missing_opt_field'))
+                              field_spec == "opt" & !field_provided_status, "missing_opt_field"))
 
   validation_result <- validation_result %>% 
     dplyr::mutate(validation_status = 
                     replace(validation_status,
-                            validation_details == 'missing_req_file', 'problem')) %>% 
+                            validation_details == "missing_req_file", 
+                            "problem")) %>% 
     dplyr::mutate(validation_status = 
                     replace(validation_status,
-                            validation_details == 'missing_req_field', 'problem')) %>% 
+                            validation_details == "missing_req_field", 
+                            "problem")) %>% 
     dplyr::mutate(validation_status = 
                     replace(validation_status,
-                            validation_details == 'missing_opt_file', 'info')) %>%
+                            validation_details == "missing_opt_file", 
+                            "info")) %>%
     dplyr::mutate(validation_status = 
                     replace(validation_status,
-                            validation_details == 'missing_opt_field', 'info')) 
+                            validation_details == "missing_opt_field",
+                            "info")) 
   
   problems <- validation_result %>% 
-    filter(validation_status == 'problem')
+    filter(validation_status == "problem")
   if(nrow(problems) > 0) {
     missing_req_files <- problems %>% 
-      filter(validation_details == 'missing_req_file') %>% dplyr::pull(file) %>% unique()
+      filter(validation_details == "missing_req_file") %>% 
+      dplyr::pull(file) %>% unique()
     if(length(missing_req_files) > 0) {
-      w <- paste0("Invalid feed. Missing required file(s): ", paste(missing_req_files, collapse=", "))
+      w <- paste0("Invalid feed. Missing required file(s): ", 
+                  paste(missing_req_files, collapse=", "))
       warning(w)
     }
     missing_req_fields <- problems %>%
-      filter(validation_details == 'missing_req_field') %>% dplyr::pull(field)
+      filter(validation_details == "missing_req_field") %>% 
+      dplyr::pull(field)
     if(length(missing_req_fields) > 0) {
       w <- paste0("Invalid feed. Missing required field(s): ", 
                   paste(missing_req_fields, collapse=", "))
@@ -70,7 +77,9 @@ gtfs_validate <- function(gtfs_obj, quiet = T) {
   return(gtfs_obj)
 }
 
-#' Create validation table for a gtfs_obj. It provides an overview of the structure of all files that were imported.
+#' Create validation table for a gtfs_obj. 
+#' 
+#' It provides an overview of the structure of all files that were imported.
 #'
 #' @param gtfs_obj A GTFS list object with components agency, stops, etc.
 #' @return validation_dataframe
@@ -93,7 +102,7 @@ validate_gtfs_structure <- function(gtfs_obj) {
     
     # validate file
     file_provided_status <- F
-    file_spec <- 'ext'
+    file_spec <- "ext"
     
     # extra file
     if(is.null(fmeta)) {
@@ -104,7 +113,7 @@ validate_gtfs_structure <- function(gtfs_obj) {
       df_validation <- tibble::tibble(file, file_spec, 
                                       file_provided_status, 
                                       field = cnames, 
-                                      field_spec = 'ext', 
+                                      field_spec = "ext", 
                                       field_provided_status = T)
     }
     # spec file
@@ -125,8 +134,8 @@ validate_gtfs_structure <- function(gtfs_obj) {
                                         field = fmeta$field, 
                                         field_spec = fmeta$field_spec, 
                                         field_provided_status = F)
-        for(colname in colnames(df)) {
-          if(colname %in% fmeta$field) {
+        for (colname in colnames(df)) {
+          if (colname %in% fmeta$field) {
             df_validation <- df_validation %>% 
               dplyr::mutate(field_provided_status = replace(field_provided_status, field == colname, T))
           } else {
@@ -134,7 +143,7 @@ validate_gtfs_structure <- function(gtfs_obj) {
               tibble::add_row(file, file_spec, 
                               file_provided_status, 
                               field = colname, 
-                              field_spec = 'ext', field_provided_status = T)
+                              field_spec = "ext", field_provided_status = T)
           }
         }
       }
@@ -151,9 +160,9 @@ validate_gtfs_structure <- function(gtfs_obj) {
   if(!calendar_exists) {
     structure <- structure %>% 
       dplyr::mutate(file_spec = replace(file_spec, 
-                                        file == 'calendar', 'ext')) %>% 
+                                        file == "calendar", "ext")) %>% 
       dplyr::mutate(file_spec = replace(file_spec, 
-                                        file == 'calendar_dates', 'req'))
+                                        file == "calendar_dates", "req"))
   }
   
   return(structure)

@@ -1,4 +1,4 @@
-context('Import metadata from transitfeeds')
+context("Import metadata from transitfeeds")
 
 working <- function() {
   url <- "https://github.com/r-transit/tidytransit/raw/master/inst/extdata/sample-feed-fixed.zip"
@@ -9,9 +9,9 @@ working <- function() {
   connecting(url)
 }
 
-test_that('the metadata from transitfeeds is a data frame that is not empty', {
+test_that("the metadata from transitfeeds is a data frame that is not empty", {
   skip_on_cran()
-  tfkey <- Sys.getenv('TRANSITFEED_API')
+  tfkey <- Sys.getenv("TRANSITFEED_API")
   if(!working()){
     skip("no internet, skipping")
   }
@@ -20,7 +20,7 @@ test_that('the metadata from transitfeeds is a data frame that is not empty', {
   }
   else {
     feedlist_df <- get_feedlist()
-    expect_is(feedlist_df, 'data.frame')
+    expect_is(feedlist_df, "data.frame")
     expect_true(dim(feedlist_df)[1]>100)
   }
 })

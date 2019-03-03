@@ -37,7 +37,7 @@ read_gtfs <- function(path, local = FALSE,
   # download zip file
   if (!local) {
     path <- download_from_url(url = path, quiet = quiet)
-    if (is.null(path)){ 
+    if (is.null(path)) { 
       return() 
     }
   }
@@ -50,10 +50,10 @@ read_gtfs <- function(path, local = FALSE,
   gtfs_obj <- create_gtfs_object(tmpdirpath, 
                                  file_list_df$filename, 
                                  quiet = quiet)
-  if(geometry) {
+  if (geometry) {
     gtfs_obj <- gtfs_as_sf(gtfs_obj,quiet=quiet)
   }
-  if(frequency) {
+  if (frequency) {
     gtfs_obj <- get_route_frequency(gtfs_obj) 
   }
   return(gtfs_obj) 
@@ -293,15 +293,15 @@ get_file_shortname <- function(file_path) {
   split_path <- strsplit(file_path, '/')
   file_name <- split_path[[1]][length(split_path[[1]])]
 
-  prefix <- gsub('.txt|-new', '', file_name) 
-  # suffix '.*-new.txt' comes from trillium data
-  prefix <- gsub('\\-|\\.', '_', prefix)
+  prefix <- gsub(".txt|-new", "", file_name) 
+  # suffix ".*-new.txt" comes from trillium data
+  prefix <- gsub("\\-|\\.", "_", prefix)
   return(prefix)
 }
 
 #' Parses one gtfs file
 #'
-#' @param prefix Character. gtfs file prefix (e.g. 'agency', 'stop_times', etc.)
+#' @param prefix Character. gtfs file prefix (e.g. "agency", "stop_times", etc.)
 #' @param file_path Character. file path
 #' @param quiet Boolean. Whether to output messages and files found in folder.
 #' @return Dataframe of parsed GTFS file.
@@ -315,43 +315,70 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
   stopifnot(!is.na(file.size(file_path)))
   if(file.size(file_path) > 1) {
 
-    ## get correct meta data using file prefix (e.g. 'agency', 'stop_times')
+    ## get correct meta data using file prefix (e.g. "agency", "stop_times")
     meta <- get_gtfs_meta()[[prefix]]
 
     # check if a file is empty. If so, return NULL.
-    L <- suppressWarnings(length(scan(file_path, what = "", quiet = TRUE, sep = '\n')))
+    L <- suppressWarnings(
+      length(
+        scan(
+          file_path, 
+          what = "", 
+          quiet = TRUE, 
+          sep = "\n")
+        )
+      )
     if(L < 1) {
       s <- sprintf("   File '%s' is empty.", basename(file_path))
       if(!quiet) message(s)
       return(NULL)
     }
 
-    # if no meta data is found for a file type but file is not empty, read as is.
+    #if no meta data is found for a file 
+    #type but file is not empty, read as is.
     if(is.null(meta)) {
-      s <- sprintf("   File %s not recognized, trying to read file as csv.", basename(file_path))
+      s <- sprintf("File %s not recognized, 
+                   trying to read file as csv.", 
+                   basename(file_path))
       if(!quiet) message(s)
 
       tryCatch({
-        df <- suppressMessages(data.table::fread(file = file_path, sep=","))
-      }, error = function(error_condition) {
-        s <- sprintf("   File could not be read as csv.", basename(file_path))
-        if(!quiet) message(s)
-        return(NULL)
-      })
+        df <- suppressMessages(
+          data.table::fread(file = file_path, 
+                            sep=","))
+        }, 
+        error = function(error_condition) {
+          s <- sprintf("   File could not be read as csv.", basename(file_path))
+          if(!quiet) message(s)
+          return(NULL)
+        })
       return(df)
     }
 
-    ## read.csv supports UTF-8-BOM. use this to get field names.
-    small_df <- suppressWarnings(utils::read.csv(file_path, nrows = 5, stringsAsFactors = FALSE)) # get a small df to find how many cols are needed
+    # read.csv supports UTF-8-BOM. use this to get field names.
+    # get a small df to find how many cols are needed
+    small_df <- suppressWarnings(
+      utils::read.csv(
+        file_path, 
+        nrows = 5, 
+        stringsAsFactors = FALSE)) 
 
-    ## get correct coltype, if possible
-    coltypes_character <- rep('c', dim(small_df)[2]) # create 'c' as coltype defaults
-    names(coltypes_character) <- names(small_df) %>% tolower()
-    indx <- match(names(coltypes_character), meta$field)  # indx from valid cols in meta$field. NAs will return for invalid cols
+    # get correct coltype, if possible
+    # create "c" as coltype defaults
+    coltypes_character <- rep("c", 
+                              dim(small_df)[2]) 
 
-    ## !is.na(indx) = valid col in 'coltype' found in meta$field
-    ## indx[!is.na(indx)] = location in 'meta$coltype' where corresponding type is found
-    coltypes_character[!is.na(indx)] <- meta$coltype[indx[!is.na(indx)]] # valid cols found in small_df
+    names(coltypes_character) <- 
+      names(small_df) %>% tolower()
+    # indx from valid cols in meta$field. NAs will return for invalid cols
+    indx <- match(names(coltypes_character), meta$field)  
+
+    #!is.na(indx) = valid col in 'coltype' found in meta$field
+    #indx[!is.na(indx)] = location in 'meta$coltype' 
+    #where corresponding type is found
+    #valid cols found in small_df
+    coltypes_character[!is.na(indx)] <- 
+      meta$coltype[indx[!is.na(indx)]] 
 
     # use col_*() notation for column types
     coltypes <-
@@ -367,17 +394,32 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
     if (has_bom(file_path)) { # check for BOM. if yes, use read.csv()
       ## switch function
       converttype <- function(x, y) {
-        switch(x, character = as.character(y), integer = as.integer(y), double = as.double(y), Date = lubridate::ymd(y))
+        switch(x, 
+               character = as.character(y), 
+               integer = as.integer(y), 
+               double = as.double(y), 
+               Date = lubridate::ymd(y))
       }
-      colnms <- meta$field[indx] # get expected/required names for columns. these are imposed.
-      
+      #get expected/required names for columns. 
+      #these are imposed.
+      colnms <- meta$field[indx] 
       ## get colclasses
-      colclasses <- sapply(coltypes_character, switch, c = "character", i = "integer", d = "double", "D" = "Date")
+      colclasses <- sapply(coltypes_character, 
+                           switch, 
+                           c = "character", 
+                           i = "integer", 
+                           d = "double", 
+                           "D" = "Date")
       
-      csv <- quote(utils::read.csv(file_path, col.names = colnms, stringsAsFactors= FALSE))
+      csv <- quote(utils::read.csv(file_path, 
+                                   col.names = colnms, 
+                                   stringsAsFactors= FALSE))
       df <- try(suppressWarnings(eval(csv)) %>%
-          mapply(converttype, x = colclasses, y = ., SIMPLIFY = FALSE) %>% # ensure proper column types
-          tibble::as_tibble())
+              mapply(converttype,
+                     # ensure proper column types
+                     x = colclasses,
+                     y = ., SIMPLIFY = FALSE) %>% 
+              tibble::as_tibble())
 
       if(any(class(df) %in% "try-error")) {
         probs <- "Error during import. 

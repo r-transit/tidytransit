@@ -377,7 +377,11 @@ tfeeds_parse_getlocation <- function(req) {
 #' @details See http://transitfeeds.com/api/ for available API calls
 #'
 
-tfeeds_get <- function(path, query, ..., version = 'v1/', key = if(has_api_key()) gtfs_api_key$get()) {
+tfeeds_get <- function(path, 
+                       query, 
+                       ..., 
+                       version = 'v1/', 
+                       key = if(has_api_key()) gtfs_api_key$get()) {
 
   if (missing(query)) {
     my_query <- list(key = key)

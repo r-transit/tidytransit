@@ -47,11 +47,16 @@ shape_route_service <- function(gtfs_obj,
     service_ids <- service_ids[which(service_ids %in% 
                                        gtfs_obj$trips$service_id)]
     if(length(service_ids) == 0) {
-      s <- "No provided Service ID(s) --- '%s' --- were found. Please provide valid Service IDs." %>% sprintf(paste(bad_service_ids, collapse = ", "))
+      s <- "No provided Service ID(s) --- 
+            '%s' --- were found. 
+            Please provide valid Service IDs." %>% 
+        sprintf(paste(bad_service_ids, collapse = ", "))
       stop(s)
     }
     if(length(bad_service_ids) > 0) {
-      s <- "Service ID(s) '%s' not found. Omitted." %>% sprintf(paste(bad_service_ids, collapse = ", "))
+      s <- "Service ID(s) '%s' 
+            not found. Omitted." %>% 
+        sprintf(paste(bad_service_ids, collapse = ", "))
       warning(s)
     }
     shapes_routes_df <- gtfs_obj$trips %>%
