@@ -119,11 +119,24 @@ or as a map:
 library(sf)
 
 feedlist_sf <- st_as_sf(feedlist_df,
-                        coords=c('loc_lng','loc_lat'),
+                        coords=c("loc_lng"","loc_lat"),
                         crs=4326)
 
 plot(feedlist_sf, max.plot = 1)
 ```
+
+Note that there is a url (`url_d`) for each feed, which can be used to read the feed for a given city into R. 
+
+For example:
+
+```{r, eval=FALSE}
+nyc_ferries_gtfs <- feedlist_df %>% 
+  filter(t=="NYC Ferry GTFS") %>%
+  pull(url_d) %>%
+  read_gtfs()
+```
+
+See the reference for more on metadata in the `transitfeeds_df`
 
 ### Feed Validation Results
 
