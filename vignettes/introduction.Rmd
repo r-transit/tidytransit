@@ -140,7 +140,7 @@ See the reference for more on metadata in the `transitfeeds_df`
 
 ### Feed Validation Results
 
-When reading a feed, tidytransit checks it against the GTFS specification, and adds an attribute to the resultant object called `validation_result`, which is a tibble about the files and fields in the GTFS feed and how they compare to the specification. 
+When reading a feed, it is checked against the GTFS specification, and an attribute is added to the resultant object called `validation_result`, which is a tibble about the files and fields in the GTFS feed and how they compare to the specification. 
 
 You can get this tibble from the metadata about the feed. 
 
