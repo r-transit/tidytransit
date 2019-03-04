@@ -134,11 +134,11 @@ We may--in fact, we probably will--see some surprising outliers for headway calc
 
 Calculating headways at stops is tricky for a number of reasons. 
 
-Another reason is that the headway calculations in this package aren't robust against all of the edge cases of every last service and stops that might be listed in a GTFS. Remember, GTFS isn't built for this kind of calculation--its built to publish schedules to users. 
+One of the main reasons is that GTFS wasn't meant for this kind of analytical work. So the headway calculations in this package aren't robust against all of the edge cases of every last service and stops that might be listed in a GTFS. 
 
-However, I have found that the methods in here are OK at describing transit service headways on routes and stops if you understand that GTFS data can be messy for analytical work, and may require a trick here or there in order to get to the point. 
+However, I have found that the methods in here are OK at describing transit service headways on routes and stops if you understand that GTFS data can be messy for analytical work.
 
-One quick solution to the above plot is to throw out stops with headways greater than an unreasonable amount of time. For example, we can filter out stops with headways above 100 minutes. 
+One quick solution to the outlier stops in above plot is to throw out stops with headways greater than an unreasonable amount of time. For example, we can filter out stops with headways above 100 minutes. 
 
 ```{r}
 some_stops_freq_sf <- some_stops %>%
@@ -148,3 +148,4 @@ some_stops_freq_sf <- some_stops %>%
 plot(some_stops_freq_sf)
 ```
 
+Of course, what solution works for you will depend on what you're trying to accomplish. 
