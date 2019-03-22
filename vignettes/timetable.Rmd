@@ -1,0 +1,117 @@
+---
+title: "Generate a departure timetable"
+date: "`r Sys.Date()`"
+author: Flavio Poletti
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{tidytransit-Timetable}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidytransit)
+library(dplyr)
+```
+
+## Overview
+
+In this vignette a departure timetable for a stop is generated. The example is ???
+
+## Preparation
+
+### Read GTFS data
+
+We use a feed from the New York Metropolitan Transportation Authority. It is provided as a sample feed with tidytransit but you can read it directly from the MTA's website. 
+
+```{r}
+local_gtfs_path <- system.file("extdata", 
+                               "google_transit_nyc_subway.zip", 
+                               package = "tidytransit")
+gtfs <- read_gtfs(local_gtfs_path, local=TRUE)
+# gtfs <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
+```
+
+### trip_origin and trip_headsign
+
+To display where a bus (or any public transit vehicle) is headed on a timetable we need the column `trip_headsign` in `gtfs$trips`. This is an optional field but our example feed provides this information. To display where a vehicle comes from on the timetable we needto create a new column in `gtfs$trips` which we'll call `trip_origin`.
+
+```{r}
+# get the id of the first stop in the trip's stop sequence
+first_stop_id <- gtfs$stop_times %>% group_by(trip_id) %>% summarise(stop_id = stop_id[which.min(stop_sequence)])
+
+# join with the stops table to get the stop_name
+first_stop_names <- left_join(first_stop_id, gtfs$stops, by="stop_id")
+
+# rename the first stop_name as trip_origin
+trip_origins <- first_stop_names %>% select(trip_id, trip_origin = stop_name)
+
+# assign the 
+gtfs$trips <- left_join(gtfs$trips, trip_origins, by = "trip_id")
+```
+
+In case trip_headsign does not exist in the feed it can be generated similarly to trip_origin:
+
+```{r}
+if(!exists("trip_headsign", where = gtfs$trips)) {
+  # get the first id of the trip's stop sequence
+  trip_headsigns <- gtfs$stop_times %>% 
+    group_by(trip_id) %>% 
+    summarise(stop_id = stop_id[which.max(stop_sequence)]) %>% 
+    left_join(gtfs$stops, by="stop_id") %>% select(trip_id, trip_headsign = stop_name)
+
+  # assign to the gtfs object 
+  gtfs$trips <- left_join(gtfs$trips, trip_headsigns, by = "trip_id")
+}
+```
+
+### Build departure timetable
+
+For easier handling of time data we use departure times as `hms::hms()`. Times for the whole feed can be converted with `gtfs_set_hms_times()`
+
+```{r}
+gtfs <- tidytransit:::gtfs_set_hms_times(gtfs)
+```
+
+
+First we need to find the ids of all stops that have the same name which might cover different platforms.
+
+```{r}
+stop_ids = gtfs$stops %>% filter(stop_name == "Knickerbocker Av") %>% select(stop_id)
+```
+
+Then we'll fetch all trips departing from these stops. Stop_ids and trips are linked via stop_times. Each trip belongs to a route, the corresponding route info is gathered by joining the trips data frame with `gtfs$routes`.
+
+```{r}
+departures <- stop_ids %>% inner_join(gtfs$stop_times %>% select(trip_id, arrival_time_hms, departure_time_hms, stop_id), by = "stop_id")
+
+# add trip info (route_id, service_id, trip_headsign, trip_origin)
+departures <- departures %>% left_join(gtfs$trips %>% select(trip_id, route_id, service_id, trip_headsign, trip_origin), by = "trip_id")
+
+# add route info (route_short_name)
+departures <- departures %>% left_join(gtfs$routes %>% select(route_id, route_short_name), by = "route_id")
+```
+
+We have now gathered all departures that happen on "Knickerbocker Av". However, we do not know on which days the these trips run. Arranging the departures and looking at the head we get an idea how the feed is setup:
+
+```{r}
+departures %>% arrange(arrival_time_hms)
+```
+
+Looking at the first two departures we see that a train departures at 00:04 and looking at the `service_id` and `trip_id` we can guess that this happens saturdays and weekdays. However, feeds are not required to indicate anything with these ids and some feeds even use a unique `service_id` for each trip and day. We'll look at a general way to gather this information. With `get_date_service_table()` we receive a table that indicates which service id runs on which date.
+
+```{r}
+date_service_table <- get_date_service_table(gtfs)
+
+weekday_summary = function(x) {
+  times_service_runs_on_weekday = table(weekdays(x))
+  paste(times_service_runs_on_weekday, names(times_service_runs_on_weekday), sep = "x ", collapse = ", ")
+}
+
+service_weekday_summary = date_service_table %>% group_by(service_id) %>% summarise(weekday_summary = weekday_summary(date))
+
+print(service_weekday_summary)
+```
+
+_work in progress_
