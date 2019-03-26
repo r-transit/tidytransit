@@ -68,17 +68,17 @@ if(!exists("trip_headsign", where = gtfs$trips)) {
 
 ### Build departure timetable
 
-For easier handling of time data we use departure times as `hms::hms()`. Times for the whole feed can be converted with `gtfs_set_hms_times()`
+For easier handling of time data we use departure times as `hms::hms()`. Times for the whole feed can be converted with `set_hms_times()`
 
 ```{r}
-gtfs <- tidytransit:::gtfs_set_hms_times(gtfs)
+gtfs <- tidytransit::set_hms_times(gtfs)
 ```
 
 
 First we need to find the ids of all stops that have the same name which might cover different platforms.
 
 ```{r}
-stop_ids = gtfs$stops %>% filter(stop_name == "Knickerbocker Av") %>% select(stop_id)
+stop_ids <- gtfs$stops %>% filter(stop_name == "Knickerbocker Av") %>% select(stop_id)
 ```
 
 Then we'll fetch all trips departing from these stops. Stop_ids and trips are linked via stop_times. Each trip belongs to a route, the corresponding route info is gathered by joining the trips data frame with `gtfs$routes`.

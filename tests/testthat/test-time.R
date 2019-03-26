@@ -7,7 +7,7 @@ create_empty_gtfs_obj <- function() {
   return(g)
 }
 
-test_that("gtfs_set_hms_times() works with valid data", {
+test_that("set_hms_times() works with valid data", {
   gtest <- create_empty_gtfs_obj()
   gtest$stop_times <- dplyr::tibble(
     arrival_time = c("08:00:00", "14:00:00", "26:10:00"),
@@ -17,7 +17,7 @@ test_that("gtfs_set_hms_times() works with valid data", {
     end_time = c("12:00:00")
   )
 
-  gtest <- gtfs_set_hms_times(gtest)  
+  gtest <- set_hms_times(gtest)  
   
   expect_is(gtest$stop_times$arrival_time_hms, "hms")
   expect_is(gtest$stop_times$departure_time_hms, "hms")

@@ -16,7 +16,7 @@ gt_as_dt <- function(stop_times) {
 filter_stop_times_by_hour <- function(stop_times, 
   start_hour, 
   end_hour) {
-  # TODO use gtfs_set_hms_times during import to avoid errors here?
+  # TODO use set_hms_times during import to avoid errors here?
   stopifnot("arrival_time_hms" %in% colnames(stop_times), "departure_time_hms" %in% colnames(stop_times))
   # it might be easier to just accept hms() objects
   stop_times %>% filter(arrival_time_hms > 
@@ -32,7 +32,7 @@ filter_stop_times_by_hour <- function(stop_times,
 #' @return gtfs_obj with added hms times columns for stop_times and frequencies
 #' @keywords internal
 #' @importFrom hms hms
-gtfs_set_hms_times <- function(gtfs_obj) {
+set_hms_times <- function(gtfs_obj) {
   stopifnot(is_gtfs_obj(gtfs_obj))
   
   str_to_seconds <- function(hhmmss_str) {
