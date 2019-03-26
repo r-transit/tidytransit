@@ -1,7 +1,7 @@
 ---
 title: "Generate a departure timetable"
 date: "`r Sys.Date()`"
-author: Flavio Poletti
+author: "Flavio Poletti""
 output: 
   html_vignette:
     fig_width: 6
@@ -102,7 +102,7 @@ We have now gathered all departures that happen on "Knickerbocker Av". However, 
 departures %>% arrange(arrival_time_hms)
 ```
 
-Looking at the first two departures we see that a train departures at 00:04 and looking at the `service_id` and `trip_id` we can guess that this happens saturdays and weekdays. However, feeds are not required to indicate anything with these ids and some feeds even use a unique `service_id` for each trip and day. We'll look at a general way to gather this information. With `get_date_service_table()` we receive a table that indicates which service id runs on which date.
+Looking at the first two departures we see that a train departures at 00:04 and looking at the `service_id` and `trip_id` we can guess that this happens saturdays and weekdays.  With `get_date_service_table()` we receive a table that indicates which service id runs on which date.
 
 ```{r}
 gtfs$date_service_table <- get_date_service_table(gtfs)
@@ -116,63 +116,5 @@ service_weekday_summary = gtfs$date_service_table %>% group_by(service_id) %>% s
 
 print(service_weekday_summary)
 ```
-
-# date patterns
-
-To analyse on which dates trips run and to group similar services we use `date patterns`. Such a pattern simply lists all dates a trip runs on. For example, a trip with the date_pattern like "2019-03-07_2019-03-14_2019-03-21_2019-03-28" runs on every thursday in March 2019. Naturally, a trip that runs every day during a year has a rather long date pattern string which is why we use a hash function to create a date_pattern_id which makes the data more manageable. Ideally there are the same number of date_pattern_ids and service_ids. However, in real life feeds this is rarely the case. In addition, the usability of `date patterns` depends largely on the feed and its complexity. Note that the following code is not really efficient.
-
-```{r}
-get_date_pattern = function(dates) {
-  paste(sort(dates), collapse = "_")
-}
-
-date_patterns = list()
-
-get_date_pattern_id = function(dates) {
-  id = openssl::sha224(get_date_pattern(dates))
-  id <- paste0("p_", substr(id, 0, 9))
-  
-  date_patterns[[id]] <<- dates
-  return(id)
-}
-
-trip_date_patterns <- gtfs$date_service_table %>% 
-  inner_join(select(gtfs$trips, service_id, trip_id), by = "service_id") %>% 
-  group_by(trip_id, service_id) %>%
-	summarise(
-		date_pattern_id = get_date_pattern_id(date)
-	) %>% ungroup()
-```
-
-`date_patterns` is a list containing all date patterns and `trip_date_patterns` now links each trip to a `date_pattern_id`. We can compare the number of unique date patterns to the number of service_ids.
-
-```{r echo=FALSE}
-cat(paste0("service ids used: ", length(unique(gtfs$trips$service_id))), "\n")
-cat(paste0("unique date patterns: ", length(date_patterns)))
-```
-
-The feed uses 70 service_ids but there are actually only 6 different date patterns used by trips. Other feeds might not have such low numbers, for example the Swiss GTFS feed uses around 15'000 service_ids which all identify unique date patterns.
-
-#### Plotting date pattern
-
-We'll now try to figure out usable names for those patterns. Grouping and identifying date patterns and giving them human readable names is a process that is generally hard to automate. A good way to start is visualising the data.
-
-```{r}
-date_pattern_table <- inner_join(gtfs$date_service_table, trip_date_patterns, by = "service_id")
-
-.weekdays = c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
-.weekday_df = data.frame(weekday_nr = 0:6, weekday = .weekdays)
-
-date_pattern_table$weekday_nr <- as.POSIXlt(date_pattern_table$date)$wday
-date_pattern_table <- date_pattern_table %>% left_join(.weekday_df, by = "weekday_nr")
-date_pattern_table$weekday <- factor(date_pattern_table$weekday, levels = .weekdays)
-
-ggplot(date_pattern_table) + theme_bw() + 
-  geom_vline(xintercept = seq(min(filter(date_pattern_table, weekday == "Sunday")$date), max(date_pattern_table$date), 7), color = "#747474") +
-  geom_point(aes(x = date, y = date_pattern_id, color = weekday), size = 0.7) + 
-  scale_x_date(breaks = scales::date_breaks("1 month")) + theme(legend.position = "bottom")
-```
-
-The plot shows that pattern `p_831fa75f2` runs on every saturday from July until October without exceptions. Similarly, the date pattern `p_eb8eae871` runs every sunday. `p_99da13743` also runs on sundays but it also covers a monday (September 3rd). `p_69c6534e2` covers weekdays (mondays through friday), `p_7764f1257` seems to do the same through November with some exceptions. How you name those patterns is up to you.
 
 _work in progress_
