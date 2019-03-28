@@ -9,12 +9,13 @@ vignette: >
 ---
   
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
 library(tidytransit)
 library(dplyr)
 library(lubridate)
 library(openssl)
 library(ggplot2)
+knitr::opts_chunk$set(echo = TRUE)
 ```
   
 ## Overview
@@ -40,13 +41,19 @@ gtfs <- read_gtfs(local_gtfs_path, local=TRUE)
 ```
   
 With `get_date_service_table()` we receive a table that indicates which service_id runs 
-on which date. This is later useful for linking dates and trips via service_id. The table 
-also shows weekdays. You could also join a table with holiday dates, if you have one at 
-hand, we'll use a minimal example with two days.
+on which date. This is later useful for linking dates and trips via service_id. 
 
 ```{r}
 gtfs$date_service_table <- get_date_service_table(gtfs)
 
+print(gtfs$date_service_table)
+```
+
+To understand service patterns better we need information on weekdays and holidays. With 
+a calendar table we know the weekday and possible holidays for each date. We'll use a minimal example 
+with two holidays.
+
+```{r}
 holidays = tribble(~date, ~holiday,
   ymd("2018-07-04"), "Independence Day",
   ymd("2018-09-03"), "Labor Day")
@@ -54,13 +61,15 @@ holidays = tribble(~date, ~holiday,
 calendar = tibble(date = unique(gtfs$date_service_table$date)) %>% 
   mutate(
     weekday = (function(date) {
-      c("sunday", "monday", "tuesday", 
-        "wednesday", "thursday", "friday", 
-        "saturday")[as.POSIXlt(date)$wday + 1]
+      c("Sunday", "Monday", "Tuesday", 
+        "Wednesday", "Thursday", "Friday", 
+        "Saturday")[as.POSIXlt(date)$wday + 1]
     })(date)
   )
 
 calendar <- calendar %>% left_join(holidays, by = "date")
+
+print(calendar)
 ```
 
 To analyse on which dates trips run and to group similar services we use service patterns. 
@@ -121,8 +130,10 @@ A good way to start is visualising the data.
 ```{r fig.height=4, fig.width=6}
 date_servicepattern_table <- inner_join(gtfs$date_service_table, trip_servicepatterns, by = "service_id")
 
+date_servicepattern_table <- date_servicepattern_table %>% left_join(calendar, by = "date")
+
 ggplot(date_servicepattern_table) + theme_bw() + 
-  geom_vline(xintercept = seq(min(filter(date_servicepattern_table, weekday == "sunday")$date), max(date_servicepattern_table$date), 7), color = "#747474") +
+  geom_vline(xintercept = seq(min(filter(date_servicepattern_table, weekday == "Sunday")$date), max(date_servicepattern_table$date), 7), color = "#747474") +
   geom_point(aes(x = date, y = servicepattern_id, color = weekday), size = 0.7) + 
   scale_x_date(breaks = scales::date_breaks("1 month")) + theme(legend.position = "bottom")
 ```
@@ -149,69 +160,75 @@ suggest_servicepattern_names = function(servicepattern, calendar) {
   }
   
   weekday_plural = function(weekday) {
-  unname(
-    c("sunday"  = "Sundays", 
-    "monday"    = "Monday", 
-    "tuesday"   = "Tuesday", 
-    "wednesday" = "Wednesdays",
-    "thursday"  = "Thursdays",  
-    "friday"    = "Fridays",  
-    "saturday"  = "Saturdays")[weekday])
+    # while paste0(weekday, "s") is easier, this solution can be used for other languages
+    unname(
+      c("Sunday"  = "Sundays", 
+        "Monday"    = "Mondays", 
+        "Tuesday"   = "Tuesdays", 
+        "Wednesday" = "Wednesdays",
+        "Thursday"  = "Thursdays",  
+        "Friday"    = "Fridays",  
+        "Saturday"  = "Saturdays")[weekday])
   }
   
-  summarise_holidays = function(h) {
-    if(any(!is.na(h))) {
-      return(paste(h, collapse=", "))
-    } else {
-      return("")
-    }
-  }
-
   # Single day service
   if(n_weekdays == 1) {
     wd = weekday_plural(names(weekday_freq)[1])
     return(add_date_range(wd))
-  }
-
+  } 
   # Weekday Service
-  if(n_weekdays == 5 && length(intersect(names(weekday_freq), c("monday", "tuesday", "wednesday", "thursday", "friday"))) == 5) {
+  else if(n_weekdays == 5 && 
+      length(intersect(names(weekday_freq), 
+        c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday"))) == 5) {
     return(add_date_range("Weekdays"))
   }
-  
   # Weekend
-  if(n_weekdays == 2 && length(intersect(names(weekday_freq), c("saturday", "sunday"))) == 2) {
+  else if(n_weekdays == 2 && 
+      length(intersect(names(weekday_freq), c("Saturday", "Sunday"))) == 2) {
+    return(add_date_range("Weekends"))
+  }
+  # Multiple weekdays that appear regularly
+  else if(n_weekdays >= 2 && (max(weekday_freq) - min(weekday_freq)) <= 1) {
+    pattern_name = paste(names(weekday_freq), collapse = ", ")
     return(add_date_range("Weekends"))
   }
   
-  holiday_pattern_summary = calendar_excerpt %>% group_by(weekday) %>% 
+  # check for holidays
+  holiday_summary = calendar_excerpt %>% group_by(weekday) %>% 
     summarise(
       count = dplyr::n(),
       holiday_count = length(holiday[!is.na(holiday)]),
-      holiday_names = summarise_holidays(holiday)
+      holiday_names = ifelse(any(!is.na(holiday)), paste(holiday, collapse=", "), "")
     ) %>% arrange(desc(count))
   
   # Multiple weekdays with holidays
-  if(sum(holiday_pattern_summary$holiday_count) > 0) {
-    weekday_and_holiday_info = weekday_plural(holiday_pattern_summary$weekday[1])
-    holiday_names = holiday_pattern_summary$holiday_names[holiday_pattern_summary$holiday_names != ""]
-    weekday_and_holiday_info <- paste0(weekday_and_holiday_info, " and ", paste(holiday_names, collapse = ", "))
-    return(add_date_range(weekday_and_holiday_info))
+  if(sum(holiday_summary$holiday_count) > 0) {
+    pattern_name = weekday_plural(holiday_summary$weekday[1])
+    holiday_names = holiday_summary$holiday_names[holiday_summary$holiday_names != ""]
+    pattern_name <- paste0(pattern_name, " and ", paste(holiday_names, collapse = ", "))
+    return(add_date_range(pattern_name))
   }
-  browser()
+
   # Default case, multiple weekdays without holidays
   pattern_name = paste(weekday_freq, names(weekday_freq), sep = "x ", collapse = ", ")
 
   return(add_date_range(pattern_name))
 }
+```
 
+We'll apply this function to our service patterns and create a table with ids and names.
+
+```{r}
 servicepattern_names = lapply(servicepatterns, suggest_servicepattern_names, calendar)
 
 servicepatterns_df = tibble(
   servicepattern_id = names(servicepattern_names),
   servicepattern_name = unlist(servicepattern_names, use.names = F)
   )
+```
 
-servicepatterns_df
+```{r echo=FALSE}
+knitr::kable(servicepatterns_df)
 ```
 
 _work in progress_
