@@ -34,13 +34,6 @@ With `get_date_service_table()` we receive a table that indicates which service_
 
 ```{r}
 gtfs$date_service_table <- get_date_service_table(gtfs)
-
-.weekdays = c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
-.weekday_df = data.frame(weekday_nr = 0:6, weekday = .weekdays)
-
-gtfs$date_service_table$weekday_nr <- as.POSIXlt(gtfs$date_service_table$date)$wday
-gtfs$date_service_table <- gtfs$date_service_table %>% left_join(.weekday_df, by = "weekday_nr")
-gtfs$date_service_table$weekday <- factor(gtfs$date_service_table$weekday, levels = .weekdays)
 ```
 
 To analyse on which dates trips run and to group similar services we use service patterns. Such a pattern simply lists all dates a trip runs on. For example, a trip with a servicepattern like c("2019-03-07", "2019-03-14"", "2019-03-21", "2019-03-28") runs every thursday in March 2019. To handle these patterns we create an servicepattern_id using a hash function. Ideally there are the same number of servicepattern_ids and service_ids. However, in real life feeds this is rarely the case. In addition, the usability of service patterns depends largely on the feed and its complexity.

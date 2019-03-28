@@ -114,7 +114,7 @@ get_date_service_table <- function(gtfs_obj) {
       dplyr::full_join(dates, service_ids_weekdays, 
                        by="weekday") %>% 
       dplyr::filter(date >= start_date & date <= end_date) %>% 
-      dplyr::select(-weekday, -start_date, -end_date)
+      dplyr::select(-start_date, -end_date)
   }
   
   if(!is.null(gtfs_obj$calendar_dates)) {
