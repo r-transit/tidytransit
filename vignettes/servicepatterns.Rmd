@@ -151,68 +151,58 @@ feed and its structure. You might also consider setting names completely manuall
 
 ```{r}
 suggest_servicepattern_names = function(servicepattern, calendar) {
-  calendar_excerpt = tibble(date = servicepattern) %>% left_join(calendar, by = "date")
-  weekday_freq = table(calendar_excerpt$weekday)
-  n_weekdays = length(weekday_freq)
-
-  add_date_range = function(string) {
-    paste0(string, " (", min(servicepattern), " - ", max(servicepattern), ")") 
-  }
+  servicepattern_calendar = tibble(date = servicepattern) %>% left_join(calendar, by = "date")
   
-  weekday_plural = function(weekday) {
+  # all normal dates without holidays
+  calendar_normal = servicepattern_calendar %>% filter(is.na(holiday))
+  
+  # create a frequency table for all calendar dates without holidays
+  weekday_freq = sort(table(calendar_normal$weekday), decreasing = T)
+  n_weekdays = length(weekday_freq)
+  
+  # all holidays that are not covered by normal weekdays anyways
+  calendar_holidays <- servicepattern_calendar %>% filter(!is.na(holiday)) %>% filter(!(weekday %in% names(weekday_freq)))
+
+  # Single day service
+  if(n_weekdays == 1) {
+    wd = names(weekday_freq)[1]
     # while paste0(weekday, "s") is easier, this solution can be used for other languages
-    unname(
-      c("Sunday"  = "Sundays", 
+    pattern_name = c("Sunday"  = "Sundays", 
         "Monday"    = "Mondays", 
         "Tuesday"   = "Tuesdays", 
         "Wednesday" = "Wednesdays",
         "Thursday"  = "Thursdays",  
         "Friday"    = "Fridays",  
-        "Saturday"  = "Saturdays")[weekday])
-  }
-  
-  # Single day service
-  if(n_weekdays == 1) {
-    wd = weekday_plural(names(weekday_freq)[1])
-    return(add_date_range(wd))
+        "Saturday"  = "Saturdays")[wd]
   } 
   # Weekday Service
   else if(n_weekdays == 5 && 
       length(intersect(names(weekday_freq), 
         c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday"))) == 5) {
-    return(add_date_range("Weekdays"))
+    pattern_name = "Weekdays"
   }
   # Weekend
   else if(n_weekdays == 2 && 
       length(intersect(names(weekday_freq), c("Saturday", "Sunday"))) == 2) {
-    return(add_date_range("Weekends"))
+    pattern_name = "Weekends"
   }
   # Multiple weekdays that appear regularly
   else if(n_weekdays >= 2 && (max(weekday_freq) - min(weekday_freq)) <= 1) {
     pattern_name = paste(names(weekday_freq), collapse = ", ")
-    return(add_date_range("Weekends"))
+  } 
+  # default
+  else {
+    pattern_name = paste(weekday_freq, names(weekday_freq), sep = "x ", collapse = ", ")
   }
   
-  # check for holidays
-  holiday_summary = calendar_excerpt %>% group_by(weekday) %>% 
-    summarise(
-      count = dplyr::n(),
-      holiday_count = length(holiday[!is.na(holiday)]),
-      holiday_names = ifelse(any(!is.na(holiday)), paste(holiday, collapse=", "), "")
-    ) %>% arrange(desc(count))
-  
-  # Multiple weekdays with holidays
-  if(sum(holiday_summary$holiday_count) > 0) {
-    pattern_name = weekday_plural(holiday_summary$weekday[1])
-    holiday_names = holiday_summary$holiday_names[holiday_summary$holiday_names != ""]
-    pattern_name <- paste0(pattern_name, " and ", paste(holiday_names, collapse = ", "))
-    return(add_date_range(pattern_name))
+  # add holidays
+  if(nrow(calendar_holidays) > 0) {
+    pattern_name <- paste0(pattern_name, " and ", paste(calendar_holidays$holiday, collapse = ", "))
   }
+  
+  pattern_name <- paste0(pattern_name, " (", min(servicepattern), " - ", max(servicepattern), ")") 
 
-  # Default case, multiple weekdays without holidays
-  pattern_name = paste(weekday_freq, names(weekday_freq), sep = "x ", collapse = ", ")
-
-  return(add_date_range(pattern_name))
+  return(pattern_name)
 }
 ```
 
