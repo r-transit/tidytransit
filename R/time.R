@@ -72,7 +72,6 @@ set_hms_times <- function(gtfs_obj) {
 #' # count the number of services running on each date
 #' nyc_services_by_date %>% group_by(date) %>% count()
 #'
-
 get_date_service_table <- function(gtfs_obj) {
   stopifnot(is_gtfs_obj(gtfs_obj))
   
@@ -82,7 +81,7 @@ get_date_service_table <- function(gtfs_obj) {
       "saturday")[as.POSIXlt(date)$wday + 1]
   }
   
-  if(all(is.na(gtfs_obj$calendar$start_date)) & 
+  if(all(is.na(gtfs_obj$calendar$start_date)) && 
      all(is.na(gtfs_obj$calendar$end_date))) {
     # TODO validate no start_date and end_date defined in calendar.txt
     date_service_df <- dplyr::tibble(date=lubridate::ymd("19700101"), 
@@ -114,7 +113,7 @@ get_date_service_table <- function(gtfs_obj) {
       dplyr::full_join(dates, service_ids_weekdays, 
                        by="weekday") %>% 
       dplyr::filter(date >= start_date & date <= end_date) %>% 
-      dplyr::select(-start_date, -end_date)
+      dplyr::select(-weekday, -start_date, -end_date)
   }
   
   if(!is.null(gtfs_obj$calendar_dates)) {
