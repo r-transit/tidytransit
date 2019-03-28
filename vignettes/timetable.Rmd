@@ -1,11 +1,7 @@
 ---
 title: "Generate a departure timetable"
-date: "`r Sys.Date()`"
-author: "Flavio Poletti""
-output: 
-  html_vignette:
-    fig_width: 6
-    fig_height: 4
+author: "Flavio Poletti"
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{tidytransit-Timetable}
   %\VignetteEngine{knitr::rmarkdown}

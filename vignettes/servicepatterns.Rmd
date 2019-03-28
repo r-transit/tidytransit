@@ -3,7 +3,7 @@ title: "Service Patterns"
 author: "Flavio Poletti"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{tidytransit-Timetable}
+  %\VignetteIndexEntry{tidytransit-Service Patterns}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

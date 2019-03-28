@@ -30,8 +30,8 @@ filter_stop_times_by_hour <- function(stop_times,
 #' with times converted with hms::hms().
 #' 
 #' @return gtfs_obj with added hms times columns for stop_times and frequencies
-#' @keywords internal
 #' @importFrom hms hms
+#' @export
 set_hms_times <- function(gtfs_obj) {
   stopifnot(is_gtfs_obj(gtfs_obj))
   
