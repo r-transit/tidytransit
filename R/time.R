@@ -29,6 +29,7 @@ filter_stop_times_by_hour <- function(stop_times,
 #' Adds columns to stop_times (arrival_time_hms, departure_time_hms) and frequencies (start_time_hms, end_time_hms)
 #' with times converted with hms::hms().
 #' 
+#' @param gtfs_obj a gtfs object in which hms times should be set, the modified gtfs_obj is returned
 #' @return gtfs_obj with added hms times columns for stop_times and frequencies
 #' @importFrom hms hms
 #' @export
