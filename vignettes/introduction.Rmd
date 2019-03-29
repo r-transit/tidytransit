@@ -13,11 +13,10 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidytransit)
 library(dplyr)
 ```
-[
-![Travis-CI Build
+[![Travis-CI Build
 Status](https://travis-ci.com/r-transit/tidytransit.svg?branch=master)](https://travis-ci.com/r-transit/tidytransit)
-[![CRAN
-status](https://www.r-pkg.org/badges/version/tidytransit?)](https://cran.r-project.org/package=tidytransit)
+<!-- [![CRAN -->
+<!-- status](https://www.r-pkg.org/badges/version/tidytransit?)](https://cran.r-project.org/package=tidytransit) -->
 
 tidytransit makes it easy to work with transit data by simplifying [General Transit Feed Specification](http://gtfs.org/) data (the standard format for storing transit data) into tidyverse and sf-friendly dataframes. Use it to map existing stops and routes, calculate transit frequencies, and validate transit feeds.
 
