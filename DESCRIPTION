@@ -39,13 +39,13 @@ Imports:
     lubridate,
     hms,
     tidyr,
-    tools
+    tools,
+    digest
 Suggests:
     testthat,
     knitr,
     rmarkdown,
-    ggplot2,
-    openssl
+    ggplot2
 RoxygenNote: 6.1.1
 URL: https://github.com/r-transit/tidytransit
 BugReports: https://github.com/r-transit/tidytransit

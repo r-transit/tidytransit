@@ -52,13 +52,9 @@ set_servicepatterns <- function(gtfs_obj) {
   if(!exists("date_service_table", gtfs_obj)) {
     gtfs_obj$date_service_table <- get_date_service_table(gtfs_obj)
   }
-  
-  get_servicepattern <- function(dates) {
-    paste(sort(dates), collapse = "_")
-  }
-  
+
   get_servicepattern_id <- function(dates) {
-    id <- openssl::sha224(get_servicepattern(dates))
+    id <- digest::digest(dates, "md5")
     id <- paste0("p_", substr(id, 0, 9))
     return(id)
   }
@@ -70,19 +66,17 @@ set_servicepatterns <- function(gtfs_obj) {
     summarise(
       servicepattern_id = get_servicepattern_id(date)
     ) %>% ungroup()
-  
+
   # find dates for servicepatterns
   date_servicepattern_table <- gtfs_obj$date_service_table %>% 
     left_join(trip_servicepatterns, by = "service_id") %>% 
-    mutate(servicepattern_id = factor(servicepattern_id))
-  
-  servicepattern_ids = unique(trip_servicepatterns$servicepattern_id)
+    group_by(date, servicepattern_id) %>% 
+    summarise() %>% ungroup()
 
-  fetch_dates <- function(x) {
-    date_servicepattern_table %>% filter(servicepattern_id == x) %>% pull(date) %>% unique()  
-  }
+  servicepattern_ids = unique(trip_servicepatterns$servicepattern_id)
   
-  servicepatterns <- lapply(servicepattern_ids, fetch_dates)
+  servicepatterns = date_servicepattern_table %>% split(.$servicepattern_id)
+  servicepatterns <- lapply(servicepatterns, function(x) { pull(x, date) })
   names(servicepatterns) <- servicepattern_ids
   
   # assing to gtfs_obj
