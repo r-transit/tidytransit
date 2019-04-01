@@ -41,3 +41,53 @@ count_service_trips <- function(trips) {
       dplyr::mutate(service_trips = dplyr::n()) %>%
         tibble::as_tibble()
 }
+
+#' Calculate servicepatterns for the gtfs_obj
+#' 
+#' @param gtfs_obj feed
+#' @return modified gtfs_obj with added servicepatterns list and a table linking trips and patterns (trip_servicepatterns)
+#' @keywords internal
+#' @export
+set_servicepatterns <- function(gtfs_obj) {
+  if(!exists("date_service_table", gtfs_obj)) {
+    gtfs_obj$date_service_table <- get_date_service_table(gtfs_obj)
+  }
+  
+  get_servicepattern <- function(dates) {
+    paste(sort(dates), collapse = "_")
+  }
+  
+  get_servicepattern_id <- function(dates) {
+    id <- openssl::sha224(get_servicepattern(dates))
+    id <- paste0("p_", substr(id, 0, 9))
+    return(id)
+  }
+  
+  # find servicepattern_ids for all trips
+  trip_servicepatterns <- gtfs_obj$date_service_table %>% 
+    inner_join(select(gtfs_obj$trips, service_id, trip_id), by = "service_id") %>% 
+    group_by(trip_id, service_id) %>%
+    summarise(
+      servicepattern_id = get_servicepattern_id(date)
+    ) %>% ungroup()
+  
+  # find dates for servicepatterns
+  date_servicepattern_table <- gtfs_obj$date_service_table %>% 
+    left_join(trip_servicepatterns, by = "service_id") %>% 
+    mutate(servicepattern_id = factor(servicepattern_id))
+  
+  servicepattern_ids = unique(trip_servicepatterns$servicepattern_id)
+
+  fetch_dates <- function(x) {
+    date_servicepattern_table %>% filter(servicepattern_id == x) %>% pull(date) %>% unique()  
+  }
+  
+  servicepatterns <- lapply(servicepattern_ids, fetch_dates)
+  names(servicepatterns) <- servicepattern_ids
+  
+  # assing to gtfs_obj
+  gtfs_obj$trip_servicepatterns <- trip_servicepatterns
+  gtfs_obj$servicepatterns <- servicepatterns
+  
+  return(gtfs_obj)
+}

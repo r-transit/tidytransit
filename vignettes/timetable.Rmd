@@ -101,16 +101,7 @@ departures %>% arrange(arrival_time_hms)
 Looking at the first two departures we see that a train departures at 00:04 and looking at the `service_id` and `trip_id` we can guess that this happens saturdays and weekdays.  With `get_date_service_table()` we receive a table that indicates which service id runs on which date.
 
 ```{r}
-gtfs$date_service_table <- get_date_service_table(gtfs)
 
-weekday_summary = function(x) {
-  times_service_runs_on_weekday = table(weekdays(x))
-  paste(times_service_runs_on_weekday, names(times_service_runs_on_weekday), sep = "x ", collapse = ", ")
-}
-
-service_weekday_summary = gtfs$date_service_table %>% group_by(service_id) %>% summarise(weekday_summary = weekday_summary(date))
-
-print(service_weekday_summary)
 ```
 
 _work in progress_

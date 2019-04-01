@@ -81,26 +81,7 @@ the case. In addition, the usability of service patterns depends largely on the 
 complexity.
 
 ```{r}
-get_servicepattern = function(dates) {
-  paste(sort(dates), collapse = "_")
-}
-
-servicepatterns = list()
-
-get_servicepattern_id = function(dates) {
-  id = openssl::sha224(get_servicepattern(dates))
-  id <- paste0("p_", substr(id, 0, 9))
-  
-  servicepatterns[[id]] <<- dates
-  return(id)
-}
-
-trip_servicepatterns <- gtfs$date_service_table %>% 
-  inner_join(select(gtfs$trips, service_id, trip_id), by = "service_id") %>% 
-  group_by(trip_id, service_id) %>%
-  summarise(
-    servicepattern_id = get_servicepattern_id(date)
-  ) %>% ungroup()
+gtfs_obj <- set_servicepatterns(gtfs_obj)
 ```
 
 `servicepatterns` is a list containing all date patterns and `trip_servicepatterns` now links 
