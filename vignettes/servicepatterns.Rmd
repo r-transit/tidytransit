@@ -81,24 +81,24 @@ the case. In addition, the usability of service patterns depends largely on the 
 complexity.
 
 ```{r}
-gtfs_obj <- set_servicepatterns(gtfs_obj)
+gtfs <- set_servicepatterns(gtfs)
 ```
 
-`servicepatterns` is a list containing all date patterns and `trip_servicepatterns` now links 
-each trip to a `servicepattern_id`. We can compare the number of unique date patterns to the 
-number of service_ids.
+`servicepatterns` is a list containing all date patterns and `service_servicepattern` links 
+each `servicepattern_id` to a `service_id` (and by extension trips). We can compare the number 
+of servicepatterns to the number of service_ids.
 
 ```{r eval=FALSE, include=FALSE}
 # service ids used
 length(unique(gtfs$trips$service_id)) # 70
 
 # unique date patterns 
-length(servicepatterns) # 6
+length(unique(gtfs$service_servicepattern$servicepattern_id)) # 7
 ```
 
-The feed uses 70 service_ids but there are actually only 6 different date patterns used by 
+The feed uses 70 service_ids but there are actually only 7 different date patterns used by 
 trips. Other feeds might not have such low numbers, for example the Swiss GTFS feed uses 
-around 15'000 service_ids which all identify unique date patterns.
+around 15'600 service_ids which all identify unique date patterns.
 
 ## Analyse Data
 
@@ -109,9 +109,7 @@ patterns and giving them human readable names is a process that is generally har
 A good way to start is visualising the data.
 
 ```{r fig.height=4, fig.width=6}
-date_servicepattern_table <- inner_join(gtfs$date_service_table, trip_servicepatterns, by = "service_id")
-
-date_servicepattern_table <- date_servicepattern_table %>% left_join(calendar, by = "date")
+date_servicepattern_table <- gtfs$date_servicepattern_table %>% left_join(calendar, by = "date")
 
 ggplot(date_servicepattern_table) + theme_bw() + 
   geom_vline(xintercept = seq(min(filter(date_servicepattern_table, weekday == "Sunday")$date), max(date_servicepattern_table$date), 7), color = "#747474") +
@@ -119,10 +117,10 @@ ggplot(date_servicepattern_table) + theme_bw() +
   scale_x_date(breaks = scales::date_breaks("1 month")) + theme(legend.position = "bottom")
 ```
 
-The plot shows that pattern `p_eb8eae871` runs on every sunday from July until October without 
-exceptions. `p_99da13743` also runs on sundays but it also covers a monday (September 3rd). 
-Similarly, the date pattern `p_831fa75f2` runs every saturday. `p_69c6534e2` covers weekdays 
-(mondays through friday), `p_7764f1257` seems to do the same through November with some exceptions. 
+The plot shows that pattern `p_4df51d2` runs on every sunday from July until October without 
+exceptions. `p_7b52f85` also runs on sundays but it also covers a monday (September 3rd). 
+Similarly, the date pattern `p_2f5fffa` runs every saturday. `p_aadaafd` covers weekdays 
+(mondays through friday), `p_279652d` seems to do the same through November with some exceptions. 
 
 ### Names for service patterns
 
@@ -131,8 +129,8 @@ see a semi automated approach with some heuristics. However, the workflow depend
 feed and its structure. You might also consider setting names completely manually.
 
 ```{r}
-suggest_servicepattern_names = function(servicepattern, calendar) {
-  servicepattern_calendar = tibble(date = servicepattern) %>% left_join(calendar, by = "date")
+suggest_servicepattern_name = function(dates, calendar) {
+  servicepattern_calendar = tibble(date = dates) %>% left_join(calendar, by = "date")
   
   # all normal dates without holidays
   calendar_normal = servicepattern_calendar %>% filter(is.na(holiday))
@@ -144,8 +142,11 @@ suggest_servicepattern_names = function(servicepattern, calendar) {
   # all holidays that are not covered by normal weekdays anyways
   calendar_holidays <- servicepattern_calendar %>% filter(!is.na(holiday)) %>% filter(!(weekday %in% names(weekday_freq)))
 
+  if(n_weekdays == 7) {
+    pattern_name = "Every day"
+  }
   # Single day service
-  if(n_weekdays == 1) {
+  else if(n_weekdays == 1) {
     wd = names(weekday_freq)[1]
     # while paste0(weekday, "s") is easier, this solution can be used for other languages
     pattern_name = c("Sunday"  = "Sundays", 
@@ -169,7 +170,9 @@ suggest_servicepattern_names = function(servicepattern, calendar) {
   }
   # Multiple weekdays that appear regularly
   else if(n_weekdays >= 2 && (max(weekday_freq) - min(weekday_freq)) <= 1) {
-    pattern_name = paste(names(weekday_freq), collapse = ", ")
+    wd = names(weekday_freq)
+    ordered_wd = wd[order(match(wd, c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")))]
+    pattern_name = paste(ordered_wd, collapse = ", ")
   } 
   # default
   else {
@@ -181,7 +184,7 @@ suggest_servicepattern_names = function(servicepattern, calendar) {
     pattern_name <- paste0(pattern_name, " and ", paste(calendar_holidays$holiday, collapse = ", "))
   }
   
-  pattern_name <- paste0(pattern_name, " (", min(servicepattern), " - ", max(servicepattern), ")") 
+  pattern_name <- paste0(pattern_name, " (", min(dates), " - ", max(dates), ")") 
 
   return(pattern_name)
 }
@@ -190,16 +193,15 @@ suggest_servicepattern_names = function(servicepattern, calendar) {
 We'll apply this function to our service patterns and create a table with ids and names.
 
 ```{r}
-servicepattern_names = lapply(servicepatterns, suggest_servicepattern_names, calendar)
-
-servicepatterns_df = tibble(
-  servicepattern_id = names(servicepattern_names),
-  servicepattern_name = unlist(servicepattern_names, use.names = F)
+servicepattern_names = gtfs$date_servicepattern_table %>% 
+  group_by(servicepattern_id) %>% summarise(
+    servicepattern_name = suggest_servicepattern_name(date, calendar)
   )
+
 ```
 
 ```{r echo=FALSE}
-knitr::kable(servicepatterns_df)
+knitr::kable(servicepattern_names)
 ```
 
 _work in progress_

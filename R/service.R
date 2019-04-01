@@ -55,33 +55,26 @@ set_servicepatterns <- function(gtfs_obj) {
 
   get_servicepattern_id <- function(dates) {
     id <- digest::digest(dates, "md5")
-    id <- paste0("p_", substr(id, 0, 9))
+    id <- paste0("p_", substr(id, 0, 7))
     return(id)
   }
   
-  # find servicepattern_ids for all trips
-  trip_servicepatterns <- gtfs_obj$date_service_table %>% 
-    inner_join(select(gtfs_obj$trips, service_id, trip_id), by = "service_id") %>% 
-    group_by(trip_id, service_id) %>%
+  # find servicepattern_ids for all services
+  service_servicepattern <- gtfs_obj$date_service_table %>% 
+    group_by(service_id) %>%
     summarise(
       servicepattern_id = get_servicepattern_id(date)
     ) %>% ungroup()
 
   # find dates for servicepatterns
   date_servicepattern_table <- gtfs_obj$date_service_table %>% 
-    left_join(trip_servicepatterns, by = "service_id") %>% 
+    left_join(service_servicepattern, by = "service_id") %>% 
     group_by(date, servicepattern_id) %>% 
     summarise() %>% ungroup()
 
-  servicepattern_ids = unique(trip_servicepatterns$servicepattern_id)
-  
-  servicepatterns = date_servicepattern_table %>% split(.$servicepattern_id)
-  servicepatterns <- lapply(servicepatterns, function(x) { pull(x, date) })
-  names(servicepatterns) <- servicepattern_ids
-  
   # assing to gtfs_obj
-  gtfs_obj$trip_servicepatterns <- trip_servicepatterns
-  gtfs_obj$servicepatterns <- servicepatterns
+  gtfs_obj$service_servicepattern <- service_servicepattern
+  gtfs_obj$date_servicepattern_table <- date_servicepattern_table
   
   return(gtfs_obj)
 }
