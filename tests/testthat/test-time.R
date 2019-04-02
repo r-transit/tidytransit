@@ -33,7 +33,7 @@ test_that("set_hms_times() works with valid data", {
   expect_is(gtest$frequencies$end_time, "character")
 })
 
-test_that("get_date_service_table() uses the right dates", {
+test_that("set_date_service_table() uses the right dates", {
   gtest <- create_empty_gtfs_obj()
   gtest$calendar <- dplyr::tibble(
     service_id = "s1",
@@ -47,14 +47,14 @@ test_that("get_date_service_table() uses the right dates", {
     start_date = lubridate::ymd("20180101"), # monday
     end_date = lubridate::ymd("20180131")) # wednesday
 
-  date_service <- tidytransit:::get_date_service_table(gtest)
+  date_service <- tidytransit::set_date_service_table(gtest)$tidytransit$date_service_table
   
   expect_true(lubridate::ymd("20180101") %in% date_service$date)
   expect_false(lubridate::ymd("20180102") %in% date_service$date)
   expect_true(lubridate::ymd("20180131") %in% date_service$date)
 })
 
-test_that("get_date_service_table() works with additions and exceptions", { 
+test_that("set_date_service_table() works with additions and exceptions", { 
   gtest <- create_empty_gtfs_obj()
   gtest$calendar <- dplyr::tibble(
     service_id = c("wdays", "wend"),
@@ -75,7 +75,7 @@ test_that("get_date_service_table() works with additions and exceptions", {
     exception_type = c(2, 1)
   )
   
-  date_service <- tidytransit:::get_date_service_table(gtest)
+  date_service <- tidytransit::set_date_service_table(gtest)$tidytransit$date_service_table
   
   # exception
   mar14 <- date_service[

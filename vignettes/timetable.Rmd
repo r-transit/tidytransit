@@ -97,7 +97,10 @@ We have now gathered all departures that happen on "Knickerbocker Av". However, 
 departures %>% arrange(arrival_time_hms)
 ```
 
-Looking at the first two departures we see that a train departures at 00:04 and looking at the `service_id` and `trip_id` we can guess that this happens saturdays and weekdays.  With `get_date_service_table()` we receive a table that indicates which service id runs on which date.
+Looking at the first two departures we see that a train departures at 00:04 and looking at 
+the `service_id` and `trip_id` we can guess that this happens saturdays and weekdays.  
+With `set_date_service_table()` we add a table to the feed that indicates which service_id 
+runs on which date.
 
 ```{r}
 
