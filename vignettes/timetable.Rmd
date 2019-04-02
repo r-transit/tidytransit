@@ -12,7 +12,6 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 library(tidytransit)
 library(dplyr)
-library(openssl)
 library(ggplot2)
 ```
 

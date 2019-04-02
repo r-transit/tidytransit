@@ -13,7 +13,6 @@ library(knitr)
 library(tidytransit)
 library(dplyr)
 library(lubridate)
-library(openssl)
 library(ggplot2)
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -81,7 +80,7 @@ the case. In addition, the usability of service patterns depends largely on the 
 complexity.
 
 ```{r}
-gtfs <- set_servicepatterns(gtfs)
+gtfs <- set_servicepattern(gtfs)
 ```
 
 `servicepatterns` is a list containing all date patterns and `service_servicepattern` links 
@@ -117,10 +116,10 @@ ggplot(date_servicepattern_table) + theme_bw() +
   scale_x_date(breaks = scales::date_breaks("1 month")) + theme(legend.position = "bottom")
 ```
 
-The plot shows that pattern `p_4df51d2` runs on every sunday from July until October without 
-exceptions. `p_7b52f85` also runs on sundays but it also covers a monday (September 3rd). 
-Similarly, the date pattern `p_2f5fffa` runs every saturday. `p_aadaafd` covers weekdays 
-(mondays through friday), `p_279652d` seems to do the same through November with some exceptions. 
+The plot shows that pattern `s_4df51d2` runs on every sunday from July until October without 
+exceptions. `s_7b52f85` also runs on sundays but it also covers a monday (September 3rd). 
+Similarly, the date pattern `s_2f5fffa` runs every saturday. `s_aadaafd` covers weekdays 
+(mondays through friday), `s_279652d` seems to do the same through November with some exceptions. 
 
 ### Names for service patterns
 
