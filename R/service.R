@@ -62,21 +62,21 @@ set_servicepattern <- function(gtfs_obj) {
   }
   
   # find servicepattern_ids for all services
-  service_pattern <- gtfs_obj$tidytransit$date_service_table %>% 
+  service_pattern <- gtfs_obj$.$date_service_table %>% 
     group_by(service_id) %>%
     summarise(
       servicepattern_id = get_servicepattern_id(date)
     ) %>% ungroup()
 
   # find dates for servicepattern
-  date_servicepattern_table <- gtfs_obj$tidytransit$date_service_table %>% 
+  date_servicepattern_table <- gtfs_obj$.$date_service_table %>% 
     left_join(service_pattern, by = "service_id") %>% 
     group_by(date, servicepattern_id) %>% 
     summarise() %>% ungroup()
 
   # assing to gtfs_obj
-  gtfs_obj$tidytransit$service_pattern <- service_pattern
-  gtfs_obj$tidytransit$date_servicepattern_table <- date_servicepattern_table
+  gtfs_obj$.$service_pattern <- service_pattern
+  gtfs_obj$.$date_servicepattern_table <- date_servicepattern_table
   
   return(gtfs_obj)
 }
