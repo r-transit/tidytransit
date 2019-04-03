@@ -52,6 +52,7 @@ count_service_trips <- function(trips) {
 #' @keywords internal
 #' @importFrom dplyr group_by summarise ungroup left_join
 #' @importFrom digest digest
+#' @importFrom rlang .data
 #' @export
 set_servicepattern <- function(gtfs_obj, hash_algo = "md5", id_prefix = "s_", hash_length = 7) {
   if(!exists("date_service_table", gtfs_obj)) {
@@ -59,24 +60,25 @@ set_servicepattern <- function(gtfs_obj, hash_algo = "md5", id_prefix = "s_", ha
   }
 
   get_servicepattern_id <- function(dates) {
-    hash <- digest::digest(dates, hash_algo)
+    hash <- digest(dates, hash_algo)
     id <- paste0(id_prefix, substr(hash, 0, hash_length))
     return(id)
   }
   
   if(hash_length < 1) {
     get_servicepattern_id <- function(dates) {
-      hash <- digest::digest(dates, hash_algo)
+      hash <- digest(dates, hash_algo)
       id <- paste0(id_prefix, hash)
       return(id)
     }
   }
   
   # find servicepattern_ids for all services
+  servicepattern_id <- NULL # prevents CMD chek note on non-visible binding
   service_pattern <- gtfs_obj$.$date_service_table %>% 
     group_by(service_id) %>%
     summarise(
-      servicepattern_id = get_servicepattern_id(date)
+      servicepattern_id = get_servicepattern_id(.data$date)
     ) %>% ungroup()
 
   # find dates for servicepattern

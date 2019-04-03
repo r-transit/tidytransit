@@ -236,14 +236,14 @@ trip_dates_count$weekday <- lubridate::wday(trip_dates_count$date, label = T, ab
 trip_dates_count$day_of_month <- lubridate::day(trip_dates_count$date)
 trip_dates_count$first_day_of_month <- lubridate::wday(trip_dates_count$date - trip_dates_count$day_of_month,  week_start = 7)
 trip_dates_count$week_of_month <- ceiling((trip_dates_count$day_of_month - as.numeric(trip_dates_count$weekday) - trip_dates_count$first_day_of_month) / 7)
-trip_dates_count$month <- lubridate::month(trip_dates_count$date, label = T)
+trip_dates_count$month <- lubridate::month(trip_dates_count$date, label = T, abbr = F)
 
 ggplot(trip_dates_count, aes(x = weekday, y = -week_of_month)) + theme_bw() +
   geom_tile(aes(fill = count, colour = "grey50")) +
   geom_text(aes(label = day_of_month), size = 3, colour = "grey20") +
   facet_wrap(~month, ncol = 3) +
   scale_fill_gradient(low = "cornsilk1", high = "DarkOrange", na.value="white", )+
-  scale_color_manual(guide = F, values = "grey50") +
+    scale_color_manual(guide = F, values = "grey50") +
   theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
   theme(panel.grid = element_blank()) +
   labs(x = NULL, y = NULL, fill = "# trips") +

@@ -58,7 +58,7 @@ trip_origin:
 
 ```{r}
 if(!exists("trip_headsign", where = gtfs$trips)) {
-  # get the first id of the trip's stop sequence
+  # get the last id of the trip's stop sequence
   trip_headsigns <- gtfs$stop_times %>% 
     group_by(trip_id) %>% 
     summarise(stop_id = stop_id[which.max(stop_sequence)]) %>% 
