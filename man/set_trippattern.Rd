@@ -4,10 +4,17 @@
 \alias{set_trippattern}
 \title{Add trip pattern data frame to the gtfs object}
 \usage{
-set_trippattern(gtfs_obj)
+set_trippattern(gtfs_obj, id_prefix = "t_", hash_length = 7,
+  hash_algo = "md5")
 }
 \arguments{
 \item{gtfs_obj}{gtfs feed}
+
+\item{id_prefix}{all ids start with this string}
+
+\item{hash_length}{length the hash should be cut to with substr(). Use -1 if the full hash should be used}
+
+\item{hash_algo}{hashing algorithm used by digest}
 }
 \value{
 gtfs_obj

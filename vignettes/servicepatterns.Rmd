@@ -207,7 +207,7 @@ We can plot the service pattern like a calendar to visualise the different patte
 
 ```{r fig.height=4, fig.width=7}
 dates = gtfs$.$date_servicepattern_table
-dates$wday <- lubridate::wday(gtfs$.$date_servicepattern_table$date, label = T, abbr = T)
+dates$wday <- lubridate::wday(dates$date, label = T, abbr = T, week_start = 7)
 dates$week_nr <- lubridate::week(dates$date)
 
 dates <- dates %>% group_by(week_nr) %>% summarise(week_first_date = min(date)) %>% right_join(dates, by = "week_nr")
@@ -232,9 +232,9 @@ trips_servicepattern = left_join(select(gtfs$trips, trip_id, service_id), gtfs$.
 trip_dates = left_join(gtfs$.$date_servicepattern_table, trips_servicepattern, by = "servicepattern_id")
 
 trip_dates_count = trip_dates %>% group_by(date) %>% summarise(count = dplyr::n()) 
-trip_dates_count$weekday <- lubridate::wday(trip_dates_count$date, label = T, abbr = T)
+trip_dates_count$weekday <- lubridate::wday(trip_dates_count$date, label = T, abbr = T, week_start = 7)
 trip_dates_count$day_of_month <- lubridate::day(trip_dates_count$date)
-trip_dates_count$first_day_of_month <- lubridate::wday(trip_dates_count$date - trip_dates_count$day_of_month)
+trip_dates_count$first_day_of_month <- lubridate::wday(trip_dates_count$date - trip_dates_count$day_of_month,  week_start = 7)
 trip_dates_count$week_of_month <- ceiling((trip_dates_count$day_of_month - as.numeric(trip_dates_count$weekday) - trip_dates_count$first_day_of_month) / 7)
 trip_dates_count$month <- lubridate::month(trip_dates_count$date, label = T)
 

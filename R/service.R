@@ -44,21 +44,32 @@ count_service_trips <- function(trips) {
 
 #' Calculate servicepattern for the gtfs_obj
 #' 
-#' @param gtfs_obj feed
+#' @param gtfs_obj gtfs feed
+#' @param id_prefix all ids start with this string
+#' @param hash_length length the hash should be cut to with substr(). Use -1 if the full hash should be used
+#' @param hash_algo hashing algorithm used by digest
 #' @return modified gtfs_obj with added servicepattern list and a table linking trips and pattern (trip_servicepatterns)
 #' @keywords internal
 #' @importFrom dplyr group_by summarise ungroup left_join
 #' @importFrom digest digest
 #' @export
-set_servicepattern <- function(gtfs_obj) {
+set_servicepattern <- function(gtfs_obj, hash_algo = "md5", id_prefix = "s_", hash_length = 7) {
   if(!exists("date_service_table", gtfs_obj)) {
     gtfs_obj <- set_date_service_table(gtfs_obj)
   }
 
   get_servicepattern_id <- function(dates) {
-    id <- digest::digest(dates, "md5")
-    id <- paste0("s_", substr(id, 0, 7))
+    hash <- digest::digest(dates, hash_algo)
+    id <- paste0(id_prefix, substr(hash, 0, hash_length))
     return(id)
+  }
+  
+  if(hash_length < 1) {
+    get_servicepattern_id <- function(dates) {
+      hash <- digest::digest(dates, hash_algo)
+      id <- paste0(id_prefix, hash)
+      return(id)
+    }
   }
   
   # find servicepattern_ids for all services
