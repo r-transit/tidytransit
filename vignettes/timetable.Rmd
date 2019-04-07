@@ -96,9 +96,7 @@ stop_ids <- gtfs$stops %>%
 
 ## Trips departing from stop 
 
-Given these stop_ids for Time Square, we can to add trip info like the route_id, service_id, trip_headsign, and trip_origin by joining the stop_ids we've selected to the stop_times data frame and then the trips data frame. 
-
-Stop_ids and trips are linked via the stop_times data frame.  
+To the selected stop_ids for Time Square, we can join trip columns: `route_id`, `service_id`, `trip_headsign`, and `trip_origin`. Because stop_ids and trips are linked via the stop_times data frame, we do this by joining the stop_ids we've selected to the stop_times data frame and then to the trips data frame. 
 
 ```{r}
 departures <- stop_ids %>% 
