@@ -1,0 +1,172 @@
+---
+title: "Generate a departure timetable"
+author: "Flavio Poletti"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{tidytransit-Timetable}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidytransit)
+library(dplyr)
+library(ggplot2)
+```
+
+In this vignette a departure timetable for a stop is generated and visualised. For some 
+analysis it is important to know how and when a single stop is served and workflows to
+gather and plot such data can help with this analysis.
+
+## Read GTFS data
+
+We use a feed from the New York Metropolitan Transportation Authority. It is provided as a 
+sample feed with tidytransit but you can read it directly from the MTA's website. 
+
+```{r}
+local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+gtfs <- read_gtfs(local_gtfs_path, local=TRUE)
+# gtfs <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
+```
+
+## trip_origin and trip_headsign
+
+To display where a bus (or any public transit vehicle) is headed on a timetable we need the 
+column `trip_headsign` in `gtfs$trips`. This is an optional field but our example feed 
+provides this information. To display where a vehicle comes from on the timetable we need to 
+create a new column in `gtfs$trips` which we'll call `trip_origin`.
+
+```{r}
+# get the id of the first stop in the trip's stop sequence
+first_stop_id <- gtfs$stop_times %>% 
+  group_by(trip_id) %>% 
+  summarise(stop_id = stop_id[which.min(stop_sequence)])
+
+# join with the stops table to get the stop_name
+first_stop_names <- left_join(first_stop_id, gtfs$stops, by="stop_id")
+
+# rename the first stop_name as trip_origin
+trip_origins <- first_stop_names %>% select(trip_id, trip_origin = stop_name)
+
+# assign the 
+gtfs$trips <- left_join(gtfs$trips, trip_origins, by = "trip_id")
+```
+
+In case `trip_headsign` does not exist in the feed it can be generated similarly to 
+trip_origin:
+
+```{r}
+if(!exists("trip_headsign", where = gtfs$trips)) {
+  # get the last id of the trip's stop sequence
+  trip_headsigns <- gtfs$stop_times %>% 
+    group_by(trip_id) %>% 
+    summarise(stop_id = stop_id[which.max(stop_sequence)]) %>% 
+    left_join(gtfs$stops, by="stop_id") %>% select(trip_id, trip_headsign = stop_name)
+
+  # assign to the gtfs object 
+  gtfs$trips <- left_join(gtfs$trips, trip_headsigns, by = "trip_id")
+}
+```
+
+
+# 
+
+For easier handling of time data we use departure times as `hms::hms()`. Times for the whole 
+feed can be converted with `set_hms_times()`
+
+```{r}
+gtfs <- gtfs %>% set_hms_times() %>% set_date_service_table()
+```
+
+## Get stop_ids
+
+To create a departure timetable we first need to find the ids of all stops with the same 
+same name as `stop_name` in general might cover different platforms and thus stop_ids.
+
+```{r}
+stop_ids <- gtfs$stops %>% filter(stop_name == "Times Sq - 42 St") %>% select(stop_id)
+```
+
+## Trips departing from stop 
+
+Then we'll fetch all trips departing from these stops. Stop_ids and trips are linked via 
+stop_times. Each trip belongs to a route, the corresponding route info is gathered by joining 
+the trips data frame with `gtfs$routes`.
+
+```{r}
+departures <- stop_ids %>% inner_join(gtfs$stop_times %>% select(trip_id, arrival_time_hms, departure_time_hms, stop_id), by = "stop_id")
+
+# add trip info (route_id, service_id, trip_headsign, trip_origin)
+departures <- departures %>% left_join(gtfs$trips %>% select(trip_id, route_id, service_id, trip_headsign, trip_origin), by = "trip_id") 
+
+# add route info (route_short_name)
+departures <- departures %>% left_join(gtfs$routes %>% select(route_id, route_short_name), by = "route_id")
+```
+
+## Extract a single day 
+
+We have now gathered all departures that happen at Times Square. However, we do not know which 
+days the these trips run. How services and trips are set up depends largely on the feed,
+for an idea how to handle this have a look at the servicepattern vignette. For this vignette
+we're only interested in departures that happen on August 23rd 2018, a typical weekday. We
+use tidytransit's `date_service_table` to see which services run on a specific date. The 
+departures data frame is filtered accordingly
+
+```{r fig.width=8, fig.height=12}
+services_on_180823 <- gtfs$.$date_service_table %>% 
+  filter(date == "2018-08-23") %>% select(service_id)
+
+departures_180823 <- departures %>% inner_join(services_on_180823, by = "service_id")
+```
+
+```{r}
+departures_180823 %>%
+  arrange(departure_time_hms, stop_id, route_short_name) %>% 
+  select(departure_time_hms, stop_id, route_short_name, trip_headsign) %>% 
+  filter(departure_time_hms >= hms::hms(hours = 7)) %>% 
+  filter(departure_time_hms < hms::hms(hours = 7, minutes = 10)) %>% 
+  knitr::kable()
+```
+
+## Simple plot
+
+We'll now plot all departures from Time square depending on trip_headsign and route. We can
+use the route colors provided in the feed.
+
+```{r fig.width=8, fig.height=6}
+route_colors <- gtfs$routes %>% select(route_id, route_short_name, route_color)
+route_colors$route_color[which(is.na(route_colors$route_color))] <- "454545"
+route_colors <- setNames(paste0("#", route_colors$route_color), route_colors$route_short_name)
+
+ggplot(departures_180823) + theme_bw() +
+  geom_point(aes(y=trip_headsign, x=departure_time_hms, color = route_short_name), size = 0.2) +
+  scale_x_time(breaks = seq(0, max(as.numeric(departures$departure_time_hms)), 3600), labels = scales::time_format("%H:%M")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  theme(legend.position = "bottom") +
+  scale_color_manual(values = route_colors) +
+  labs(title = "Departures from Times Square on 08/23/18")
+```
+
+Now we plot departures for all stop_ids with the same name, we can separate for different
+stop_id. The following plot shows all departures for stop_ids 127N and 127S from 7 to 8 AM.
+
+```{r fig.width=6, fig.height=6}
+departures_180823_sub_7to8 <- departures_180823 %>% 
+  filter(stop_id %in% c("127N", "127S")) %>% 
+  filter(departure_time_hms >= hms::hms(hours = 7) & departure_time_hms <= hms::hms(hour = 8))
+
+ggplot(departures_180823_sub_7to8) + theme_bw() +
+  geom_point(aes(y=trip_headsign, x=departure_time_hms, color = route_short_name), size = 1) +
+  scale_x_time(breaks = seq(7*3600, 9*3600, 300), labels = scales::time_format("%H:%M")) +
+  scale_y_discrete(drop = F, ) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  theme(legend.position = "bottom") +
+  labs(title = "Departures from Times Square on 08/23/18") +
+  facet_wrap(~stop_id, ncol = 1)
+```
+
+Of course this plot idea can be expanded further. You could also differentiate each route by
+direction (using headsign, origin or next/previous stops). Another approach is to calculate 
+frequencies and show different levels of service during the day, all depending on the goal 
+of your analysis. 

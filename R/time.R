@@ -16,7 +16,7 @@ gt_as_dt <- function(stop_times) {
 filter_stop_times_by_hour <- function(stop_times, 
   start_hour, 
   end_hour) {
-  # TODO use gtfs_set_hms_times during import to avoid errors here?
+  # TODO use set_hms_times during import to avoid errors here?
   stopifnot("arrival_time_hms" %in% colnames(stop_times), "departure_time_hms" %in% colnames(stop_times))
   # it might be easier to just accept hms() objects
   stop_times %>% filter(arrival_time_hms > 
@@ -29,10 +29,11 @@ filter_stop_times_by_hour <- function(stop_times,
 #' Adds columns to stop_times (arrival_time_hms, departure_time_hms) and frequencies (start_time_hms, end_time_hms)
 #' with times converted with hms::hms().
 #' 
+#' @param gtfs_obj a gtfs object in which hms times should be set, the modified gtfs_obj is returned
 #' @return gtfs_obj with added hms times columns for stop_times and frequencies
-#' @keywords internal
 #' @importFrom hms hms
-gtfs_set_hms_times <- function(gtfs_obj) {
+#' @export
+set_hms_times <- function(gtfs_obj) {
   stopifnot(is_gtfs_obj(gtfs_obj))
   
   str_to_seconds <- function(hhmmss_str) {
@@ -67,13 +68,12 @@ gtfs_set_hms_times <- function(gtfs_obj) {
 #' @examples 
 #' library(dplyr)
 #' local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
-#' nyc <- read_gtfs(local_gtfs_path, local=TRUE)
-#' nyc_services_by_date <- nyc %>% get_date_service_table()
+#' nyc <- read_gtfs(local_gtfs_path, local=TRUE) %>% set_date_service_table()
+#' nyc_services_by_date <- nyc$.$date_service_table
 #' # count the number of services running on each date
 #' nyc_services_by_date %>% group_by(date) %>% count()
 #'
-
-get_date_service_table <- function(gtfs_obj) {
+set_date_service_table <- function(gtfs_obj) {
   stopifnot(is_gtfs_obj(gtfs_obj))
   
   weekday <- function(date) {
@@ -82,7 +82,7 @@ get_date_service_table <- function(gtfs_obj) {
       "saturday")[as.POSIXlt(date)$wday + 1]
   }
   
-  if(all(is.na(gtfs_obj$calendar$start_date)) & 
+  if(all(is.na(gtfs_obj$calendar$start_date)) && 
      all(is.na(gtfs_obj$calendar$end_date))) {
     # TODO validate no start_date and end_date defined in calendar.txt
     date_service_df <- dplyr::tibble(date=lubridate::ymd("19700101"), 
@@ -143,5 +143,7 @@ get_date_service_table <- function(gtfs_obj) {
     warning("No start and end dates defined in feed")
   }
   
-  return(date_service_df)
+  gtfs_obj$.$date_service_table <- date_service_df
+  
+  return(gtfs_obj)
 }
