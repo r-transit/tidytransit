@@ -28,7 +28,7 @@ service_ids and some feeds even use a unique `service_id` for each trip and day.
 this vignette we'll look at a general way to gather information on when trips run by 
 using "service patterns".
 
-Service patterns can be used to find a typicial day for further analysis like routing or
+Service patterns can be used to find a typical day for further analysis like routing or
 trip frequencies for different days.
 
 ## Prepare data
@@ -242,7 +242,7 @@ ggplot(trip_dates_count, aes(x = weekday, y = -week_of_month)) + theme_bw() +
   geom_tile(aes(fill = count, colour = "grey50")) +
   geom_text(aes(label = day_of_month), size = 3, colour = "grey20") +
   facet_wrap(~month, ncol = 3) +
-  scale_fill_gradient(low = "cornsilk1", high = "DarkOrange", na.value="white", )+
+  scale_fill_gradient(low = "cornsilk1", high = "DarkOrange", na.value="white")+
     scale_color_manual(guide = F, values = "grey50") +
   theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
   theme(panel.grid = element_blank()) +
