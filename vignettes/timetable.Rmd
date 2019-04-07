@@ -137,13 +137,11 @@ departures %>%
   knitr::kable()
 ```
 
-However, we do not know directly on which days the these trips run. Using the service_id column on our calculated departures, and tidytransit's calculated `date_service_table`, we can filter trips to a given date of interest. 
+However, we don't know days on which these trips run. Using the service_id column on our calculated departures, and tidytransit's calculated `date_service_table`, we can filter trips to a given date of interest. 
 
 ## Preparing a Date Service Table
 
-First, we need to calculate a table that maps calendar dates to service_ids for the entire schedule.  
-
-We pipe the feed to the `set_date_service_table` function, which adds a `date_service_table` to the computed tables in the feed. Please the `servicepatterns` Vignette for further examples on how to use this table. 
+First, we need to calculate a table that maps calendar dates to service_ids for the entire schedule. To do this, we pipe the feed to the `set_date_service_table` function, which adds a `date_service_table` to the computed tables in the feed. Please the `servicepatterns` Vignette for further examples on how to use this table. 
 
 ```{r}
 gtfs <- gtfs %>% 
