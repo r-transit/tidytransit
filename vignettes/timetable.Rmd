@@ -1,5 +1,5 @@
 ---
-title: "Generate a departure timetable"
+title: "Generate a Departure Timetable"
 author: "Flavio Poletti"
 output: rmarkdown::html_vignette
 vignette: >
@@ -30,6 +30,14 @@ gtfs <- read_gtfs(local_gtfs_path, local=TRUE)
 # gtfs <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
 ```
 
+## Casting Time Data as hms
+
+In order to work with time fields in the GTFS feed data, we first need to convert them to [`hms::hms()`](https://cran.r-project.org/web/packages/hms/index.html). Times for the whole feed can be converted with `set_hms_times()`. See the `set_hms_times` reference for more detail on how it works. 
+
+```{r}
+gtfs <- gtfs %>% set_hms_times()
+```
+
 ## trip_origin and trip_headsign
 
 To display where a bus (or any public transit vehicle) is headed on a timetable we need the 
@@ -49,8 +57,14 @@ first_stop_names <- left_join(first_stop_id, gtfs$stops, by="stop_id")
 # rename the first stop_name as trip_origin
 trip_origins <- first_stop_names %>% select(trip_id, trip_origin = stop_name)
 
-# assign the 
+# join the trip origins back onto the trips
 gtfs$trips <- left_join(gtfs$trips, trip_origins, by = "trip_id")
+```
+
+```{r}
+gtfs$trips %>%
+  select(route_id, trip_origin) %>%
+  head()
 ```
 
 In case `trip_headsign` does not exist in the feed it can be generated similarly to 
@@ -62,63 +76,102 @@ if(!exists("trip_headsign", where = gtfs$trips)) {
   trip_headsigns <- gtfs$stop_times %>% 
     group_by(trip_id) %>% 
     summarise(stop_id = stop_id[which.max(stop_sequence)]) %>% 
-    left_join(gtfs$stops, by="stop_id") %>% select(trip_id, trip_headsign = stop_name)
+    left_join(gtfs$stops, by="stop_id") %>% select(trip_id, trip_headsign.computed = stop_name)
 
-  # assign to the gtfs object 
+  # assign the headsign to the gtfs object 
   gtfs$trips <- left_join(gtfs$trips, trip_headsigns, by = "trip_id")
 }
 ```
 
+## Create A Departure Time Table
 
-# 
-
-For easier handling of time data we use departure times as `hms::hms()`. Times for the whole 
-feed can be converted with `set_hms_times()`
-
-```{r}
-gtfs <- gtfs %>% set_hms_times() %>% set_date_service_table()
-```
-
-## Get stop_ids
-
-To create a departure timetable we first need to find the ids of all stops with the same 
-same name as `stop_name` in general might cover different platforms and thus stop_ids.
+To create a departure timetable we first need to find the ids of all stops in the stops table with the same 
+same name, as `stop_name` might cover different platforms and thus have multiple stop_ids in the stops table. 
 
 ```{r}
-stop_ids <- gtfs$stops %>% filter(stop_name == "Times Sq - 42 St") %>% select(stop_id)
+stop_ids <- gtfs$stops %>% 
+  filter(stop_name == "Times Sq - 42 St") %>% 
+  select(stop_id)
 ```
 
 ## Trips departing from stop 
 
-Then we'll fetch all trips departing from these stops. Stop_ids and trips are linked via 
-stop_times. Each trip belongs to a route, the corresponding route info is gathered by joining 
-the trips data frame with `gtfs$routes`.
+Given these stop_ids for Time Square, we can to add trip info like the route_id, service_id, trip_headsign, and trip_origin by joining the stop_ids we've selected to the stop_times data frame and then the trips data frame. 
+
+Stop_ids and trips are linked via the stop_times data frame.  
 
 ```{r}
-departures <- stop_ids %>% inner_join(gtfs$stop_times %>% select(trip_id, arrival_time_hms, departure_time_hms, stop_id), by = "stop_id")
+departures <- stop_ids %>% 
+  inner_join(gtfs$stop_times %>% 
+               select(trip_id, arrival_time_hms, 
+                      departure_time_hms, stop_id), 
+             by = "stop_id")
 
-# add trip info (route_id, service_id, trip_headsign, trip_origin)
-departures <- departures %>% left_join(gtfs$trips %>% select(trip_id, route_id, service_id, trip_headsign, trip_origin), by = "trip_id") 
+departures <- departures %>% 
+  left_join(gtfs$trips %>% 
+              select(trip_id, route_id, 
+                     service_id, trip_headsign, 
+                     trip_origin), 
+            by = "trip_id") 
+```
 
-# add route info (route_short_name)
-departures <- departures %>% left_join(gtfs$routes %>% select(route_id, route_short_name), by = "route_id")
+## add route info (route_short_name)
+
+Each trip belongs to a route, and the route short name can be added to the departures by joining the trips data frame with `gtfs$routes`.
+
+```{r}
+departures <- departures %>% 
+  left_join(gtfs$routes %>% 
+              select(route_id, 
+                     route_short_name), 
+            by = "route_id")
+```
+
+Now we have a data frame that tells us about the origin, destination, and time at which each train depart from Times Square for every possible schedule of service. 
+
+```{r}
+departures %>% 
+  select(arrival_time_hms,
+         departure_time_hms,
+         trip_headsign,trip_origin,
+         route_id) %>%
+  head() %>%
+  knitr::kable()
+```
+
+However, we do not know directly on which days the these trips run. Using the service_id column on our calculated departures, and tidytransit's calculated `date_service_table`, we can filter trips to a given date of interest. 
+
+## Preparing a Date Service Table
+
+First, we need to calculate a table that maps calendar dates to service_ids for the entire schedule.  
+
+We pipe the feed to the `set_date_service_table` function, which adds a `date_service_table` to the computed tables in the feed. Please the `servicepatterns` Vignette for further examples on how to use this table. 
+
+```{r}
+gtfs <- gtfs %>% 
+  set_hms_times() %>% 
+  set_date_service_table()
+```
+
+```{r}
+head(gtfs$.$date_service_table)
 ```
 
 ## Extract a single day 
 
-We have now gathered all departures that happen at Times Square. However, we do not know which 
-days the these trips run. How services and trips are set up depends largely on the feed,
-for an idea how to handle this have a look at the servicepattern vignette. For this vignette
-we're only interested in departures that happen on August 23rd 2018, a typical weekday. We
-use tidytransit's `date_service_table` to see which services run on a specific date. The 
-departures data frame is filtered accordingly
+Now we are ready to extract the same service table for any given day of the year. 
+
+For example,for August 23rd 2018, a typical weekday, we can filter as follows: 
 
 ```{r fig.width=8, fig.height=12}
 services_on_180823 <- gtfs$.$date_service_table %>% 
   filter(date == "2018-08-23") %>% select(service_id)
 
-departures_180823 <- departures %>% inner_join(services_on_180823, by = "service_id")
+departures_180823 <- departures %>% 
+  inner_join(services_on_180823, by = "service_id")
 ```
+
+How services and trips are set up depends largely on the feed. For an idea how to handle other dates and questions about schedules have a look at the `servicepatterns` vignette. 
 
 ```{r}
 departures_180823 %>%
@@ -159,7 +212,7 @@ departures_180823_sub_7to8 <- departures_180823 %>%
 ggplot(departures_180823_sub_7to8) + theme_bw() +
   geom_point(aes(y=trip_headsign, x=departure_time_hms, color = route_short_name), size = 1) +
   scale_x_time(breaks = seq(7*3600, 9*3600, 300), labels = scales::time_format("%H:%M")) +
-  scale_y_discrete(drop = F, ) +
+  scale_y_discrete(drop = F) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   theme(legend.position = "bottom") +
   labs(title = "Departures from Times Square on 08/23/18") +
