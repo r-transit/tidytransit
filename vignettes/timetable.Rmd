@@ -68,7 +68,7 @@ gtfs$trips %>%
 ```
 
 In case `trip_headsign` does not exist in the feed it can be generated similarly to 
-trip_origin:
+`trip_origin`:
 
 ```{r}
 if(!exists("trip_headsign", where = gtfs$trips)) {
@@ -141,7 +141,7 @@ However, we don't know days on which these trips run. Using the service_id colum
 
 ## Preparing a Date Service Table
 
-First, we need to calculate a table that maps calendar dates to service_ids for the entire schedule. To do this, we pipe the feed to the `set_date_service_table` function, which adds a `date_service_table` to the computed tables in the feed. Please the `servicepatterns` Vignette for further examples on how to use this table. 
+First, we need to calculate a table that maps calendar dates to service_ids for the entire schedule. To do this, we pipe the feed to the `set_date_service_table` function, which adds a `date_service_table` to the computed tables in the feed. Please the `servicepatterns` vignette for further examples on how to use this table. 
 
 ```{r}
 gtfs <- gtfs %>% 
@@ -157,7 +157,7 @@ head(gtfs$.$date_service_table)
 
 Now we are ready to extract the same service table for any given day of the year. 
 
-For example,for August 23rd 2018, a typical weekday, we can filter as follows: 
+For example, for August 23rd 2018, a typical weekday, we can filter as follows: 
 
 ```{r fig.width=8, fig.height=12}
 services_on_180823 <- gtfs$.$date_service_table %>% 
@@ -180,7 +180,7 @@ departures_180823 %>%
 
 ## Simple plot
 
-We'll now plot all departures from Time square depending on trip_headsign and route. We can
+We'll now plot all departures from Times Square depending on trip_headsign and route. We can
 use the route colors provided in the feed.
 
 ```{r fig.width=8, fig.height=6}
@@ -218,4 +218,4 @@ ggplot(departures_180823_sub_7to8) + theme_bw() +
 Of course this plot idea can be expanded further. You could also differentiate each route by
 direction (using headsign, origin or next/previous stops). Another approach is to calculate 
 frequencies and show different levels of service during the day, all depending on the goal 
-of your analysis. 
+of your analysis.
