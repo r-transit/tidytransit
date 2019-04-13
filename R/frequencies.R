@@ -1,4 +1,10 @@
 #' Get Stop Frequency
+#' 
+#' Note that some GTFS feeds contain a frequency data frame already. 
+#' Consider using this instead, as it will be more accurate than what 
+#' tidytransit calculates. 
+#' 
+#' 
 #' @param gtfs_obj a list of gtfs dataframes as read by read_gtfs().
 #' @param start_hour (optional) an integer indicating the start hour (default 7)
 #' @param end_hour (optional) an integer indicating the end hour (default 20)
@@ -7,7 +13,7 @@
 #' @param by_route default TRUE, if FALSE then calculate headway for any line coming through the stop in the same direction on the same schedule. 
 #' @param wide (optional) if true, then return a wide rather than tidy data frame
 #' @export
-#' @return a gtfs_obj with a dataframe of stops with a "Trips" variable representing the count trips taken through each stop for a route within a given time frame
+#' @return a gtfs_obj with a dataframe of stops (gtfs_obj$.$stops_frequency) with a "Trips" variable representing the count trips taken through each stop for a route within a given time frame
 #' @importFrom dplyr %>%
 #' @importFrom rlang .data !! := quo enquo
 #' @importFrom stats median sd
@@ -77,11 +83,15 @@ get_stop_frequency <- function(gtfs_obj,
   }
   stops_frequency <- stop_time_trips %>% 
     tibble::as_tibble()
-  gtfs_obj$stops_frequency <- stops_frequency
+  gtfs_obj$.$stops_frequency <- stops_frequency
   return(gtfs_obj)
 }
 
 #' Get Route Frequency
+#' 
+#' Note that some GTFS feeds contain a frequency data frame already. 
+#' Consider using this instead, as it will be more accurate than what 
+#' tidytransit calculates. 
 #' 
 #' should take: 
 #' @param gtfs_obj a list of gtfs dataframes as read by the trread package.
@@ -89,8 +99,8 @@ get_stop_frequency <- function(gtfs_obj,
 #' @param end_hour (optional) an integer, default 22 (10 pm)
 #' @param quiet default FALSE. whether to echo process messages
 #' @param service_id (optional) a string from the calendar dataframe identifying a particular service schedule.
-#' @param dow (optional) an integeger vector with days of week. monday=1. default: c(1,1,1,1,1,0,0)
-#' @return a gtfs_obj with a dataframe of routes with variables for headway/frequency for a route within a given time frame
+#' @param dow (optional) an integer vector with days of week. monday=1. default: c(1,1,1,1,1,0,0)
+#' @return a gtfs_obj with a dataframe of routes with variables (gtfs_obj$.$routes_frequency) for headway/frequency for a route within a given time frame
 #' @export
 #' @examples 
 #' data(gtfs_obj)
@@ -105,11 +115,12 @@ get_route_frequency <- function(gtfs_obj,
                             service_id = "",
                             dow=c(1, 1, 1, 1, 1, 0, 0)) {
   if (!quiet) message("Calculating route and stop headways.")
+  if( !is.null(gtfs_obj$frequencies) ) {  print("NOTE: A pre-calculated frequencies dataframe exists for this feed already--consider using that.") } 
   # TODO use set_* if gtfs_obj is changed/appended?
   gtfs_obj <- get_stop_frequency(gtfs_obj, start_hour, 
                                  end_hour, service_id, dow)  
-  if (dim(gtfs_obj$stops_frequency)[[1]]!=0) {
-    gtfs_obj$routes_frequency <- gtfs_obj$stops_frequency %>%
+  if (dim(gtfs_obj$.$stops_frequency)[[1]]!=0) {
+    gtfs_obj$.$routes_frequency <- gtfs_obj$.$stops_frequency %>%
       dplyr::group_by_("route_id") %>%
       dplyr::summarise(median_headways = 
                          as.integer(round(median(.data$headway),0)),
@@ -125,3 +136,4 @@ get_route_frequency <- function(gtfs_obj,
   return(gtfs_obj)
 }
 
+transit_freq_epa_sf <- get_epa_transit(state="CA")

@@ -6,9 +6,9 @@
 #' @export
 gtfs_as_sf <- function(gtfs_obj, quiet) {
   if(!quiet) message('Converting stops to simple features ')
-  gtfs_obj$stops_sf <- try(get_stop_geometry(gtfs_obj$stops))
+  gtfs_obj$.$stops_sf <- try(get_stop_geometry(gtfs_obj$stops))
   if(!quiet) message('Converting routes to simple features ')
-  gtfs_obj$routes_sf <- try(get_route_geometry(gtfs_obj))
+  gtfs_obj$.$routes_sf <- try(get_route_geometry(gtfs_obj))
   return(gtfs_obj)
 }
 
