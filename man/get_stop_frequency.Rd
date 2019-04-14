@@ -5,7 +5,7 @@
 \title{Get Stop Frequency}
 \usage{
 get_stop_frequency(gtfs_obj, start_hour = 6, end_hour = 22,
-  service_id = "", dow = c(1, 1, 1, 1, 1, 0, 0), by_route = TRUE,
+  service_ids = c(), dow = c(1, 1, 1, 1, 1, 0, 0), by_route = TRUE,
   wide = FALSE)
 }
 \arguments{
@@ -15,19 +15,21 @@ get_stop_frequency(gtfs_obj, start_hour = 6, end_hour = 22,
 
 \item{end_hour}{(optional) an integer indicating the end hour (default 20)}
 
-\item{service_id}{(optional) a string from the calendar dataframe identifying a particular service schedule.}
-
 \item{dow}{(optional) integer vector indicating which days of week to calculate for. default is weekday, e.g. c(1,1,1,1,1,0,0)}
 
 \item{by_route}{default TRUE, if FALSE then calculate headway for any line coming through the stop in the same direction on the same schedule.}
 
 \item{wide}{(optional) if true, then return a wide rather than tidy data frame}
+
+\item{service_id}{(optional) a string from the calendar dataframe identifying a particular service id, or a set of them}
 }
 \value{
-a gtfs_obj with a dataframe of stops with a "Trips" variable representing the count trips taken through each stop for a route within a given time frame
+a gtfs_obj with a dataframe of stops (gtfs_obj$.$stops_frequency) with a "Trips" variable representing the count trips taken through each stop for a route within a given time frame
 }
 \description{
-Get Stop Frequency
+Note that some GTFS feeds contain a frequency data frame already.
+Consider using this instead, as it will be more accurate than what
+tidytransit calculates.
 }
 \examples{
 data(gtfs_obj)

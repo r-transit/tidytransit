@@ -5,7 +5,7 @@
 \title{Get Route Frequency}
 \usage{
 get_route_frequency(gtfs_obj, start_hour = 6, end_hour = 22,
-  quiet = FALSE, service_id = "", dow = c(1, 1, 1, 1, 1, 0, 0))
+  quiet = FALSE, service_id = c(), dow = c(1, 1, 1, 1, 1, 0, 0))
 }
 \arguments{
 \item{gtfs_obj}{a list of gtfs dataframes as read by the trread package.}
@@ -18,12 +18,17 @@ get_route_frequency(gtfs_obj, start_hour = 6, end_hour = 22,
 
 \item{service_id}{(optional) a string from the calendar dataframe identifying a particular service schedule.}
 
-\item{dow}{(optional) an integeger vector with days of week. monday=1. default: c(1,1,1,1,1,0,0)}
+\item{dow}{(optional) an integer vector with days of week. monday=1. default: c(1,1,1,1,1,0,0)}
 }
 \value{
-a gtfs_obj with a dataframe of routes with variables for headway/frequency for a route within a given time frame
+a gtfs_obj with a dataframe of routes with variables (gtfs_obj$.$routes_frequency) for headway/frequency for a route within a given time frame
 }
 \description{
+Note that some GTFS feeds contain a frequency data frame already.
+Consider using this instead, as it will be more accurate than what
+tidytransit calculates.
+}
+\details{
 should take:
 }
 \examples{

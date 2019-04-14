@@ -8,7 +8,7 @@
 #' @param gtfs_obj a list of gtfs dataframes as read by read_gtfs().
 #' @param start_hour (optional) an integer indicating the start hour (default 7)
 #' @param end_hour (optional) an integer indicating the end hour (default 20)
-#' @param service_id (optional) a string from the calendar dataframe identifying a particular service schedule.
+#' @param service_id (optional) a string from the calendar dataframe identifying a particular service id, or a set of them
 #' @param dow (optional) integer vector indicating which days of week to calculate for. default is weekday, e.g. c(1,1,1,1,1,0,0)
 #' @param by_route default TRUE, if FALSE then calculate headway for any line coming through the stop in the same direction on the same schedule. 
 #' @param wide (optional) if true, then return a wide rather than tidy data frame
@@ -27,7 +27,7 @@
 get_stop_frequency <- function(gtfs_obj,
                             start_hour=6,
                             end_hour=22,
-                            service_id = "",
+                            service_ids=c(),
                             dow=c(1, 1, 1, 1, 1, 0, 0),
                             by_route=TRUE,
                             wide=FALSE) {
@@ -39,11 +39,8 @@ get_stop_frequency <- function(gtfs_obj,
   stop_times <- filter_stop_times_by_hour(stop_times,
                                           start_hour,
                                           end_hour)
-  if (service_id == "") {
+  if (length(service_ids)==0) {
     service_ids <- service_by_dow(calendar, dow)
-  }
-  else {
-    service_ids <- calendar[calendar$service_id == service_id, ]$service_id
   }
   trips <- trips %>%
     dplyr::filter(.data$service_id %in% service_ids) %>%
@@ -112,7 +109,7 @@ get_route_frequency <- function(gtfs_obj,
                             start_hour=6,
                             end_hour=22,
                             quiet = FALSE,
-                            service_id = "",
+                            service_id = c(),
                             dow=c(1, 1, 1, 1, 1, 0, 0)) {
   if (!quiet) message("Calculating route and stop headways.")
   if( !is.null(gtfs_obj$frequencies) ) {  print("NOTE: A pre-calculated frequencies dataframe exists for this feed already--consider using that.") } 
@@ -136,4 +133,3 @@ get_route_frequency <- function(gtfs_obj,
   return(gtfs_obj)
 }
 
-transit_freq_epa_sf <- get_epa_transit(state="CA")

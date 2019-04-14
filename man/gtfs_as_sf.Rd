@@ -4,7 +4,7 @@
 \alias{gtfs_as_sf}
 \title{Add Simple Features for Stops and Routes to GTFS Object}
 \usage{
-gtfs_as_sf(gtfs_obj, quiet)
+gtfs_as_sf(gtfs_obj, quiet = TRUE)
 }
 \arguments{
 \item{gtfs_obj}{a standard tidytransit gtfs object}
