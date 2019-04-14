@@ -2,4 +2,4 @@
 #set_api_key()
 library(transitfeedr)
 feedlist <- get_feedlist()
-devtools::use_data(feedlist)
+usethis::use_data(feedlist)

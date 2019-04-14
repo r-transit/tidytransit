@@ -16,7 +16,7 @@
 #'   \item{url_i}{the metadata url for the feed}
 #' }
 #' @source \url{http://www.transitfeeds.com/}
-"feedlist_df"
+"feedlist"
 
 #' Dataframe of route type id's and the names of the types (e.g. "Cable Car")
 #'
@@ -27,7 +27,7 @@
 #'   \item{name}{name of the gtfs route type}
 #' }
 #' @source \url{https://gist.github.com/derhuerst/b0243339e22c310bee2386388151e11e}
-"route_type_names_df"
+"route_type_names"
 
 #' Example GTFS data
 #' 

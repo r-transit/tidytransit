@@ -18,13 +18,21 @@ Status](https://travis-ci.com/r-transit/tidytransit.svg?branch=master)](https://
 <!-- [![CRAN -->
 <!-- status](https://www.r-pkg.org/badges/version/tidytransit?)](https://cran.r-project.org/package=tidytransit) -->
 
-tidytransit makes it easy to work with transit data by simplifying [General Transit Feed Specification](http://gtfs.org/) data (the standard format for storing transit data) into tidyverse and sf-friendly dataframes. Use it to map existing stops and routes, calculate transit frequencies, and validate transit feeds.
+# Introduction
 
-tidytransit is a [fork](https://en.wikipedia.org/wiki/Fork_(software_development)) of [gtfsr](https://github.com/ropensci/gtfsr), published to [CRAN](https://cran.r-project.org/), with frequency calculation functions, and without GTFS-specific interactive cartography features. 
+Use tidytransit to:
 
-## Installation
+- read GTFS zip files into R
+- automatically cast the spatial and temporal data in the feeds into more usable R data types  
+- create graphics about transit service
+- map existing stops and routes
+- estimate transit frequencies
+- validate transit feeds
+
+# Installation
 
 This package requires a working installation of [sf](https://github.com/r-spatial/sf#installing). 
+
 ```{r, eval=FALSE}
 # Once sf is installed, you can install from CRAN with: 
 install.packages('tidytransit')
@@ -36,15 +44,96 @@ devtools::install_github("r-transit/tidytransit")
 
 For some users, `sf` is impractical to install due to system level dependencies. For these users, [`trread`](https://github.com/r-transit/trread) may work better. Its tidytransit without geospatial (GDAL) tools. 
 
-## Usage
+# The General Transit Feed Specification
 
-### Read GTFS data
+GTFS feeds contain many linked tables about published transit schedules about trips, stops, and routes. Below is a diagram of these relationships and tables. 
+
+![gtfs-relationship-diagram](figures/GTFS_class_diagram.svg.png)
+Source: Wikimedia, user -stk. 
+
+Since GTFS is a data standard, you can find many uses for it which have not been considered here. The [summary page for the GTFS standard](https://developers.google.com/transit/gtfs/#overview-of-a-gtfs-feed) is a good resource.
+
+GTFS works well with R given that the data structure is tabular.  
+
+# Usage
+
+## Read GTFS data
+
+GTFS data come packaged as a zip file of tables in text form. The main thing tidytransit does is consolidate the reading of all those tables into a single R object, which contains a list of the tables in each feed. 
+
+Below we use the tidytransit `read_gtfs` function in order to read a feed from the NYC MTA into R. 
+
+We use a feed included in the package in the example below. But note that you can read directly from the New York City Metropolitan Transit Authority, as shown in the commented code below. 
+
+You can also read from any other URL. This is useful because there are many sources for GTFS data, and often the best source is transit service providers themselves. See the next section on "Finding More GTFS Feeds" for more sources of feeds. 
+
+```{r}
+# nyc <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
+
+local_gtfs_path <- system.file("extdata", 
+                               "google_transit_nyc_subway.zip", 
+                               package = "tidytransit")
+nyc <- read_gtfs(local_gtfs_path, 
+                 local=TRUE)
+```
+
+Each of the source tables for the GTFS feed is now available in the nyc `gtfs` object. 
+
+For example, stops:
+
+```{r}
+head(nyc$stops)
+```
+
+The tables available on each feed may vary. Below we can simply print the names of all the tables that were read in for this feed. Each of these is a table. 
+
+```{r}
+names(nyc)
+```
+
+## Finding More GTFS Feeds
+
+Included in the tidytransit package is a dataframe with a list of urls, city names, and locations. 
+
+You can browse it as a data frame:
+
+```{r}
+head(feedlist)
+```
+
+Note that there is a url (`url_d`) for each feed, which can be used to read the feed for a given city into R. 
+
+For example:
+
+```{r, eval=FALSE}
+nyc_ferries_gtfs <- feedlist %>% 
+  filter(t=="NYC Ferry GTFS") %>%
+  pull(url_d) %>%
+  read_gtfs()
+```
+
+Included in the transitfeeds table is a set of coordinates for each feed. This means you can filter feed sources by location. Or map all of them, as below:
+
+```{r}
+library(sf)
+
+feedlist_sf <- st_as_sf(feedlist,
+                        coords=c("loc_lng","loc_lat"),
+                        crs=4326)
+
+plot(feedlist_sf, max.plot = 1)
+```
+
+See the package reference for the `transitfeeds` data frame for more information on the transitfeeds metadata.  
+
+## Additional tables calculated by tidytransit
+
+When you add flags for geometry=TRUE and frequency=TRUE, tidytransit attempts to convert GTFS feeds into simple features dataframes and frequency/headway dataframes upon import of the GTFS data. These data frames are added to the "gtfs" object under the "." sub-list. 
 
 ```{r}
 # Read in GTFS feed
 # here we use a feed included in the package, but note that you can read directly from the New York City Metropolitan Transit Authority using the following URL:
 # nyc <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
-
 local_gtfs_path <- system.file("extdata", 
                                "google_transit_nyc_subway.zip", 
                                package = "tidytransit")
@@ -54,16 +143,12 @@ nyc <- read_gtfs(local_gtfs_path,
                  frequency=TRUE)
 ```
 
-When you add flags for geometry=TRUE and frequency=TRUE, Tidytransit attempts to convert GTFS feeds into simple features dataframes and frequency/headway dataframes upon import of the GTFS data. 
+Note that these are estimated headways and route geometries, and the quality of their estimation depends on many factors, including the GTFS feed structure. In some cases, these functions may fail to estimate frequencies or spatial features at all, or with an acceptable level of accuracy. We have an open issue for benchmarking the quality of these estimates. 
 
-Below we discuss methods and data available for the gtfs object as read by tidytransit. 
-
-### Plot
-
-Perhaps you want to map subway routes and color-code each route by how often trains come. 
+Below we list the table names added. 
 
 ```{r}
-plot(nyc)
+names(nyc$.)
 ```
 
 ### Headways by Route
@@ -71,71 +156,24 @@ plot(nyc)
 View the headways along routes as a dataframe. `routes_frequency` is added to the list of gtfs dataframes read in by `read_gtfs` when frequency=TRUE. By default, frequency is calculated for service that happens every weekday from 6 am to 10 pm. See the reference for the `get_route_frequency` function for other options (e.g. weekends, other times of day). 
 
 ```{r}
-head(nyc$routes_frequency)
+head(nyc$.$routes_frequency)
 ```
-
-| route\_id | median\_headways | mean\_headways | st\_dev\_headways | stop\_count |
-| :-------- | ---------------: | -------------: | ----------------: | ----------: |
-| GS        |                4 |              4 |              0.01 |           4 |
-| L         |                4 |              4 |              0.13 |          48 |
-| 1         |                5 |              5 |              0.14 |          76 |
-| 7         |                5 |              5 |              0.29 |          44 |
-| 6         |                6 |              7 |              2.84 |          76 |
-| E         |                6 |             23 |             53.01 |          48 |
 
 ### Headways by Stop
 
 View the headways at stops. `stops_frequency` is added to the list of gtfs dataframes read in by `read_gtfs`. Again, by default, frequency is calculated for service that happens every weekday from 6 am to 10 pm. See the reference for the `get_stop_frequency` function for other options (e.g. weekends, other times of day). 
 
 ```{r}
-head(nyc$stops_frequency)
+head(nyc$.$stops_frequency)
 ```
 
-    ## # A tibble: 6 x 4
-    ## # Groups:   direction_id, stop_id [6]
-    ##   direction_id stop_id stop_name             headway
-    ##          <int> <chr>   <chr>                   <dbl>
-    ## 1            0 902N    Times Sq - 42 St         3.60
-    ## 2            1 901S    Grand Central - 42 St    3.60
-    ## 3            1 902S    Times Sq - 42 St         3.60
-    ## 4            0 901N    Grand Central - 42 St    3.61
-    ## 5            0 702N    Mets - Willets Point     3.72
-    ## 6            0 707N    Junction Blvd            3.72
+### Plot Frequency Map
 
-### Use the Transitfeeds.com Feedlist 
-
-Included in the tidytransit package is a dataframe with a list of urls, city names, and locations. 
-
-You can browse it as a data frame:
+You can now map subway routes and color-code each route by how often trains come.  
 
 ```{r}
-head(feedlist_df)
+plot(nyc)
 ```
-
-or as a map:
-
-```{r}
-library(sf)
-
-feedlist_sf <- st_as_sf(feedlist_df,
-                        coords=c("loc_lng","loc_lat"),
-                        crs=4326)
-
-plot(feedlist_sf, max.plot = 1)
-```
-
-Note that there is a url (`url_d`) for each feed, which can be used to read the feed for a given city into R. 
-
-For example:
-
-```{r, eval=FALSE}
-nyc_ferries_gtfs <- feedlist_df %>% 
-  filter(t=="NYC Ferry GTFS") %>%
-  pull(url_d) %>%
-  read_gtfs()
-```
-
-See the reference for more on metadata in the `transitfeeds_df`
 
 ### Feed Validation Results
 
@@ -148,3 +186,6 @@ validation_result <- attr(nyc, "validation_result")
 head(validation_result)
 ```
 
+## Background
+
+tidytransit is a [fork](https://en.wikipedia.org/wiki/Fork_(software_development)) of [gtfsr](https://github.com/ropensci/gtfsr). 
