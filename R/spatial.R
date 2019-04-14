@@ -4,7 +4,7 @@
 #' @param quiet boolean whether to print status messages
 #' @return gtfs_obj a tidytransit gtfs object with a bunch of simple features tables
 #' @export
-gtfs_as_sf <- function(gtfs_obj, quiet) {
+gtfs_as_sf <- function(gtfs_obj, quiet=TRUE) {
   if(!quiet) message('Converting stops to simple features ')
   gtfs_obj$.$stops_sf <- try(get_stop_geometry(gtfs_obj$stops))
   if(!quiet) message('Converting routes to simple features ')

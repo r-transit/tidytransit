@@ -164,7 +164,7 @@ head(nyc$.$routes_frequency)
 View the headways at stops. `stops_frequency` is added to the list of gtfs dataframes read in by `read_gtfs`. Again, by default, frequency is calculated for service that happens every weekday from 6 am to 10 pm. See the reference for the `get_stop_frequency` function for other options (e.g. weekends, other times of day). 
 
 ```{r}
-head(nyc$stops_frequency)
+head(nyc$.$stops_frequency)
 ```
 
 ### Plot Frequency Map
