@@ -38,8 +38,11 @@ more limited functionality, but it can read GTFS tables into R.
 
 Please see:
 
-- [the tutorial](http://tidytransit.r-transit.org/articles/introduction.html)   
-- [the reference](http://tidytransit.r-transit.org/reference/index.html).   
+- [the tutorial](http://tidytransit.r-transit.org/articles/introduction.html) 
+- [introduction to service patterns](http://tidytransit.r-transit.org/articles/servicepatterns.html)
+- [introduction to time tables](http://tidytransit.r-transit.org/articles/timetable.html)
+- [introduction to frequency calculation](http://tidytransit.r-transit.org/articles/frequency.html)
+- [the function reference](http://tidytransit.r-transit.org/reference/index.html).   
 
 
 # Background
