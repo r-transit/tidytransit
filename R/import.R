@@ -201,6 +201,10 @@ unzip_file <- function(zipfile,
     return(NULL)
   }
 
+  if(!file.exists(f) && !dir.exists(f)) {
+    stop(paste0('"', f, '": No such file or directory'))
+  }
+  
   f <- normalizePath(f)
 
   if(tools::file_ext(f) != "zip") {
