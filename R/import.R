@@ -35,7 +35,7 @@ read_gtfs <- function(path, local = FALSE,
                       geometry=FALSE,
                       frequency=FALSE) {
   # download zip file
-  if (!local) {
+  if (!local && valid_url(path)) {
     path <- download_from_url(url = path, quiet = quiet)
     if (is.null(path)) { 
       return() 
@@ -120,13 +120,7 @@ download_from_url <- function(url,
       stop('Please input a single url.')
     }
   }
-  
-  # check if url links to a zip file
-  if(!valid_url(url)) {
-    stop1 <- sprintf("Link '%s' is invalid; failed to connect.", url)
-    stop(stop1)
-  }
-  
+
   r <- httr::GET(url)
   
   # Get gtfs zip if url can be reach
