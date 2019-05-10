@@ -55,3 +55,33 @@ trigger_suppressWarnings <- function(expr, quiet) {
 
 }
 
+#' Writes a gtfs object to a zip file. Calculated tidytransit tables and columns are not exported.
+#' @param gtfs_obj a gtfs feed object
+#' @param zipfile path to the zip file the feed should be written to
+#' @param compression_level a number between 1 and 9.9, passed to zip::zip
+#' @export
+write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9) {
+  stopifnot(is_gtfs_obj(gtfs_obj))
+  
+  meta <- get_gtfs_meta()
+  dir.create(tmp <- tempfile())
+  filenames = names(gtfs_obj)
+  filenames <- filenames[filenames != "."]
+  
+  for(filename in filenames) {
+    dd <- as.data.frame(gtfs_obj[[filename]])
+    
+    # formate dates yyyymmdd
+    colclasses <- sapply(dd, class)
+    date_cols <- which(colclasses == "Date")
+    dd[date_cols] <- format(dd[date_cols], "%Y%m%d")
+    
+    # remove columns from set_hms_times
+    cn <- colnames(dd)[which(!(colnames(dd) %in% c("arrival_time_hms", "departure_time_hms", "start_time_hms", "end_time_hms")))]
+    dd <- dd[cn]
+    
+    readr::write_csv(dd, paste0(tmp, "/", filename, ".txt"), )
+  }
+  filelist = paste0(tmp, "/", filenames, ".txt")
+  zip::zipr(zipfile, filelist, recurse = F, compression_level = compression_level)
+}
