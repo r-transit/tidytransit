@@ -176,7 +176,27 @@ get_gtfs_meta <- function() {
   transfers$coltype[transfers$field %in% c("min_transfer_time")] <- "i"
   transfers$file_spec <- "opt"
   
-  # feed_info
+  # pathways
+  assign("pathways", list())
+  pathways$field <- c("pathway_id", "from_stop_id", "to_stop_id",
+    "pathway_mode", "is_bidirectional", "length", "traversal_time",
+    "stair_count", "max_slope", "min_width", "signposted_as", "reversed_signposted_as")
+  pathways$field_spec <- c(rep("req", 5), rep("opt", 7))
+  names(pathways$field_spec) <- pathways$field
+  pathways$coltype <- rep("c", length(pathways$field))
+  pathways$coltype[pathways$field %in% c("traversal_time", "stair_count")] <- "i"
+  pathways$coltype[pathways$field %in% c("length", "max_slope", "min_width")] <- "d"
+  pathways$file_spec <- "opt"
+  
+  # levels
+  assign("levels", list())
+  levels$field <- c("level_id", "level_index", "level_name")
+  levels$field_spec <- c("req", "req", "opt")
+  names(levels$field_spec) <- levels$field
+  levels$coltype <- c("c", "d", "c")
+  levels$file_spec <- "opt"
+  
+  # feed_info 
   assign("feed_info", list())
   feed_info$field <- c("feed_publisher_name", "feed_publisher_url", 
                        "feed_lang", "feed_start_date", "feed_end_date", 
@@ -190,21 +210,22 @@ get_gtfs_meta <- function() {
                       c("feed_start_date", "feed_end_date")] <- "D"
   feed_info$file_spec <- "opt"
   
+  # create meta object ####
   meta <- list(agency, stops, routes, trips, 
                stop_times, calendar, calendar_dates,
                fare_attributes, fare_rules,
                shapes, frequencies, transfers,
-               feed_info)
+               pathways, levels, feed_info)
   attributes(meta) <- list(
     names = c("agency", "stops", "routes",
               "trips", "stop_times", "calendar",
               "calendar_dates", "fare_attributes",
               "fare_rules", "shapes", "frequencies",
-              "transfers", "feed_info"),
+              "transfers", "pathways", "levels", "feed_info"),
     file_spec = c("req", "req", "req", "req",
                   "req", "req", "opt", "opt",
                   "opt", "opt", "opt", "opt",
-                  "opt"))
+                  "opt", "opt", "opt"))
   return(meta)
 }
 
