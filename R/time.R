@@ -36,24 +36,17 @@ filter_stop_times_by_hour <- function(stop_times,
 set_hms_times <- function(gtfs_obj) {
   stopifnot(is_gtfs_obj(gtfs_obj))
   
-  str_to_seconds <- function(hhmmss_str) {
-    sapply(
-      strsplit(hhmmss_str, ":"), 
-      function(Y) { sum(as.numeric(Y) * c(3600, 60, 1)) }
-      )
-  }
-  
   gtfs_obj$stop_times$arrival_time_hms <- 
-    hms::hms(str_to_seconds(gtfs_obj$stop_times$arrival_time))
+    hms::hms(hhmmss_to_seconds(gtfs_obj$stop_times$arrival_time))
   gtfs_obj$stop_times$departure_time_hms <- 
-    hms::hms(str_to_seconds(gtfs_obj$stop_times$departure_time))
+    hms::hms(hhmmss_to_seconds(gtfs_obj$stop_times$departure_time))
   
   if(exists("frequencies", where=gtfs_obj) && 
      !is.null(gtfs_obj$frequencies) && nrow(gtfs_obj$frequencies) > 0) {
     gtfs_obj$frequencies$start_time_hms <- 
-      hms::hms(str_to_seconds(gtfs_obj$frequencies$start_time))
+      hms::hms(hhmmss_to_seconds(gtfs_obj$frequencies$start_time))
     gtfs_obj$frequencies$end_time_hms <- 
-      hms::hms(str_to_seconds(gtfs_obj$frequencies$end_time))
+      hms::hms(hhmmss_to_seconds(gtfs_obj$frequencies$end_time))
   }
   
   return(gtfs_obj)
@@ -146,4 +139,12 @@ set_date_service_table <- function(gtfs_obj) {
   gtfs_obj$.$date_service_table <- date_service_df
   
   return(gtfs_obj)
+}
+
+# Function to convert "HH:MM:SS" time strings to seconds.
+# readr::parse_time() might be faster but doesn't accept hour values > 24
+hhmmss_to_seconds <- function(hhmmss_str) {
+  sapply(strsplit(hhmmss_str, ":"), function(Y) {
+    sum(as.numeric(Y) * c(3600, 60, 1))
+  })
 }

@@ -414,10 +414,3 @@ set_num_times = function(stop_times_dt) {
     invisible(stop_times_dt)
   }
 }
-
-# TODO move to time.R
-hhmmss_to_seconds <- function(hhmmss_str) {
-  sapply(strsplit(hhmmss_str, ":"), function(Y) {
-    sum(as.numeric(Y) * c(3600, 60, 1))
-  })
-}
