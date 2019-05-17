@@ -118,7 +118,7 @@ get_route_frequency <- function(gtfs_obj,
                                  end_hour, service_ids, dow)  
   if (dim(gtfs_obj$.$stops_frequency)[[1]]!=0) {
     gtfs_obj$.$routes_frequency <- gtfs_obj$.$stops_frequency %>%
-      dplyr::group_by_("route_id") %>%
+      dplyr::group_by(route_id) %>%
       dplyr::summarise(median_headways = 
                          as.integer(round(median(.data$headway),0)),
                        mean_headways = 

@@ -62,7 +62,7 @@ shape_route_service <- function(gtfs_obj,
     shapes_routes_df <- gtfs_obj$trips %>%
       dplyr::filter(.data$service_id %in% service_ids) %>%
       dplyr::filter(.data$route_id %in% route_ids) %>%
-      dplyr::select_('shape_id', 'route_id', 'service_id') %>%
+      dplyr::select(shape_id, route_id, service_id) %>%
       dplyr::filter(!is.na(.data$shape_id)) %>%
       dplyr::distinct(.data$service_id, 
                       .data$shape_id, 
@@ -72,7 +72,7 @@ shape_route_service <- function(gtfs_obj,
   } else {
     shapes_routes_df <- gtfs_obj$trips %>%
       dplyr::slice(which(.data$route_id %in% route_ids)) %>%
-      dplyr::select_('shape_id', 'route_id', 'service_id') %>%
+      dplyr::select(shape_id, route_id, service_id) %>%
       dplyr::filter(!is.na(.data$shape_id)) %>%
       dplyr::distinct(.data$service_id, 
                       .data$shape_id, 
