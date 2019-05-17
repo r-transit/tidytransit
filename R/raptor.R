@@ -4,11 +4,13 @@
 #' stops in `stop_times` with journeys departing from `from_stop_ids` within 
 #' `departure_time_range`.
 #' 
-#' A modified [Round-Based Public Transit Routing Algorithm](https://www.microsoft.com/en-us/research/publication/round-based-public-transit-routing) 
-#' (RAPTOR) using data.table calculatins earliest arrival times for all stop. If two journeys 
-#' arrive at the same time, the one with the later departure time and thus shorter travel time 
-#' is kept. By default, For all journeys within `departure_time_range` those with the shortest travel time
-#' are 
+#' With a modified [Round-Based Public Transit Routing Algorithm](https://www.microsoft.com/en-us/research/publication/round-based-public-transit-routing) 
+#' (RAPTOR) using data.table earliest arrival times for all stops are calculated. If two 
+#' journeys arrive at the same time, the one with the later departure time and thus shorter 
+#' travel time is kept. By default, all journeys within `departure_time_range` that arrive 
+#' at a stop are returned in a table. Journeys are defined by a departure stop_id, a 
+#' departure, arrival and travel time. Note that the exact journeys (with each intermediate 
+#' stop and route id for example) is _not_ returned.
 #'
 #' For most cases `stop_times` needs to be filtered as it should only contain
 #' trips happening on a single day and departures later than a given journey
@@ -22,18 +24,18 @@
 #'                   should be removed. The table should also only include departures 
 #'                   happening on one day. Use `filter_stop_times` for easier preparation. 
 #' @param transfers Transfers table from a gtfs feed. In general no preparation is needed.
-#' @param from_stop_ids Atomic char vector with stop_ids from where a journey should start 
+#' @param from_stop_ids Atomic char vector with stop_ids from where a journey should start
 #' @param departure_time_range All departures from the first departure of 
-#' stop_times (not necessarily a from_stop) within `departure_time_range` 
-#' (in seconds) are considered.
-#' @param max_transfers maximum number of transfers allowed, no limit as default.
+#'                             stop_times (not necessarily a from_stop) within 
+#'                             `departure_time_range` (in seconds) are considered.
+#' @param max_transfers Maximum number of transfers allowed, no limit (NULL) as default.
 #' @param keep One of c("all", "shortest", "earliest"). By default `all` journeys 
 #'             arriving at a stop are returned. With `shortest` the 
 #'             journey with shortest travel time is returned. With `earliest` the 
 #'             journey arriving at a stop the earliest is returned.
 #'
-#' @return By default a table with travel times to all stop_ids reachable from `from_stop_ids` and their
-#'         corresponding journey departure and arrival times.
+#' @return By default a table with travel times to all stop_ids reachable from 
+#'         `from_stop_ids` and their corresponding journey departure and arrival times.
 #'
 #' @import data.table
 #' @export
@@ -73,8 +75,8 @@ raptor = function(stop_times,
   to_stop_id <- travel_time <- min_arrival_time <- NULL
   # stop ids need to be a character vector
   # use data.table for faster manipulation
-  stop_times_dt <- .setup_stop_times(stop_times)
-  transfers_dt <- .setup_transfers(transfers)
+  stop_times_dt <- setup_stop_times(stop_times)
+  transfers_dt <- setup_transfers(transfers)
   if(is.data.frame(from_stop_ids)) { from_stop_ids <- from_stop_ids[[1]] }
 
   if(is.null(keep) || 
@@ -205,22 +207,26 @@ raptor = function(stop_times,
   return(rptr)
 }
 
-#' Calculate travel times from a stop to all reachable stops.
+#' Calculate shortest travel times from a stop to all reachable stops
 #' 
-#' Function to calculate travel times from a stop (give by `from_stop_name`) to all other 
-#' stops of a feed. `filtered_stop_times` needs to be filtered before with `filter_stop_times`.
+#' Function to calculate the shortest travel times from a stop (give by `from_stop_name`) to all other 
+#' stops of a feed. `filtered_stop_times` needs to be created before with `filter_stop_times`.
+#' 
+#' This function allows easier access to `raptor` by using stop names instead of ids and 
+#' returning shortest travel times by default.
 #' 
 #' @param filtered_stop_times stop_times data.table (with transfers and stops tables as 
-#'                            attributes) created with `filter_stop_times` where the deparuture
-#'                            time has been set.
+#'                            attributes) created with `filter_stop_times` where the 
+#'                            deparuture time has been set.
 #' @param from_stop_name stop name from which travel times should be calculated. A vector 
 #'                       with multiple names is accepted.
 #' @param departure_time_range All departures within this range in seconds after the first 
-#'                             departure of `filtered_stop_times` are considered for journeys.
+#'                             departure of `filtered_stop_times` are considered for 
+#'                             journeys.
 #' @param max_transfers The maximimum number of transfers
-#' @param max_departure_time Either set this parameter or `departure_time_range`. Only departures
-#'                           before max_departure_time are used. Accepts "HH:MM:SS" or seconds 
-#'                           as numerical value.
+#' @param max_departure_time Either set this parameter or `departure_time_range`. Only 
+#'                           departures before `max_departure_time` are used. Accepts 
+#'                           "HH:MM:SS" or seconds as numerical value.
 #'                           
 #' @return A table with travel times to all stops reachable from `from_stop_name` and their
 #'         corresponding journey departure and arrival times.
@@ -240,6 +246,7 @@ raptor = function(stop_times,
 #' tts %>% filter(stop_name == "Queensboro Plaza") %>% dplyr::pull(travel_time) %>% hms::hms()
 #' 
 #' # plot a simple map showing travel times to all reachable stops
+#' # this can be expanded to isochron maps
 #' library(ggplot2)
 #' ggplot(tts) + geom_point(aes(x=stop_lon, y=stop_lat, color = travel_time))
 #' }
@@ -365,12 +372,12 @@ filter_stop_times = function(gtfs_obj,
   setindex(stops_dt, "stop_name")
   attributes(stop_times_dt)$stops <- stops_dt
   
-  attributes(stop_times_dt)$transfers <- .setup_transfers(gtfs_obj$transfers)
+  attributes(stop_times_dt)$transfers <- setup_transfers(gtfs_obj$transfers)
   
   return(stop_times_dt)
 }
 
-.setup_stop_times = function(stop_times) {
+setup_stop_times = function(stop_times) {
   if(!is.data.table(stop_times)) {
     stop_times <- as.data.table(stop_times)
   }
@@ -384,7 +391,7 @@ filter_stop_times = function(gtfs_obj,
   return(stop_times)
 }
 
-.setup_transfers = function(transfers) {
+setup_transfers = function(transfers) {
   transfer_type <- min_transfer_time <- NULL
   if(is.null(transfers) || nrow(transfers) == 0) {
     return(NULL)

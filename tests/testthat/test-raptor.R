@@ -30,6 +30,7 @@ test_that("travel times wrapper function", {
 
 test_that("travel_time works with different params", {
   fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
+  travel_times(fst, "One", max_departure_time = 7*3600+5*60)
   travel_times(fst, "One", max_departure_time = "07:05:00")
   expect_warning(travel_times(fst, "One", departure_time_range = 1800,  max_departure_time = "07:45:00"))
   expect_error(travel_times(fst, "unknown stop"))

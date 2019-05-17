@@ -2,7 +2,7 @@
 % Please edit documentation in R/raptor.R
 \name{travel_times}
 \alias{travel_times}
-\title{Calculate travel times from a stop to all reachable stops.}
+\title{Calculate shortest travel times from a stop to all reachable stops}
 \usage{
 travel_times(filtered_stop_times, from_stop_name,
   departure_time_range = 3600, max_transfers = NULL,
@@ -10,28 +10,33 @@ travel_times(filtered_stop_times, from_stop_name,
 }
 \arguments{
 \item{filtered_stop_times}{stop_times data.table (with transfers and stops tables as
-attributes) created with \code{filter_stop_times} where the deparuture
-time has been set.}
+attributes) created with \code{filter_stop_times} where the
+deparuture time has been set.}
 
 \item{from_stop_name}{stop name from which travel times should be calculated. A vector
 with multiple names is accepted.}
 
 \item{departure_time_range}{All departures within this range in seconds after the first
-departure of \code{filtered_stop_times} are considered for journeys.}
+departure of \code{filtered_stop_times} are considered for
+journeys.}
 
 \item{max_transfers}{The maximimum number of transfers}
 
-\item{max_departure_time}{Either set this parameter or \code{departure_time_range}. Only departures
-before max_departure_time are used. Accepts "HH:MM:SS" or seconds
-as numerical value.}
+\item{max_departure_time}{Either set this parameter or \code{departure_time_range}. Only
+departures before max_departure_time are used. Accepts
+"HH:MM:SS" or seconds as numerical value.}
 }
 \value{
 A table with travel times to all stops reachable from \code{from_stop_name} and their
 corresponding journey departure and arrival times.
 }
 \description{
-Function to calculate travel times from a stop (give by \code{from_stop_name}) to all other
-stops of a feed. \code{filtered_stop_times} needs to be filtered before with \code{filter_stop_times}.
+Function to calculate the shortest travel times from a stop (give by \code{from_stop_name}) to all other
+stops of a feed. \code{filtered_stop_times} needs to be created before with \code{filter_stop_times}.
+}
+\details{
+This function allows easier access to \code{raptor} by using stop names instead of ids and
+returning shortest travel times by default.
 }
 \examples{
 \donttest{
@@ -48,6 +53,7 @@ tts <- tts \%>\% filter(travel_time <= 3600)
 tts \%>\% filter(stop_name == "Queensboro Plaza") \%>\% dplyr::pull(travel_time) \%>\% hms::hms()
 
 # plot a simple map showing travel times to all reachable stops
+# this can be expanded to isochron maps
 library(ggplot2)
 ggplot(tts) + geom_point(aes(x=stop_lon, y=stop_lat, color = travel_time))
 }

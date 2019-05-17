@@ -18,10 +18,10 @@ happening on one day. Use \code{filter_stop_times} for easier preparation.}
 \item{from_stop_ids}{Atomic char vector with stop_ids from where a journey should start}
 
 \item{departure_time_range}{All departures from the first departure of
-stop_times (not necessarily a from_stop) within \code{departure_time_range}
-(in seconds) are considered.}
+stop_times (not necessarily a from_stop) within
+\code{departure_time_range} (in seconds) are considered.}
 
-\item{max_transfers}{maximum number of transfers allowed, no limit as default.}
+\item{max_transfers}{Maximum number of transfers allowed, no limit (NULL) as default.}
 
 \item{keep}{One of c("all", "shortest", "earliest"). By default \code{all} journeys
 arriving at a stop are returned. With \code{shortest} the
@@ -29,8 +29,8 @@ journey with shortest travel time is returned. With \code{earliest} the
 journey arriving at a stop the earliest is returned.}
 }
 \value{
-By default a table with travel times to all stop_ids reachable from \code{from_stop_ids} and their
-corresponding journey departure and arrival times.
+By default a table with travel times to all stop_ids reachable from
+\code{from_stop_ids} and their corresponding journey departure and arrival times.
 }
 \description{
 \code{raptor} finds the minimal travel time and/or earliest arrival time for all
@@ -38,11 +38,13 @@ stops in \code{stop_times} with journeys departing from \code{from_stop_ids} wit
 \code{departure_time_range}.
 }
 \details{
-A modified \href{https://www.microsoft.com/en-us/research/publication/round-based-public-transit-routing}{Round-Based Public Transit Routing Algorithm}
-(RAPTOR) using data.table calculatins earliest arrival times for all stop. If two journeys
-arrive at the same time, the one with the later departure time and thus shorter travel time
-is kept. By default, For all journeys within \code{departure_time_range} those with the shortest travel time
-are
+With a modified \href{https://www.microsoft.com/en-us/research/publication/round-based-public-transit-routing}{Round-Based Public Transit Routing Algorithm}
+(RAPTOR) using data.table earliest arrival times for all stops are calculated. If two
+journeys arrive at the same time, the one with the later departure time and thus shorter
+travel time is kept. By default, all journeys within \code{departure_time_range} that arrive
+at a stop are returned in a table. Journeys are defined by a departure stop_id, a
+departure, arrival and travel time. Note that the exact journeys (with each intermediate
+stop and route id for example) is \emph{not} returned.
 
 For most cases \code{stop_times} needs to be filtered as it should only contain
 trips happening on a single day and departures later than a given journey
