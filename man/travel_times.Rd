@@ -23,7 +23,7 @@ journeys.}
 \item{max_transfers}{The maximimum number of transfers}
 
 \item{max_departure_time}{Either set this parameter or \code{departure_time_range}. Only
-departures before max_departure_time are used. Accepts
+departures before \code{max_departure_time} are used. Accepts
 "HH:MM:SS" or seconds as numerical value.}
 }
 \value{

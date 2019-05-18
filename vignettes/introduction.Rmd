@@ -3,7 +3,7 @@ title: "Introduction"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{tidytransit-Introduction}
+  %\VignetteIndexEntry{tidytransit-introduction}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
