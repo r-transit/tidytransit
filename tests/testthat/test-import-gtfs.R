@@ -108,4 +108,9 @@ test_that("Some minimal validation is performed and returned", {
   }
 })
 
+test_that("unknown local file throws meaningful error", {
+  tidytransit::read_gtfs(local_gtfs_path)
+  expect_error(tidytransit::read_gtfs("/Users/wrong.zip"))
+})
+
 
