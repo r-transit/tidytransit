@@ -10,6 +10,9 @@ before_install:
   - sudo apt-get --yes --force-yes update -qq
   - sudo apt-get install --yes libproj-dev libgeos-dev libgdal-dev libudunits2-dev
 
+r_build_args: --no-build-vignettes --no-manual
+r_check_args: --no-build-vignettes --no-manual --timings
+
 after_failure:
   - if [ -f tests/tests.log ]; then cat tests/tests.log && sleep 10; fi
   - echo == End of test log ==    
