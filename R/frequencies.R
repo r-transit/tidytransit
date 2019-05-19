@@ -15,7 +15,7 @@
 #' @export
 #' @return a gtfs_obj with a dataframe of stops (gtfs_obj$.$stops_frequency) with a "Trips" variable representing the count trips taken through each stop for a route within a given time frame
 #' @importFrom dplyr %>%
-#' @importFrom rlang .data !! := quo enquo
+#' @importFrom rlang .data !! quo enquo
 #' @importFrom stats median sd
 #' @importFrom tidyr spread
 #' @examples 
