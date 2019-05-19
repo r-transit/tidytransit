@@ -1,9 +1,10 @@
 ---
-title: "Frequency Calculation"
+title: "Headway Estimation"
+author: "Tom Buckley"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{GTFS-Table-Introduction}
+  %\VignetteIndexEntry{tidytransit-headways}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -21,15 +22,19 @@ library(tidytransit)
 
 This is a brief introduction to the functions in tidytransit that can be used to describe the frequency with which vehicles are scheduled to pass through routes and stops. 
 
-# Assumptions of read_gtfs()
+# Getting headways using read_gtfs()
 
-When determining what headways are, we have to decide which hours of the day and which schedules we are interested in. 
+For convenience, when you pass a `frequency=TRUE` parameter to `read_gtfs()`, a `routes_frequency` dataframe is added to the list of calculated dataframes in the gtfs object as read by `read_gtfs`. 
 
-Tidytransit makes a few key assumptions about headways in the high level `read_gtfs` function. That is that they are:
+## Key Assumptions
+ 
+By default `read_gtfs` assumes:
 
-- at each stop between 6 AM and 10 PM for all schedules that run on all weekdays. 
-- they correspond to the frequency with which vehicles pass through stops. 
-- [a method for guessing which service_id is representative of a standard weekday](https://github.com/r-transit/tidytransit/blob/master/R/frequencies.R#L34-L59). 
+- the user wants headways from 6 AM and 10 PM for all schedules that run on all weekdays.
+- the user wants headways that correspond to the frequency with which vehicles pass through stops. 
+- [that we can use a heuristic to guess which service_id is representative of a standard weekday](https://github.com/r-transit/tidytransit/blob/master/R/frequencies.R#L34-L59). 
+
+See the reference for the `get_route_frequency` function for other options (e.g. weekends, other times of day). 
 
 ```{r}
 local_gtfs_path <- system.file("extdata", 
@@ -39,6 +44,29 @@ nyc <- read_gtfs(local_gtfs_path,
                  local=TRUE,
                  geometry=TRUE,
                  frequency=TRUE)
+```
+
+### Headways by Route
+
+View the headways along routes as a dataframe. 
+
+```{r}
+head(nyc$.$routes_frequency)
+```
+
+### Headways by Stop
+
+View the headways at stops. `stops_frequency` is added to the list of gtfs dataframes read in by `read_gtfs`. Again, by default, frequency is calculated for service that happens every weekday from 6 am to 10 pm. See the reference for the `get_stop_frequency` function for other options (e.g. weekends, other times of day). 
+
+```{r}
+head(nyc$.$stops_frequency)
+```
+
+### Plot Frequency Map
+
+You can now map subway routes and color-code each route by how often trains come.  
+```{r}
+plot(nyc)
 ```
 
 You can also use the `get_route_frequency` function directly, which takes arguments for other windows of time, and for other schedules. See the `get_route_frequency` documentation in the reference for more detail.
