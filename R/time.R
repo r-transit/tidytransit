@@ -1,13 +1,3 @@
-#' Get a dataframe with lubridate dates for the gtfs stop_times. 
-#' This method is deprecated, use set_hms_time on the feed instead
-#' 
-#' @param stop_times a gtfs_obj$stop_times dataframe
-#' @return an dataframe with arrival and departure time set to lubridate types
-#' @keywords internal
-gt_as_dt <- function(stop_times) {
-  stop("This method is deprecated, use set_hms_time on the feed instead")
-}
-
 #' Filter stop times by hour of the day
 #' 
 #' @param stop_times a gtfs_obj$stop_times dataframe with lubridate arrival_time and departure_time

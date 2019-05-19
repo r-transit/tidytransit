@@ -59,41 +59,6 @@ read_gtfs <- function(path, local = FALSE,
   return(gtfs_obj) 
 }
 
-#' This function is deprecated. Please use read_gtfs
-#' 
-#' This function reads GTFS text files from a local or remote zip file. 
-#' It also validates the files against the GTFS specification by file, requirement status, and column name
-#' The data are returned as a list of dataframes and a validation object, 
-#' which contains details on whether all required files were found, 
-#' and which required and optional columns are present. 
-#' 
-#'
-#' @param path Character. url link to zip file OR path to local zip file. if to local path, then option `local` must be set to TRUE.
-#' @param local Boolean. If the paths are searching locally or not. Default is FALSE (that is, urls).
-#' @param quiet Boolean. Whether to see file download progress and files extract. FALSE by default.
-#'
-#' @return Dataframes of GTFS data.
-#'
-#' @export
-#' @importFrom dplyr %>% arrange summarise group_by inner_join
-#' @examples \donttest{
-#' library(dplyr)
-#' u1 <- "https://github.com/r-transit/tidytransit/raw/master/inst/extdata/sample-feed-fixed.zip"
-#' sample_gtfs <- import_gtfs(u1)
-#' attach(sample_gtfs)
-#' #list routes by the number of stops they have
-#' routes %>% inner_join(trips, by="route_id") %>%
-#'   inner_join(stop_times) %>%
-#'     inner_join(stops, by="stop_id") %>%
-#'       group_by(route_long_name) %>%
-#'         summarise(stop_count=n_distinct(stop_id)) %>%
-#'           arrange(desc(stop_count))
-#' }
-import_gtfs <- function(path, local = FALSE, quiet = FALSE) {
-  .Deprecated("read_gtfs") #include a package argument, too
-  read_gtfs(path, local = FALSE, quiet = FALSE)
-}
-
 #' Download a zipped GTFS feed file from a url
 #'
 #' @param url Character URL of GTFS feed.
