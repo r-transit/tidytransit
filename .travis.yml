@@ -1,18 +1,22 @@
 language: r
+
 r:
-  - oldrel
   - release
   - devel
-cache: packages
+  - oldrel # breaks on sf_0.7-2 not available
+
+deploy.skip_cleanup: true
+
+sudo: required
+dist: trusty
+
+cache:
+  - packages
+  - ccache
+
+latex: false
 
 before_install:
   - sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable --yes
   - sudo apt-get --yes --force-yes update -qq
   - sudo apt-get install --yes libproj-dev libgeos-dev libgdal-dev libudunits2-dev
-
-r_build_args: --no-build-vignettes --no-manual
-r_check_args: --no-build-vignettes --no-manual --timings
-
-after_failure:
-  - if [ -f tests/tests.log ]; then cat tests/tests.log && sleep 10; fi
-  - echo == End of test log ==    
