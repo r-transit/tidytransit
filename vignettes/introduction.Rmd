@@ -28,6 +28,7 @@ Use tidytransit to:
 - map existing stops and routes
 - estimate transit frequencies
 - validate transit feeds
+- estimate travel time between transit stops
 
 # Installation
 
@@ -73,8 +74,7 @@ You can also read from any other URL. This is useful because there are many sour
 local_gtfs_path <- system.file("extdata", 
                                "google_transit_nyc_subway.zip", 
                                package = "tidytransit")
-nyc <- read_gtfs(local_gtfs_path, 
-                 local=TRUE)
+nyc <- read_gtfs(local_gtfs_path)
 ```
 
 Each of the source tables for the GTFS feed is now available in the nyc `gtfs` object. 
@@ -125,55 +125,6 @@ plot(feedlist_sf, max.plot = 1)
 ```
 
 See the package reference for the `transitfeeds` data frame for more information on the transitfeeds metadata.  
-
-## Additional tables calculated by tidytransit
-
-When you add flags for geometry=TRUE and frequency=TRUE, tidytransit attempts to convert GTFS feeds into simple features dataframes and frequency/headway dataframes upon import of the GTFS data. These data frames are added to the "gtfs" object under the "." sub-list. 
-
-```{r}
-# Read in GTFS feed
-# here we use a feed included in the package, but note that you can read directly from the New York City Metropolitan Transit Authority using the following URL:
-# nyc <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
-local_gtfs_path <- system.file("extdata", 
-                               "google_transit_nyc_subway.zip", 
-                               package = "tidytransit")
-nyc <- read_gtfs(local_gtfs_path, 
-                 local=TRUE,
-                 geometry=TRUE,
-                 frequency=TRUE)
-```
-
-Note that these are estimated headways and route geometries, and the quality of their estimation depends on many factors, including the GTFS feed structure. In some cases, these functions may fail to estimate frequencies or spatial features at all, or with an acceptable level of accuracy. We have an open issue for benchmarking the quality of these estimates. 
-
-Below we list the table names added. 
-
-```{r}
-names(nyc$.)
-```
-
-### Headways by Route
-
-View the headways along routes as a dataframe. `routes_frequency` is added to the list of gtfs dataframes read in by `read_gtfs` when frequency=TRUE. By default, frequency is calculated for service that happens every weekday from 6 am to 10 pm. See the reference for the `get_route_frequency` function for other options (e.g. weekends, other times of day). 
-
-```{r}
-head(nyc$.$routes_frequency)
-```
-
-### Headways by Stop
-
-View the headways at stops. `stops_frequency` is added to the list of gtfs dataframes read in by `read_gtfs`. Again, by default, frequency is calculated for service that happens every weekday from 6 am to 10 pm. See the reference for the `get_stop_frequency` function for other options (e.g. weekends, other times of day). 
-
-```{r}
-head(nyc$.$stops_frequency)
-```
-
-### Plot Frequency Map
-
-You can now map subway routes and color-code each route by how often trains come.  
-
-```{r}
-plot(nyc)
-```
 
 ### Feed Validation Results
 

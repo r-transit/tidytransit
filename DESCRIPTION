@@ -1,10 +1,10 @@
 Package: tidytransit
 Type: Package
 Title: Read, Validate, Analyze, and Map Files in the General Transit Feed Specification  
-Version: 0.4.0
+Version: 0.5.0
 Authors@R: c(
-    person("Tom", "Buckley", role = c("aut", "cre"), email = "tom@tbuckl.com"),
     person("Flavio", "Poletti", role = c("aut"), email = "flavio.poletti@hotmail.ch"),
+    person("Tom", "Buckley", role = c("aut", "cre"), email = "tom@tbuckl.com"),
     person("Danton", "Noriega-Goodwin", role = c("aut"), email = "danton.noriega@gmail.com"),
     person("Mark", "Padgham", role = c("aut"), email = "mark.padgham@email.com"),
     person("Angela", "Li", role = c("ctb"), email = "angela@rladies.org"),
