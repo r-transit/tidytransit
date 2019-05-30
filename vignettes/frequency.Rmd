@@ -100,19 +100,23 @@ If you're interested in how to work with schedules and outlier stops like this, 
 
 # Route Frequency Assumptions
 
-To calculate headway at the route level, by default, tidytransit summary statistics of the calculated headways at stops along each route. So the median headways for stops along each route do some work to throw out outliers stop headways.  
-
-One way to verify that the headway and service calculations from GTFS are accurate is by checking against other sources, such as the train schedules themselves. 
+Headways along routes, in the `routes_frequency` data frame, are based on summary statistics of the frequency with which vehicles pass through the stops in the `stops_frequency` data frame.
 
 ```{r}
 head(nyc$.$routes_frequency)
 ```
 
-Above, we see that the median headway for the 1 train from 6 AM to 10 PM is 5 minutes according to our calculations. According to the [wikipedia entry](https://en.wikipedia.org/wiki/List_of_New_York_City_Subway_services#Train_intervals) for the NYC MTA this seems about right. 
+The median value for a route will more closely match what a rider might experience along that route. That the median works better than the mean is due to the outlier stops discussed above.  
+
+One way we can verify these estimates is by checking against reported headways. 
+
+For example, we see that our estimated median headway for the 1 train from 6 AM to 10 PM is 5 minutes. When we compare this estimate with the [wikipedia entry](https://en.wikipedia.org/wiki/List_of_New_York_City_Subway_services#Train_intervals) for this train, we have a rough match. Headways reported there are 3 minutes at rush hour, 6 minutes at mid-day and 10 minutes at night. 
 
 # Specific Days and Times
 
-We might also want to check what rush hour headways are like on a specific day. The `set_hms_times` and `set_date_service_table` functions will alter the feed for us, allowing us to filter by date. 
+You might be interested in calculating headways for more specific times of day. 
+
+For example, what are rush hour headways like on a specific weekday (2018-08-23)? The `set_hms_times` and `set_date_service_table` functions will alter the feed for us, allowing us to filter by date. 
 
 ```{r}
 nyc <- nyc %>% 
