@@ -354,44 +354,6 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
         "D" = readr::col_date(format = "%Y%m%d")
       )
     
-    if (has_bom(file_path)) { # check for BOM. if yes, use read.csv()
-      ## switch function
-      converttype <- function(x, y) {
-        switch(x, 
-               character = as.character(y), 
-               integer = as.integer(y), 
-               double = as.double(y), 
-               Date = lubridate::ymd(y))
-      }
-      #get expected/required names for columns. 
-      #these are imposed.
-      colnms <- meta$field[indx] 
-      ## get colclasses
-      colclasses <- sapply(coltypes_character, 
-                           switch, 
-                           c = "character", 
-                           i = "integer", 
-                           d = "double", 
-                           "D" = "Date")
-      
-      csv <- quote(utils::read.csv(file_path, 
-                                   col.names = colnms, 
-                                   stringsAsFactors= FALSE))
-      df <- try(suppressWarnings(eval(csv)) %>%
-              mapply(converttype,
-                     # ensure proper column types
-                     x = colclasses,
-                     y = ., SIMPLIFY = FALSE) %>% 
-              tibble::as_tibble())
-
-      if(any(class(df) %in% "try-error")) {
-        probs <- "Error during import. 
-                  Likely encoding error. 
-                  Note that utils::read.csv() 
-                  was used, not readr::read_csv()."
-        attributes(df) <- append(attributes(df), list(problems = probs))
-      }
-    } else {
       df <- suppressWarnings(
         readr::read_csv(file = file_path, 
           col_types = coltypes
@@ -404,7 +366,6 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
         warning(paste0("Parsing failures while reading ", prefix))
         print(probs)
       }
-    }
 
     return(df)
   } else return(NULL)
