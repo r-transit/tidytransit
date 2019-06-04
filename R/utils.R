@@ -83,5 +83,5 @@ write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9) {
     readr::write_csv(dd, paste0(tmp, "/", filename, ".txt"), )
   }
   filelist = paste0(tmp, "/", filenames, ".txt")
-  zip::zip(zipfile, filelist, recurse = F, compression_level = compression_level)
+  zip::zipr(zipfile, filelist, recurse = F, compression_level = compression_level)
 }
