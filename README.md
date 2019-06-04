@@ -9,7 +9,14 @@ status](http://www.r-pkg.org/badges/version-ago/tidytransit?)](https://cran.r-pr
 # tidytransit
 
 Use tidytransit to map transit stops and routes, calculate transit
-frequencies, and validate transit feeds. tidytransit reads the [General Transit Feed Specification](http://gtfs.org/) into [tidyverse](https://tibble.tidyverse.org/) and [simple features](https://en.wikipedia.org/wiki/Simple_Features) dataframes.
+frequencies, and validate transit feeds. tidytransit reads the [General Transit Feed Specification](http://gtfs.org/) into [tidyverse](https://tibble.tidyverse.org/) and [simple features](https://en.wikipedia.org/wiki/Simple_Features) dataframes. Tidytransit can be used to:
+- read GTFS feeds into R
+- automatically cast the spatial and temporal data in the feeds into more usable R data types  
+- create graphics about transit service
+- map existing stops and routes
+- estimate transit frequencies
+- validate transit feeds
+- estimate travel times between transit stops
 
 ## Installation
 
