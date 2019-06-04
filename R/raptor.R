@@ -90,7 +90,7 @@ raptor = function(stop_times,
   }
   
   # setup work data frame "rptr"
-  rptr_colnames = c("stop_id", "marked", "min_arrival_time", "journey_departure_time", "journey_departure_stop_id")
+  rptr_colnames = c("stop_id", "marked", "min_arrival_time", "journey_departure_time", "journey_departure_stop_id", "transfers")
   
   # get earliest departure time for from_stop_ids and set them as journey start times
   rptr = stop_times_dt[stop_id %in% from_stop_ids]
@@ -108,10 +108,11 @@ raptor = function(stop_times,
   rptr[, min_arrival_time := rptr$departure_time_num - 1]
   rptr[, journey_departure_time := departure_time_num]
   rptr[, journey_departure_stop_id := stop_id]
+  rptr[, transfers := 0]
   rptr <- rptr[, rptr_colnames, with = F]
   
   # raptor loop ####
-  k = 1
+  k = 0
   while(any(rptr$marked)) {
     # select marked stops
     rptr_marked <- rptr[marked == TRUE]
@@ -137,6 +138,7 @@ raptor = function(stop_times,
     # all arrival_times in the marked trips are possibly better than the
     # current min_arrival_times in rptr (thus candidates)
     arrival_candidates = stop_times_dt[trips_marked, on = "trip_id", allow.cartesian = TRUE]
+    arrival_candidates[, transfers := k]
     # keep arrival_times that actually happen after the trip has
     # left its marked stop (departure_time > marked_departure_time)
     arrival_candidates <- arrival_candidates[departure_time_num > marked_departure_time_num]
@@ -162,6 +164,7 @@ raptor = function(stop_times,
       )
       # arrival_time needs to be calculated
       transfer_candidates[,min_arrival_time := (min_arrival_time + min_transfer_time)]
+      transfer_candidates[,transfers := k+1]
       transfer_candidates[,stop_id := to_stop_id]
       transfer_candidates <- transfer_candidates[, rptr_colnames, with = F]
       
@@ -203,7 +206,7 @@ raptor = function(stop_times,
   }
   
   # return result table
-  rptr <- rptr[,c("stop_id", "travel_time", "journey_departure_stop_id", "journey_departure_time", "min_arrival_time")]
+  rptr <- rptr[,c("stop_id", "travel_time", "journey_departure_stop_id", "journey_departure_time", "min_arrival_time", "transfers")]
   return(rptr)
 }
 
@@ -297,7 +300,7 @@ travel_times = function(filtered_stop_times,
   rptr_names[,journey_departure_time := hms::hms(journey_departure_time)]
   
   rptr_names <- rptr_names[,c("stop_name", "travel_time", "journey_departure_time",
-                              "min_arrival_time", "stop_id", "stop_lon", "stop_lat")]
+                              "min_arrival_time", "transfers", "stop_id", "stop_lon", "stop_lat")]
   return(rptr_names)
 }
 

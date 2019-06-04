@@ -43,7 +43,7 @@ test_that("stop times are filtered correctly", {
   expect_error(filter_stop_times(g, "2018-10-01", "08:00:00", "09:00:00"))
   
   fst = filter_stop_times(g, "2018-10-01", "07:00:00", "08:00:00")
-  expect(all(c("transfers", "stops") %in% names(attributes(fst))))
+  expect_true(all(c("transfers", "stops") %in% names(attributes(fst))))
   expect_error(travel_times(g$stop_times, "One"))
 })
 
@@ -160,4 +160,23 @@ test_that("earliest arrival time without transfers", {
     "stop8b" = "07:24"
   )))
   expect_equal(actual, expected)
+})
+
+test_that("transfers are returned", {
+  r = raptor(stop_times, transfers, "stop2", keep = "all")
+  setorder(r, travel_time)
+  expect_equal(r[stop_id == "stop3a"]$transfers, c(0,0))
+  expect_equal(r[stop_id == "stop4"]$transfers, c(1,0))
+  expect_equal(r[stop_id == "stop8a"]$transfers, 2)
+  expect_equal(r[stop_id == "stop8b"]$transfers, 1)
+})
+
+test_that("transfers for travel_times", {
+  fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
+  tt = travel_times(
+    filtered_stop_times = fst, 
+    from_stop_name = "One", 
+    departure_time_range = 3600)
+  expect_equal(tt[order(stop_id)]$transfers, 
+    c(0, 0, 0, 1, 0, 0, 1, 0))
 })
