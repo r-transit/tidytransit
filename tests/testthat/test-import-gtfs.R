@@ -113,4 +113,13 @@ test_that("unknown local file throws meaningful error", {
   expect_error(tidytransit::read_gtfs("/Users/wrong.zip"))
 })
 
+test_that("Files with BOM can be read", {
+  skip_on_cran()
+  bom_path <- system.file("extdata", 
+              "sample-feed-bom.zip", 
+              package = "tidytransit")
+  g <- tidytransit::read_gtfs(bom_path)
+  expect_true(is_gtfs_obj(g))
+})
+
 
