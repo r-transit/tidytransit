@@ -59,6 +59,7 @@ trigger_suppressWarnings <- function(expr, quiet) {
 #' @param gtfs_obj a gtfs feed object
 #' @param zipfile path to the zip file the feed should be written to
 #' @param compression_level a number between 1 and 9.9, passed to zip::zip
+#' @importFrom zip zipr
 #' @export
 write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9) {
   stopifnot(is_gtfs_obj(gtfs_obj))
