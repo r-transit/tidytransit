@@ -12,6 +12,7 @@
 #' @param quiet Boolean. Whether to see file download progress and files extract. FALSE by default.
 #' @param geometry Boolean. Whether to add simple feature dataframes of routes and stops to the gtfs object
 #' @param frequency Boolean. Whether to add frequency/headway calculations to the gtfs object
+#' @param skip_size_check Boolean. Whether to skip the checking the size of the GTFS file. Default FALSE.
 #'
 #' @return A GTFS object. That is, a list of dataframes of GTFS data.
 #'
@@ -33,7 +34,8 @@
 read_gtfs <- function(path, local = FALSE, 
                       quiet = TRUE, 
                       geometry=FALSE,
-                      frequency=FALSE) {
+                      frequency=FALSE,
+                      skip_size_check=FALSE) {
   # download zip file
   if (!local && valid_url(path)) {
     path <- download_from_url(url = path, quiet = quiet)
@@ -44,19 +46,36 @@ read_gtfs <- function(path, local = FALSE,
   # extract zip file
   tmpdirpath <- unzip_file(path, quiet=quiet)
   file_list_df <- zip::zip_list(path)
+  file_size <- round(file.info(path)$size/1e6,0)
   if (!exists("file_list_df")) {
     stop(sprintf("No files found in zip"))
   }
-  gtfs_obj <- create_gtfs_object(tmpdirpath, 
-                                 file_list_df$filename, 
-                                 quiet = quiet)
-  if (geometry) {
-    gtfs_obj <- gtfs_as_sf(gtfs_obj,quiet=quiet)
+  else if (file_size>20 & skip_size_check==FALSE) {
+    print(paste("GTFS zip file size is:",file_size))
+    readline(prompt="Press [enter] to continue reading it.")
+    gtfs_obj <- create_gtfs_object(tmpdirpath, 
+                                   file_list_df$filename, 
+                                   quiet = quiet)
+    if (geometry) {
+      gtfs_obj <- gtfs_as_sf(gtfs_obj,quiet=quiet)
+    }
+    if (frequency) {
+      gtfs_obj <- get_route_frequency(gtfs_obj) 
+    }
+    return(gtfs_obj) 
   }
-  if (frequency) {
-    gtfs_obj <- get_route_frequency(gtfs_obj) 
+  else {
+    gtfs_obj <- create_gtfs_object(tmpdirpath, 
+                                   file_list_df$filename, 
+                                   quiet = quiet)
+    if (geometry) {
+      gtfs_obj <- gtfs_as_sf(gtfs_obj,quiet=quiet)
+    }
+    if (frequency) {
+      gtfs_obj <- get_route_frequency(gtfs_obj) 
+    }
+    return(gtfs_obj)
   }
-  return(gtfs_obj) 
 }
 
 #' Download a zipped GTFS feed file from a url
@@ -85,7 +104,7 @@ download_from_url <- function(url,
       stop('Please input a single url.')
     }
   }
-
+  
   r <- httr::GET(url)
   
   # Get gtfs zip if url can be reach
@@ -134,13 +153,13 @@ unzip_file <- function(zipfile,
     warning(warn)
     return(NULL)
   }
-
+  
   if(!file.exists(f) && !dir.exists(f)) {
     stop(paste0('"', f, '": No such file or directory'))
   }
   
   f <- normalizePath(f)
-
+  
   if(tools::file_ext(f) != "zip") {
     if(!quiet) message('No zip file found, reading files from path.')
     return(f)
@@ -148,18 +167,18 @@ unzip_file <- function(zipfile,
   
   # create extraction folder
   utils::unzip(f, exdir=tmpdirpath)
-
-
+  
+  
   if(length(list.files(tmpdirpath)) == 0) {
     warn <- "No files found after decompressing. NULL is returned."
     return(NULL)
   }
-
+  
   if(!quiet) {
     message(sprintf("Unzipped the following files to directory '%s'...", tmpdirpath))
     list.files(tmpdirpath) %>% print
   }
-
+  
   return(tmpdirpath)
 }
 
@@ -176,15 +195,15 @@ create_gtfs_object <- function(tmpdirpath, file_paths, quiet = FALSE) {
   df_names <- prefixes
   if(!quiet) message('Reading files in feed...\n')
   gtfs_obj <- lapply(file_paths, 
-                   function(x) read_gtfs_file(x, 
-                                              tmpdirpath, 
-                                              quiet = quiet))
+                     function(x) read_gtfs_file(x, 
+                                                tmpdirpath, 
+                                                quiet = quiet))
   names(gtfs_obj) <- unname(df_names)
   gtfs_obj[sapply(gtfs_obj, is.null)] <- NULL
   class(gtfs_obj) <- "gtfs"
   if(!quiet) message('Reading files in feed... done.\n')
   
-    
+  
   gtfs_obj <- gtfs_validate(gtfs_obj, quiet = quiet)
   
   stopifnot(is_gtfs_obj(gtfs_obj))
@@ -205,12 +224,12 @@ create_gtfs_object <- function(tmpdirpath, file_paths, quiet = FALSE) {
 
 read_gtfs_file <- function(file_path, tmpdirpath, quiet = FALSE) {
   prefix <- get_file_shortname(file_path)
-
+  
   if(!quiet) message(paste0('Reading ', prefix))
-
+  
   full_file_path <- paste0(tmpdirpath,"/",file_path)
   new_df <- parse_gtfs_file(prefix, full_file_path, quiet = quiet)
-
+  
   return(new_df)
 }
 
@@ -224,7 +243,7 @@ read_gtfs_file <- function(file_path, tmpdirpath, quiet = FALSE) {
 get_file_shortname <- function(file_path) {
   split_path <- strsplit(file_path, '/')
   file_name <- split_path[[1]][length(split_path[[1]])]
-
+  
   prefix <- gsub(".txt|-new", "", file_name) 
   # suffix ".*-new.txt" comes from trillium data
   prefix <- gsub("\\-|\\.", "_", prefix)
@@ -242,14 +261,14 @@ get_file_shortname <- function(file_path) {
 #' @importFrom data.table fread
 
 parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
-
+  
   # only parse if file has any data, NULL o/w
   stopifnot(!is.na(file.size(file_path)))
   if(file.size(file_path) > 1) {
-
+    
     ## get correct meta data using file prefix (e.g. "agency", "stop_times")
     meta <- get_gtfs_meta()[[prefix]]
-
+    
     # check if a file is empty. If so, return NULL.
     L <- suppressWarnings(
       length(
@@ -258,14 +277,14 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
           what = "", 
           quiet = TRUE, 
           sep = "\n")
-        )
       )
+    )
     if(L < 1) {
       s <- sprintf("   File '%s' is empty.", basename(file_path))
       if(!quiet) message(s)
       return(NULL)
     }
-
+    
     #if no meta data is found for a file 
     #type but file is not empty, read as is.
     if(is.null(meta)) {
@@ -273,20 +292,20 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
                    trying to read file as csv.", 
                    basename(file_path))
       if(!quiet) message(s)
-
+      
       tryCatch({
         df <- suppressMessages(
           data.table::fread(file = file_path, 
                             sep=","))
-        }, 
-        error = function(error_condition) {
-          s <- sprintf("   File could not be read as csv.", basename(file_path))
-          if(!quiet) message(s)
-          return(NULL)
-        })
+      }, 
+      error = function(error_condition) {
+        s <- sprintf("   File could not be read as csv.", basename(file_path))
+        if(!quiet) message(s)
+        return(NULL)
+      })
       return(df)
     }
-
+    
     # read.csv supports UTF-8-BOM. use this to get field names.
     # get a small df to find how many cols are needed
     small_df <- suppressWarnings(
@@ -294,24 +313,24 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
         file_path, 
         nrows = 5, 
         stringsAsFactors = FALSE)) 
-
+    
     # get correct coltype, if possible
     # create "c" as coltype defaults
     coltypes_character <- rep("c", 
                               dim(small_df)[2]) 
-
+    
     names(coltypes_character) <- 
       names(small_df) %>% tolower()
     # indx from valid cols in meta$field. NAs will return for invalid cols
     indx <- match(names(coltypes_character), meta$field)  
-
+    
     #!is.na(indx) = valid col in 'coltype' found in meta$field
     #indx[!is.na(indx)] = location in 'meta$coltype' 
     #where corresponding type is found
     #valid cols found in small_df
     coltypes_character[!is.na(indx)] <- 
       meta$coltype[indx[!is.na(indx)]] 
-
+    
     # use col_*() notation for column types
     coltypes <-
       sapply(
