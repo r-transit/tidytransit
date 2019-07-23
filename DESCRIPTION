@@ -1,6 +1,6 @@
 Package: tidytransit
 Type: Package
-Title: Read, Validate, Analyze, and Map Files in the General Transit Feed Specification  
+Title: Read, validate, analyze and map GTFS (General Transit Feed Specification) data  
 Version: 0.5.1
 Authors@R: c(
     person("Flavio", "Poletti", role = c("aut"), email = "flavio.poletti@hotmail.ch"),
