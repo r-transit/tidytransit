@@ -15,25 +15,21 @@
 #' }
 plot.gtfs <- function(x, ...) {
   dots <- list(...)
-  if(exists("x$routes_sf") & 
-     exists("x$routes_frequency")){
-    routes_sf_frequencies <- x$.$routes_sf %>% 
-      dplyr::inner_join(x$.$routes_frequency, by = "route_id") %>% 
-      dplyr::select(median_headways,
-                     mean_headways,
-                     st_dev_headways,
-                     stop_count)
-  } else {
-    message('Calculating headways and spatial features. This may take a while')
-      x$routes_sf <- get_route_geometry(x)
-      x <- get_route_frequency(x)
-      routes_sf_frequencies <- x$.$routes_sf %>% 
-        dplyr::inner_join(x$.$routes_frequency, by = "route_id") %>% 
-        dplyr::select(median_headways,
-                      mean_headways,
-                      st_dev_headways,
-                      stop_count)
+  if(!exists("routes_sf", where = x)) {
+    x$routes_sf <- get_route_geometry(x)
   }
+  if(!exists(".", where = x) || 
+     !exists("routes_frequency", where = x$.)) {
+    message('Calculating headways and spatial features. This may take a while')
+    x <- get_route_frequency(x)
+  }
+  routes_sf_frequencies <- x$routes_sf %>% 
+    dplyr::inner_join(x$.$routes_frequency, by = "route_id") %>% 
+    dplyr::select(median_headways,
+                  mean_headways,
+                  st_dev_headways,
+                  stop_count)
+  
   plot(routes_sf_frequencies)
 }
 
