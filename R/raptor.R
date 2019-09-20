@@ -34,8 +34,8 @@
 #'             journey with shortest travel time is returned. With `earliest` the 
 #'             journey arriving at a stop the earliest is returned.
 #'
-#' @return By default a table with travel times to all stop_ids reachable from 
-#'         `from_stop_ids` and their corresponding journey departure and arrival times.
+#' @return A data.table with travel times to all stop_ids reachable from `from_stop_ids` 
+#'         and their corresponding journey departure and arrival times.
 #'
 #' @import data.table
 #' @export
@@ -230,6 +230,8 @@ raptor = function(stop_times,
 #' @param max_departure_time Either set this parameter or `departure_time_range`. Only 
 #'                           departures before `max_departure_time` are used. Accepts 
 #'                           "HH:MM:SS" or seconds as numerical value.
+#' @param return_DT travel_times() returns a data.table if TRUE. Default is FALSE which returns 
+#'                  a tibble/tbl_df.
 #'                           
 #' @return A table with travel times to all stops reachable from `from_stop_name` and their
 #'         corresponding journey departure and arrival times.
@@ -257,7 +259,8 @@ travel_times = function(filtered_stop_times,
                         from_stop_name,
                         departure_time_range = 3600,
                         max_transfers = NULL,
-                        max_departure_time = NULL) {
+                        max_departure_time = NULL,
+                        return_DT = FALSE) {
   travel_time <- min_arrival_time <- journey_departure_time <- NULL
   if("gtfs" %in% class(filtered_stop_times)) {
     stop("Travel times cannot be calculated on a gtfs object. Use filter_stop_times.")
@@ -301,6 +304,11 @@ travel_times = function(filtered_stop_times,
   
   rptr_names <- rptr_names[,c("stop_name", "travel_time", "journey_departure_time",
                               "min_arrival_time", "transfers", "stop_id", "stop_lon", "stop_lat")]
+  
+  if(!return_DT) {
+    rptr_names <- tibble::as_tibble(rptr_names)
+  }
+  
   return(rptr_names)
 }
 
