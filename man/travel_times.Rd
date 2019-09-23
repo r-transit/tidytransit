@@ -6,7 +6,7 @@
 \usage{
 travel_times(filtered_stop_times, from_stop_name,
   departure_time_range = 3600, max_transfers = NULL,
-  max_departure_time = NULL)
+  max_departure_time = NULL, return_DT = FALSE)
 }
 \arguments{
 \item{filtered_stop_times}{stop_times data.table (with transfers and stops tables as
@@ -25,6 +25,9 @@ journeys.}
 \item{max_departure_time}{Either set this parameter or \code{departure_time_range}. Only
 departures before \code{max_departure_time} are used. Accepts
 "HH:MM:SS" or seconds as numerical value.}
+
+\item{return_DT}{travel_times() returns a data.table if TRUE. Default is FALSE which returns
+a tibble/tbl_df.}
 }
 \value{
 A table with travel times to all stops reachable from \code{from_stop_name} and their
