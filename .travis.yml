@@ -3,7 +3,6 @@ language: r
 r:
   - release
   - devel
-  - oldrel
 
 deploy.skip_cleanup: true
 

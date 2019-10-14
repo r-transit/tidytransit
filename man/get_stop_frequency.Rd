@@ -23,6 +23,9 @@ get_stop_frequency(gtfs_obj, start_hour = 6, end_hour = 22,
 
 \item{wide}{(optional) if true, then return a wide rather than tidy data frame}
 }
+\value{
+dataframe of stops (gtfs_obj$.$stops_frequency) with a "Trips" variable representing the count trips taken through each stop for a route within a given time frame
+}
 \description{
 Note that some GTFS feeds contain a frequency data frame already.
 Consider using this instead, as it will be more accurate than what
