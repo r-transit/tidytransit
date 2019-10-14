@@ -22,7 +22,7 @@ library(sf)
 
 # Introduction
 
-The focus of this vignette is on how to use R to make graphics for where and how often transit service operates basedon schedule data published in the [General Transit Feed Specification](http://gtfs.org/). 
+The focus of this vignette is on how to use R to make graphics for where and how often transit service operates based on schedule data published in the [General Transit Feed Specification](http://gtfs.org/). 
 
 We're going to review how to use this package to:
 
@@ -90,7 +90,7 @@ head(am_freq)
 
 This table includes columns for the id for a given stop, the route_id, our selected service_id's, and the number of departures and the average headway for a given direction from 6 am to 10 am on weekdays. 
 
-The `get_stop_frequency` function simply counts the number of departures within the time frame to get departures per stop. Then, to get headways, it divides the number of departures by the number of minutes by the number of departures, and rounds to the nearest integer. 
+The `get_stop_frequency` function simply counts the number of departures within the time frame to get departures per stop. Then, to get headways, it divides the number of minutes by the number of departures, and rounds to the nearest integer. 
 
 Lets have a look at the headways for the 1 train, which runs from the Bronx down to the Bottom of Manhattan. 
 
