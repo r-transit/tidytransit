@@ -13,7 +13,7 @@
 #' @param by_route default TRUE, if FALSE then calculate headway for any line coming through the stop in the same direction on the same schedule. 
 #' @param wide (optional) if true, then return a wide rather than tidy data frame
 #' @export
-#' @returna dataframe of stops (gtfs_obj$.$stops_frequency) with a "Trips" variable representing the count trips taken through each stop for a route within a given time frame
+#' @return dataframe of stops (gtfs_obj$.$stops_frequency) with a "Trips" variable representing the count trips taken through each stop for a route within a given time frame
 #' @importFrom dplyr %>%
 #' @importFrom rlang .data !! quo enquo
 #' @importFrom stats median sd
