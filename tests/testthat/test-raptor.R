@@ -18,14 +18,15 @@ test_that("travel times wrapper function", {
     from_stop_name = "One", 
     departure_time_range = 3600)
   expect_equal(nrow(tt), length(unique(g$stops$stop_name)))
-  expect_equal(tt[stop_name == "One", travel_time], 0)
-  expect_equal(tt[stop_name == "Two", travel_time], 4*60)
-  expect_equal(tt[stop_name == "Three", travel_time], (18-12)*60)
-  expect_equal(tt[stop_name == "Four", travel_time], (37-17)*60)
-  expect_equal(tt[stop_name == "Five", travel_time], (15-10)*60)
-  expect_equal(tt[stop_name == "Six", travel_time], (20-10)*60)
-  expect_equal(tt[stop_name == "Seven", travel_time], (25-10)*60)
-  expect_equal(tt[stop_name == "Eight", travel_time], (24-12)*60)
+  expect_equal(tt %>% dplyr::filter(stop_name == "One") %>% dplyr::pull(travel_time), 0)
+  expect_equal(tt$travel_time[which(tt$stop_name == "One")], 0)
+  expect_equal(tt$travel_time[which(tt$stop_name == "Two")], 4*60)
+  expect_equal(tt$travel_time[which(tt$stop_name == "Three")], (18-12)*60)
+  expect_equal(tt$travel_time[which(tt$stop_name == "Four")], (37-17)*60)
+  expect_equal(tt$travel_time[which(tt$stop_name == "Five")], (15-10)*60)
+  expect_equal(tt$travel_time[which(tt$stop_name == "Six")], (20-10)*60)
+  expect_equal(tt$travel_time[which(tt$stop_name == "Seven")], (25-10)*60)
+  expect_equal(tt$travel_time[which(tt$stop_name == "Eight")], (24-12)*60)
 })
 
 test_that("travel_time works with different params", {
@@ -176,7 +177,17 @@ test_that("transfers for travel_times", {
   tt = travel_times(
     filtered_stop_times = fst, 
     from_stop_name = "One", 
-    departure_time_range = 3600)
-  expect_equal(tt[order(stop_id)]$transfers, 
-    c(0, 0, 0, 1, 0, 0, 1, 0))
+    departure_time_range = 3600) %>% 
+    arrange(stop_id)
+  expect_equal(tt$transfers, 
+               c(0, 0, 0, 1, 0, 0, 1, 0))
+})
+
+test_that("travel_times return type", {
+  fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
+  expect_s3_class(travel_times(fst, "One", return_DT = TRUE), "data.frame")
+  expect_s3_class(travel_times(fst, "One", return_DT = FALSE), "data.frame")
+  expect_s3_class(travel_times(fst, "One"), "tbl_df")
+  expect_s3_class(travel_times(fst, "One", return_DT = FALSE), "tbl_df")
+  expect_s3_class(travel_times(fst, "One", return_DT = TRUE), "data.table")
 })

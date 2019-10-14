@@ -29,8 +29,8 @@ journey with shortest travel time is returned. With \code{earliest} the
 journey arriving at a stop the earliest is returned.}
 }
 \value{
-By default a table with travel times to all stop_ids reachable from
-\code{from_stop_ids} and their corresponding journey departure and arrival times.
+A data.table with travel times to all stop_ids reachable from \code{from_stop_ids}
+and their corresponding journey departure and arrival times.
 }
 \description{
 \code{raptor} finds the minimal travel time and/or earliest arrival time for all

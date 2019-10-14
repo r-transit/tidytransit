@@ -277,14 +277,10 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
       return(df)
     }
 
-    # read.csv supports UTF-8-BOM. use this to get field names.
     # get a small df to find how many cols are needed
     small_df <- suppressWarnings(
-      utils::read.csv(
-        file_path, 
-        nrows = 5, 
-        stringsAsFactors = FALSE)) 
-
+      readr::read_csv(file_path, n_max = 1, col_types = readr::cols(.default = "c")))
+    
     # get correct coltype, if possible
     # create "c" as coltype defaults
     coltypes_character <- rep("c", 
