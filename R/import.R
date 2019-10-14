@@ -10,8 +10,6 @@
 #' @param path Character. url link to zip file OR path to local zip file. if to local path, then option `local` must be set to TRUE.
 #' @param local Boolean. If the paths are searching locally or not. Default is FALSE (that is, urls).
 #' @param quiet Boolean. Whether to see file download progress and files extract. FALSE by default.
-#' @param geometry Boolean. Whether to add simple feature dataframes of routes and stops to the gtfs object
-#' @param frequency Boolean. Whether to add frequency/headway calculations to the gtfs object
 #'
 #' @return A GTFS object. That is, a list of dataframes of GTFS data.
 #'
@@ -31,9 +29,7 @@
 #'           arrange(desc(stop_count))
 #' }
 read_gtfs <- function(path, local = FALSE, 
-                      quiet = TRUE, 
-                      geometry=FALSE,
-                      frequency=FALSE) {
+                      quiet = TRUE) {
   # download zip file
   if (!local && valid_url(path)) {
     path <- download_from_url(url = path, quiet = quiet)
@@ -50,12 +46,6 @@ read_gtfs <- function(path, local = FALSE,
   gtfs_obj <- create_gtfs_object(tmpdirpath, 
                                  file_list_df$filename, 
                                  quiet = quiet)
-  if (geometry) {
-    gtfs_obj <- gtfs_as_sf(gtfs_obj,quiet=quiet)
-  }
-  if (frequency) {
-    gtfs_obj <- get_route_frequency(gtfs_obj) 
-  }
   return(gtfs_obj) 
 }
 

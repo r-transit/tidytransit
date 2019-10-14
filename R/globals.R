@@ -5,6 +5,7 @@ if (getRversion() >= "3.1.0") {
       "agency_id",
       "color",
       "df_name",
+      "departures",
       "field_provided_status",
       "field_spec",
       "field",

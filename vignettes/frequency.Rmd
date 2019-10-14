@@ -1,5 +1,5 @@
 ---
-title: "Headway/Frequency Estimation"
+title: "Transit (GTFS) Service & Headway Mapping with R"
 author: "Tom Buckley"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -16,135 +16,240 @@ knitr::opts_chunk$set(
 )
 library(dplyr)
 library(tidytransit)
+library(ggplot2)
+library(sf)
 ```
 
 # Introduction
 
-This is a brief introduction to the functions in tidytransit that can be used to describe the frequency with which vehicles are scheduled to pass through routes and stops. 
+The focus of this vignette is on how to use R to make graphics for where and how often transit service operates basedon schedule data published in the [General Transit Feed Specification](http://gtfs.org/). 
 
-# Using read_gtfs()
+We're going to review how to use this package to:
 
-For convenience, when you pass a `frequency=TRUE` parameter to `read_gtfs()`, a `routes_frequency` dataframe is added to the list of calculated dataframes in the gtfs object as read by `read_gtfs`. 
+1) Import Transit (GTFS Data)
+2) Identify Weekday Schedules of Service
+3) Headway Calculation
+4) Mapping Headways By Route
+5) Mapping Departures by Stop and Route
 
-## Key Assumptions
- 
-By default `read_gtfs` assumes:
+# 1) Importing the NYC MTA Subway Schedule
 
-- the user wants frequencies from 6 AM and 10 PM for all schedules that run on all weekdays.
-- the user wants frequencies that correspond to the frequency with which vehicles pass through stops. 
-- [that we can use a heuristic to guess which service_id is representative of a standard weekday](https://github.com/r-transit/tidytransit/blob/master/R/frequencies.R#L34-L59). 
+We'll start by importing a snapshot of the NYC MTA's subway schedule, which is included with the package. 
 
-See the reference for the `get_route_frequency()` function for other options (e.g. weekends, other times of day). 
+Note that you can import the data from the URL listed below, or any other URL for GTFS data.  
 
 ```{r}
-local_gtfs_path <- system.file("extdata", 
-                               "google_transit_nyc_subway.zip", 
-                               package = "tidytransit")
-nyc <- read_gtfs(local_gtfs_path, 
-                 geometry=TRUE,
-                 frequency=TRUE)
+local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+gtfs <- read_gtfs(local_gtfs_path, local=TRUE)
+# gtfs <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
 ```
 
-# By Route
+# 2) Identify Weekday Schedules of Service
 
-View the headways along routes as a dataframe. 
+GTFS feeds typically contain a schedule of all the schedules of service for a given system. Selecting a schedule of service in NYC allows us to focus on, for example, non-holiday weekday service, in the Fall of 2019. In some feeds, service selection can be more or less complicated than NYC. In any case, you'll want to read the [service patterns](http://tidytransit.r-transit.org/articles/servicepatterns.html) vignette included in this package in order to see how you can select the right service for your needs. 
+
+We use one of the functions described in that vignette to create a table on the gtfs feed that lets us filter by weekday/weekend service. 
 
 ```{r}
-head(nyc$.$routes_frequency)
+gtfs <- set_servicepattern(gtfs)
 ```
 
-# By Stop
-
-View the headways at stops. `stops_frequency` is added to the list of gtfs dataframes read in by `read_gtfs`. Again, by default, frequency is calculated for service that happens every weekday from 6 am to 10 pm. See the reference for the `get_stop_frequency` function for other options (e.g. weekends, other times of day). 
+Below we use a service_pattern_id, `s_e25d6ca`, which we've selected based on a graphic in that vignette. Using that ID, we pull all GTFS service_id's that correspond to weekday service from Monday through Friday in NYC. 
 
 ```{r}
-head(nyc$.$stops_frequency)
+service_ids <- gtfs$.$service_pattern %>% 
+  filter(servicepattern_id == 's_e25d6ca') %>% 
+  pull(service_id)
+head(service_ids)
 ```
 
-# Mapping Route Frequencies
+So, what are these service_id codes? How they are put together varies from operator to operator. The important thing is that the service_id's are also a field on the `trips` table, which describes all the trips taken in the system. 
 
-You can now map subway routes and color-code each route by how often trains come.  
+Lets see how many trips fall under each of these service_id's on the trips table, and how they relate to routes. 
+
 ```{r}
-plot(nyc)
+gtfs$trips %>%
+  filter(service_id %in% service_ids) %>%
+  group_by(service_id, route_id) %>%
+  summarise(count = n())
 ```
 
-# Mapping Stop Frequencies
+The NYC Subway GTFS identifyies service_id's by the route that a trip runs on. Some GTFS feeds are simpler: a single service_id might relate to 'all vehicle trips running every weekdays'.
 
-Before we plot headways at stops, we must join the frequency table to the geometries for the stops. 
+# 3) Headway Calculation
 
-```{r}
-some_stops_freq_sf <- nyc$.$stops_sf %>%
-  left_join(nyc$.$stops_frequency, by="stop_id") %>%
-  select(headway)
-```
-
-Then we can plot them. 
+So, now that we've identified the set of service_id's that refer to all weekday trips, we can summarize service between 6 am and 10 pm for the NYC Subway system on weekdays.  
 
 ```{r}
-plot(some_stops_freq_sf)
-```
-
-We will see some outliers for headway calculations in this plot. 
-
-In the NYC MTA schedule, for a few stops, a train will only show up a few times a day. Since we are calculating headways, by default, for a period from 6 am to 10 pm, the average headway for these stops will be as high as hundred of minutes. 
-
-One quick solution to the outlier stops in above plot is to throw out stops with headways greater than an unreasonable amount of time. For example, we can filter out stops with headways above 60 minutes. 
-
-```{r}
-some_stops_freq_sf <- some_stops_freq_sf %>%
-  filter(headway<60)
-plot(some_stops_freq_sf)
-```
-
-If you're interested in how to work with schedules and outlier stops like this, the `timetable` vignette, included in this package, is a great introduction.  
-
-# Route Frequency Assumptions
-
-Headways along routes, in the `routes_frequency` data frame, are based on summary statistics of the frequency with which vehicles pass through the stops in the `stops_frequency` data frame.
-
-```{r}
-head(nyc$.$routes_frequency)
-```
-
-The median value for a route will more closely match what a rider might experience along that route. That the median works better than the mean is due to the outlier stops discussed above.  
-
-One way we can verify these estimates is by checking against reported headways. 
-
-For example, we see that our estimated median headway for the 1 train from 6 AM to 10 PM is 5 minutes. When we compare this estimate with the [wikipedia entry](https://en.wikipedia.org/wiki/List_of_New_York_City_Subway_services#Train_intervals) for this train, we have a rough match. Headways reported there are 3 minutes at rush hour, 6 minutes at mid-day and 10 minutes at night. 
-
-# Specific Days and Times
-
-You might be interested in calculating headways for more specific times of day. 
-
-For example, what are rush hour headways like on a specific weekday (2018-08-23)? The `set_hms_times` and `set_date_service_table` functions will alter the feed for us, allowing us to filter by date. 
-
-```{r}
-nyc <- nyc %>% 
-  set_hms_times() %>% 
-  set_date_service_table()
-```
-
-Below we pull a service ID for a specific weekday (2018-08-23). 
-
-```{r}
-nyc <- nyc %>% 
-  set_hms_times() %>% 
-  set_date_service_table()
-
-services_on_180823 <- nyc$.$date_service_table %>% 
-  filter(date == "2018-08-23") %>% select(service_id)
-```
-
-See the `servicepatterns` and `timetable` vignettes for more advice on schedule filtering.
-
-Then we calculate the route frequency in the afternoon rush hour. 
-
-```{r}
-nyc <- get_route_frequency(nyc, service_id = services_on_180823, start_hour = 16, end_hour = 19)
+am_freq <- get_stop_frequency(gtfs, start_hour = 6, end_hour = 10, service_ids = service_ids)
 ```
 
 ```{r}
-head(nyc$.$routes_frequency)
+head(am_freq)
 ```
 
-Again, the median headways for the 1 train seem to roughly correspond (1 min off) to those published on [wikipedia entry](https://en.wikipedia.org/wiki/List_of_New_York_City_Subway_services#Train_intervals)
+This table includes columns for the id for a given stop, the route_id, our selected service_id's, and the number of departures and the average headway for a given direction from 6 am to 10 am on weekdays. 
+
+The `get_stop_frequency` function simply counts the number of departures within the time frame to get departures per stop. Then, to get headways, it divides the number of departures by the number of minutes by the number of departures, and rounds to the nearest integer. 
+
+Lets have a look at the headways for the 1 train, which runs from the Bronx down to the Bottom of Manhattan. 
+
+First, we filter the `am_freq` data frame to just stops going in 1 direction on the 1 train, and then we join to the original `stops` table, which includes a more descriptive stop_name. 
+
+```{r}
+one_line_stops <- am_freq %>% 
+    filter(route_id==1 & direction_id==0) %>%
+    left_join(gtfs$stops, by ="stop_id")
+```
+
+As we can see, some stops seem to have higher headways than others, even when the train is running in the same direction. This may be counterintuitive, because we might expect the train to run through every stop the same amount of times for a given direction. 
+
+Lets inspect the stops at which headways are higher. 
+
+```{r}
+one_line_stops %>% 
+  arrange(desc(headway)) %>% 
+  select(stop_name, departures, headway) %>% 
+  head()
+```
+
+And those at which headways are lower:
+
+```{r}
+one_line_stops %>% 
+  arrange(desc(headway)) %>% 
+  select(stop_name, departures, headway) %>% 
+  tail()
+```
+
+Here we can see that the 242-Van Cortland Stop, the last stop up North, in the Bronx, has noticeably higher headways (8 mins) at this time of day than the South Ferry Stop, which is at the south end of Manhattan.
+
+Lets also plot the headways at these stops on a map to see how they are distributed across the city. 
+First, we'll use the `get_stop_geometry` function, which converts the latitudes and longitudes on the stops table in the GTFS feed into  [simple features](https://r-spatial.github.io/sf/articles/sf1.html).  
+
+```{r}
+nyc_stops_sf <- get_stop_geometry(gtfs$stops)
+```
+
+Now we can join those stop coordinates to the 1 line's calculated stop headways. 
+
+```{r}
+one_line_stops_sf <- nyc_stops_sf %>%
+  right_join(one_line_stops, by="stop_id") 
+```
+
+And then use ggplot's `geom_sf` to plot the headways. 
+
+```{r}
+one_line_stops_sf %>% 
+  ggplot() + 
+  geom_sf(aes(color=headway)) +
+  theme_bw()
+```
+
+On the map too, we can see that there is some variation in stop headways. During certain times of the day, the 1 train skips stops north of a certain stop in manhattan, presumably in order to turn around and provide shorter headways to stops south of that stop.
+
+Finally, we can easily summarise what the headways are like along the entire route now, by using r's default summary function for the vector of headways. 
+
+```{r}
+summary(one_line_stops$headway)
+```
+
+This is the same method that tidytransit uses to summarise headways along all routes in the system when we use the `get_route_frequency` function, which we'll try next.  
+
+# 4) Mapping Headways By Route
+
+Now we'll use the `get_route_frequency` function to summarise transit service by route, for the same time period. 
+
+```{r}
+am_route_freq <- get_route_frequency(gtfs, service_ids = service_ids, start_hour = 6, end_hour = 10) 
+head(am_route_freq)
+```
+
+Since, under the hood, this table is a summary of stop frequencies along each route, it includes the same variables as a summary of the headways at each stop along the route, as well as a sum of all departures. Again, its important to note that this summary is based on the trips that happened within the time frame we specify. 
+As with the stops, we can easily join this table to simple features and then plot it on a map. Note that here too we pass in the select service_id's from above, as the route run by a vehicle also depends on the selected service. 
+
+```{r}
+routes_sf <- get_route_geometry(gtfs, service_ids = service_ids)
+```
+
+Then we join the geometries to the calculated frequencies:
+
+```{r}
+routes_sf <- routes_sf %>% 
+  right_join(am_route_freq, by = 'route_id')
+```
+
+And finally, lets plot the routes with median headways of less than 10 minutes in the morning.
+
+```{r, fig.width=6, fig.height=10, warn=FALSE}
+routes_sf %>% 
+  filter(median_headways<10) %>%
+  ggplot() + 
+  geom_sf(aes(colour=as.factor(median_headways))) + 
+  labs(color = "Headways") +
+  geom_sf_text(aes(label=route_id)) +
+  theme_bw() 
+```
+
+Its clear that a number of the route lines overlap.
+
+# 5) Mapping Departures by Stop and Route
+
+Still, we'd like to represent where and how frequently the subway runs in NYC in the morning. How can we do so?
+
+One answer might be change units. So far, we've summarized frequency by stop, and now by route. And now that we see how routes overlap, we might want to consider using a different unit. The GTFS data standard comes with a `shapes` table, which, if modeled correctly, should allow us to say what the frequency of vehicles passing through any given shape is, using similar methods. This kind of method is beyond the scope of this vignette. 
+
+Alternatively, regular ggplot users might expect the ggplot `dodge` function to allow us to move around these lines but, by design, thats not possible with `geom_sf`. 
+
+So we'll use a cartographic trick, scaling each line according to total departures and close to a number around .001 [decimal degrees](https://en.wikipedia.org/wiki/Decimal_degrees) which is a about the length of a street, which will fit on the map well. One might call this a cartogram. 
+
+```{r}
+routes_sf_buffer <- st_buffer(routes_sf,
+                              dist=routes_sf$total_departures/1e6)
+```
+
+Next, when we render the map, we'll make sure to make the borders around each route transparent, and set the opacity for the fill of all the polygons high again. 
+
+```{r, fig.width=6, fig.height=10}
+routes_sf_buffer %>% 
+  ggplot() + 
+  geom_sf(colour=alpha("white",0),fill=alpha("red",0.2)) +
+  theme_bw() 
+```
+
+Now we have a rough representation of the question we set out to answer: where and how frequently does transit service run in the AM in the NYC Subway. Note that in this graphic, the intensity of the red tells you how many overlapping trains run through the line and the thickness of the lines represents how many run along each line. 
+
+We can combine this with stops to get a sense of how central stops relate to routes. 
+
+```{r}
+nyc_stop_am_departures_main <- nyc_stops_sf %>% left_join(am_freq) %>% 
+  filter(departures>50)
+```
+
+First, we'll leverage the common `stop_name` variable to group and count departures, in both directions, for all stops, filtering to out a number of smaller stops for more graphical clarity. 
+
+```{r}
+nyc_stops <- left_join(gtfs$stops,am_freq, by="stop_id")
+
+stop_departures <- nyc_stops %>%  
+  group_by(stop_name) %>%
+  transmute(total_departures=sum(departures, na.rm=TRUE))
+
+nyc_stops1 <- right_join(nyc_stops_sf,
+                        stop_departures, by="stop_name")
+
+stop_departures <- nyc_stops1 %>%
+  filter(total_departures>100)
+```
+
+Finally, we can plot both the route line counts and the stop departure counts on one map:
+
+```{r, fig.width=6, fig.height=10}
+ggplot() + 
+  geom_sf(data=routes_sf_buffer,colour=alpha("white",0),fill=alpha("red",0.3)) +
+  geom_sf(data=stop_departures, aes(size=total_departures), shape=1) + 
+  labs(size = "Departures (Hundreds)") +
+  theme_bw() +
+  theme(legend.position="none")
+```

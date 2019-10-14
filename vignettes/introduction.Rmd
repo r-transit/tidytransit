@@ -1,6 +1,7 @@
 ---
-title: "Introduction"
+title: "Introduction to tidytransit"
 date: "`r Sys.Date()`"
+author: "Tom Buckley"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{tidytransit-Introduction}
@@ -22,15 +23,15 @@ Status](https://travis-ci.com/r-transit/tidytransit.svg?branch=master)](https://
 
 Use tidytransit to:
 
-- read GTFS zip files into R
-- automatically cast the spatial and temporal data in the feeds into more usable R data types  
-- create graphics about transit service
-- map existing stops and routes
-- estimate transit frequencies
-- validate transit feeds
-- estimate travel time between transit stops
+- [Read a GTFS Feed into R Data Types](http://tidytransit.r-transit.org/articles/introduction.html#read-gtfs-data)
+- [Validate transit feeds](http://tidytransit.r-transit.org/articles/introduction.html#feed-validation-results)
+- Coerce [stops and routes to 'simple features'](http://tidytransit.r-transit.org/reference/get_stop_geometry.html) and [plot them](http://tidytransit.r-transit.org/reference/plot.gtfs.html)
+- [Create graphics about transit service](http://tidytransit.r-transit.org/articles/servicepatterns.html)
+- [Estimate transit frequencies](http://tidytransit.r-transit.org/articles/frequency.html)
+- [Estimate travel time between transit stops](http://tidytransit.r-transit.org/reference/raptor.html)
+- [Look up GTFS feeds from around the world within R](http://tidytransit.r-transit.org/articles/introduction.html#finding-more-gtfs-feeds)
 
-# Installation
+# Installation & Dependencies
 
 This package requires a working installation of [sf](https://github.com/r-spatial/sf#installing). 
 
@@ -43,24 +44,22 @@ install.packages('tidytransit')
 devtools::install_github("r-transit/tidytransit")
 ```
 
-For some users, `sf` is impractical to install due to system level dependencies. For these users, [`trread`](https://github.com/r-transit/trread) may work better. Its tidytransit without geospatial (GDAL) tools. 
+For some users, `sf` is impractical to install due to system level dependencies. For these users, [`trread`](https://github.com/r-transit/trread) may work better. Its tidytransit without geospatial tools. 
 
 # The General Transit Feed Specification
 
-GTFS feeds contain many linked tables about published transit schedules about trips, stops, and routes. Below is a diagram of these relationships and tables. 
+The [summary page for the GTFS standard](https://developers.google.com/transit/gtfs/#overview-of-a-gtfs-feed) is a good resource for more information on the standard.  
+
+GTFS feeds contain many linked tables about published transit schedules about service schedules, trips, stops, and routes. 
+
+Below is a diagram of these relationships and tables:
 
 ![gtfs-relationship-diagram](figures/GTFS_class_diagram.svg.png)
 Source: Wikimedia, user -stk. 
 
-Since GTFS is a data standard, you can find many uses for it which have not been considered here. The [summary page for the GTFS standard](https://developers.google.com/transit/gtfs/#overview-of-a-gtfs-feed) is a good resource.
+# Read a GTFS Feed
 
-GTFS works well with R given that the data structure is tabular.  
-
-# Usage
-
-## Read GTFS data
-
-GTFS data come packaged as a zip file of tables in text form. The main thing tidytransit does is consolidate the reading of all those tables into a single R object, which contains a list of the tables in each feed. 
+GTFS data come packaged as a zip file of tables in text form. The first thing tidytransit does is consolidate the reading of all those tables into a single R object, which contains a list of the tables in each feed. 
 
 Below we use the tidytransit `read_gtfs` function in order to read a feed from the NYC MTA into R. 
 
@@ -97,6 +96,17 @@ tables that were read in for this feed. Each of these is a table.
 names(nyc)
 ```
 
+## Feed Validation Results
+
+When reading a feed, it is checked against the GTFS specification, and an attribute is added to the resultant object called `validation_result`, which is a tibble about the files and fields in the GTFS feed and how they compare to the specification. 
+
+You can get this tibble from the metadata about the feed. 
+
+```{r}
+validation_result <- attr(nyc, "validation_result")
+head(validation_result)
+```
+
 ## Finding More GTFS Feeds
 
 Included in the tidytransit package is a dataframe with a list of urls, city names, and locations. 
@@ -130,19 +140,4 @@ feedlist_sf <- st_as_sf(feedlist,
 plot(feedlist_sf, max.plot = 1)
 ```
 
-See the package reference for the `transitfeeds` data frame for more information on the transitfeeds metadata.  
-
-### Feed Validation Results
-
-When reading a feed, it is checked against the GTFS specification, and an attribute is added to the resultant object called `validation_result`, which is a tibble about the files and fields in the GTFS feed and how they compare to the specification. 
-
-You can get this tibble from the metadata about the feed. 
-
-```{r}
-validation_result <- attr(nyc, "validation_result")
-head(validation_result)
-```
-
-## Background
-
-tidytransit is a [fork](https://en.wikipedia.org/wiki/Fork_(software_development)) of [gtfsr](https://github.com/ropensci/gtfsr). 
+See the package reference for the `transitfeeds` data frame for more information on the transitfeeds metadata.
