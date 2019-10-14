@@ -28,9 +28,9 @@ We're going to review how to use this package to:
 
 1) Import Transit (GTFS Data)
 2) Identify Weekday Schedules of Service
-3) Estimate Headways at Stops
-4) Map headways along multiple lines 
-5) Map total departures along all routes and lines in the NYC Subway.
+3) Headway Calculation
+4) Mapping Headways By Route
+5) Mapping Departures by Stop and Route
 
 # 1) Importing the NYC MTA Subway Schedule
 
@@ -76,7 +76,7 @@ gtfs$trips %>%
 
 The NYC Subway GTFS identifyies service_id's by the route that a trip runs on. Some GTFS feeds are simpler: a single service_id might relate to 'all vehicle trips running every weekdays'.
 
-# 3) Headways Between 6 am and 10 am on stops on the 1 Train. 
+# 3) Headway Calculation
 
 So, now that we've identified the set of service_id's that refer to all weekday trips, we can summarize service between 6 am and 10 pm for the NYC Subway system on weekdays.  
 
@@ -157,7 +157,7 @@ summary(one_line_stops$headway)
 
 This is the same method that tidytransit uses to summarise headways along all routes in the system when we use the `get_route_frequency` function, which we'll try next.  
 
-# 4) Headways Between 6 am and 10 am on stops for all Routes
+# 4) Mapping Headways By Route
 
 Now we'll use the `get_route_frequency` function to summarise transit service by route, for the same time period. 
 
@@ -194,7 +194,7 @@ routes_sf %>%
 
 Its clear that a number of the route lines overlap.
 
-# 5) Map Departures Between 6 am and 10 am for all Stops and for All Routes
+# 5) Mapping Departures by Stop and Route
 
 Still, we'd like to represent where and how frequently the subway runs in NYC in the morning. How can we do so?
 
