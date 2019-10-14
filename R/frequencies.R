@@ -55,12 +55,6 @@ get_stop_frequency <- function(gtfs_obj,
                       .data$service_id) %>%
       dplyr::summarise(departures = dplyr::n())
   }
-  if (by_route == FALSE & by_service==FALSE) {
-    stop_time_trips <- stop_time_trips %>%
-      dplyr::group_by(.data$direction_id,
-                      .data$stop_id) %>%
-      dplyr::summarise(departures = dplyr::n())
-  }
   else if (by_route == TRUE) {
   stop_time_trips <- stop_time_trips %>%
     dplyr::group_by(.data$route_id,

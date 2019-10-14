@@ -21,19 +21,16 @@ get_route_frequency(gtfs_obj, start_hour = 6, end_hour = 22,
 \item{dow}{(optional) an integer vector with days of week. monday=1. default: c(1,1,1,1,1,0,0)}
 }
 \value{
-a gtfs_obj with a dataframe of routes with variables (gtfs_obj$.$routes_frequency) for headway/frequency for a route within a given time frame
+a dataframe of routes with variables (gtfs_obj$.$routes_frequency) for headway/frequency for a route within a given time frame
 }
 \description{
 Note that some GTFS feeds contain a frequency data frame already.
 Consider using this instead, as it will be more accurate than what
 tidytransit calculates.
 }
-\details{
-should take:
-}
 \examples{
 data(gtfs_obj)
-gtfs_obj <- get_route_frequency(gtfs_obj)
-x <- order(gtfs_obj$.$routes_frequency$median_headways)
-head(gtfs_obj$.$routes_frequency[x,])
+routes_frequency <- get_route_frequency(gtfs_obj)
+x <- order(routes_frequency$median_headways)
+head(routes_frequency[x,])
 }
