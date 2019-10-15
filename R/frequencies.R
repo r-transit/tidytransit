@@ -109,9 +109,11 @@ get_route_frequency <- function(gtfs_obj,
                             quiet = FALSE,
                             service_ids = c(),
                             dow=c(1, 1, 1, 1, 1, 0, 0)) {
-  if (!quiet) message("Calculating route and stop headways.")
-  if( !is.null(gtfs_obj$frequencies) ) {  print("NOTE: A pre-calculated frequencies dataframe exists for this feed already--consider using that.") } 
-  # TODO use set_* if gtfs_obj is changed/appended?
+  if(!quiet) message("Calculating route and stop headways.")
+  if(feed_contains(gtfs_obj, "frequencies")) {  
+    message("A pre-calculated frequencies dataframe exists for this feed already, 
+            consider using that.") 
+  } 
   stops_frequency <- get_stop_frequency(gtfs_obj, start_hour, 
                                  end_hour, service_ids, dow)  
   if (dim(stops_frequency)[[1]]!=0) {
@@ -126,8 +128,7 @@ get_route_frequency <- function(gtfs_obj,
                          round(sd(.data$headway),2),
                        stop_count = dplyr::n())
   } else {
-    warning("failed to calculate frequency--
-            try passing a service_id from calendar_df")
+    warning("Failed to calculate frequency, try passing a service_id from calendar_df.")
   }
   return(routes_frequency)
 }

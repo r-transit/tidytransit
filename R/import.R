@@ -115,7 +115,7 @@ download_from_url <- function(url,
 
 unzip_file <- function(zipfile, 
                        tmpdirpath=tempdir(), 
-                       quiet = FALSE) {
+                       quiet = TRUE) {
   f <- zipfile
   
   # check path

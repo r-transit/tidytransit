@@ -4,7 +4,7 @@
 \alias{unzip_file}
 \title{Unzip a file and delete zip}
 \usage{
-unzip_file(zipfile, tmpdirpath = tempdir(), quiet = FALSE)
+unzip_file(zipfile, tmpdirpath = tempdir(), quiet = TRUE)
 }
 \arguments{
 \item{zipfile}{path to zipped file}
