@@ -31,8 +31,7 @@ set_hms_times <- function(gtfs_obj) {
   gtfs_obj$stop_times$departure_time_hms <- 
     hms::hms(hhmmss_to_seconds(gtfs_obj$stop_times$departure_time))
   
-  if(exists("frequencies", where=gtfs_obj) && 
-     !is.null(gtfs_obj$frequencies) && nrow(gtfs_obj$frequencies) > 0) {
+  if(feed_contains(gtfs_obj, "frequencies") && nrow(gtfs_obj$frequencies) > 0) {
     gtfs_obj$frequencies$start_time_hms <- 
       hms::hms(hhmmss_to_seconds(gtfs_obj$frequencies$start_time))
     gtfs_obj$frequencies$end_time_hms <- 

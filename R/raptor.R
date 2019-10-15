@@ -354,7 +354,7 @@ filter_stop_times = function(gtfs_obj,
   }
   
   # trips runnin on day
-  if(!exists(".", where = gtfs_obj) || !exists("date_service_table", where = gtfs_obj$.)) {
+  if(!feed_contains(gtfs_obj, "date_service_table")) {
     gtfs_obj <- set_date_service_table(gtfs_obj)
   }
   service_ids = filter(gtfs_obj$.$date_service_table, date == extract_date)
