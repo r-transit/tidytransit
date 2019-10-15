@@ -5,13 +5,50 @@
 #' @return gtfs_obj a tidytransit gtfs object with a bunch of simple features tables
 #' @export
 gtfs_as_sf <- function(gtfs_obj, quiet=TRUE) {
-  if(!quiet) message('Converting stops to simple features ')
+  if(!quiet) message('Converting stops to simple features')
   gtfs_obj$.$stops_sf <- try(get_stop_geometry(gtfs_obj$stops))
-  if(!quiet) message('Converting routes to simple features ')
-  gtfs_obj$.$routes_sf <- try(get_route_geometry(gtfs_obj))
+  
+  if(feed_contains(gtfs_obj, "shapes")) {
+    if(!quiet) message('Converting shapes to simple features')
+    gtfs_obj$.$shapes_sf <- try(get_shapes_geometry(gtfs_obj$shapes))
+    if(!quiet) message('Converting routes to simple features ')
+    gtfs_obj$.$routes_sf <- try(get_route_geometry(gtfs_obj))
+  } else { 
+    warning('No shapes available in gtfs_obj') 
+  }
+  
   return(gtfs_obj)
 }
 
+get_shapes_sf <- function(gtfs_obj) {
+  if(!feed_contains("shapes_sf")) {
+    stop("shapes_sf not yet created, use gtfs_obj <- gtfs_as_sf(gtfs_obj)")
+  }
+  return(gtfs_obj$.$shapes_sf)
+}
+
+get_stops_sf <- function(gtfs_obj) {
+  if(!feed_contains("stops_sf")) {
+    stop("stops_sf not yet created, use gtfs_obj <- gtfs_as_sf(gtfs_obj)")
+  }
+  return(gtfs_obj$.$stops_sf)
+}
+
+#' Make shapes into Simple Features Linestrings
+#'
+#' @param shapes a gtfs$shapes dataframe
+#' @export
+#' @return an sf dataframe for gtfs shapes
+get_shapes_geometry <- function(shapes) {
+  list_of_line_tibbles <- split(shapes, shapes$shape_id)
+  list_of_linestrings <- lapply(list_of_line_tibbles, shape_as_sf_linestring)
+  
+  shape_linestrings <- sf::st_sfc(list_of_linestrings, crs = 4326)
+  
+  shapes_sf <- sf::st_sf(shape_id = unique(shapes$shape_id), geometry = shape_linestrings)
+  
+  return(shapes_sf)
+}
 #' Make Routes into Simple Features Lines
 #'
 #' @param gtfs_obj tidytransit gtfs object
