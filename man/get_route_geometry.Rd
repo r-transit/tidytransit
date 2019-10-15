@@ -20,7 +20,7 @@ an sf dataframe for gtfs routes with a multilinestring column
 Make Routes into Simple Features Lines
 }
 \examples{
-data(gtfs_obj)
-routes_sf <- get_route_geometry(gtfs_obj)
+data(gtfs_duke)
+routes_sf <- get_route_geometry(gtfs_duke)
 plot(routes_sf[1,])
 }

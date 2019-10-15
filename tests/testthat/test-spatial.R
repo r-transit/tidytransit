@@ -4,10 +4,10 @@ library(sf)
 
 test_that("Can convert a gtfsr routes dataframe 
           to a simple features dataframe", {
-	expect_is(get_route_geometry(gtfs_obj), "sf")
+	expect_is(get_route_geometry(gtfs_duke), "sf")
 })
 
 test_that("Can convert a gtfsr stops dataframe 
           to a simple features dataframe", {
-  expect_is(get_stop_geometry(gtfs_obj$stops), "sf")
+  expect_is(get_stop_geometry(gtfs_duke$stops), "sf")
 })

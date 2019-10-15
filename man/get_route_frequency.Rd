@@ -29,8 +29,8 @@ Consider using this instead, as it will be more accurate than what
 tidytransit calculates.
 }
 \examples{
-data(gtfs_obj)
-routes_frequency <- get_route_frequency(gtfs_obj)
+data(gtfs_duke)
+routes_frequency <- get_route_frequency(gtfs_duke)
 x <- order(routes_frequency$median_headways)
 head(routes_frequency[x,])
 }

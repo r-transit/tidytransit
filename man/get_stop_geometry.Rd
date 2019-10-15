@@ -16,8 +16,8 @@ an sf dataframe for gtfs routes with a point column
 Make Stops into Simple Features Points
 }
 \examples{
-data(gtfs_obj)
-some_stops <- gtfs_obj$stops[sample(nrow(gtfs_obj$stops), 40),]
+data(gtfs_duke)
+some_stops <- gtfs_duke$stops[sample(nrow(gtfs_duke$stops), 40),]
 some_stops_sf <- get_stop_geometry(some_stops)
 plot(some_stops_sf)
 }

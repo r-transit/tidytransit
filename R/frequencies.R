@@ -13,14 +13,16 @@
 #' @param by_route default TRUE, if FALSE then calculate headway for any line coming through the stop in the same direction on the same schedule. 
 #' @param wide (optional) if true, then return a wide rather than tidy data frame
 #' @export
-#' @return dataframe of stops (gtfs_obj$.$stops_frequency) with a "Trips" variable representing the count trips taken through each stop for a route within a given time frame
+#' @return dataframe of stops (gtfs_obj$.$stops_frequency) with a "Trips" variable 
+#'         representing the count trips taken through each stop for a route within a 
+#'         given time frame
 #' @importFrom dplyr %>%
 #' @importFrom rlang .data !! quo enquo
 #' @importFrom stats median sd
 #' @importFrom tidyr spread
 #' @examples 
-#' data(gtfs_obj)
-#' stop_frequency <- get_stop_frequency(gtfs_obj)
+#' data(gtfs_duke)
+#' stop_frequency <- get_stop_frequency(gtfs_duke)
 #' x <- order(stop_frequency$headway)
 #' head(stop_frequency[x,])
 
@@ -96,8 +98,8 @@ get_stop_frequency <- function(gtfs_obj,
 #' @return a dataframe of routes with variables (gtfs_obj$.$routes_frequency) for headway/frequency for a route within a given time frame
 #' @export
 #' @examples 
-#' data(gtfs_obj)
-#' routes_frequency <- get_route_frequency(gtfs_obj)
+#' data(gtfs_duke)
+#' routes_frequency <- get_route_frequency(gtfs_duke)
 #' x <- order(routes_frequency$median_headways)
 #' head(routes_frequency[x,])
 

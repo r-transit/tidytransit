@@ -20,8 +20,8 @@ gtfs_as_sf <- function(gtfs_obj, quiet=TRUE) {
 #' @export
 #' @return an sf dataframe for gtfs routes with a multilinestring column
 #' @examples
-#' data(gtfs_obj)
-#' routes_sf <- get_route_geometry(gtfs_obj)
+#' data(gtfs_duke)
+#' routes_sf <- get_route_geometry(gtfs_duke)
 #' plot(routes_sf[1,])
 get_route_geometry <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
   shape_route_service <- shape_route_service(gtfs_obj, route_ids = route_ids, service_ids = service_ids)
@@ -50,8 +50,8 @@ get_route_geometry <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
 #' @export
 #' @return an sf dataframe for gtfs routes with a point column
 #' @examples
-#' data(gtfs_obj)
-#' some_stops <- gtfs_obj$stops[sample(nrow(gtfs_obj$stops), 40),]
+#' data(gtfs_duke)
+#' some_stops <- gtfs_duke$stops[sample(nrow(gtfs_duke$stops), 40),]
 #' some_stops_sf <- get_stop_geometry(some_stops)
 #' plot(some_stops_sf)
 get_stop_geometry <- function(stops) {
