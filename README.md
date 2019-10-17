@@ -1,4 +1,3 @@
-
 [![Travis-CI Build
 Status](https://travis-ci.com/r-transit/tidytransit.svg?branch=master)](https://travis-ci.com/r-transit/tidytransit)
 [![CRAN
@@ -10,14 +9,24 @@ status](http://www.r-pkg.org/badges/version-ago/tidytransit?)](https://cran.r-pr
 # tidytransit
 
 Use tidytransit to map transit stops and routes, calculate transit
-frequencies, and validate transit feeds. tidytransit reads the [General Transit Feed Specification](http://gtfs.org/) into [tidyverse](https://tibble.tidyverse.org/) and [simple features](https://en.wikipedia.org/wiki/Simple_Features) dataframes. Tidytransit can be used to:
-- read GTFS feeds into R
-- automatically cast the spatial and temporal data in the feeds into more usable R data types  
-- create graphics about transit service
+frequencies, and validate transit feeds. tidytransit reads the 
+[General Transit Feed Specification](http://gtfs.org/) into 
+[tidyverse](https://tibble.tidyverse.org/) and 
+[simple features](https://en.wikipedia.org/wiki/Simple_Features) data frames. 
+Tidytransit can be used to:
+- [read GTFS feeds into R](http://tidytransit.r-transit.org/reference/read_gtfs.html)
+- [estimate transit frequencies](http://tidytransit.r-transit.org/reference/get_route_frequency.html)
+- [calculate travel times between transit stops](http://tidytransit.r-transit.org/reference/travel_times.html)
+- [convert stops and routes to sf data frames](http://tidytransit.r-transit.org/reference/gtfs_as_sf.html)
 - map existing stops and routes
-- estimate transit frequencies
-- validate transit feeds
-- estimate travel times between transit stops
+- [validate transit feeds and more](http://tidytransit.r-transit.org/reference/index.html)
+
+Have a look at the following vignettes to see how tidytransit can be used to analyse a feed:
+
+- [the tutorial](http://tidytransit.r-transit.org/articles/introduction.html) 
+- [introduction to service patterns](http://tidytransit.r-transit.org/articles/servicepatterns.html)
+- [introduction to time tables](http://tidytransit.r-transit.org/articles/timetable.html)
+- [introduction to frequency calculation](http://tidytransit.r-transit.org/articles/frequency.html)  
 
 ## Installation
 
@@ -41,17 +50,6 @@ For some users, `sf` is impractical to install due to system level
 dependencies. For these users,
 [`trread`](https://github.com/r-transit/trread) may work better. It has
 more limited functionality, but it can read GTFS tables into R.
-
-# Usage
-
-Please see:
-
-- [the tutorial](http://tidytransit.r-transit.org/articles/introduction.html) 
-- [introduction to service patterns](http://tidytransit.r-transit.org/articles/servicepatterns.html)
-- [introduction to time tables](http://tidytransit.r-transit.org/articles/timetable.html)
-- [introduction to frequency calculation](http://tidytransit.r-transit.org/articles/frequency.html)
-- [the function reference](http://tidytransit.r-transit.org/reference/index.html).   
-
 
 # Background
 
