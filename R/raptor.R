@@ -38,6 +38,7 @@
 #'         and their corresponding journey departure and arrival times.
 #'
 #' @import data.table
+#' @seealso travel_times, filter_stop_times
 #' @export
 #' @examples \donttest{
 #' nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
@@ -232,6 +233,7 @@ raptor = function(stop_times,
 #'                           "HH:MM:SS" or seconds as numerical value.
 #' @param return_DT travel_times() returns a data.table if TRUE. Default is FALSE which returns 
 #'                  a tibble/tbl_df.
+#' @seealso filter_stop_times, raptor
 #'                           
 #' @return A table with travel times to all stops reachable from `from_stop_name` and their
 #'         corresponding journey departure and arrival times.

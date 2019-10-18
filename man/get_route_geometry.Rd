@@ -21,6 +21,7 @@ Get all trip shapes for a given route and service.
 }
 \examples{
 data(gtfs_duke)
-routes_sf <- get_route_geometry(gtfs_duke)
-plot(routes_sf[1,])
+gtfs_duke_sf <- gtfs_as_sf(gtfs_duke)
+routes_sf <- get_route_geometry(gtfs_duke_sf)
+plot(routes_sf[c(1,1350),])
 }

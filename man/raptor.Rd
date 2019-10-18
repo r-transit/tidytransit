@@ -80,3 +80,6 @@ shortest_travel_times <- setDT(rptr)[order(travel_time_incl_walk)][, .SD[1], by 
 hist(shortest_travel_times$travel_time, breaks = 360)
 }
 }
+\seealso{
+travel_times, filter_stop_times
+}

@@ -2,7 +2,7 @@ context("Converting GTFS routes and shapes into sf dataframes")
 library(sf)
 
 test_that("convert gtfs stops and shapes to sf data frames", {
-  expect_is(get_stop_geometry(gtfs_duke$stops), "sf")
+  expect_is(get_stops_geometry(gtfs_duke$stops), "sf")
   shapes_sf = get_shapes_geometry(gtfs_duke$shapes)
   expect_is(shapes_sf, "sf")
   expect_equal(nrow(shapes_sf), length(unique(gtfs_duke$shapes$shape_id)))
@@ -20,7 +20,7 @@ test_that("gtfs_as_sf doesn't crash without shapes", {
 test_that("get_route_geometry", {
   duke_sf <- gtfs_as_sf(gtfs_duke)
   
-  get_route_geometry(duke_sf, route_ids = "1681") %>% dplyr::distinct(trip_id)
+  get_route_geometry(duke_sf, route_ids = "1681")
   get_route_geometry(duke_sf, route_ids = "12945", service_ids = c("c_16865_b_19493_d_31", "c_839_b_20026_d_31"))
   get_route_geometry(duke_sf, service_ids = "c_839_b_20026_d_31")
   expect_warning(get_route_geometry(duke_sf, route_ids = "non_existing_id"))

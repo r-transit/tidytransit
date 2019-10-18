@@ -11,7 +11,7 @@
 #' @export
 gtfs_as_sf <- function(gtfs_obj, skip_shapes = FALSE, quiet = TRUE) {
   if(!quiet) message('Converting stops to simple features')
-  gtfs_obj$stops <- try(get_stop_geometry(gtfs_obj$stops))
+  gtfs_obj$stops <- try(get_stops_geometry(gtfs_obj$stops))
   
   if(feed_contains(gtfs_obj, "shapes") && !skip_shapes) {
     if(!quiet) message('Converting shapes to simple features')
@@ -23,25 +23,27 @@ gtfs_as_sf <- function(gtfs_obj, skip_shapes = FALSE, quiet = TRUE) {
   return(gtfs_obj)
 }
 
-#' Make Stops into Simple Features Points
+#' Convert stops into Simple Features Points
 #'
 #' @param stops a gtfs$stops dataframe
 #' @return an sf dataframe for gtfs routes with a point column
+#' @export
 #' @examples
 #' data(gtfs_duke)
 #' some_stops <- gtfs_duke$stops[sample(nrow(gtfs_duke$stops), 40),]
-#' some_stops_sf <- get_stop_geometry(some_stops)
+#' some_stops_sf <- get_stops_geometry(some_stops)
 #' plot(some_stops_sf)
-get_stop_geometry <- function(stops) {
+get_stops_geometry <- function(stops) {
   stops_sf <- sf::st_as_sf(stops,
                            coords = c("stop_lon", "stop_lat"),
                            crs = 4326)
   return(stops_sf)
 }
 
-#' Make shapes into Simple Features Linestrings
+#' Convert shapes into Simple Features Linestrings
 #'
 #' @param shapes a gtfs$shapes dataframe
+#' @export
 #' @return an sf dataframe for gtfs shapes
 get_shapes_geometry <- function(shapes) {
   list_of_line_tibbles <- split(shapes, shapes$shape_id)
@@ -64,8 +66,9 @@ get_shapes_geometry <- function(shapes) {
 #' @export
 #' @examples
 #' data(gtfs_duke)
-#' routes_sf <- get_route_geometry(gtfs_duke)
-#' plot(routes_sf[1,])
+#' gtfs_duke_sf <- gtfs_as_sf(gtfs_duke)
+#' routes_sf <- get_route_geometry(gtfs_duke_sf)
+#' plot(routes_sf[c(1,1350),])
 get_route_geometry <- function(gtfs_sf_obj, route_ids = NULL, service_ids = NULL) {
   if(!"sf" %in% class(gtfs_sf_obj$shapes)) {
     stop("shapes not converted to sf, use gtfs_obj <- gtfs_as_sf(gtfs_obj)")
@@ -84,7 +87,7 @@ get_route_geometry <- function(gtfs_sf_obj, route_ids = NULL, service_ids = NULL
     }
   }
 
-  trip_shapes = dplyr::inner_join(trips, gtfs_sf_obj$shapes, by = "shape_id")
+  trip_shapes = dplyr::inner_join(gtfs_sf_obj$shapes, trips, by = "shape_id")
   return(trip_shapes)
 }
 
@@ -103,12 +106,12 @@ get_trip_geometry <- function(gtfs_sf_obj, trip_ids) {
   if(!"sf" %in% class(gtfs_sf_obj$shapes)) {
     stop("shapes not converted to sf, use gtfs_obj <- gtfs_as_sf(gtfs_obj)")
   }
-  id_diff = setdiff(trip_ids, trips$trip_id)
+  id_diff = setdiff(trip_ids, gtfs_sf_obj$trips$trip_id)
   if(length(id_diff) > 0) warning('"', paste(id_diff, collapse=", "), '" not found in trips data frame')
 
-  gtfs_sf_obj$trips %>% 
-    filter(trip_id %in% trip_ids) %>% 
-    dplyr::inner_join(gtfs_sf_obj$shapes, by = "shape_id")
+  trips = gtfs_sf_obj$trips %>% filter(trip_id %in% trip_ids)
+  trips_shapes = dplyr::inner_join(gtfs_sf_obj$shapes, trips, by = "shape_id")
+  return(trips_shapes)
 }
 
 #' return an sf linestring with lat and long from gtfs

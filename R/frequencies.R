@@ -92,7 +92,6 @@ get_stop_frequency <- function(gtfs_obj,
 #' @param gtfs_obj a list of gtfs dataframes as read by the trread package.
 #' @param start_hour (optional) an integer, default 6 (6 am)
 #' @param end_hour (optional) an integer, default 22 (10 pm)
-#' @param quiet default FALSE. whether to echo process messages
 #' @param service_ids (optional) a string from the calendar dataframe identifying a particular service schedule.
 #' @param dow (optional) an integer vector with days of week. monday=1. default: c(1,1,1,1,1,0,0)
 #' @return a dataframe of routes with variables (gtfs_obj$.$routes_frequency) for headway/frequency for a route within a given time frame
@@ -102,14 +101,11 @@ get_stop_frequency <- function(gtfs_obj,
 #' routes_frequency <- get_route_frequency(gtfs_duke)
 #' x <- order(routes_frequency$median_headways)
 #' head(routes_frequency[x,])
-
 get_route_frequency <- function(gtfs_obj,
                             start_hour=6,
                             end_hour=22,
-                            quiet = FALSE,
                             service_ids = c(),
                             dow=c(1, 1, 1, 1, 1, 0, 0)) {
-  if(!quiet) message("Calculating route and stop headways.")
   if(feed_contains(gtfs_obj, "frequencies")) {  
     message("A pre-calculated frequencies dataframe exists for this feed already, 
             consider using that.") 

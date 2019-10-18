@@ -15,7 +15,11 @@
 #' }
 plot.gtfs <- function(x, ...) {
   dots <- list(...)
-  x_stops <- get_stop_geometry(x$stops)
-  plot(x_stops)
+  if("sf" %in% class(x$stops)) {
+    plot(x$stops)
+  } else {
+    x_stops <- get_stops_geometry(x$stops)
+    plot(x_stops)
+  }
 }
 

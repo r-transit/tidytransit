@@ -2,7 +2,7 @@
 % Please edit documentation in R/spatial.R
 \name{get_shapes_geometry}
 \alias{get_shapes_geometry}
-\title{Make shapes into Simple Features Linestrings}
+\title{Convert shapes into Simple Features Linestrings}
 \usage{
 get_shapes_geometry(shapes)
 }
@@ -13,5 +13,5 @@ get_shapes_geometry(shapes)
 an sf dataframe for gtfs shapes
 }
 \description{
-Make shapes into Simple Features Linestrings
+Convert shapes into Simple Features Linestrings
 }
