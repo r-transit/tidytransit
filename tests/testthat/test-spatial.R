@@ -1,26 +1,31 @@
 context("Converting GTFS routes and shapes into sf dataframes")
 library(sf)
 
-test_that("Can convert a gtfsr routes dataframe 
-          to a simple features dataframe", {
-	expect_is(get_route_geometry(gtfs_duke), "sf")
-})
-
-test_that("Can convert a gtfsr stops dataframe 
-          to a simple features dataframe", {
+test_that("convert gtfs stops and shapes to sf data frames", {
   expect_is(get_stop_geometry(gtfs_duke$stops), "sf")
-})
-
-nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
-nyc <- read_gtfs(nyc_path)
-
-test_that("convert shapes to shapes_sf", {
-  shapes_sf = get_shapes_geometry(nyc$shapes)
+  shapes_sf = get_shapes_geometry(gtfs_duke$shapes)
   expect_is(shapes_sf, "sf")
-  expect_equal(nrow(shapes_sf), length(unique(nyc$shapes$shape_id)))
+  expect_equal(nrow(shapes_sf), length(unique(gtfs_duke$shapes$shape_id)))
+  duke_sf <- gtfs_as_sf(gtfs_duke)
+  expect_is(duke_sf$shapes, "sf")
+  expect_is(duke_sf$stops, "sf")
 })
 
 test_that("gtfs_as_sf doesn't crash without shapes", {
-  nyc$shapes <- NULL
-  expect_warning(gtfs_as_sf(nyc))
+  gtfs_duke_wo_shapes <- gtfs_duke
+  gtfs_duke_wo_shapes$shapes <- NULL
+  expect_warning(gtfs_as_sf(gtfs_duke_wo_shapes))
 })
+
+test_that("get_route_geometry", {
+  duke_sf <- gtfs_as_sf(gtfs_duke)
+  
+  get_route_geometry(duke_sf, route_ids = "1681") %>% dplyr::distinct(trip_id)
+  get_route_geometry(duke_sf, route_ids = "12945", service_ids = c("c_16865_b_19493_d_31", "c_839_b_20026_d_31"))
+  get_route_geometry(duke_sf, service_ids = "c_839_b_20026_d_31")
+  expect_warning(get_route_geometry(duke_sf, route_ids = "non_existing_id"))
+  expect_warning(get_route_geometry(duke_sf, route_ids = "1681", service_ids = "non_existing_id"))
+  get_trip_geometry(duke_sf, c("t_94482_b_20026_tn_2", "t_94481_b_20026_tn_7"))
+  expect_warning(get_trip_geometry(duke_sf, c("t_94482_b_20026_tn_2", "non_existing_id", "other_id")))
+})
+

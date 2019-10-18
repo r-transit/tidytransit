@@ -2,7 +2,8 @@
 % Please edit documentation in R/spatial.R
 \name{planner_buffer}
 \alias{planner_buffer}
-\title{Buffer using common urban planner distances}
+\title{Buffer using common urban planner distances
+TODO not used}
 \usage{
 planner_buffer(df_sf1, dist = "h", crs = 26910)
 }

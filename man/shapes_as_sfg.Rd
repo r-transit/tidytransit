@@ -2,7 +2,8 @@
 % Please edit documentation in R/spatial.R
 \name{shapes_as_sfg}
 \alias{shapes_as_sfg}
-\title{return an sf multilinestring with lat and long from gtfs for a route}
+\title{return an sf multilinestring with lat and long from gtfs for a route
+TODO not used}
 \usage{
 shapes_as_sfg(df)
 }
@@ -14,5 +15,6 @@ a multilinestring simple feature geometry (sfg) for the routes
 }
 \description{
 return an sf multilinestring with lat and long from gtfs for a route
+TODO not used
 }
 \keyword{internal}
