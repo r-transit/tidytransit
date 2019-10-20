@@ -60,40 +60,6 @@ get_shapes_geometry <- function(shapes) {
 #' Get all trip shapes for a given route and service.
 #'
 #' @param gtfs_sf_obj tidytransit gtfs object with sf data frames
-#' @param route_ids routes to extract
-#' @param service_ids service_ids to extract
-#' @return an sf dataframe for gtfs routes with a row/linestring for each trip
-#' @export
-#' @examples
-#' data(gtfs_duke)
-#' gtfs_duke_sf <- gtfs_as_sf(gtfs_duke)
-#' routes_sf <- get_route_geometry(gtfs_duke_sf)
-#' plot(routes_sf[c(1,1350),])
-get_route_geometry <- function(gtfs_sf_obj, route_ids = NULL, service_ids = NULL) {
-  if(!"sf" %in% class(gtfs_sf_obj$shapes)) {
-    stop("shapes not converted to sf, use gtfs_obj <- gtfs_as_sf(gtfs_obj)")
-  }
-  trips <- gtfs_sf_obj$trips
-  if(!is.null(route_ids)) {
-    trips <- filter(trips, route_id %in% route_ids)
-    if(nrow(trips) == 0) {
-      warning("No trips with route_id ", route_ids, " found")
-    }
-  }
-  if(!is.null(service_ids)) {
-    trips <- filter(trips, service_id %in% service_ids)
-    if(nrow(trips) == 0) {
-      warning("No trips with service_id ", service_ids, " found")
-    }
-  }
-
-  trip_shapes = dplyr::inner_join(gtfs_sf_obj$shapes, trips, by = "shape_id")
-  return(trip_shapes)
-}
-
-#' Get all trip shapes for a given route and service.
-#'
-#' @param gtfs_sf_obj tidytransit gtfs object with sf data frames
 #' @param trip_ids trip_ids to extract shapes
 #' @return an sf dataframe for gtfs routes with a row/linestring for each trip
 #' @export
