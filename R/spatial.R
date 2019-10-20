@@ -87,19 +87,3 @@ shapes_as_sfg <- function(df) {
 
   return(sf::st_multilinestring(l_linestrings))
 }
-
-#' Buffer using common urban planner distances
-#'
-#' merges gtfs objects
-#' @param df_sf1 a simple features data frame
-#' @param dist default "h" - for half mile buffers. can also pass "q".
-#' @param crs default epsg 26910. can be any other epsg
-#' @return a simple features data frame with planner buffers
-#' @keywords internal
-planner_buffer <- function(df_sf1,dist="h",crs=26910) {
-  distance <- 804.672
-  if(dist=="q"){distance <- 402.336}
-  df2 <- sf::st_transform(df_sf1,crs)
-  df3 <- sf::st_buffer(df2,dist=distance)
-  return(df3)
-}
