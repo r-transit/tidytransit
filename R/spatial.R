@@ -40,6 +40,39 @@ get_stops_geometry <- function(stops) {
   return(stops_sf)
 }
 
+#' Make Routes into Simple Features Lines
+#'
+#' @param gtfs_obj tidytransit gtfs object
+#' @param route_ids select routes to convert to simple features
+#' @param service_ids select service_ids to convert to simple features
+#' @export
+#' @return an sf dataframe for gtfs routes with a multilinestring column
+#' @examples
+#' data(gtfs_obj)
+#' routes_sf <- get_route_geometry(gtfs_obj)
+#' plot(routes_sf[1,])
+get_route_geometry <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
+  shape_route_service <- shape_route_service(gtfs_obj, route_ids = route_ids, service_ids = service_ids)
+  routes_latlong <- dplyr::inner_join(gtfs_obj$shapes,
+                                      shape_route_service,
+                                      by="shape_id")
+  
+  lines <- dplyr::distinct(routes_latlong, .data$route_id)
+  lines <- lines[order(lines$route_id),]
+  list_of_line_tibbles <- split(routes_latlong, routes_latlong$route_id)
+  list_of_multilinestrings <- lapply(list_of_line_tibbles, shapes_as_sfg)
+  
+  lines$geometry <- sf::st_sfc(list_of_multilinestrings, crs = 4326)
+  
+  lines_sf <- sf::st_as_sf(lines)
+  lines_sf$geometry <- 
+    sf::st_as_sfc(
+      sf::st_as_text(
+        lines_sf$geometry), crs=4326)
+  return(lines_sf)
+}
+
+
 #' Convert shapes into Simple Features Linestrings
 #'
 #' @param shapes a gtfs$shapes dataframe
