@@ -206,11 +206,16 @@ One answer might be change units. So far, we've summarized frequency by stop, an
 
 Alternatively, regular ggplot users might expect the ggplot `dodge` function to allow us to move around these lines but, by design, thats not possible with `geom_sf`. 
 
-So we'll use a cartographic trick, scaling each line according to total departures and close to a number around .001 [decimal degrees](https://en.wikipedia.org/wiki/Decimal_degrees) which is a about the length of a street, which will fit on the map well. One might call this a cartogram. 
+So we'll use a cartographic trick, scaling each line according to total departures. 
+
+Since we've chosen a coordinate reference system that uses meters as its unit, we'll have to find a way to spread the lines out by meters in a way that makes sense visually. 
+
+We want to highlight the differences between small and large amount of departures on the routes visually, so we square the departures to make larger counts seem larger visually. Then we divide by 10k to get the distance back down to a width that works: street scale (20 to 100 meters).  
 
 ```{r}
+
 routes_sf_buffer <- st_buffer(routes_sf,
-                              dist=routes_sf$total_departures/1e6)
+                              dist=(routes_sf$total_departures^2/1e5))
 ```
 
 Next, when we render the map, we'll make sure to make the borders around each route transparent, and set the opacity for the fill of all the polygons high again. 
