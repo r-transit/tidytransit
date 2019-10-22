@@ -63,7 +63,7 @@ get_shapes_geometry <- function(shapes) {
 #' @param route_ids routes to extract
 #' @param service_ids service_ids to extract
 #' @return an sf dataframe for gtfs routes with a row/linestring for each trip
-#' @importFrom dplyr inner_join
+#' @importFrom dplyr inner_join distinct
 #' @importFrom sf st_cast
 #' @export
 #' @examples
@@ -89,7 +89,9 @@ get_route_geometry <- function(gtfs_sf_obj, route_ids = NULL, service_ids = NULL
     }
   }
 
-  trip_shapes <- inner_join(gtfs_sf_obj$shapes, trips, by = "shape_id")
+  shape_ids = distinct(trips, route_id, shape_id)
+  
+  trip_shapes <- inner_join(gtfs_sf_obj$shapes, shape_ids, by = "shape_id")
   route_shapes <- trip_shapes %>% 
     group_by(route_id) %>% 
     summarise() %>% 
