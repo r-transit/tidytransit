@@ -29,3 +29,15 @@ test_that("get_route_geometry", {
   expect_warning(get_trip_geometry(duke_sf, c("t_94482_b_20026_tn_2", "non_existing_id", "other_id")))
 })
 
+test_that("route_geometry behaves as before", {
+  gtfs_obj <- gtfs_as_sf(gtfs_duke)
+  route_geom <- get_route_geometry(gtfs_obj)
+  expect_equal(nrow(route_geom), 
+               length(unique(gtfs_obj$routes$route_id)))
+  expect_equal(sort(route_geom$route_id), 
+               sort(gtfs_obj$routes$route_id))
+  expect_equal(length(unique(as.character(sf::st_geometry_type(route_geom$geometry)))), 
+               1)
+  expect_equal(as.character(sf::st_geometry_type(route_geom$geometry[1])), 
+               "MULTILINESTRING")
+})
