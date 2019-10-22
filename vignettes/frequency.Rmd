@@ -186,8 +186,8 @@ And finally, lets plot the routes with median headways of less than 10 minutes i
 
 ```{r, fig.width=6, fig.height=10, warn=FALSE}
 # convert to an appropriate coordinate reference system
-routes_sf <- sf::st_transform(routes_sf, 26919) 
-routes_sf %>% 
+routes_sf_crs <- sf::st_transform(routes_sf, 26919) 
+routes_sf_crs %>% 
   filter(median_headways<10) %>%
   ggplot() + 
   geom_sf(aes(colour=as.factor(median_headways))) + 
