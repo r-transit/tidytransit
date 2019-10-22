@@ -78,7 +78,7 @@ The NYC Subway GTFS identifyies service_id's by the route that a trip runs on. S
 
 # 3) Headway Calculation
 
-So, now that we've identified the set of service_id's that refer to all weekday trips, we can summarize service between 6 am and 10 pm for the NYC Subway system on weekdays.  
+So, now that we've identified the set of service_id's that refer to all weekday trips, we can summarize service between 6 am and 10 am for the NYC Subway system on weekdays.  
 
 ```{r}
 am_freq <- get_stop_frequency(gtfs, start_hour = 6, end_hour = 10, service_ids = service_ids)
