@@ -41,3 +41,20 @@ test_that("route_geometry behaves as before", {
   expect_equal(as.character(sf::st_geometry_type(route_geom$geometry[1])), 
                "MULTILINESTRING")
 })
+
+# benchmark
+example_id = "1690"
+system.time({
+  geom_prev = get_route_geometry_prev(gtfs_duke)
+})[3]
+# elapsed 
+# 0.669 
+
+system.time({
+  geom_curr = get_route_geometry(gtfs_as_sf(gtfs_duke))
+})[3]
+# elapsed 
+# 0.279
+
+plot(geom_prev[which(geom_prev$route_id == example_id),"route_id"])
+plot(geom_curr[which(geom_curr$route_id == example_id),"route_id"])
