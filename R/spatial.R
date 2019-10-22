@@ -100,28 +100,6 @@ get_route_geometry <- function(gtfs_sf_obj, route_ids = NULL, service_ids = NULL
   return(route_shapes)
 }
 
-#' @export
-get_route_geometry_prev <- function(gtfs_obj, route_ids = NULL, service_ids = NULL) {
-  shape_route_service <- shape_route_service(gtfs_obj, route_ids = route_ids, service_ids = service_ids)
-  routes_latlong <- dplyr::inner_join(gtfs_obj$shapes,
-                                      shape_route_service,
-                                      by="shape_id")
-  
-  lines <- dplyr::distinct(routes_latlong, .data$route_id)
-  lines <- lines[order(lines$route_id),]
-  list_of_line_tibbles <- split(routes_latlong, routes_latlong$route_id)
-  list_of_multilinestrings <- lapply(list_of_line_tibbles, shapes_as_sfg)
-  
-  lines$geometry <- sf::st_sfc(list_of_multilinestrings, crs = 4326)
-  
-  lines_sf <- sf::st_as_sf(lines)
-  lines_sf$geometry <- 
-    sf::st_as_sfc(
-      sf::st_as_text(
-        lines_sf$geometry), crs=4326)
-  return(lines_sf)
-}
-
 #' Get all trip shapes for a given route and service.
 #'
 #' @param gtfs_sf_obj tidytransit gtfs object with sf data frames

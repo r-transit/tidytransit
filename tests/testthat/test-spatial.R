@@ -17,9 +17,8 @@ test_that("gtfs_as_sf doesn't crash without shapes", {
   expect_warning(gtfs_as_sf(gtfs_duke_wo_shapes))
 })
 
+duke_sf <- gtfs_as_sf(gtfs_duke)
 test_that("get_route_geometry", {
-  duke_sf <- gtfs_as_sf(gtfs_duke)
-  
   get_route_geometry(duke_sf, route_ids = "1681")
   get_route_geometry(duke_sf, route_ids = "12945", service_ids = c("c_16865_b_19493_d_31", "c_839_b_20026_d_31"))
   get_route_geometry(duke_sf, service_ids = "c_839_b_20026_d_31")
@@ -30,31 +29,31 @@ test_that("get_route_geometry", {
 })
 
 test_that("route_geometry behaves as before", {
-  gtfs_obj <- gtfs_as_sf(gtfs_duke)
-  route_geom <- get_route_geometry(gtfs_obj)
+  route_geom <- get_route_geometry(duke_sf)
   expect_equal(nrow(route_geom), 
-               length(unique(gtfs_obj$routes$route_id)))
+               length(unique(duke_sf$routes$route_id)))
   expect_equal(sort(route_geom$route_id), 
-               sort(gtfs_obj$routes$route_id))
+               sort(duke_sf$routes$route_id))
   expect_equal(length(unique(as.character(sf::st_geometry_type(route_geom$geometry)))), 
                1)
   expect_equal(as.character(sf::st_geometry_type(route_geom$geometry[1])), 
                "MULTILINESTRING")
 })
 
-# benchmark
-example_id = "1690"
-system.time({
-  geom_prev = get_route_geometry_prev(gtfs_duke)
-})[3]
-# elapsed 
-# 0.669 
+test_that("one shape per trip is returned", {
+  n_ids = 14
+  trip_ids = sample(unique(duke_sf$trips$trip_id), n_ids)
+  trip_geom = get_trip_geometry(duke_sf, trip_ids)
+  expect_equal(nrow(trip_geom), n_ids)
+})
 
-system.time({
-  geom_curr = get_route_geometry(gtfs_as_sf(gtfs_duke))
-})[3]
-# elapsed 
-# 0.279
-
-plot(geom_prev[which(geom_prev$route_id == example_id),"route_id"])
-plot(geom_curr[which(geom_curr$route_id == example_id),"route_id"])
+test_that("two shapes are returned even if trips use the same shape_id", {
+  route_id = "12945"
+  trip_ids = c("t_726295_b_19493_tn_37", "t_726295_b_19493_tn_39")
+  shape_id = "p_531836"
+  
+  trip_geom = get_trip_geometry(duke_sf, trip_ids)
+  expect_equal(nrow(trip_geom), length(trip_ids))
+  route_geom = get_route_geometry(duke_sf, route_ids = route_id)
+  expect_equal(nrow(route_geom), length(route_id))
+})
