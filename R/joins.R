@@ -1,3 +1,5 @@
+# TODO remove old unexported and deprecated functions (originating from gtfsr)
+
 #'Join the shapes, trips and routes tables together - also checks on some potential errors in the data and warns accordingly
 #' @param gtfs_obj a gtfs object
 #' @param route_ids the routes for which to join the tables together - required, but not sure why this can't just be any/all routes in routes_df
@@ -9,6 +11,7 @@
 shape_route_service <- function(gtfs_obj, 
                                 route_ids = NULL, 
                                 service_ids = NULL) {
+  .Deprecated("get_route_geometry")
   
   stopifnot(class(gtfs_obj) == 'gtfs',
             !is.null(gtfs_obj$shapes),
@@ -95,6 +98,8 @@ shape_route_service <- function(gtfs_obj,
 #' @importFrom rlang !! .data
 #' @keywords internal
 shape_for_route <- function(g1, select_route_id, select_service_id) {
+  .Deprecated("get_route_geometry")
+  
   some_trips <- g1$trips %>%
     filter(.data$route_id %in% select_route_id & 
              .data$service_id %in% select_service_id)
@@ -118,6 +123,8 @@ shapes_for_routes <- function(g1,
                               route_ids, 
                               service_ids, 
                               directional=FALSE) {
+  .Deprecated("get_route_geometry")
+  
   l1 = list()
   i <- 1
   for (route_id in route_ids) {
