@@ -125,10 +125,10 @@ one_line_stops %>%
 Here we can see that the 242-Van Cortland Stop, the last stop up North, in the Bronx, has noticeably higher headways (8 mins) at this time of day than the South Ferry Stop, which is at the south end of Manhattan.
 
 Lets also plot the headways at these stops on a map to see how they are distributed across the city. 
-First, we'll use the `get_stops_geometry` function, which converts the latitudes and longitudes on the stops table in the GTFS feed into  [simple features](https://r-spatial.github.io/sf/articles/sf1.html).  
+First, we'll use the `stops_as_sf` function, which converts the latitudes and longitudes on the stops table in the GTFS feed into  [simple features](https://r-spatial.github.io/sf/articles/sf1.html).  
 
 ```{r}
-nyc_stops_sf <- get_stops_geometry(gtfs$stops)
+nyc_stops_sf <- stops_as_sf(gtfs$stops)
 ```
 
 Now we can join those stop coordinates to the 1 line's calculated stop headways. 

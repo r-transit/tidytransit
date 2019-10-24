@@ -18,7 +18,7 @@ plot.gtfs <- function(x, ...) {
   if("sf" %in% class(x$stops)) {
     plot(x$stops)
   } else {
-    x_stops <- get_stops_geometry(x$stops)
+    x_stops <- stops_as_sf(x$stops)
     plot(x_stops)
   }
 }

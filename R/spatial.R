@@ -11,11 +11,11 @@
 #' @export
 gtfs_as_sf <- function(gtfs_obj, skip_shapes = FALSE, quiet = TRUE) {
   if(!quiet) message('Converting stops to simple features')
-  gtfs_obj$stops <- try(get_stops_geometry(gtfs_obj$stops))
+  gtfs_obj$stops <- try(stops_as_sf(gtfs_obj$stops))
   
   if(feed_contains(gtfs_obj, "shapes") && !skip_shapes) {
     if(!quiet) message('Converting shapes to simple features')
-    gtfs_obj$shapes <- try(get_shapes_geometry(gtfs_obj$shapes))
+    gtfs_obj$shapes <- try(shapes_as_sf(gtfs_obj$shapes))
   } else { 
     warning('No shapes available in gtfs_obj') 
   }
@@ -31,9 +31,9 @@ gtfs_as_sf <- function(gtfs_obj, skip_shapes = FALSE, quiet = TRUE) {
 #' @examples
 #' data(gtfs_duke)
 #' some_stops <- gtfs_duke$stops[sample(nrow(gtfs_duke$stops), 40),]
-#' some_stops_sf <- get_stops_geometry(some_stops)
+#' some_stops_sf <- stops_as_sf(some_stops)
 #' plot(some_stops_sf)
-get_stops_geometry <- function(stops) {
+stops_as_sf <- function(stops) {
   stops_sf <- sf::st_as_sf(stops,
                            coords = c("stop_lon", "stop_lat"),
                            crs = 4326)
@@ -42,16 +42,16 @@ get_stops_geometry <- function(stops) {
 
 #' Convert shapes into Simple Features Linestrings
 #'
-#' @param shapes a gtfs$shapes dataframe
+#' @param gtfs_shapes a gtfs$shapes dataframe
 #' @export
 #' @return an sf dataframe for gtfs shapes
-get_shapes_geometry <- function(shapes) {
-  list_of_line_tibbles <- split(shapes, shapes$shape_id)
+shapes_as_sf <- function(gtfs_shapes) {
+  list_of_line_tibbles <- split(gtfs_shapes, gtfs_shapes$shape_id)
   list_of_linestrings <- lapply(list_of_line_tibbles, shape_as_sf_linestring)
   
   shape_linestrings <- sf::st_sfc(list_of_linestrings, crs = 4326)
   
-  shapes_sf <- sf::st_sf(shape_id = unique(shapes$shape_id), geometry = shape_linestrings)
+  shapes_sf <- sf::st_sf(shape_id = unique(gtfs_shapes$shape_id), geometry = shape_linestrings)
   shapes_sf$shape_id <- as.character(shapes_sf$shape_id)
   
   return(shapes_sf)
@@ -116,7 +116,9 @@ get_trip_geometry <- function(gtfs_sf_obj, trip_ids) {
     stop("shapes not converted to sf, use gtfs_obj <- gtfs_as_sf(gtfs_obj)")
   }
   id_diff = setdiff(trip_ids, gtfs_sf_obj$trips$trip_id)
-  if(length(id_diff) > 0) warning('"', paste(id_diff, collapse=", "), '" not found in trips data frame')
+  if(length(id_diff) > 0) {
+    warning('"', paste(id_diff, collapse=", "), '" not found in trips data frame')
+  }
 
   trips = gtfs_sf_obj$trips %>% filter(trip_id %in% trip_ids)
   trips_shapes = dplyr::inner_join(gtfs_sf_obj$shapes, trips, by = "shape_id")

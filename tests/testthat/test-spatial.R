@@ -2,8 +2,8 @@ context("Converting GTFS routes and shapes into sf dataframes")
 library(sf)
 
 test_that("convert gtfs stops and shapes to sf data frames", {
-  expect_is(get_stops_geometry(gtfs_duke$stops), "sf")
-  shapes_sf = get_shapes_geometry(gtfs_duke$shapes)
+  expect_is(stops_as_sf(gtfs_duke$stops), "sf")
+  shapes_sf = shapes_as_sf(gtfs_duke$shapes)
   expect_is(shapes_sf, "sf")
   expect_equal(nrow(shapes_sf), length(unique(gtfs_duke$shapes$shape_id)))
   duke_sf <- gtfs_as_sf(gtfs_duke)

@@ -25,7 +25,7 @@ Use tidytransit to:
 
 - [Read a GTFS Feed into R Data Types](http://tidytransit.r-transit.org/articles/introduction.html#read-gtfs-data)
 - [Validate transit feeds](http://tidytransit.r-transit.org/articles/introduction.html#feed-validation-results)
-- Coerce [stops and routes to 'simple features'](http://tidytransit.r-transit.org/reference/get_stops_geometry.html) and [plot them](http://tidytransit.r-transit.org/reference/plot.gtfs.html)
+- Coerce [stops and routes to 'simple features'](http://tidytransit.r-transit.org/reference/stops_as_sf.html) and [plot them](http://tidytransit.r-transit.org/reference/plot.gtfs.html)
 - [Create graphics about transit service](http://tidytransit.r-transit.org/articles/servicepatterns.html)
 - [Estimate transit frequencies](http://tidytransit.r-transit.org/articles/frequency.html)
 - [Calculate travel time between transit stops](http://tidytransit.r-transit.org/reference/raptor.html)
