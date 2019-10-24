@@ -18,10 +18,14 @@ A GTFS object. That is, a list of dataframes of GTFS data.
 }
 \description{
 This function reads GTFS text files from a local or remote zip file.
-It also validates the files against the GTFS specification by file, requirement status, and column name
+It also validates the files against the GTFS specification by file, requirement status,
+and column name.
+}
+\details{
 The data are returned as a list of dataframes and a validation object,
 which contains details on whether all required files were found,
 and which required and optional columns are present.
+#'
 }
 \examples{
 \donttest{

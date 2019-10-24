@@ -1,7 +1,6 @@
 #'	Used to remove directory and its content
 #' @param folder Character. Path to folder.
 #' @noRd
-
 rmfolder <- function(folder) {
   lapply(list.files(folder, full.names=TRUE), file.remove)
   file.remove(folder)
@@ -13,7 +12,6 @@ rmfolder <- function(folder) {
 #' @param quiet Boolean. Whether to display output.
 #' @param test_url Boolean. Whether to test if the url connects or not. FALSE by default (can take a while).
 #' @noRd
-
 valid_url <- function(url, timeout = 5, test_url = TRUE, quiet = TRUE) {
 
 	stopifnot(is.character(url))
@@ -41,14 +39,12 @@ valid_url <- function(url, timeout = 5, test_url = TRUE, quiet = TRUE) {
 	}
 
 	return(all(url_cond1, url_cond2))
-
 }
 
 #' Used to trigger suppressWarnings or not
 #' @param expr expression to suppress
 #' @param quiet Logical. Whether to suppress or not. \code{FALSE} by default.
 #' @noRd
-
 trigger_suppressWarnings <- function(expr, quiet) {
 
 	if(!quiet) expr else suppressWarnings(expr)

@@ -7,7 +7,7 @@
 \method{summary}{gtfs}(object, ...)
 }
 \arguments{
-\item{object}{a gtfs_obj as read by read_gtfs()}
+\item{object}{a gtfs_obj as read by \code{\link[=read_gtfs]{read_gtfs()}}}
 
 \item{...}{further specifications}
 }

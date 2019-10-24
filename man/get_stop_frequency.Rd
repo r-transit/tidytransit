@@ -9,11 +9,11 @@ get_stop_frequency(gtfs_obj, start_hour = 6, end_hour = 22,
   wide = FALSE)
 }
 \arguments{
-\item{gtfs_obj}{a list of gtfs dataframes as read by read_gtfs().}
+\item{gtfs_obj}{a list of gtfs dataframes as read by \code{\link[=read_gtfs]{read_gtfs()}}.}
 
-\item{start_hour}{(optional) an integer indicating the start hour (default 7)}
+\item{start_hour}{(optional) an integer indicating the start hour (default 6)}
 
-\item{end_hour}{(optional) an integer indicating the end hour (default 20)}
+\item{end_hour}{(optional) an integer indicating the end hour (default 22)}
 
 \item{service_ids}{(optional) a set of service_ids from the calendar dataframe identifying a particular service id}
 
@@ -24,7 +24,8 @@ get_stop_frequency(gtfs_obj, start_hour = 6, end_hour = 22,
 \item{wide}{(optional) if true, then return a wide rather than tidy data frame}
 }
 \value{
-dataframe of stops (gtfs_obj$.$stops_frequency) with a "Trips" variable representing the count trips taken through each stop for a route within a given time frame
+dataframe of stops with the number of departures and the headway
+(departures divided by timespan) as columns.
 }
 \description{
 Note that some GTFS feeds contain a frequency data frame already.
