@@ -15,11 +15,16 @@
 #' }
 plot.gtfs <- function(x, ...) {
   dots <- list(...)
-  if("sf" %in% class(x$stops)) {
-    plot(x$stops)
+  if(!feed_contains(x, "stops")) {
+    stop("Feed doesn't contain a stops table!")
+  }
+  x_stops <- x$stops 
+  if(!"sf" %in% class(x$stops))  x_stops <- stops_as_sf(x$stops)
+
+  if("sf" %in% class(x$shapes)) {
+    plot(x$shapes["shape_id"], reset = FALSE, main = agency_info(x))
+    plot(x_stops[,"stop_id"], add = TRUE)
   } else {
-    x_stops <- stops_as_sf(x$stops)
-    plot(x_stops)
+    plot(x_stops[,"stop_id"], main = agency_info(x))
   }
 }
-

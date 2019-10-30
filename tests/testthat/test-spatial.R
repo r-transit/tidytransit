@@ -57,3 +57,11 @@ test_that("two shapes are returned even if trips use the same shape_id", {
   route_geom = get_route_geometry(duke_sf, route_ids = route_id)
   expect_equal(nrow(route_geom), length(route_id))
 })
+
+test_that("plots work with and without shapes", {
+  plot(gtfs_duke)
+  plot(duke_sf)
+  gtfs_duke_wo_stops <- gtfs_duke
+  gtfs_duke_wo_stops$stops <- NULL
+  expect_error(plot(gtfs_duke_wo_stops))
+})
