@@ -4,12 +4,10 @@
 \alias{read_gtfs}
 \title{Get and validate dataframes of General Transit Feed Specification (GTFS) data.}
 \usage{
-read_gtfs(path, local = FALSE, quiet = TRUE)
+read_gtfs(path, quiet = TRUE)
 }
 \arguments{
-\item{path}{Character. url link to zip file OR path to local zip file. if to local path, then option \code{local} must be set to TRUE.}
-
-\item{local}{Boolean. If the paths are searching locally or not. Default is FALSE (that is, urls).}
+\item{path}{Character. URL link to zip file OR path to local zip file.}
 
 \item{quiet}{Boolean. Whether to see file download progress and files extract. FALSE by default.}
 }

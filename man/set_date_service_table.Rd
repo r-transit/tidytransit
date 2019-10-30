@@ -18,7 +18,7 @@ Use it to summarise service. For example, get a count of the number of services 
 \examples{
 library(dplyr)
 local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
-nyc <- read_gtfs(local_gtfs_path, local=TRUE) \%>\% set_date_service_table()
+nyc <- read_gtfs(local_gtfs_path) \%>\% set_date_service_table()
 nyc_services_by_date <- nyc$.$date_service_table
 # count the number of services running on each date
 nyc_services_by_date \%>\% group_by(date) \%>\% count()

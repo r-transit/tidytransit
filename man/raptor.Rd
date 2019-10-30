@@ -56,7 +56,7 @@ in \code{stop_times} have been visited.
 \examples{
 \donttest{
 nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
-nyc <- read_gtfs(nyc_path, local=TRUE)
+nyc <- read_gtfs(nyc_path)
 
 # you can use initial walk times to different stops in walking distance (arbitrary example values)
 stop_ids_harlem_st <- c("301", "301N", "301S")

@@ -45,7 +45,7 @@ returning shortest travel times by default.
 \examples{
 \donttest{
 nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
-nyc <- read_gtfs(nyc_path, local=TRUE)
+nyc <- read_gtfs(nyc_path)
 
 # Use journeys departing after 7 AM with arrival time before 9 AM on 26th June
 stop_times <- filter_stop_times(nyc, "2018-06-26", 7*3600, 9*3600)
