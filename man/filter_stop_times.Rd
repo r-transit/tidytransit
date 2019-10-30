@@ -31,3 +31,6 @@ g <- set_date_service_table(g)
 # filter the sample feed
 stop_times <- filter_stop_times(g, "2007-01-06", "06:00:00", "08:00:00")
 }
+\seealso{
+This function creates filtered \code{stop_times} for \code{\link[=travel_times]{travel_times()}} and \code{\link[=raptor]{raptor()}}.
+}

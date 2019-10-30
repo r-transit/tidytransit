@@ -7,7 +7,7 @@
 set_date_service_table(gtfs_obj)
 }
 \arguments{
-\item{gtfs_obj}{a gtfs_object as read by read_gtfs}
+\item{gtfs_obj}{a gtfs_object as read by \code{\link[=read_gtfs]{read_gtfs()}}}
 }
 \value{
 a date_service data frame
@@ -22,5 +22,4 @@ nyc <- read_gtfs(local_gtfs_path, local=TRUE) \%>\% set_date_service_table()
 nyc_services_by_date <- nyc$.$date_service_table
 # count the number of services running on each date
 nyc_services_by_date \%>\% group_by(date) \%>\% count()
-
 }

@@ -11,7 +11,7 @@ raptor(stop_times, transfers, from_stop_ids, departure_time_range = 3600,
 \item{stop_times}{A (prepared) stop_times table from a gtfs feed. Prepared means
 that all stop time rows before the desired journey departure time
 should be removed. The table should also only include departures
-happening on one day. Use \code{filter_stop_times} for easier preparation.}
+happening on one day. Use \code{\link[=filter_stop_times]{filter_stop_times()}} for easier preparation.}
 
 \item{transfers}{Transfers table from a gtfs feed. In general no preparation is needed.}
 
@@ -46,9 +46,9 @@ at a stop are returned in a table. Journeys are defined by a departure stop_id, 
 departure, arrival and travel time. Note that the exact journeys (with each intermediate
 stop and route id for example) is \emph{not} returned.
 
-For most cases \code{stop_times} needs to be filtered as it should only contain
-trips happening on a single day and departures later than a given journey
-start time (see \code{filter_stop_times}).
+For most cases, \code{stop_times} needs to be filtered as it should only contain trips
+happening on a single day and departures later than a given journey start time, see
+\code{\link[=filter_stop_times]{filter_stop_times()}}.
 
 The algorithm scans all trips until it exceeds \code{max_transfers} or all trips
 in \code{stop_times} have been visited.
@@ -79,4 +79,7 @@ rptr$travel_time_incl_walk <- rptr$travel_time + rptr$walk_time
 shortest_travel_times <- setDT(rptr)[order(travel_time_incl_walk)][, .SD[1], by = "stop_id"]
 hist(shortest_travel_times$travel_time, breaks = 360)
 }
+}
+\seealso{
+\code{\link[=travel_times]{travel_times()}}
 }

@@ -11,7 +11,6 @@
 #' @examples \donttest{
 #' feedlist_df <- get_feedlist() 
 #' }
-
 get_feedlist <- function() {
 
   max_limit <- 100 # 100 is the max limit
@@ -58,7 +57,6 @@ get_feedlist <- function() {
 #' @return File path
 #'
 #' @keywords internal
-
 get_feed <- function(url, path=NULL, quiet=FALSE) {
 
   stopifnot(length(url) == 1)
@@ -120,7 +118,6 @@ get_feed <- function(url, path=NULL, quiet=FALSE) {
 #' for all feeds in input that are downloadable
 #'
 #' @keywords internal
-
 filter_feedlist <- function(feedlist_df, test_url = FALSE) {
 
   if (!is.data.frame(feedlist_df)) 
@@ -281,8 +278,6 @@ tfeeds_check <- function(req) {
 #' @param req The result of a httr::GET
 #' @noRd
 #' @return content parsed as text
-
-
 tfeeds_text <- function(req) {
   parsed_content <- httr::content(req, as = "text")
   if (identical(parsed_content, "")) stop("No output to parse", call. = FALSE)
@@ -294,7 +289,6 @@ tfeeds_text <- function(req) {
 #' @param req The result of a GET
 #' @noRd
 #' @return Dataframe of feeds
-
 tfeeds_parse_getfeedlist <- function(req) {
 
   # parse content
@@ -375,8 +369,6 @@ tfeeds_parse_getlocation <- function(req) {
 #' @return Result of httr::GET
 #'
 #' @details See http://transitfeeds.com/api/ for available API calls
-#'
-
 tfeeds_get <- function(path, 
                        query, 
                        ..., 
