@@ -1,6 +1,7 @@
 #' Filter stop times by hour of the day
 #' 
-#' @param stop_times a gtfs_obj$stop_times dataframe with lubridate arrival_time and departure_time
+#' @param stop_times a gtfs_obj$stop_times dataframe with arrival_time and departure_time 
+#'                   created by [set_hms_times()].
 #' @return dataframe with only stop times within the hours specified, with time columns as lubridate periods
 #' @keywords internal
 filter_stop_times_by_hour <- function(stop_times, 
@@ -16,10 +17,11 @@ filter_stop_times_by_hour <- function(stop_times,
 
 #' Add hms::hms columns to feed
 #' 
-#' Adds columns to stop_times (arrival_time_hms, departure_time_hms) and frequencies (start_time_hms, end_time_hms)
-#' with times converted with hms::hms().
+#' Adds columns to stop_times (arrival_time_hms, departure_time_hms) and 
+#' frequencies (start_time_hms, end_time_hms) with times converted with [hms::hms()].
 #' 
-#' @param gtfs_obj a gtfs object in which hms times should be set, the modified gtfs_obj is returned
+#' @param gtfs_obj a gtfs object in which hms times should be set, 
+#'                the modified gtfs_obj is returned
 #' @return gtfs_obj with added hms times columns for stop_times and frequencies
 #' @importFrom hms hms
 #' @export
@@ -45,16 +47,15 @@ set_hms_times <- function(gtfs_obj) {
 #' 
 #' Use it to summarise service. For example, get a count of the number of services for a date. See example. 
 #' @return a date_service data frame
-#' @param gtfs_obj a gtfs_object as read by read_gtfs
+#' @param gtfs_obj a gtfs_object as read by [read_gtfs()]
 #' @export
 #' @examples 
 #' library(dplyr)
 #' local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
-#' nyc <- read_gtfs(local_gtfs_path, local=TRUE) %>% set_date_service_table()
+#' nyc <- read_gtfs(local_gtfs_path) %>% set_date_service_table()
 #' nyc_services_by_date <- nyc$.$date_service_table
 #' # count the number of services running on each date
 #' nyc_services_by_date %>% group_by(date) %>% count()
-#'
 set_date_service_table <- function(gtfs_obj) {
   stopifnot(is_gtfs_obj(gtfs_obj))
   

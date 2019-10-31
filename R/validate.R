@@ -1,7 +1,8 @@
 #' Validation table that defines for every data frame within gtfs_obj
 #' whether the file is required ('req'), optional ('opt') or an extra 
 #' file ('ext'). The same is applied for each field. The validation_status
-#' column points problems with files/fiels. 
+#' column points problems with files/fiels.
+#' 
 #' @param gtfs_obj A GTFS list object with components agency, stops, etc.
 #' @return gtfs_obj with a validation summary dataframe as an attribute 
 #' 

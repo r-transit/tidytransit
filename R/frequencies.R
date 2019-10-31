@@ -4,18 +4,17 @@
 #' Consider using this instead, as it will be more accurate than what 
 #' tidytransit calculates. 
 #' 
-#' 
-#' @param gtfs_obj a list of gtfs dataframes as read by read_gtfs().
-#' @param start_hour (optional) an integer indicating the start hour (default 7)
-#' @param end_hour (optional) an integer indicating the end hour (default 20)
+#' @param gtfs_obj a list of gtfs dataframes as read by [read_gtfs()].
+#' @param start_hour (optional) an integer indicating the start hour (default 6)
+#' @param end_hour (optional) an integer indicating the end hour (default 22)
 #' @param service_ids (optional) a set of service_ids from the calendar dataframe identifying a particular service id
 #' @param dow (optional) integer vector indicating which days of week to calculate for. default is weekday, e.g. c(1,1,1,1,1,0,0)
 #' @param by_route default TRUE, if FALSE then calculate headway for any line coming through the stop in the same direction on the same schedule. 
 #' @param wide (optional) if true, then return a wide rather than tidy data frame
 #' @export
-#' @return dataframe of stops (gtfs_obj$.$stops_frequency) with a "Trips" variable 
-#'         representing the count trips taken through each stop for a route within a 
-#'         given time frame
+#' @return dataframe of stops with the number of departures and the headway 
+#'         (departures divided by timespan) as columns.
+#'
 #' @importFrom dplyr %>%
 #' @importFrom rlang .data !! quo enquo
 #' @importFrom stats median sd
@@ -25,7 +24,6 @@
 #' stop_frequency <- get_stop_frequency(gtfs_duke)
 #' x <- order(stop_frequency$headway)
 #' head(stop_frequency[x,])
-
 get_stop_frequency <- function(gtfs_obj,
                             start_hour=6,
                             end_hour=22,

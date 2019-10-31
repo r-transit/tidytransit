@@ -1,6 +1,6 @@
 #' GTFS feed summary
 #'
-#' @param object a gtfs_obj as read by read_gtfs()
+#' @param object a gtfs_obj as read by [read_gtfs()]
 #' @export
 #' @param ... further specifications
 #' @importFrom dplyr select arrange filter

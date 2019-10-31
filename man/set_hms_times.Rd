@@ -7,12 +7,13 @@
 set_hms_times(gtfs_obj)
 }
 \arguments{
-\item{gtfs_obj}{a gtfs object in which hms times should be set, the modified gtfs_obj is returned}
+\item{gtfs_obj}{a gtfs object in which hms times should be set,
+the modified gtfs_obj is returned}
 }
 \value{
 gtfs_obj with added hms times columns for stop_times and frequencies
 }
 \description{
-Adds columns to stop_times (arrival_time_hms, departure_time_hms) and frequencies (start_time_hms, end_time_hms)
-with times converted with hms::hms().
+Adds columns to stop_times (arrival_time_hms, departure_time_hms) and
+frequencies (start_time_hms, end_time_hms) with times converted with \code{\link[hms:hms]{hms::hms()}}.
 }

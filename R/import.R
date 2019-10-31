@@ -1,14 +1,14 @@
 #' Get and validate dataframes of General Transit Feed Specification (GTFS) data.
 #' 
 #' This function reads GTFS text files from a local or remote zip file. 
-#' It also validates the files against the GTFS specification by file, requirement status, and column name
+#' It also validates the files against the GTFS specification by file, requirement status, 
+#' and column name.
+#' 
 #' The data are returned as a list of dataframes and a validation object, 
 #' which contains details on whether all required files were found, 
 #' and which required and optional columns are present. 
-#' 
-#'
-#' @param path Character. url link to zip file OR path to local zip file. if to local path, then option `local` must be set to TRUE.
-#' @param local Boolean. If the paths are searching locally or not. Default is FALSE (that is, urls).
+#' #'
+#' @param path Character. URL link to zip file OR path to local zip file.
 #' @param quiet Boolean. Whether to see file download progress and files extract. FALSE by default.
 #'
 #' @return A GTFS object. That is, a list of dataframes of GTFS data.
@@ -28,10 +28,9 @@
 #'         summarise(stop_count=n_distinct(stop_id)) %>%
 #'           arrange(desc(stop_count))
 #' }
-read_gtfs <- function(path, local = FALSE, 
-                      quiet = TRUE) {
+read_gtfs <- function(path, quiet = TRUE) {
   # download zip file
-  if (!local && valid_url(path)) {
+  if (valid_url(path)) {
     path <- download_from_url(url = path, quiet = quiet)
     if (is.null(path)) { 
       return() 
@@ -59,7 +58,6 @@ read_gtfs <- function(path, local = FALSE,
 #' @importFrom dplyr %>%
 #'
 #' @keywords internal
-
 download_from_url <- function(url,
                               path=tempfile(fileext = ".zip"),
                               quiet=FALSE) {
@@ -111,8 +109,6 @@ download_from_url <- function(url,
 #' 
 #' @return file path to directory with gtfs .txt files
 #' @keywords internal
-#' 
-
 unzip_file <- function(zipfile, 
                        tmpdirpath=tempdir(), 
                        quiet = TRUE) {
@@ -160,7 +156,6 @@ unzip_file <- function(zipfile,
 #' @param quiet Boolean. Whether to output messages and files found in folder.
 #' @noRd
 #' @keywords internal
-
 create_gtfs_object <- function(tmpdirpath, file_paths, quiet = FALSE) {
   prefixes <- vapply(file_paths,get_file_shortname,FUN.VALUE = "")
   df_names <- prefixes
@@ -184,7 +179,6 @@ create_gtfs_object <- function(tmpdirpath, file_paths, quiet = FALSE) {
   return(gtfs_obj)
 }
 
-
 #' Function to read all files into dataframes
 #'
 #' @param file_path Character file path
@@ -192,7 +186,6 @@ create_gtfs_object <- function(tmpdirpath, file_paths, quiet = FALSE) {
 #' @param quiet Boolean. Whether to output messages and files found in folder.
 #' @noRd
 #' @keywords internal
-
 read_gtfs_file <- function(file_path, tmpdirpath, quiet = FALSE) {
   prefix <- get_file_shortname(file_path)
 
@@ -230,7 +223,6 @@ get_file_shortname <- function(file_path) {
 #' @noRd
 #' @keywords internal
 #' @importFrom data.table fread
-
 parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
 
   # only parse if file has any data, NULL o/w

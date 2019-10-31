@@ -17,9 +17,7 @@ working <- function() {
 test_that("read_gtfs() imports a local file to a 
           list of dataframes and doesnt 
           delete the source file", {
-  gtfs_obj <- tidytransit:::read_gtfs(
-    local_gtfs_path,
-    local=TRUE)
+  gtfs_obj <- tidytransit:::read_gtfs(local_gtfs_path)
   
   expect_is(gtfs_obj, "gtfs")
   file.exists(local_gtfs_path)

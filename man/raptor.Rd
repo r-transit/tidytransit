@@ -11,7 +11,7 @@ raptor(stop_times, transfers, from_stop_ids, departure_time_range = 3600,
 \item{stop_times}{A (prepared) stop_times table from a gtfs feed. Prepared means
 that all stop time rows before the desired journey departure time
 should be removed. The table should also only include departures
-happening on one day. Use \code{filter_stop_times} for easier preparation.}
+happening on one day. Use \code{\link[=filter_stop_times]{filter_stop_times()}} for easier preparation.}
 
 \item{transfers}{Transfers table from a gtfs feed. In general no preparation is needed.}
 
@@ -46,9 +46,9 @@ at a stop are returned in a table. Journeys are defined by a departure stop_id, 
 departure, arrival and travel time. Note that the exact journeys (with each intermediate
 stop and route id for example) is \emph{not} returned.
 
-For most cases \code{stop_times} needs to be filtered as it should only contain
-trips happening on a single day and departures later than a given journey
-start time (see \code{filter_stop_times}).
+For most cases, \code{stop_times} needs to be filtered as it should only contain trips
+happening on a single day and departures later than a given journey start time, see
+\code{\link[=filter_stop_times]{filter_stop_times()}}.
 
 The algorithm scans all trips until it exceeds \code{max_transfers} or all trips
 in \code{stop_times} have been visited.
@@ -56,7 +56,7 @@ in \code{stop_times} have been visited.
 \examples{
 \donttest{
 nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
-nyc <- read_gtfs(nyc_path, local=TRUE)
+nyc <- read_gtfs(nyc_path)
 
 # you can use initial walk times to different stops in walking distance (arbitrary example values)
 stop_ids_harlem_st <- c("301", "301N", "301S")
@@ -81,5 +81,5 @@ hist(shortest_travel_times$travel_time, breaks = 360)
 }
 }
 \seealso{
-travel_times, filter_stop_times
+\code{\link[=travel_times]{travel_times()}}
 }
