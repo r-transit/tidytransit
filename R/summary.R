@@ -8,15 +8,8 @@ summary.gtfs <- function(object, ...) {
   dots <- list(...)
   
   # agency info
-  agencies <- object$agency$agency_name
-  ag_n <- length(agencies)
-  ag_p <- min(ag_n, 3)
-  ag_excess = ag_n - ag_p
-  agencies_info <- paste(agencies[1:ag_p], collapse=", ")
-  if(ag_excess > 0) {
-    agencies_info <- paste0(agencies_info, " ... ", ag_excess, " more")
-  }
-  agency_sing_plur <- ifelse(ag_n == 1, "agency       ", "agencies     ")
+  agencies_info <- agency_info(object, 3)
+  agency_sing_plur <- ifelse(nrow(object$agency) == 1, "agency       ", "agencies     ")
                              
   # counts
   n_stop_ids <- length(unique(object$stops$stop_id))
@@ -64,3 +57,16 @@ summary.gtfs <- function(object, ...) {
   cat(paste0("# shapes     ", format(n_shapes, width = w), "\n"))
 }
 
+#' Create a text listing the first `max_agencies` agencies of the feed
+#' @keywords internal
+agency_info <- function(gtfs_obj, max_agencies = 3) {
+  agencies <- gtfs_obj$agency$agency_name
+  ag_n <- length(agencies)
+  ag_p <- min(ag_n, max_agencies)
+  ag_excess = ag_n - ag_p
+  agencies_info <- paste(agencies[1:ag_p], collapse=", ")
+  if(ag_excess > 0) {
+    agencies_info <- paste0(agencies_info, " ... ", ag_excess, " more")
+  }
+  return(agencies_info)
+}

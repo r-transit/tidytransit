@@ -62,3 +62,6 @@ library(ggplot2)
 ggplot(tts) + geom_point(aes(x=stop_lon, y=stop_lat, color = travel_time))
 }
 }
+\seealso{
+filter_stop_times, raptor
+}

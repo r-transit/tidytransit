@@ -40,6 +40,7 @@
 #' @seealso [travel_times()] 
 #' 
 #' @import data.table
+#' @seealso travel_times, filter_stop_times
 #' @export
 #' @examples \donttest{
 #' nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
@@ -359,7 +360,7 @@ filter_stop_times = function(gtfs_obj,
   }
   
   # trips runnin on day
-  if(!exists(".", where = gtfs_obj) || !exists("date_service_table", where = gtfs_obj$.)) {
+  if(!feed_contains(gtfs_obj, "date_service_table")) {
     gtfs_obj <- set_date_service_table(gtfs_obj)
   }
   service_ids = filter(gtfs_obj$.$date_service_table, date == extract_date)

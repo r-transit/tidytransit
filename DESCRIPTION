@@ -41,7 +41,8 @@ Suggests:
     testthat,
     knitr,
     rmarkdown,
-    ggplot2
+    ggplot2,
+    scales
 RoxygenNote: 6.1.1
 URL: https://github.com/r-transit/tidytransit
 BugReports: https://github.com/r-transit/tidytransit

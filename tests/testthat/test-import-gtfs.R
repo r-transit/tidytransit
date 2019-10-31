@@ -48,7 +48,7 @@ test_that("import-empty txt files are not
     skip("no internet, skipping")
   }
   else {
-    zip <- tidytransit:::download_from_url(gtfs_example_url)
+    zip <- tidytransit:::download_from_url(gtfs_example_url, quiet = T)
     folder <- tidytransit:::unzip_file(zip)
     files <- list.files(folder, full.names = TRUE)
     agency_file <- files[1]
