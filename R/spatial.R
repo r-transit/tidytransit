@@ -138,35 +138,3 @@ shape_as_sf_linestring <- function(df) {
   return(sf::st_linestring(m))
 }
 
-#' return an sf multilinestring with lat and long from gtfs for a route
-#' TODO not used
-#' 
-#' @param df the shapes dataframe from a gtfs object
-#' @keywords internal
-#' @return a multilinestring simple feature geometry (sfg) for the routes
-shapes_as_sfg <- function(df) {
-  # as suggested by www.github.com/mdsumner
-  l_dfs <- split(df, df$shape_id)
-
-  l_linestrings <- lapply(l_dfs,
-                          shape_as_sf_linestring)
-
-  return(sf::st_multilinestring(l_linestrings))
-}
-
-#' Buffer using common urban planner distances
-#' TODO not used
-#'
-#' merges gtfs objects
-#' @param df_sf1 a simple features data frame
-#' @param dist default "h" - for half mile buffers. can also pass "q".
-#' @param crs default epsg 26910. can be any other epsg
-#' @return a simple features data frame with planner buffers
-#' @keywords internal
-planner_buffer <- function(df_sf1,dist="h",crs=26910) {
-  distance <- 804.672
-  if(dist=="q"){distance <- 402.336}
-  df2 <- sf::st_transform(df_sf1,crs)
-  df3 <- sf::st_buffer(df2,dist=distance)
-  return(df3)
-}
