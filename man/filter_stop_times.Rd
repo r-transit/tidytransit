@@ -23,7 +23,7 @@ Filter a \code{stop_times} table for a given date and timespan.
 }
 \examples{
 feed_path <- system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
-g <- read_gtfs(feed_path, local=TRUE)
+g <- read_gtfs(feed_path)
 
 # Consider precalculating date_service_table for the feed.
 g <- set_date_service_table(g)

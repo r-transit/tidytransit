@@ -8,8 +8,7 @@
 #' which contains details on whether all required files were found, 
 #' and which required and optional columns are present. 
 #' #'
-#' @param path Character. url link to zip file OR path to local zip file. if to local path, then option `local` must be set to TRUE.
-#' @param local Boolean. If the paths are searching locally or not. Default is FALSE (that is, urls).
+#' @param path Character. URL link to zip file OR path to local zip file.
 #' @param quiet Boolean. Whether to see file download progress and files extract. FALSE by default.
 #'
 #' @return A GTFS object. That is, a list of dataframes of GTFS data.
@@ -29,10 +28,9 @@
 #'         summarise(stop_count=n_distinct(stop_id)) %>%
 #'           arrange(desc(stop_count))
 #' }
-read_gtfs <- function(path, local = FALSE, 
-                      quiet = TRUE) {
+read_gtfs <- function(path, quiet = TRUE) {
   # download zip file
-  if (!local && valid_url(path)) {
+  if (valid_url(path)) {
     path <- download_from_url(url = path, quiet = quiet)
     if (is.null(path)) { 
       return() 
