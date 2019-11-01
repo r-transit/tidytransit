@@ -1,12 +1,12 @@
 #' Get and validate dataframes of General Transit Feed Specification (GTFS) data.
-#' 
-#' This function reads GTFS text files from a local or remote zip file. 
-#' It also validates the files against the GTFS specification by file, requirement status, 
+#'
+#' This function reads GTFS text files from a local or remote zip file.
+#' It also validates the files against the GTFS specification by file, requirement status,
 #' and column name.
-#' 
-#' The data are returned as a list of dataframes and a validation object, 
-#' which contains details on whether all required files were found, 
-#' and which required and optional columns are present. 
+#'
+#' The data are returned as a list of dataframes and a validation object,
+#' which contains details on whether all required files were found,
+#' and which required and optional columns are present.
 #' #'
 #' @param path Character. URL link to zip file OR path to local zip file.
 #' @param quiet Boolean. Whether to see file download progress and files extract. FALSE by default.
@@ -22,8 +22,8 @@
 #' attach(sample_gtfs)
 #' #list routes by the number of stops they have
 #' routes %>% inner_join(trips, by="route_id") %>%
-#'   inner_join(stop_times) %>% 
-#'     inner_join(stops, by="stop_id") %>% 
+#'   inner_join(stop_times) %>%
+#'     inner_join(stops, by="stop_id") %>%
 #'       group_by(route_long_name) %>%
 #'         summarise(stop_count=n_distinct(stop_id)) %>%
 #'           arrange(desc(stop_count))
@@ -32,8 +32,8 @@ read_gtfs <- function(path, quiet = TRUE) {
   # download zip file
   if (valid_url(path)) {
     path <- download_from_url(url = path, quiet = quiet)
-    if (is.null(path)) { 
-      return() 
+    if (is.null(path)) {
+      return()
     }
   }
   # extract zip file
@@ -42,10 +42,10 @@ read_gtfs <- function(path, quiet = TRUE) {
   if (!exists("file_list_df")) {
     stop(sprintf("No files found in zip"))
   }
-  gtfs_obj <- create_gtfs_object(tmpdirpath, 
-                                 file_list_df$filename, 
+  gtfs_obj <- create_gtfs_object(tmpdirpath,
+                                 file_list_df$filename,
                                  quiet = quiet)
-  return(gtfs_obj) 
+  return(gtfs_obj)
 }
 
 #' Download a zipped GTFS feed file from a url
@@ -61,10 +61,10 @@ read_gtfs <- function(path, quiet = TRUE) {
 download_from_url <- function(url,
                               path=tempfile(fileext = ".zip"),
                               quiet=FALSE) {
-  
+
   stopifnot(length(url) == 1)
-  
-  # check if single element of dataframe 
+
+  # check if single element of dataframe
   # was inputed. if so, convert to single value; error otherwise.
   if(!is.null(dim(url))) {
     if(all(dim(url) == c(1,1))) {
@@ -74,8 +74,14 @@ download_from_url <- function(url,
     }
   }
 
-  r <- httr::GET(url)
-  
+  r <- httr::RETRY(
+    verb = "GET"
+    , url = url
+    , times = 5
+    , terminate_on = c(403, 404)
+    , terminate_on_success = TRUE
+  )
+
   # Get gtfs zip if url can be reach
   if(httr::status_code(r) == 200) {
     check <- try(utils::download.file(url, path, quiet = quiet), silent=TRUE)
@@ -89,7 +95,7 @@ download_from_url <- function(url,
     warning(warn)
     return(NULL)
   }
-  
+
   # check path
   check <- try(normalizePath(path), silent = TRUE)
   if(assertthat::is.error(check)) {
@@ -106,14 +112,14 @@ download_from_url <- function(url,
 #' @param tmpdirpath path to unzip file to-default tempdir()
 #' @param quiet Boolean. Whether to output files found in folder.
 #' @importFrom tools file_ext
-#' 
+#'
 #' @return file path to directory with gtfs .txt files
 #' @keywords internal
-unzip_file <- function(zipfile, 
-                       tmpdirpath=tempdir(), 
+unzip_file <- function(zipfile,
+                       tmpdirpath=tempdir(),
                        quiet = TRUE) {
   f <- zipfile
-  
+
   # check path
   if(try(path.expand(f), silent = TRUE) %>% assertthat::is.error()) {
     warn <- 'Invalid file path. NULL is returned.'
@@ -124,14 +130,14 @@ unzip_file <- function(zipfile,
   if(!file.exists(f) && !dir.exists(f)) {
     stop(paste0('"', f, '": No such file or directory'))
   }
-  
+
   f <- normalizePath(f)
 
   if(tools::file_ext(f) != "zip") {
     if(!quiet) message('No zip file found, reading files from path.')
     return(f)
   }
-  
+
   # create extraction folder
   utils::unzip(f, exdir=tmpdirpath)
 
@@ -160,22 +166,22 @@ create_gtfs_object <- function(tmpdirpath, file_paths, quiet = FALSE) {
   prefixes <- vapply(file_paths,get_file_shortname,FUN.VALUE = "")
   df_names <- prefixes
   if(!quiet) message('Reading files in feed...\n')
-  gtfs_obj <- lapply(file_paths, 
-                   function(x) read_gtfs_file(x, 
-                                              tmpdirpath, 
+  gtfs_obj <- lapply(file_paths,
+                   function(x) read_gtfs_file(x,
+                                              tmpdirpath,
                                               quiet = quiet))
   names(gtfs_obj) <- unname(df_names)
   gtfs_obj[sapply(gtfs_obj, is.null)] <- NULL
   class(gtfs_obj) <- "gtfs"
   if(!quiet) message('Reading files in feed... done.\n')
-  
-    
+
+
   gtfs_obj <- gtfs_validate(gtfs_obj, quiet = quiet)
-  
+
   stopifnot(is_gtfs_obj(gtfs_obj))
-  
+
   if(!quiet) message("Reading gtfs feed completed.\n\n")
-  
+
   return(gtfs_obj)
 }
 
@@ -203,12 +209,12 @@ read_gtfs_file <- function(file_path, tmpdirpath, quiet = FALSE) {
 #' @return df_name a character vector of the df_name for the file
 #' @noRd
 #' @keywords internal
-#' 
+#'
 get_file_shortname <- function(file_path) {
   split_path <- strsplit(file_path, '/')
   file_name <- split_path[[1]][length(split_path[[1]])]
 
-  prefix <- gsub(".txt|-new", "", file_name) 
+  prefix <- gsub(".txt|-new", "", file_name)
   # suffix ".*-new.txt" comes from trillium data
   prefix <- gsub("\\-|\\.", "_", prefix)
   return(prefix)
@@ -236,9 +242,9 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
     L <- suppressWarnings(
       length(
         scan(
-          file_path, 
-          what = "", 
-          quiet = TRUE, 
+          file_path,
+          what = "",
+          quiet = TRUE,
           sep = "\n")
         )
       )
@@ -248,19 +254,19 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
       return(NULL)
     }
 
-    #if no meta data is found for a file 
+    #if no meta data is found for a file
     #type but file is not empty, read as is.
     if(is.null(meta)) {
-      s <- sprintf("File %s not recognized, 
-                   trying to read file as csv.", 
+      s <- sprintf("File %s not recognized,
+                   trying to read file as csv.",
                    basename(file_path))
       if(!quiet) message(s)
 
       tryCatch({
         df <- suppressMessages(
-          data.table::fread(file = file_path, 
+          data.table::fread(file = file_path,
                             sep=","))
-        }, 
+        },
         error = function(error_condition) {
           s <- sprintf("   File could not be read as csv.", basename(file_path))
           if(!quiet) message(s)
@@ -272,23 +278,23 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
     # get a small df to find how many cols are needed
     small_df <- suppressWarnings(
       readr::read_csv(file_path, n_max = 1, col_types = readr::cols(.default = "c")))
-    
+
     # get correct coltype, if possible
     # create "c" as coltype defaults
-    coltypes_character <- rep("c", 
-                              dim(small_df)[2]) 
+    coltypes_character <- rep("c",
+                              dim(small_df)[2])
 
-    names(coltypes_character) <- 
+    names(coltypes_character) <-
       names(small_df) %>% tolower()
     # indx from valid cols in meta$field. NAs will return for invalid cols
-    indx <- match(names(coltypes_character), meta$field)  
+    indx <- match(names(coltypes_character), meta$field)
 
     #!is.na(indx) = valid col in 'coltype' found in meta$field
-    #indx[!is.na(indx)] = location in 'meta$coltype' 
+    #indx[!is.na(indx)] = location in 'meta$coltype'
     #where corresponding type is found
     #valid cols found in small_df
-    coltypes_character[!is.na(indx)] <- 
-      meta$coltype[indx[!is.na(indx)]] 
+    coltypes_character[!is.na(indx)] <-
+      meta$coltype[indx[!is.na(indx)]]
 
     # use col_*() notation for column types
     coltypes <-
@@ -300,20 +306,20 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
         "d" = readr::col_double(),
         "D" = readr::col_date(format = "%Y%m%d")
       )
-    
+
     df <- suppressWarnings(
-      readr::read_csv(file = file_path, 
+      readr::read_csv(file = file_path,
                       col_types = coltypes
       )
     )
     probs <- readr::problems(df)
-    
+
     if(dim(probs)[1] > 0) {
       attributes(df) <- append(attributes(df), list(problems = probs))
       warning(paste0("Parsing failures while reading ", prefix))
       print(probs)
     }
-    
+
     return(df)
   } else return(NULL)
 }
