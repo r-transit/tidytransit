@@ -1,4 +1,5 @@
 #' Get list of all available feeds from transitfeeds API
+#' @importFrom httr content RETRY
 #' @importFrom magrittr "%>%"
 #' @importFrom magrittr "%<>%"
 #' @importFrom utils "read.csv"
@@ -9,7 +10,7 @@
 #'
 #' @export
 #' @examples \donttest{
-#' feedlist_df <- get_feedlist() 
+#' feedlist_df <- get_feedlist()
 #' }
 get_feedlist <- function() {
 
@@ -28,7 +29,7 @@ get_feedlist <- function() {
 
     for (i in 1:response_cycles) {
 
-      sub_req <- tfeeds_get("getFeeds", 
+      sub_req <- tfeeds_get("getFeeds",
                             query = list(limit = max_limit, page = i))
       sub_req_df <- tfeeds_parse_getfeedlist(sub_req)
       req_df <- rbind(req_df, sub_req_df)
@@ -53,7 +54,7 @@ get_feedlist <- function() {
 #' @param url Character URL of GTFS feed.
 #' @param path Character. Folder into which to put zipped file. If NULL, then save a tempfile
 #' @param quiet Boolean. Whether to see file download progress. FALSE by default.
-#'
+#' @importFrom httr RETRY status_code
 #' @return File path
 #'
 #' @keywords internal
@@ -61,7 +62,7 @@ get_feed <- function(url, path=NULL, quiet=FALSE) {
 
   stopifnot(length(url) == 1)
 
-  # check if single element of dataframe 
+  # check if single element of dataframe
   # was inputed. if so, convert to single value; error otherwise.
   if(!is.null(dim(url))) {
     if(all(dim(url) == c(1,1))) {
@@ -75,8 +76,8 @@ get_feed <- function(url, path=NULL, quiet=FALSE) {
   valid <- valid_url(url)
   if(!valid) {
     if(!quiet) {
-      warn1 <- 
-        sprintf("Link '%s' is invalid; 
+      warn1 <-
+        sprintf("Link '%s' is invalid;
                 failed to connect. NULL was returned.", url)
       warning(warn1)
     }
@@ -84,11 +85,17 @@ get_feed <- function(url, path=NULL, quiet=FALSE) {
   }
 
   # generate a temporary file path if no path is specified
-  if(is.null(path)) temp <- 
-    tempfile(fileext = ".zip") else 
+  if(is.null(path)) temp <-
+    tempfile(fileext = ".zip") else
       temp <- file.path(path, 'gtfs_zip.zip')
 
-  r <- httr::GET(url)
+  r <- httr::RETRY(
+    verb = "GET"
+    , url = url
+    , times = 5
+    , terminate_on = c(403, 404)
+    , terminate_on_success = TRUE
+  )
 
   # Get gtfs zip if url can be reach
   if(httr::status_code(r) == 200) {
@@ -114,15 +121,15 @@ get_feed <- function(url, path=NULL, quiet=FALSE) {
 #' @param feedlist_df A dataframe of feed metadata such as output from get_feedlist
 #' @param test_url Boolean. Whether to test if the url connects or not. FALSE by default (can take a while).
 #'
-#' @return A dataframe of feed metadata 
+#' @return A dataframe of feed metadata
 #' for all feeds in input that are downloadable
 #'
 #' @keywords internal
 filter_feedlist <- function(feedlist_df, test_url = FALSE) {
 
-  if (!is.data.frame(feedlist_df)) 
+  if (!is.data.frame(feedlist_df))
     stop('Invalid feedlist_df input.  Must be a dataframe.')
-  if (!('url_d' %in% names(feedlist_df))) 
+  if (!('url_d' %in% names(feedlist_df)))
     stop('No valid URLs found - expected url_d column in feedlist_df.')
 
   indx <- feedlist_df$url_d %>%
@@ -263,7 +270,7 @@ has_api_key <- function() {
 # https://cran.r-project.org/web/packages/httr/vignettes/api-packages.html
 
 #' Check HTTP status; stop if failure
-#' @param req The result of an httr::GET
+#' @param req The result of an httr::RETRY
 #' @noRd
 
 tfeeds_check <- function(req) {
@@ -275,7 +282,8 @@ tfeeds_check <- function(req) {
 
 #' Parse content as text
 #'
-#' @param req The result of a httr::GET
+#' @param req The result of a httr::RETRY
+#' @importFrom httr content
 #' @noRd
 #' @return content parsed as text
 tfeeds_text <- function(req) {
@@ -287,6 +295,7 @@ tfeeds_text <- function(req) {
 #' Parse a gtfs feed list
 #'
 #' @param req The result of a GET
+#' @importFrom httr content
 #' @noRd
 #' @return Dataframe of feeds
 tfeeds_parse_getfeedlist <- function(req) {
@@ -332,7 +341,8 @@ tfeeds_parse_getfeedlist <- function(req) {
 
 #' Extract location dataframe from transitfeeds getLocation API
 #'
-#' @param req Response to getLocation httr::GET
+#' @param req Response to getLocation httr::RETRY
+#' @importFrom httr content
 #' @noRd
 #' @return Dataframe of locations with id, descriptions, and lat/lng
 #'
@@ -364,15 +374,16 @@ tfeeds_parse_getlocation <- function(req) {
 #' @param query Character. Other query strings.
 #' @param version Version of API as character that can be appended as part of path, defaults to v1
 #' @param key API key, defaults to gtfs_api_key
-#' @param ... any httr::GET options to pass-through
+#' @param ... any httr::RETRY options to pass-through
+#' @importFrom httr RETRY
 #' @noRd
-#' @return Result of httr::GET
+#' @return Result of httr::RETRY
 #'
 #' @details See http://transitfeeds.com/api/ for available API calls
-tfeeds_get <- function(path, 
-                       query, 
-                       ..., 
-                       version = 'v1/', 
+tfeeds_get <- function(path,
+                       query,
+                       ...,
+                       version = 'v1/',
                        key = if(has_api_key()) gtfs_api_key$get()) {
 
   if (missing(query)) {
@@ -381,9 +392,15 @@ tfeeds_get <- function(path,
     my_query <- c(query, list(key = key))
   }
 
-  req <- httr::GET('http://api.transitfeeds.com/', 
-                   path = paste0(version, path), 
-                   query = my_query)
+  req <- httr::RETRY(
+    verb = "GET"
+    , url = 'http://api.transitfeeds.com/'
+    , path = paste0(version, path)
+    , query = my_query
+    , times = 5
+    , terminate_on = c(403, 404)
+    , terminate_on_success = TRUE
+  )
 
   tfeeds_check(req)
 
