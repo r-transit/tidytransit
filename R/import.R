@@ -112,6 +112,7 @@ download_from_url <- function(url,
 #' @param tmpdirpath path to unzip file to-default tempdir()
 #' @param quiet Boolean. Whether to output files found in folder.
 #' @importFrom tools file_ext
+#' @importFrom zip unzip
 #'
 #' @return file path to directory with gtfs .txt files
 #' @keywords internal
@@ -139,8 +140,7 @@ unzip_file <- function(zipfile,
   }
 
   # create extraction folder
-  utils::unzip(f, exdir=tmpdirpath)
-
+  zip::unzip(f, exdir=tmpdirpath)
 
   if(length(list.files(tmpdirpath)) == 0) {
     warn <- "No files found after decompressing. NULL is returned."
