@@ -17,9 +17,7 @@ working <- function() {
 test_that("read_gtfs() imports a local file to a 
           list of dataframes and doesnt 
           delete the source file", {
-  gtfs_obj <- tidytransit:::read_gtfs(
-    local_gtfs_path,
-    local=TRUE)
+  gtfs_obj <- tidytransit:::read_gtfs(local_gtfs_path)
   
   expect_is(gtfs_obj, "gtfs")
   file.exists(local_gtfs_path)
@@ -50,7 +48,7 @@ test_that("import-empty txt files are not
     skip("no internet, skipping")
   }
   else {
-    zip <- tidytransit:::download_from_url(gtfs_example_url)
+    zip <- tidytransit:::download_from_url(gtfs_example_url, quiet = T)
     folder <- tidytransit:::unzip_file(zip)
     files <- list.files(folder, full.names = TRUE)
     agency_file <- files[1]

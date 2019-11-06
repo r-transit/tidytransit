@@ -2,18 +2,22 @@
 % Please edit documentation in R/spatial.R
 \name{gtfs_as_sf}
 \alias{gtfs_as_sf}
-\title{Add Simple Features for Stops and Routes to GTFS Object}
+\title{Convert stops and shapes to Simple Features#'}
 \usage{
-gtfs_as_sf(gtfs_obj, quiet = TRUE)
+gtfs_as_sf(gtfs_obj, skip_shapes = FALSE, quiet = TRUE)
 }
 \arguments{
 \item{gtfs_obj}{a standard tidytransit gtfs object}
 
+\item{skip_shapes}{if TRUE, shapes are not converted. Default FALSE.}
+
 \item{quiet}{boolean whether to print status messages}
 }
 \value{
-gtfs_obj a tidytransit gtfs object with a bunch of simple features tables
+gtfs_obj a tidytransit gtfs object with stops and shapes as sf data frames
 }
 \description{
-Add Simple Features for Stops and Routes to GTFS Object
+Stops are converted to POINT sf data frames. Shapes are created as
+LINESTRING data frame. Note that this function replaces stops and shapes
+tables in gtfs_obj.
 }

@@ -55,7 +55,7 @@ count_service_trips <- function(trips) {
 #' @importFrom rlang .data
 #' @export
 set_servicepattern <- function(gtfs_obj, hash_algo = "md5", id_prefix = "s_", hash_length = 7) {
-  if(!exists("date_service_table", gtfs_obj)) {
+  if(!feed_contains(gtfs_obj, "date_service_table")) {
     gtfs_obj <- set_date_service_table(gtfs_obj)
   }
 

@@ -19,8 +19,7 @@ Plot GTFS object routes and their frequencies
 local_gtfs_path <- system.file("extdata",
                               "google_transit_nyc_subway.zip",
                               package = "tidytransit")
-nyc <- read_gtfs(local_gtfs_path,
-                local=TRUE)
+nyc <- read_gtfs(local_gtfs_path)
 plot(nyc)
 }
 }

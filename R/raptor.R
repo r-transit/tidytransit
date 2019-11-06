@@ -12,9 +12,9 @@
 #' departure, arrival and travel time. Note that the exact journeys (with each intermediate 
 #' stop and route id for example) is _not_ returned.
 #'
-#' For most cases `stop_times` needs to be filtered as it should only contain
-#' trips happening on a single day and departures later than a given journey
-#' start time (see `filter_stop_times`).
+#' For most cases, `stop_times` needs to be filtered as it should only contain trips 
+#' happening on a single day and departures later than a given journey start time, see 
+#' [filter_stop_times()].
 #' 
 #' The algorithm scans all trips until it exceeds `max_transfers` or all trips
 #' in `stop_times` have been visited.
@@ -22,7 +22,7 @@
 #' @param stop_times A (prepared) stop_times table from a gtfs feed. Prepared means
 #'                   that all stop time rows before the desired journey departure time
 #'                   should be removed. The table should also only include departures 
-#'                   happening on one day. Use `filter_stop_times` for easier preparation. 
+#'                   happening on one day. Use [filter_stop_times()] for easier preparation. 
 #' @param transfers Transfers table from a gtfs feed. In general no preparation is needed.
 #' @param from_stop_ids Atomic char vector with stop_ids from where a journey should start
 #' @param departure_time_range All departures from the first departure of 
@@ -37,11 +37,14 @@
 #' @return A data.table with travel times to all stop_ids reachable from `from_stop_ids` 
 #'         and their corresponding journey departure and arrival times.
 #'
+#' @seealso [travel_times()] 
+#' 
 #' @import data.table
+#' @seealso travel_times, filter_stop_times
 #' @export
 #' @examples \donttest{
 #' nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
-#' nyc <- read_gtfs(nyc_path, local=TRUE)
+#' nyc <- read_gtfs(nyc_path)
 #'
 #' # you can use initial walk times to different stops in walking distance (arbitrary example values)
 #' stop_ids_harlem_st <- c("301", "301N", "301S")
@@ -212,14 +215,15 @@ raptor = function(stop_times,
 
 #' Calculate shortest travel times from a stop to all reachable stops
 #' 
-#' Function to calculate the shortest travel times from a stop (give by `from_stop_name`) to all other 
-#' stops of a feed. `filtered_stop_times` needs to be created before with `filter_stop_times`.
+#' Function to calculate the shortest travel times from a stop (give by `from_stop_name`) 
+#' to all other stops of a feed. `filtered_stop_times` needs to be created before with 
+#' [filter_stop_times()].
 #' 
-#' This function allows easier access to `raptor` by using stop names instead of ids and 
+#' This function allows easier access to [raptor()] by using stop names instead of ids and 
 #' returning shortest travel times by default.
 #' 
 #' @param filtered_stop_times stop_times data.table (with transfers and stops tables as 
-#'                            attributes) created with `filter_stop_times` where the 
+#'                            attributes) created with [filter_stop_times()] where the 
 #'                            deparuture time has been set.
 #' @param from_stop_name stop name from which travel times should be calculated. A vector 
 #'                       with multiple names is accepted.
@@ -230,16 +234,16 @@ raptor = function(stop_times,
 #' @param max_departure_time Either set this parameter or `departure_time_range`. Only 
 #'                           departures before `max_departure_time` are used. Accepts 
 #'                           "HH:MM:SS" or seconds as numerical value.
-#' @param return_DT travel_times() returns a data.table if TRUE. Default is FALSE which returns 
-#'                  a tibble/tbl_df.
+#' @param return_DT travel_times() returns a data.table if TRUE. Default is FALSE which 
+#'                  returns a tibble/tbl_df.
 #'                           
 #' @return A table with travel times to all stops reachable from `from_stop_name` and their
 #'         corresponding journey departure and arrival times.
-#' 
+#'         
 #' @export
 #' @examples \donttest{
 #' nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
-#' nyc <- read_gtfs(nyc_path, local=TRUE)
+#' nyc <- read_gtfs(nyc_path)
 #' 
 #' # Use journeys departing after 7 AM with arrival time before 9 AM on 26th June
 #' stop_times <- filter_stop_times(nyc, "2018-06-26", 7*3600, 9*3600)
@@ -263,7 +267,7 @@ travel_times = function(filtered_stop_times,
                         return_DT = FALSE) {
   travel_time <- min_arrival_time <- journey_departure_time <- NULL
   if("gtfs" %in% class(filtered_stop_times)) {
-    stop("Travel times cannot be calculated on a gtfs object. Use filter_stop_times.")
+    stop("Travel times cannot be calculated on a gtfs object. Use filter_stop_times().")
   }
   if(!all(c("stops", "transfers") %in% names(attributes(filtered_stop_times)))) {
     stop("Stops and transfers not found in filtered_stop_times attributes. Use filter_stop_times() to prepare data or use raptor() for lower level access.")
@@ -312,7 +316,7 @@ travel_times = function(filtered_stop_times,
   return(rptr_names)
 }
 
-#' Filter a `stop_times` table for a given date and timespan.
+#' Filter a `stop_times` table for a given date and timespan. 
 #' 
 #' @param gtfs_obj a gtfs feed
 #' @param extract_date date to extract trips from in YYYY-MM-DD format
@@ -320,11 +324,13 @@ travel_times = function(filtered_stop_times,
 #'                           hms object or numeric value in seconds.
 #' @param max_arrival_time The latest arrival time. Can be given as "HH:MM:SS", 
 #'                         hms object or numeric value in seconds
-#'         
+#' 
+#' @seealso This function creates filtered `stop_times` for [travel_times()] and [raptor()].
+#'                         
 #' @export                
 #' @examples 
 #' feed_path <- system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
-#' g <- read_gtfs(feed_path, local=TRUE)
+#' g <- read_gtfs(feed_path)
 #' 
 #' # Consider precalculating date_service_table for the feed.
 #' g <- set_date_service_table(g)
@@ -354,7 +360,7 @@ filter_stop_times = function(gtfs_obj,
   }
   
   # trips runnin on day
-  if(!exists(".", where = gtfs_obj) || !exists("date_service_table", where = gtfs_obj$.)) {
+  if(!feed_contains(gtfs_obj, "date_service_table")) {
     gtfs_obj <- set_date_service_table(gtfs_obj)
   }
   service_ids = filter(gtfs_obj$.$date_service_table, date == extract_date)

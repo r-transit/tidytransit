@@ -40,7 +40,7 @@ Note that you can import the data from the URL listed below, or any other URL fo
 
 ```{r}
 local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
-gtfs <- read_gtfs(local_gtfs_path, local=TRUE)
+gtfs <- read_gtfs(local_gtfs_path)
 # gtfs <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
 ```
 
@@ -125,10 +125,10 @@ one_line_stops %>%
 Here we can see that the 242-Van Cortland Stop, the last stop up North, in the Bronx, has noticeably higher headways (8 mins) at this time of day than the South Ferry Stop, which is at the south end of Manhattan.
 
 Lets also plot the headways at these stops on a map to see how they are distributed across the city. 
-First, we'll use the `get_stop_geometry` function, which converts the latitudes and longitudes on the stops table in the GTFS feed into  [simple features](https://r-spatial.github.io/sf/articles/sf1.html).  
+First, we'll use the `stops_as_sf` function, which converts the latitudes and longitudes on the stops table in the GTFS feed into  [simple features](https://r-spatial.github.io/sf/articles/sf1.html).  
 
 ```{r}
-nyc_stops_sf <- get_stop_geometry(gtfs$stops)
+nyc_stops_sf <- stops_as_sf(gtfs$stops)
 ```
 
 Now we can join those stop coordinates to the 1 line's calculated stop headways. 
@@ -170,20 +170,24 @@ Since, under the hood, this table is a summary of stop frequencies along each ro
 As with the stops, we can easily join this table to simple features and then plot it on a map. Note that here too we pass in the select service_id's from above, as the route run by a vehicle also depends on the selected service. 
 
 ```{r}
-routes_sf <- get_route_geometry(gtfs, service_ids = service_ids)
+# get_route_geometry needs a gtfs object that includes shapes as simple feature data frames
+gtfs_sf <- gtfs_as_sf(gtfs)
+routes_sf <- get_route_geometry(gtfs_sf, service_ids = service_ids)
 ```
 
 Then we join the geometries to the calculated frequencies:
 
 ```{r}
 routes_sf <- routes_sf %>% 
-  right_join(am_route_freq, by = 'route_id')
+  inner_join(am_route_freq, by = 'route_id')
 ```
 
 And finally, lets plot the routes with median headways of less than 10 minutes in the morning.
 
 ```{r, fig.width=6, fig.height=10, warn=FALSE}
-routes_sf %>% 
+# convert to an appropriate coordinate reference system
+routes_sf_crs <- sf::st_transform(routes_sf, 26919) 
+routes_sf_crs %>% 
   filter(median_headways<10) %>%
   ggplot() + 
   geom_sf(aes(colour=as.factor(median_headways))) + 

@@ -10,7 +10,7 @@ travel_times(filtered_stop_times, from_stop_name,
 }
 \arguments{
 \item{filtered_stop_times}{stop_times data.table (with transfers and stops tables as
-attributes) created with \code{filter_stop_times} where the
+attributes) created with \code{\link[=filter_stop_times]{filter_stop_times()}} where the
 deparuture time has been set.}
 
 \item{from_stop_name}{stop name from which travel times should be calculated. A vector
@@ -26,25 +26,26 @@ journeys.}
 departures before \code{max_departure_time} are used. Accepts
 "HH:MM:SS" or seconds as numerical value.}
 
-\item{return_DT}{travel_times() returns a data.table if TRUE. Default is FALSE which returns
-a tibble/tbl_df.}
+\item{return_DT}{travel_times() returns a data.table if TRUE. Default is FALSE which
+returns a tibble/tbl_df.}
 }
 \value{
 A table with travel times to all stops reachable from \code{from_stop_name} and their
 corresponding journey departure and arrival times.
 }
 \description{
-Function to calculate the shortest travel times from a stop (give by \code{from_stop_name}) to all other
-stops of a feed. \code{filtered_stop_times} needs to be created before with \code{filter_stop_times}.
+Function to calculate the shortest travel times from a stop (give by \code{from_stop_name})
+to all other stops of a feed. \code{filtered_stop_times} needs to be created before with
+\code{\link[=filter_stop_times]{filter_stop_times()}}.
 }
 \details{
-This function allows easier access to \code{raptor} by using stop names instead of ids and
+This function allows easier access to \code{\link[=raptor]{raptor()}} by using stop names instead of ids and
 returning shortest travel times by default.
 }
 \examples{
 \donttest{
 nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
-nyc <- read_gtfs(nyc_path, local=TRUE)
+nyc <- read_gtfs(nyc_path)
 
 # Use journeys departing after 7 AM with arrival time before 9 AM on 26th June
 stop_times <- filter_stop_times(nyc, "2018-06-26", 7*3600, 9*3600)
@@ -60,4 +61,7 @@ tts \%>\% filter(stop_name == "Queensboro Plaza") \%>\% dplyr::pull(travel_time)
 library(ggplot2)
 ggplot(tts) + geom_point(aes(x=stop_lon, y=stop_lat, color = travel_time))
 }
+}
+\seealso{
+filter_stop_times, raptor
 }
