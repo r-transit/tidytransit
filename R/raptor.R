@@ -76,43 +76,79 @@ raptor = function(stop_times,
   from_stop_id <- departure_time_num <- marked <- journey_departure_time <- journey_departure_stop_id <- NULL
   wait_time_to_departure <- marked_departure_time_num <- arrival_time_num <- min_transfer_time <- NULL
   to_stop_id <- travel_time <- min_arrival_time <- NULL
+  
+  # check and params ####
   # stop ids need to be a character vector
   # use data.table for faster manipulation
   stop_times_dt <- setup_stop_times(stop_times)
   transfers_dt <- setup_transfers(transfers)
   if(is.data.frame(from_stop_ids)) { from_stop_ids <- from_stop_ids[[1]] }
 
+  nonexistent_stop_ids = setdiff(from_stop_ids, c(stop_times_dt$stop_id, transfers_dt$from_stop_id, transfers_dt$to_stop_id))
+  if(length(nonexistent_stop_ids) > 0) {
+    from_stop_ids <- setdiff(from_stop_ids, nonexistent_stop_ids)
+    if(length(from_stop_ids) == 0) {
+      warning("Stop not found in stop_times or transfers: ", paste(nonexistent_stop_ids, collapse = ", "))
+      empty_dt = data.table(stop_id = character(0), travel_time = numeric(0), journey_departure_stop_id = character(0),
+        journey_departure_time = numeric(0),min_arrival_time = character(0), transfers = numeric(0))
+      return(empty_dt)
+    }
+  }
   if(is.null(keep) || 
      !(keep %in% c("shortest", "earliest", "all"))) {
     stop(paste0(keep, " is not a supported optimization type, all times are returned"))
   }
-  
-  if(all(!(from_stop_ids %in% stop_times$stop_id))) {
-    warning(paste0("No departures from ", paste0(from_stop_ids, collapse = ", ")))
-    return(data.table(stop_id = from_stop_ids, min_arrival_time = 0, journey_departure_time = 0))
-  }
-  
-  # setup work data frame "rptr"
-  rptr_colnames = c("stop_id", "marked", "min_arrival_time", "journey_departure_time", "journey_departure_stop_id", "transfers")
-  
-  # get earliest departure time for from_stop_ids and set them as journey start times
-  rptr = stop_times_dt[stop_id %in% from_stop_ids]
   if(!is.numeric(departure_time_range)) {
     stop("departure_time_range is not numeric. Needs to be the time range in seconds after the first departure of stop_times")
   }
   if(departure_time_range < 1) {
     stop("departure_time_range is less than 1")
   }
-  max_departure_time = min(stop_times_dt$departure_time_num) + departure_time_range
-  rptr <- rptr[departure_time_num <= max_departure_time]
+  min_departure_time = min(stop_times_dt$departure_time_num)
+  max_departure_time = min_departure_time + departure_time_range
+  
+  # set up arrivals at from_stops ####
+  
+  # find stops reachable by transfer from from_stops
+  transfer_stops = data.frame() # only needed for nrow below
+  if(!is.null(transfers_dt)) {
+    transfer_stops <- transfers_dt[from_stop_id %in% from_stop_ids]
+  }
+  
+  # init_stops contains from_stops and stops reachable by transfer
+  rptr_colnames = c("stop_id", "marked", "min_arrival_time", "journey_departure_time", "journey_departure_stop_id", "transfers")
+  
+  init_stops = data.table(
+    stop_id = c(from_stop_ids, transfer_stops$to_stop_id),
+    marked = F,
+    min_arrival_time = c(rep(min_departure_time, length(from_stop_ids)), 
+                         min_departure_time+transfer_stops$min_transfer_time),
+    journey_departure_time = rep(min_departure_time, 
+                                 length(from_stop_ids)+nrow(transfer_stops)),
+    journey_departure_stop_id = c(from_stop_ids, transfer_stops$from_stop_id),
+    transfers = c(rep(0, length(from_stop_ids)), rep(1, nrow(transfer_stops)))
+  )
 
-  # setup columns
-  rptr[, marked := TRUE]
-  rptr[, min_arrival_time := rptr$departure_time_num - 1]
-  rptr[, journey_departure_time := departure_time_num]
-  rptr[, journey_departure_stop_id := stop_id]
-  rptr[, transfers := 0]
+  # mark all departures from init_stops ####
+  init_departures = stop_times_dt[init_stops, on = "stop_id"]
+  init_departures[, journey_departure_time := departure_time_num]
+  init_departures <- init_departures[!is.na(journey_departure_time)]
+  init_departures[, min_arrival_time := journey_departure_time ]
+  init_departures[, journey_departure_stop_id := stop_id]
+  init_departures[, marked := TRUE]
+  init_departures[, transfers := 0]
+  init_departures <- init_departures[, rptr_colnames, with = F]
+  
+  # rptr: work data frame ####
+  rptr <- rbind(init_stops, init_departures)
   rptr <- rptr[, rptr_colnames, with = F]
+  rptr <- distinct(rptr)
+
+  # raptor loop works with departure > arrival 
+  rptr[, min_arrival_time := min_arrival_time-1]
+  
+  # only keep departures within time range for initial loop
+  rptr <- rptr[journey_departure_time <= max_departure_time]
   
   # raptor loop ####
   k = 0
@@ -131,6 +167,7 @@ raptor = function(stop_times,
     # use each departure/trip once (for the closest journey_departure_time)
     setorder(departures_marked, wait_time_to_departure)
     departures_marked <- departures_marked[, .SD[1], by=c("stop_id", "trip_id")]
+    
     # get trips from marked departures
     setorder(departures_marked, departure_time_num)
     trips_marked <- departures_marked[, .SD[1], by=c("trip_id", "journey_departure_time")]
@@ -187,14 +224,20 @@ raptor = function(stop_times,
     # slightly faster than:
     # 	rptr[, rank := seq_len(.N), by = c("stop_id", "journey_departure_time")]
     # 	rptr <- rptr[.rank1, on = "rank"]
-   
+    
     # iteration is finished, the remaining marked stops have been improved
     k <- k+1
     if(!is.null(max_transfers) && k > max_transfers) { break }
   }
   
+  # create results ####
+  
   # fix min_arrival_times of from_stops
-  rptr[stop_id %in% from_stop_ids, min_arrival_time := min_arrival_time + 1]
+  rptr[stop_id %in% init_stops$stop_id, min_arrival_time := min_arrival_time + 1]
+
+  # only keep one arrival (earliest) for initial stops
+  rptr <- rptr[!stop_id %in% init_stops$stop_id]
+  rptr <- rbind(init_stops, rptr)
   
   # calculate travel_time
   rptr[,travel_time := min_arrival_time - journey_departure_time]
@@ -208,8 +251,9 @@ raptor = function(stop_times,
     rptr <- rptr[, .SD[1], by="stop_id"]
   }
   
-  # return result table
-  rptr <- rptr[,c("stop_id", "travel_time", "journey_departure_stop_id", "journey_departure_time", "min_arrival_time", "transfers")]
+  # build result table
+  rptr <- rptr[, c("stop_id", "travel_time", "journey_departure_stop_id", 
+                   "journey_departure_time", "min_arrival_time", "transfers")]
   return(rptr)
 }
 
@@ -325,15 +369,14 @@ travel_times = function(filtered_stop_times,
 #' @param max_arrival_time The latest arrival time. Can be given as "HH:MM:SS", 
 #'                         hms object or numeric value in seconds
 #' 
-#' @seealso This function creates filtered `stop_times` for [travel_times()] and [raptor()].
+#' This function creates filtered `stop_times` for [travel_times()] and [raptor()]. If you
+#' want to filter a feed multiple times it is faster to precalculate date_service_table with
+#' [set_date_service_table()].
 #'                         
 #' @export                
 #' @examples 
 #' feed_path <- system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
 #' g <- read_gtfs(feed_path)
-#' 
-#' # Consider precalculating date_service_table for the feed.
-#' g <- set_date_service_table(g)
 #' 
 #' # filter the sample feed
 #' stop_times <- filter_stop_times(g, "2007-01-06", "06:00:00", "08:00:00")
@@ -359,8 +402,9 @@ filter_stop_times = function(gtfs_obj,
     stop("max_arrival_time is before min_departure_time")
   }
   
-  # trips runnin on day
+  # trips running on day
   if(!feed_contains(gtfs_obj, "date_service_table")) {
+    message("Consider using set_date_service_table beforehand if you filter this feed multiple times")
     gtfs_obj <- set_date_service_table(gtfs_obj)
   }
   service_ids = filter(gtfs_obj$.$date_service_table, date == extract_date)

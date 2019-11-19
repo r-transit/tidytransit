@@ -82,4 +82,6 @@ hist(shortest_travel_times$travel_time, breaks = 360)
 }
 \seealso{
 \code{\link[=travel_times]{travel_times()}}
+
+travel_times, filter_stop_times
 }
