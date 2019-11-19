@@ -16,7 +16,11 @@ filter_stop_times(gtfs_obj, extract_date, min_departure_time,
 hms object or numeric value in seconds.}
 
 \item{max_arrival_time}{The latest arrival time. Can be given as "HH:MM:SS",
-hms object or numeric value in seconds}
+hms object or numeric value in seconds
+
+This function creates filtered \code{stop_times} for \code{\link[=travel_times]{travel_times()}} and \code{\link[=raptor]{raptor()}}. If you
+want to filter a feed multiple times it is faster to precalculate date_service_table with
+\code{\link[=set_date_service_table]{set_date_service_table()}}.}
 }
 \description{
 Filter a \code{stop_times} table for a given date and timespan.
@@ -25,12 +29,6 @@ Filter a \code{stop_times} table for a given date and timespan.
 feed_path <- system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
 g <- read_gtfs(feed_path)
 
-# Consider precalculating date_service_table for the feed.
-g <- set_date_service_table(g)
-
 # filter the sample feed
 stop_times <- filter_stop_times(g, "2007-01-06", "06:00:00", "08:00:00")
-}
-\seealso{
-This function creates filtered \code{stop_times} for \code{\link[=travel_times]{travel_times()}} and \code{\link[=raptor]{raptor()}}.
 }

@@ -14,7 +14,7 @@ Get list of all available feeds from transitfeeds API
 }
 \examples{
 \donttest{
-feedlist_df <- get_feedlist() 
+feedlist_df <- get_feedlist()
 }
 }
 \seealso{

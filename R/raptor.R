@@ -369,15 +369,14 @@ travel_times = function(filtered_stop_times,
 #' @param max_arrival_time The latest arrival time. Can be given as "HH:MM:SS", 
 #'                         hms object or numeric value in seconds
 #' 
-#' @seealso This function creates filtered `stop_times` for [travel_times()] and [raptor()].
+#' This function creates filtered `stop_times` for [travel_times()] and [raptor()]. If you
+#' want to filter a feed multiple times it is faster to precalculate date_service_table with
+#' [set_date_service_table()].
 #'                         
 #' @export                
 #' @examples 
 #' feed_path <- system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
 #' g <- read_gtfs(feed_path)
-#' 
-#' # Consider precalculating date_service_table for the feed.
-#' g <- set_date_service_table(g)
 #' 
 #' # filter the sample feed
 #' stop_times <- filter_stop_times(g, "2007-01-06", "06:00:00", "08:00:00")
@@ -403,8 +402,9 @@ filter_stop_times = function(gtfs_obj,
     stop("max_arrival_time is before min_departure_time")
   }
   
-  # trips runnin on day
+  # trips running on day
   if(!feed_contains(gtfs_obj, "date_service_table")) {
+    message("Consider using set_date_service_table beforehand if you filter this feed multiple times")
     gtfs_obj <- set_date_service_table(gtfs_obj)
   }
   service_ids = filter(gtfs_obj$.$date_service_table, date == extract_date)
