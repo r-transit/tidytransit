@@ -390,10 +390,10 @@ filter_stop_times = function(gtfs_obj,
     extract_date <- readr::parse_date(extract_date)
   }
   if(is.character(min_departure_time)) {
-    min_departure_time <- readr::parse_time(min_departure_time)
+    min_departure_time <- hhmmss_to_seconds(min_departure_time)
   }
   if(is.character(max_arrival_time)) {
-    max_arrival_time <- readr::parse_time(max_arrival_time)
+    max_arrival_time <- hhmmss_to_seconds(max_arrival_time)
   }
   min_departure_time <- as.numeric(min_departure_time)
   max_arrival_time <- as.numeric(max_arrival_time)
