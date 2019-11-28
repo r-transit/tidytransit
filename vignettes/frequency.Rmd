@@ -36,11 +36,16 @@ We're going to review how to use this package to:
 
 We'll start by importing a snapshot of the NYC MTA's subway schedule, which is included with the package. 
 
-Note that you can import the data from the URL listed below, or any other URL for GTFS data.  
+For this vignette, we use the NYC MTA data that is included with the installed tidytransit package. 
 
 ```{r}
 local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
 gtfs <- read_gtfs(local_gtfs_path)
+```
+
+But note that you can also just uncomment the line below and import the data from the NYC MTA's URL directly. 
+
+```{r}
 # gtfs <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
 ```
 
@@ -60,7 +65,9 @@ Below we use a service_pattern_id, `s_e25d6ca`, which we've selected based on a 
 service_ids <- gtfs$.$service_pattern %>% 
   filter(servicepattern_id == 's_e25d6ca') %>% 
   pull(service_id)
-head(service_ids)
+
+head(service_ids) %>% 
+  knitr::kable()
 ```
 
 So, what are these service_id codes? How they are put together varies from operator to operator. The important thing is that the service_id's are also a field on the `trips` table, which describes all the trips taken in the system. 
@@ -74,18 +81,18 @@ gtfs$trips %>%
   summarise(count = n())
 ```
 
-The NYC Subway GTFS identifyies service_id's by the route that a trip runs on. Some GTFS feeds are simpler: a single service_id might relate to 'all vehicle trips running every weekdays'.
+The NYC Subway GTFS identifies service_id's by the route that a trip runs on. Some GTFS feeds are simpler: a single service_id might relate to 'all vehicle trips running every weekdays'.
 
 # 3) Headway Calculation
 
-So, now that we've identified the set of service_id's that refer to all weekday trips, we can summarize service between 6 am and 10 pm for the NYC Subway system on weekdays.  
+So, now that we've identified the set of service_id's that refer to all weekday trips, we can summarize service between 6 am and 10 am for the NYC Subway system on weekdays.  
 
 ```{r}
 am_freq <- get_stop_frequency(gtfs, start_hour = 6, end_hour = 10, service_ids = service_ids)
 ```
 
 ```{r}
-head(am_freq)
+knitr::kable(head(am_freq))
 ```
 
 This table includes columns for the id for a given stop, the route_id, our selected service_id's, and the number of departures and the average headway for a given direction from 6 am to 10 am on weekdays. 
@@ -110,7 +117,8 @@ Lets inspect the stops at which headways are higher.
 one_line_stops %>% 
   arrange(desc(headway)) %>% 
   select(stop_name, departures, headway) %>% 
-  head()
+  head() %>%
+  knitr::kable()
 ```
 
 And those at which headways are lower:
@@ -119,7 +127,8 @@ And those at which headways are lower:
 one_line_stops %>% 
   arrange(desc(headway)) %>% 
   select(stop_name, departures, headway) %>% 
-  tail()
+  tail() %>%
+  knitr::kable()
 ```
 
 Here we can see that the 242-Van Cortland Stop, the last stop up North, in the Bronx, has noticeably higher headways (8 mins) at this time of day than the South Ferry Stop, which is at the south end of Manhattan.
@@ -163,7 +172,7 @@ Now we'll use the `get_route_frequency` function to summarise transit service by
 
 ```{r}
 am_route_freq <- get_route_frequency(gtfs, service_ids = service_ids, start_hour = 6, end_hour = 10) 
-head(am_route_freq)
+head(knitr::kable(am_route_freq))
 ```
 
 Since, under the hood, this table is a summary of stop frequencies along each route, it includes the same variables as a summary of the headways at each stop along the route, as well as a sum of all departures. Again, its important to note that this summary is based on the trips that happened within the time frame we specify. 
