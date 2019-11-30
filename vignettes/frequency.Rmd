@@ -22,21 +22,19 @@ library(sf)
 
 # Introduction
 
-The focus of this vignette is on how to use R to make graphics for where and how often transit service operates based on schedule data published in the [General Transit Feed Specification](http://gtfs.org/). 
+The focus of this vignette is on how to use R to make graphics about where and how often transit service operates based on schedule data published in the [General Transit Feed Specification](http://gtfs.org/). 
 
 We're going to review how to use this package to:
 
-1) Import Transit (GTFS Data)
+1) Import Transit Data (GTFS)
 2) Identify Weekday Schedules of Service
-3) Headway Calculation
-4) Mapping Headways By Route
-5) Mapping Departures by Stop and Route
+3) Calculate Schedule Headways
+4) Map Headways By Route
+5) Map Departures by Stop and Route
 
 # 1) Importing the NYC MTA Subway Schedule
 
-We'll start by importing a snapshot of the NYC MTA's subway schedule, which is included with the package. 
-
-For this vignette, we use the NYC MTA data that is included with the installed tidytransit package. 
+We'll start by importing a snapshot of the NYC MTA's subway schedule, which is included with the package when [installed](http://tidytransit.r-transit.org/index.html#installation). 
 
 ```{r}
 local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
@@ -78,12 +76,13 @@ Lets see how many trips fall under each of these service_id's on the trips table
 gtfs$trips %>%
   filter(service_id %in% service_ids) %>%
   group_by(service_id, route_id) %>%
-  summarise(count = n())
+  summarise(count = n()) %>% 
+  knitr::kable()
 ```
 
 The NYC Subway GTFS identifies service_id's by the route that a trip runs on. Some GTFS feeds are simpler: a single service_id might relate to 'all vehicle trips running every weekdays'.
 
-# 3) Headway Calculation
+# 3) Calculate Headways
 
 So, now that we've identified the set of service_id's that refer to all weekday trips, we can summarize service between 6 am and 10 am for the NYC Subway system on weekdays.  
 
@@ -166,7 +165,7 @@ summary(one_line_stops$headway)
 
 This is the same method that tidytransit uses to summarise headways along all routes in the system when we use the `get_route_frequency` function, which we'll try next.  
 
-# 4) Mapping Headways By Route
+# 4) Map Headways By Route
 
 Now we'll use the `get_route_frequency` function to summarise transit service by route, for the same time period. 
 
@@ -207,13 +206,13 @@ routes_sf_crs %>%
 
 Its clear that a number of the route lines overlap.
 
-# 5) Mapping Departures by Stop and Route
+# 5) Map Departures by Stop and Route
 
-Still, we'd like to represent where and how frequently the subway runs in NYC in the morning. How can we do so?
+Still, we'd like to represent where and how frequently the subway runs in NYC in the morning. How can we do so given that, graphically, the route lines overlap?
 
-One answer might be change units. So far, we've summarized frequency by stop, and now by route. And now that we see how routes overlap, we might want to consider using a different unit. The GTFS data standard comes with a `shapes` table, which, if modeled correctly, should allow us to say what the frequency of vehicles passing through any given shape is, using similar methods. This kind of method is beyond the scope of this vignette. 
+One method might be change the units we are representing graphically. Thus far, we have used stops and routes as units. But GTFS data also come with a `shapes` table, which, in theory, should allow us to say what the frequency of vehicles passing through any given shape is, using similar methods. This kind of method is beyond the scope of this vignette. 
 
-Alternatively, regular ggplot users might expect the ggplot `dodge` function to allow us to move around these lines but, by design, thats not possible with `geom_sf`. 
+Alternatively, regular ggplot users might expect the ggplot `dodge` function to allow us to move around these lines but, by design, thats not possible with `geom_sf`. One can see why: unlike a bar chart, the representations of route lines in geographic space on a map have a specific meaning. 
 
 So we'll use a cartographic trick, scaling each line according to total departures and close to a number around .001 [decimal degrees](https://en.wikipedia.org/wiki/Decimal_degrees) which is a about the length of a street, which will fit on the map well. One might call this a cartogram. 
 

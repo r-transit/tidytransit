@@ -18,7 +18,7 @@ Tidytransit can be used to:
 - [estimate transit frequencies](http://tidytransit.r-transit.org/reference/get_route_frequency.html)
 - [calculate travel times between transit stops](http://tidytransit.r-transit.org/reference/travel_times.html)
 - [convert stops and routes to sf data frames](http://tidytransit.r-transit.org/reference/gtfs_as_sf.html)
-- map existing stops and routes
+- [map existing stops and routes](http://tidytransit.r-transit.org/articles/frequency.html)
 - [validate transit feeds and more](http://tidytransit.r-transit.org/reference/index.html)
 
 Have a look at the following vignettes to see how tidytransit can be used to analyse a feed:
