@@ -77,10 +77,11 @@ gtfs$trips %>%
   filter(service_id %in% service_ids) %>%
   group_by(service_id, route_id) %>%
   summarise(count = n()) %>% 
+  head() %>%
   knitr::kable()
 ```
 
-The NYC Subway GTFS identifies service_id's by the route that a trip runs on. Some GTFS feeds are simpler: a single service_id might relate to 'all vehicle trips running every weekdays'.
+Given the one-to-one relationship between service-id's and routes, we might conclude that the NYC Subway GTFS creates service_id's for each route that a trip runs on. Some GTFS feeds are simpler: a single service_id might relate to 'all vehicle trips running every weekdays'. 
 
 # 3) Calculate Headways
 
