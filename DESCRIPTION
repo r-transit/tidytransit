@@ -24,7 +24,7 @@ LazyData: TRUE
 Depends: R (>= 3.2.5)
 Imports:
     dplyr,
-    zip,
+    zip (>= 2.0.1),
     tibble,
     readr,
     data.table,
