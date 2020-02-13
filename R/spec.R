@@ -210,22 +210,48 @@ get_gtfs_meta <- function() {
                       c("feed_start_date", "feed_end_date")] <- "D"
   feed_info$file_spec <- "opt"
   
+  # translations
+  assign("translations", list())
+  translations$field <- c("table_name", "field_name", "language", "translation", 
+                       "record_id", "record_sub_id", "field_value")
+  translations$field_spec <- c("req", "req", "req", "req",
+                            "opt", "opt", "opt")
+  names(translations$field_spec) <- translations$field
+  translations$coltype <- rep("c", length(translations$field))
+  translations$file_spec <- "opt"
+  
+  # attributions
+  assign("attributions", list())
+  attributions$field <- c("attribution_id", "agency_id", "route_id", 
+                          "trip_id", "organization_name", "is_producer", 
+                          "is_operator", "is_authority", "attribution_url", 
+                          "attribution_email", "attribution_phone")
+  attributions$field_spec <- c(rep("opt", 4), "req", rep("opt", 6))
+  names(attributions$field_spec) <- attributions$field
+  attributions$coltype <- rep("c", length(attributions$field))
+  attributions$file_spec <- "opt"
+  
+  
   # create meta object ####
   meta <- list(agency, stops, routes, trips, 
                stop_times, calendar, calendar_dates,
                fare_attributes, fare_rules,
                shapes, frequencies, transfers,
-               pathways, levels, feed_info)
+               pathways, levels, feed_info,
+               translations, attributions)
   attributes(meta) <- list(
     names = c("agency", "stops", "routes",
               "trips", "stop_times", "calendar",
               "calendar_dates", "fare_attributes",
               "fare_rules", "shapes", "frequencies",
-              "transfers", "pathways", "levels", "feed_info"),
-    file_spec = c("req", "req", "req", "req",
-                  "req", "req", "opt", "opt",
-                  "opt", "opt", "opt", "opt",
-                  "opt", "opt", "opt"))
+              "transfers", "pathways", "levels", 
+              "feed_info", "translations", "attributions"),
+    file_spec = c("req", "req", "req", 
+                  "req", "req", "req", 
+                  "opt", "opt",
+                  "opt", "opt", "opt", 
+                  "opt", "opt", "opt", 
+                  "opt", "opt",  "opt"))
   return(meta)
 }
 
