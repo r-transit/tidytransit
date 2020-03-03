@@ -211,3 +211,7 @@ test_that("empty return data.table has the same columns as correct", {
   r2 = raptor(stop_times_0711, transfers, "stop3a")
   expect_equal(colnames(r1), colnames(r2))
 })
+
+test_that("raptor errors without any stop_ids", {
+  expect_error(raptor(stop_times, transfers))
+})
