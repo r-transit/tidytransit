@@ -78,16 +78,23 @@ raptor = function(stop_times,
   wait_time_to_departure <- marked_departure_time_num <- arrival_time_num <- min_transfer_time <- NULL
   to_stop_id <- travel_time <- min_arrival_time <- NULL
 
+  rev_stop_times = FALSE
   if(is.null(from_stop_ids) & is.null(to_stop_ids)) {
     stop("Both from_stop_ids and to_stop_ids are NULL")
+  } else if(is.null(from_stop_ids)) {
+    # if from_stop_ids are not set we want to find all incoming journeys
+    # stop_times need to be reversed
+    rev_stop_times <- TRUE
+    if(is.data.frame(to_stop_ids)) to_stop_ids <- to_stop_ids[[1]]
+  } else {
+    if(is.data.frame(from_stop_ids)) from_stop_ids <- from_stop_ids[[1]] 
   }
-  
+
   # check and params ####
   # stop ids need to be a character vector
   # use data.table for faster manipulation
-  stop_times_dt <- setup_stop_times(stop_times)
+  stop_times_dt <- setup_stop_times(stop_times, reverse = rev_stop_times)
   transfers_dt <- setup_transfers(transfers)
-  if(is.data.frame(from_stop_ids)) { from_stop_ids <- from_stop_ids[[1]] }
 
   nonexistent_stop_ids = setdiff(from_stop_ids, c(stop_times_dt$stop_id, transfers_dt$from_stop_id, transfers_dt$to_stop_id))
   if(length(nonexistent_stop_ids) > 0) {
@@ -443,11 +450,16 @@ filter_stop_times = function(gtfs_obj,
   return(stop_times_dt)
 }
 
-setup_stop_times = function(stop_times) {
+setup_stop_times = function(stop_times, reverse = FALSE) {
   if(!is.data.table(stop_times)) {
     stop_times <- as.data.table(stop_times)
   }
   set_num_times(stop_times)
+  if(reverse) {
+    max_time = 604800
+    stop_times[, arrival_time_num := (max_time - arrival_time_num)]
+    stop_times[, departure_time_num := (max_time - departure_time_num)]
+  }
   if(is.null(key(stop_times)) || "trip_id" != key(stop_times)) {
     setkeyv(stop_times, "trip_id") # faster than key on stop_id
   }
