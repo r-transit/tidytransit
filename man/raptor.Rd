@@ -4,8 +4,8 @@
 \alias{raptor}
 \title{Calculate travel times from one stop to all reachable stops}
 \usage{
-raptor(stop_times, transfers, from_stop_ids, departure_time_range = 3600,
-  max_transfers = NULL, keep = "all")
+raptor(stop_times, transfers, from_stop_ids = NULL, to_stop_ids = NULL,
+  departure_time_range = 3600, max_transfers = NULL, keep = "all")
 }
 \arguments{
 \item{stop_times}{A (prepared) stop_times table from a gtfs feed. Prepared means
@@ -15,7 +15,9 @@ happening on one day. Use \code{\link[=filter_stop_times]{filter_stop_times()}} 
 
 \item{transfers}{Transfers table from a gtfs feed. In general no preparation is needed.}
 
-\item{from_stop_ids}{Atomic char vector with stop_ids from where a journey should start}
+\item{from_stop_ids}{character vector with stop_ids from where journeys should start}
+
+\item{to_stop_ids}{character vector with stop_ids where journeys should end}
 
 \item{departure_time_range}{All departures from the first departure of
 stop_times (not necessarily a from_stop) within
@@ -72,7 +74,7 @@ rptr <- raptor(stop_times, nyc$transfers, walk_times$stop_id, departure_time_ran
                keep = "all")
 
 # add walk times to travel times
-rptr <- left_join(rptr, walk_times, by=c("journey_departure_stop_id" = "stop_id"))
+rptr <- left_join(rptr, walk_times, by=c("from_stop_id" = "stop_id"))
 rptr$travel_time_incl_walk <- rptr$travel_time + rptr$walk_time
 
 # get minimal travel times (with walk times) for all stop_ids 
