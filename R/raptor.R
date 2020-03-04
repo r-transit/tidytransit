@@ -78,6 +78,12 @@ raptor = function(stop_times,
   wait_time_to_departure <- marked_departure_time_num <- arrival_time_num <- min_transfer_time <- NULL
   to_stop_id <- travel_time <- min_arrival_time <- NULL
 
+  if(!is.character(from_stop_ids) && !is.null(from_stop_ids)) {
+    stop("from_stop_ids must be a character vector (or NULL)")
+  } 
+  if(!is.character(to_stop_ids) && !is.null(to_stop_ids)) {
+    stop("to_stop_ids must be a character vector (or NULL)")
+  }
   rev_stop_times = FALSE
   if(is.null(from_stop_ids) & is.null(to_stop_ids)) {
     stop("Both from_stop_ids and to_stop_ids are NULL")

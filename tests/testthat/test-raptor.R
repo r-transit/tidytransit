@@ -117,7 +117,7 @@ test_that("parameters are checked", {
   
   # non-existent stop_id
   expect_warning(raptor(st, tr, "stop99"))
-  expect_warning(raptor(st, tr, 42))
+  expect_error(raptor(st, tr, 42))
   
   # time range type
   expect_error(raptor(st, tr, "stop5", departure_time_range = "char"))
