@@ -3,7 +3,7 @@ context("raptor travel time routing")
 local_gtfs_path <- system.file("extdata", "routing.zip", package = "tidytransit")
 g <- read_gtfs(local_gtfs_path)
 g <- set_hms_times(g)
-from_stop_ids <- c("stop1a", "stop1b")
+test_from_stop_ids <- c("stop1a", "stop1b")
 
 stop_times = g$stop_times
 stop_times_0709 = dplyr::filter(g$stop_times, departure_time_hms >= 7*3600+10*60)
@@ -18,15 +18,15 @@ test_that("travel times wrapper function", {
     from_stop_name = "One", 
     departure_time_range = 3600)
   expect_equal(nrow(tt), length(unique(g$stops$stop_name)))
-  expect_equal(tt %>% dplyr::filter(stop_name == "One") %>% dplyr::pull(travel_time), 0)
-  expect_equal(tt$travel_time[which(tt$stop_name == "One")], 0)
-  expect_equal(tt$travel_time[which(tt$stop_name == "Two")], 4*60)
-  expect_equal(tt$travel_time[which(tt$stop_name == "Three")], (18-12)*60)
-  expect_equal(tt$travel_time[which(tt$stop_name == "Four")], (37-17)*60)
-  expect_equal(tt$travel_time[which(tt$stop_name == "Five")], (15-10)*60)
-  expect_equal(tt$travel_time[which(tt$stop_name == "Six")], (20-10)*60)
-  expect_equal(tt$travel_time[which(tt$stop_name == "Seven")], (25-10)*60)
-  expect_equal(tt$travel_time[which(tt$stop_name == "Eight")], (24-12)*60)
+  expect_equal(tt %>% dplyr::filter(to_stop_name == "One") %>% dplyr::pull(travel_time), 0)
+  expect_equal(tt$travel_time[which(tt$to_stop_name == "One")], 0)
+  expect_equal(tt$travel_time[which(tt$to_stop_name == "Two")], 4*60)
+  expect_equal(tt$travel_time[which(tt$to_stop_name == "Three")], (18-12)*60)
+  expect_equal(tt$travel_time[which(tt$to_stop_name == "Four")], (37-17)*60)
+  expect_equal(tt$travel_time[which(tt$to_stop_name == "Five")], (15-10)*60)
+  expect_equal(tt$travel_time[which(tt$to_stop_name == "Six")], (20-10)*60)
+  expect_equal(tt$travel_time[which(tt$to_stop_name == "Seven")], (25-10)*60)
+  expect_equal(tt$travel_time[which(tt$to_stop_name == "Eight")], (24-12)*60)
 })
 
 test_that("travel_time works with different params", {
@@ -50,7 +50,7 @@ test_that("stop times are filtered correctly", {
 
 test_that("raptor travel times", {
   r = raptor(stop_times, transfers,
-             from_stop_ids, departure_time_range = 3600,
+             test_from_stop_ids, departure_time_range = 3600,
              keep = "shortest")
   actual = r[order(to_stop_id), travel_time]
   
@@ -71,12 +71,12 @@ test_that("raptor travel times", {
 })
 
 test_that("ea and tt return the same result for one departure", {
-  shortest = raptor(stop_times, transfers, from_stop_ids,
+  shortest = raptor(stop_times, transfers, test_from_stop_ids,
                        departure_time_range = 60,
                        keep = "shortest")[order(to_stop_id)]
   shortest_tt <- shortest$travel_time
   
-  earliest_arrival = raptor(stop_times, transfers, from_stop_ids,
+  earliest_arrival = raptor(stop_times, transfers, test_from_stop_ids,
                             departure_time_range = 60,
                             keep = "earliest")[order(to_stop_id)]
   earliest_arrival_tt <- earliest_arrival$journey_arrival_time - 7*3600
@@ -145,7 +145,7 @@ test_that("earliest arrival times", {
 })
 
 test_that("earliest arrival time without transfers", {
-  r = raptor(stop_times, NULL, from_stop_ids, keep = "earliest")
+  r = raptor(stop_times, NULL, test_from_stop_ids, keep = "earliest")
   actual = r[order(to_stop_id), journey_arrival_time]
   expected = c(
     7*3600 + 00*60, # stop1a 07:00
@@ -178,16 +178,16 @@ test_that("transfers for travel_times", {
     filtered_stop_times = fst, 
     from_stop_name = "One", 
     departure_time_range = 3600) %>% 
-    arrange(stop_id)
+    arrange(to_stop_id)
   expect_equal(tt$transfers, 
                c(0, 0, 0, 1, 0, 0, 1, 0))
 })
 
 test_that("only max_transfers are used", {
-  expect_equal(max(raptor(stop_times, transfers, from_stop_ids, max_transfers = 0)$transfers), 0)
-  expect_equal(max(raptor(stop_times, transfers, from_stop_ids, max_transfers = 1)$transfers), 1)
-  expect_equal(max(raptor(stop_times, transfers, from_stop_ids, max_transfers = 2)$transfers), 2)
-  expect_equal(max(raptor(stop_times, transfers, from_stop_ids, max_transfers = NULL)$transfers), 2)
+  expect_equal(max(raptor(stop_times, transfers, test_from_stop_ids, max_transfers = 0)$transfers), 0)
+  expect_equal(max(raptor(stop_times, transfers, test_from_stop_ids, max_transfers = 1)$transfers), 1)
+  expect_equal(max(raptor(stop_times, transfers, test_from_stop_ids, max_transfers = 2)$transfers), 2)
+  expect_equal(max(raptor(stop_times, transfers, test_from_stop_ids, max_transfers = NULL)$transfers), 2)
 })
 
 test_that("travel_times return type", {

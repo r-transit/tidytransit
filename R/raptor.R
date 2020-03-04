@@ -312,8 +312,10 @@ raptor = function(stop_times,
 #' @param filtered_stop_times stop_times data.table (with transfers and stops tables as 
 #'                            attributes) created with [filter_stop_times()] where the 
 #'                            deparuture time has been set.
-#' @param from_stop_name stop name from which travel times should be calculated. A vector 
-#'                       with multiple names is accepted.
+#' @param from_stop_name stop name for which travel times of outgouing journey should be 
+#'                       calculated. A vector with multiple names is accepted.
+#' @param to_stop_name stop name for which travel times of incoming journeys should be 
+#'                     calculated. A vector with multiple names is accepted.
 #' @param departure_time_range All departures within this range in seconds after the first 
 #'                             departure of `filtered_stop_times` are considered for 
 #'                             journeys.
@@ -347,7 +349,8 @@ raptor = function(stop_times,
 #' ggplot(tts) + geom_point(aes(x=stop_lon, y=stop_lat, color = travel_time))
 #' }
 travel_times = function(filtered_stop_times,
-                        from_stop_name,
+                        from_stop_name = NULL,
+                        to_stop_name = NULL,
                         departure_time_range = 3600,
                         max_transfers = NULL,
                         max_departure_time = NULL,
@@ -358,6 +361,9 @@ travel_times = function(filtered_stop_times,
   }
   if(!all(c("stops", "transfers") %in% names(attributes(filtered_stop_times)))) {
     stop("Stops and transfers not found in filtered_stop_times attributes. Use filter_stop_times() to prepare data or use raptor() for lower level access.")
+  }
+  if(is.null(from_stop_name) && is.null(to_stop_name)) {
+    stop("Both from_stop_name and to_stop_name are NULL")
   }
   if(!is.null(max_departure_time)) {
     if(departure_time_range != 3600) {
@@ -374,27 +380,60 @@ travel_times = function(filtered_stop_times,
   stops = attributes(filtered_stop_times)$stops
   
   # get stop_ids of names
-  from_stop_ids = stops$stop_id[which(stops$stop_name %in% from_stop_name)]
-  
-  if(length(from_stop_ids) == 0) {
-    stop(paste0("Stop name '", from_stop_name, "' not found in stops table"))
+  from_stop_ids = NULL
+  if(!is.null(from_stop_name)) {
+    from_stop_ids = stops$stop_id[which(stops$stop_name %in% from_stop_name)]
+    if(length(from_stop_ids) == 0) {
+      stop(paste0("Stop name '", from_stop_name, "' not found in stops table"))
+    }
+  }
+  to_stop_ids = NULL
+  if(!is.null(to_stop_name)) {
+    to_stop_ids = stops$stop_id[which(stops$stop_name %in% to_stop_name)]
+    if(length(to_stop_ids) == 0) {
+      stop(paste0("Stop name '", to_stop_name, "' not found in stops table"))
+    }
   }
   
   rptr = raptor(filtered_stop_times,
                 transfers,
                 from_stop_ids = from_stop_ids,
+                to_stop_ids = to_stop_ids,
                 departure_time_range = departure_time_range,
                 keep = "shortest")
 
   # minimal travel_time by stop_name
-  rptr_names = merge(stops, rptr, by.x = "stop_id", by.y = "to_stop_id")
+  stops1 = select(stops, from_stop_name = stop_name, from_stop_id = stop_id, 
+                  from_stop_lon = stop_lon, from_stop_lat = stop_lat)
+  stops2 = select(stops, to_stop_name = stop_name, to_stop_id = stop_id, 
+                  to_stop_lon = stop_lon, to_stop_lat = stop_lat)
+  rptr_names = merge(stops1, rptr, by = "from_stop_id")
+  rptr_names <- merge(stops2, rptr_names, by = "to_stop_id")
+  
+  # keep minimal travel time for each stop name
+  keep_by = "to_stop_name"
+  if(!is.null(to_stop_ids)) {
+    if(!is.null(from_stop_ids)) {
+      keep_by <- c("to_stop_name", "from_stop_name")
+      rptr_names <- rptr_names[from_stop_id %in% from_stop_ids,]
+      rptr_names <- rptr_names[to_stop_id %in% to_stop_ids,]
+    } else {
+      keep_by <- "from_stop_name"
+    }
+  }
+  
+  # keep minimal time for each stop name
   setorder(rptr_names, travel_time)
-  rptr_names <- rptr_names[, .SD[1], by = "stop_name"]
+  rptr_names <- rptr_names[, .SD[1], by = keep_by]
   rptr_names[,journey_arrival_time := hms::hms(journey_arrival_time)]
   rptr_names[,journey_departure_time := hms::hms(journey_departure_time)]
-  
-  rptr_names <- rptr_names[,c("stop_name", "travel_time", "journey_departure_time",
-                              "journey_arrival_time", "transfers", "stop_id", "stop_lon", "stop_lat")]
+
+  rptr_names <- rptr_names[,c("from_stop_name", "to_stop_name", 
+                              "travel_time", "journey_departure_time",
+                              "journey_arrival_time", "transfers", 
+                              "from_stop_id", "to_stop_id",
+                              "from_stop_lon", "from_stop_lat",
+                              "to_stop_lon", "to_stop_lat")]
   
   if(!return_DT) {
     rptr_names <- tibble::as_tibble(rptr_names)
