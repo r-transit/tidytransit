@@ -52,7 +52,7 @@ test_that("raptor travel times", {
   r = raptor(stop_times, transfers,
              from_stop_ids, departure_time_range = 3600,
              keep = "shortest")
-  actual = r[order(stop_id), travel_time]
+  actual = r[order(to_stop_id), travel_time]
   
   expected = c(
     0,          # stop1a 00:00:00
@@ -73,12 +73,12 @@ test_that("raptor travel times", {
 test_that("ea and tt return the same result for one departure", {
   shortest = raptor(stop_times, transfers, from_stop_ids,
                        departure_time_range = 60,
-                       keep = "shortest")[order(stop_id)]
+                       keep = "shortest")[order(to_stop_id)]
   shortest_tt <- shortest$travel_time
   
   earliest_arrival = raptor(stop_times, transfers, from_stop_ids,
                             departure_time_range = 60,
-                            keep = "earliest")[order(stop_id)]
+                            keep = "earliest")[order(to_stop_id)]
   earliest_arrival_tt <- earliest_arrival$min_arrival_time - 7*3600
 
   expect_equal(shortest_tt, earliest_arrival_tt)
@@ -87,12 +87,12 @@ test_that("ea and tt return the same result for one departure", {
 test_that("travel_time with one stop and reduced departure_time_range", {
   r = raptor(stop_times_0709, transfers, "stop1a",
              departure_time_range = 30,
-             keep = "shortest")[order(stop_id)]
+             keep = "shortest")[order(to_stop_id)]
   actual <- r$travel_time
   
   expected = c(
     00*60 + 00, # stop1a 00:00:00
-    00*60 + 10, # stop1b 00:00:00
+    00*60 + 10, # stop1b 00:00:10
     18*60 + 00, # stop3a 00:18:00
     18*60 + 10, # stop3b 00:18:10
     27*60 + 00, # stop4  00:27:00
@@ -132,7 +132,7 @@ test_that("parameters are checked", {
 
 test_that("earliest arrival times", {
   r = raptor(stop_times, transfers, "stop2", keep = "earliest")
-  actual = r[order(stop_id), min_arrival_time]
+  actual = r[order(to_stop_id), min_arrival_time]
   expected = c(
     7*3600 + 00*60 + 00, # stop2  07:05:00 departure time
     7*3600 + 11*60 + 00, # stop3a 07:11:00
@@ -146,7 +146,7 @@ test_that("earliest arrival times", {
 
 test_that("earliest arrival time without transfers", {
   r = raptor(stop_times, NULL, from_stop_ids, keep = "earliest")
-  actual = r[order(stop_id), min_arrival_time]
+  actual = r[order(to_stop_id), min_arrival_time]
   expected = c(
     7*3600 + 00*60, # stop1a 07:00
     7*3600 + 00*60, # stop1b 07:12
@@ -166,10 +166,10 @@ test_that("earliest arrival time without transfers", {
 test_that("transfers are returned", {
   r = raptor(stop_times, transfers, "stop2", keep = "all")
   setorder(r, travel_time)
-  expect_equal(r[stop_id == "stop3a"]$transfers, c(0,0))
-  expect_equal(r[stop_id == "stop4"]$transfers, c(1,0))
-  expect_equal(r[stop_id == "stop8a"]$transfers, 2)
-  expect_equal(r[stop_id == "stop8b"]$transfers, 1)
+  expect_equal(r[to_stop_id == "stop3a"]$transfers, c(0,0))
+  expect_equal(r[to_stop_id == "stop4"]$transfers, c(1,0))
+  expect_equal(r[to_stop_id == "stop8a"]$transfers, 2)
+  expect_equal(r[to_stop_id == "stop8b"]$transfers, 1)
 })
 
 test_that("transfers for travel_times", {
@@ -257,7 +257,7 @@ test_that("raptor travel times with to_stop_ids", {
   expect_equal(rptr$min_arrival_time, arr_expected)
   expect_equal(rptr$journey_departure_time, dep_expected)
   expect_equal(rptr$travel_time, tt_expected)
-  expect_equal(unique(rptr$stop_id), "stop4")
+  expect_equal(unique(rptr$to_stop_id), "stop4")
 })
 
 test_that("raptor with to_stop_ids and from_stop_ids", {
