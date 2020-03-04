@@ -84,22 +84,23 @@ raptor = function(stop_times,
   if(!is.character(to_stop_ids) && !is.null(to_stop_ids)) {
     stop("to_stop_ids must be a character vector (or NULL)")
   }
-  rev_stop_times = FALSE
+
+  reverse_stop_times = FALSE
   if(is.null(from_stop_ids) & is.null(to_stop_ids)) {
     stop("Both from_stop_ids and to_stop_ids are NULL")
   } else if(is.null(from_stop_ids)) {
     # if from_stop_ids are not set we want to find all incoming journeys
     # stop_times need to be reversed
-    rev_stop_times <- TRUE
-    if(is.data.frame(to_stop_ids)) to_stop_ids <- to_stop_ids[[1]]
-  } else {
-    if(is.data.frame(from_stop_ids)) from_stop_ids <- from_stop_ids[[1]] 
+    reverse_stop_times <- TRUE
+    x = from_stop_ids
+    from_stop_ids <- to_stop_ids
+    to_stop_ids <- x
   }
 
   # check and params ####
   # stop ids need to be a character vector
   # use data.table for faster manipulation
-  stop_times_dt <- setup_stop_times(stop_times, reverse = rev_stop_times)
+  stop_times_dt <- setup_stop_times(stop_times, reverse = reverse_stop_times)
   transfers_dt <- setup_transfers(transfers)
 
   nonexistent_stop_ids = setdiff(from_stop_ids, c(stop_times_dt$stop_id, transfers_dt$from_stop_id, transfers_dt$to_stop_id))
@@ -252,9 +253,7 @@ raptor = function(stop_times,
     k <- k+1
     if(k > max_transfers) { break }
   }
-  
-  # create results ####
-  
+
   # fix min_arrival_times of from_stops
   rptr[stop_id %in% init_stops$stop_id, min_arrival_time := min_arrival_time + 1]
 
@@ -264,14 +263,28 @@ raptor = function(stop_times,
   
   # calculate travel_time
   rptr[,travel_time := min_arrival_time - journey_departure_time]
+
+  # reverse arrival/departure times ####
+  if(reverse_stop_times) {
+    max_time = 604800
+    arrival_tmp = max_time - rptr$min_arrival_time
+    rptr[,min_arrival_time := max_time - journey_departure_time]
+    rptr[,journey_departure_time := arrival_tmp]
+    stop_tmp = rptr$stop_id
+    rptr[,stop_id := journey_departure_stop_id]
+    rptr[,journey_departure_stop_id := stop_tmp]
+  }
+  
+  # create results ####
   
   # optimize, only keep the "best" arrivals
+  sort_by = ifelse(reverse_stop_times, "journey_departure_stop_id", "stop_id")
   if(keep == "shortest") {
     setorder(rptr, travel_time, min_arrival_time)
-    rptr <- rptr[, .SD[1], by="stop_id"]
+    rptr <- rptr[, .SD[1], by = sort_by]
   } else if(keep == "earliest") {
     setorder(rptr, min_arrival_time, travel_time)
-    rptr <- rptr[, .SD[1], by="stop_id"]
+    rptr <- rptr[, .SD[1], by = sort_by]
   }
   
   # build result table

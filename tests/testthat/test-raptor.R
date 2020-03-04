@@ -222,3 +222,44 @@ test_that("empty return data.table has the same columns as correct", {
 test_that("raptor errors without any stop_ids", {
   expect_error(raptor(stop_times, transfers))
 })
+
+test_that("raptor travel times with to_stop_ids", {
+  rptr = raptor(stop_times, transfers, to_stop_ids = "stop4", keep = "shortest")
+  setorder(rptr, journey_departure_stop_id)
+  arr_expected = c(
+    37*60, # stop1a 
+    37*60, # stop1b 
+    37*60, # stop2   
+    37*60, # stop3a
+    37*60, # stop3b
+    45*60, # stop4
+    37*60, # stop5
+    37*60, # stop6
+    41*60, # stop7
+    41*60, # stop8a
+    41*60  # stop8b
+  )+7*3600
+  dep_expected = c(
+    17*60 - 10, # stop1a 
+    17*60 - 00, # stop1b 
+    09*60 - 00, # stop2   
+    28*60 - 00, # stop3a
+    28*60 - 10, # stop3b
+    45*60 - 00, # stop4
+    15*60 - 00, # stop5
+    20*60 - 00, # stop6
+    25*60 - 00, # stop7
+    32*60 - 00, # stop8a
+    32*60 - 10  # stop8b
+  )+7*3600
+  tt_expected = arr_expected - dep_expected
+
+  expect_equal(rptr$min_arrival_time, arr_expected)
+  expect_equal(rptr$journey_departure_time, dep_expected)
+  expect_equal(rptr$travel_time, tt_expected)
+  expect_equal(unique(rptr$stop_id), "stop4")
+})
+
+test_that("raptor with to_stop_ids and from_stop_ids", {
+  expect_error(raptor(stop_times, transfers))
+})
