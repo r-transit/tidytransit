@@ -118,12 +118,17 @@ raptor = function(stop_times,
   }
   min_departure_time = min(stop_times_dt$departure_time_num)
   max_departure_time = min_departure_time + departure_time_range
+  if(is.null(max_transfers)) {
+    max_transfers <- 999999
+  } else if(max_transfers < 0) {
+    stop("max_transfers is less than 0")
+  }
   
   # set up arrivals at from_stops ####
   
   # find stops reachable by transfer from from_stops
   transfer_stops = data.frame() # only needed for nrow below
-  if(!is.null(transfers_dt)) {
+  if(!is.null(transfers_dt) && max_transfers > 0) {
     transfer_stops <- transfers_dt[from_stop_id %in% from_stop_ids]
   }
   
@@ -206,7 +211,7 @@ raptor = function(stop_times,
     arrival_candidates <- arrival_candidates[, rptr_colnames, with = F]
     
     # Find all transfers for arrival candidates
-    if(!is.null(transfers_dt)) {
+    if(!is.null(transfers_dt) && (k+1) <= max_transfers) {
       transfer_candidates = merge(
         arrival_candidates,
         transfers_dt,
@@ -239,7 +244,7 @@ raptor = function(stop_times,
     
     # iteration is finished, the remaining marked stops have been improved
     k <- k+1
-    if(!is.null(max_transfers) && k > max_transfers) { break }
+    if(k > max_transfers) { break }
   }
   
   # create results ####

@@ -183,6 +183,13 @@ test_that("transfers for travel_times", {
                c(0, 0, 0, 1, 0, 0, 1, 0))
 })
 
+test_that("only max_transfers are used", {
+  expect_equal(max(raptor(stop_times, transfers, from_stop_ids, max_transfers = 0)$transfers), 0)
+  expect_equal(max(raptor(stop_times, transfers, from_stop_ids, max_transfers = 1)$transfers), 1)
+  expect_equal(max(raptor(stop_times, transfers, from_stop_ids, max_transfers = 2)$transfers), 2)
+  expect_equal(max(raptor(stop_times, transfers, from_stop_ids, max_transfers = NULL)$transfers), 2)
+})
+
 test_that("travel_times return type", {
   fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
   expect_s3_class(travel_times(fst, "One", return_DT = TRUE), "data.frame")
