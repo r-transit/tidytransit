@@ -34,10 +34,10 @@
 #'                   `arrival` is TRUE, all arrivals within `time_range` before the latest 
 #'                   arrival of stop_times are considered.
 #' @param max_transfers Maximum number of transfers allowed, no limit (NULL) as default.
-#' @param keep One of c("all", "shortest", "earliest"). By default `all` journeys arriving 
+#' @param keep One of c("all", "shortest", "earliest", "latest"). By default `all` journeys arriving 
 #'             at a stop are returned. With `shortest` the journey with shortest travel 
 #'             time is returned. With `earliest` the journey arriving at a stop the earliest 
-#'             is returned.
+#'             is returned, `latest` works accordingly.
 #'
 #' @return A data.table with journeys (departure, arrival and travel time) to/from all 
 #'         stop_ids reachable by `stop_ids`.
@@ -109,8 +109,8 @@ raptor = function(stop_times,
     }
   }
   if(is.null(keep) || 
-     !(keep %in% c("shortest", "earliest", "all"))) {
-    stop(paste0(keep, " is not a supported optimization type, all times are returned"))
+     !(keep %in% c("shortest", "earliest", "all", "latest"))) {
+    stop(paste0(keep, " is not a supported optimization type, use one of: all, shortest, earliest, latest"))
   }
   if(!is.numeric(time_range)) {
     stop("time_range is not numeric. Needs to be the time range in seconds after the first departure of stop_times")
@@ -282,6 +282,9 @@ raptor = function(stop_times,
     rptr <- rptr[, .SD[1], by = keep_by]
   } else if(keep == "earliest") {
     setorder(rptr, journey_arrival_time, travel_time)
+    rptr <- rptr[, .SD[1], by = keep_by]
+  } else if(keep == "latest") {
+    setorder(rptr, -journey_arrival_time, travel_time)
     rptr <- rptr[, .SD[1], by = keep_by]
   }
   

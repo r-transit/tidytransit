@@ -304,6 +304,16 @@ test_that("raptor with arrival=TRUE and reduced time_range", {
   expect_equal(rptr_2$travel_time, tt_expected_2)
 })
 
+test_that("latest arrivals are correct", {
+  r1 = raptor(stop_times, transfers, stop_ids = "stop1a", arrival = FALSE, keep = "latest")
+  expect_equal(r1[which(r1$to_stop_id == "stop4")]$journey_arrival_time, 41*60+7*3600)
+  expect_equal(r1[which(r1$to_stop_id == "stop3b")]$journey_arrival_time, 28*60+7*3600+10)
+  
+  r2 = raptor(stop_times, transfers, stop_ids = "stop4", arrival = TRUE, keep = "latest")
+  expect_equal(r2[which(r2$from_stop_id == "stop1a")]$journey_arrival_time, 45*60+7*3600)
+  expect_equal(r2[which(r2$from_stop_id == "stop4")]$journey_arrival_time, 45*60+7*3600)
+}
+
 test_that("travel_times with arrival=TRUE stop_name", {
   fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
   tt_to = travel_times(fst, stop_name = "Four", arrival = TRUE)
