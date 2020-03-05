@@ -28,7 +28,7 @@ TRUE, all journeys \emph{end} at \code{stop_name}.}
 
 \item{max_departure_time}{Either set this parameter or \code{time_range}. Only departures
 before \code{max_departure_time} are used. Accepts "HH:MM:SS" or
-seconds as numerical value. Unused if `arrival`` is TRUE.}
+seconds as numerical value. Unused if \code{arrival} is TRUE.}
 
 \item{return_coords}{returns stop coordinates as columms. Default is FALSE.}
 

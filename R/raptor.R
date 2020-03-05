@@ -265,7 +265,7 @@ raptor = function(stop_times,
   if(arrival) {
     max_time = 604800
     arrival_tmp = max_time - rptr$journey_arrival_time
-    rptr[,journey_arrival_time := max_time - journey_departure_time]
+    rptr[,journey_arrival_time := (max_time - journey_departure_time)]
     rptr[,journey_departure_time := arrival_tmp]
     stop_tmp = rptr$to_stop_id
     rptr[,to_stop_id := from_stop_id]
@@ -504,8 +504,9 @@ setup_stop_times = function(stop_times, reverse = FALSE) {
   setnames(x = stop_times, new = "to_stop_id", old = "stop_id")
   if(reverse) {
     max_time = 604800
-    stop_times[, arrival_time_num := (max_time - arrival_time_num)]
-    stop_times[, departure_time_num := (max_time - departure_time_num)]
+    arrival_time_tmp = stop_times$arrival_time_num
+    stop_times[, arrival_time_num := (max_time - departure_time_num)]
+    stop_times[, departure_time_num := (max_time - arrival_time_tmp)]
   }
   if(is.null(key(stop_times)) || "trip_id" != key(stop_times)) {
     setkeyv(stop_times, "trip_id") # faster than key on stop_id

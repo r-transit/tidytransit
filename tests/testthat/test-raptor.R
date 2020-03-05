@@ -229,7 +229,7 @@ test_that("raptor errors without any stop_ids", {
   expect_error(raptor(stop_times, transfers))
 })
 
-test_that("raptor travel times with to_stop_ids", {
+test_that("raptor travel times with arrival=TRUE", {
   rptr = raptor(stop_times, transfers, stop_ids = "stop4", arrival = TRUE, keep = "shortest")
   setorder(rptr, from_stop_id)
   arr_expected = c(
@@ -248,13 +248,13 @@ test_that("raptor travel times with to_stop_ids", {
   dep_expected = c(
     17*60 - 10, # stop1a 
     17*60 - 00, # stop1b 
-    09*60 - 00, # stop2   
-    28*60 - 00, # stop3a
-    28*60 - 10, # stop3b
+    10*60 - 00, # stop2   
+    29*60 - 00, # stop3a
+    29*60 - 10, # stop3b
     45*60 - 00, # stop4
     15*60 - 00, # stop5
-    20*60 - 00, # stop6
-    25*60 - 00, # stop7
+    21*60 - 00, # stop6
+    26*60 - 00, # stop7
     32*60 - 00, # stop8a
     32*60 - 10  # stop8b
   )+7*3600
@@ -266,10 +266,49 @@ test_that("raptor travel times with to_stop_ids", {
   expect_equal(unique(rptr$to_stop_id), "stop4")
 })
 
+test_that("raptor with arrival=TRUE and reduced time_range", {
+  rptr_2 = raptor(stop_times, transfers, stop_ids = "stop4", 
+                arrival = TRUE, time_range = 5*60,
+                keep = "shortest")
+  setorder(rptr_2, from_stop_id)
+  arr_expected_2 = c(
+    40*60, # stop1a 
+    40*60, # stop1b 
+    40*60, # stop2   
+    40*60, # stop3a
+    40*60, # stop3b
+    45*60, # stop4
+    40*60, # stop5
+    40*60, # stop6
+    41*60, # stop7
+    41*60, # stop8a
+    41*60  # stop8b
+  )+7*3600
+  dep_expected_2 = c(
+    17*60 - 10, # stop1a
+    17*60 - 00, # stop1b 
+    10*60 - 00, # stop2   
+    29*60 - 00, # stop3a
+    29*60 - 10, # stop3b
+    45*60 - 00, # stop4
+    15*60 - 00, # stop5
+    21*60 - 00, # stop6
+    26*60 - 00, # stop7
+    32*60 - 00, # stop8a
+    32*60 - 10  # stop8b
+  )+7*3600
+  tt_expected_2 = arr_expected_2 - dep_expected_2
 
-test_that("travel_times with departure=FALSE stop_name", {
+  expect_equal(rptr_2$journey_arrival_time, arr_expected_2)
+  expect_equal(rptr_2$journey_departure_time, dep_expected_2)
+  expect_equal(rptr_2$travel_time, tt_expected_2)
+})
+
+test_that("travel_times with arrival=TRUE stop_name", {
   fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
   tt_to = travel_times(fst, stop_name = "Four", arrival = TRUE)
   tt_to <- tt_to[order(tt_to$from_stop_id),]
   expect_equal(tt_to$journey_arrival_time, hms::hms(c(37,37,37,45,37,37,41,41)*60+7*3600))
 })
+
+
