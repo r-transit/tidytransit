@@ -5,7 +5,7 @@
 \title{Calculate shortest travel times from a stop to all reachable stops}
 \usage{
 travel_times(filtered_stop_times, stop_name, time_range = 3600,
-  departure = TRUE, max_transfers = NULL, max_departure_time = NULL,
+  arrival = FALSE, max_transfers = NULL, max_departure_time = NULL,
   return_coords = FALSE, return_DT = FALSE)
 }
 \arguments{
@@ -16,18 +16,19 @@ deparuture time has been set.}
 \item{stop_name}{stop name for which travel times should becalculated. A vector with
 multiple names is accepted.}
 
-\item{time_range}{All departures within this range in seconds after the first
-departure of \code{filtered_stop_times} are considered for
-journeys.}
+\item{time_range}{All departures within this range in seconds after the first departure
+of \code{filtered_stop_times} are considered for journeys. If arrival is
+TRUE, all journeys arriving within time range before the latest arrival
+of \code{filtered_stop_times} are considered.}
 
-\item{departure}{If TRUE (default), all journeys \emph{start} from \code{stop_name}. If
-FALSE, all journeys \emph{end} at \code{stop_name}.}
+\item{arrival}{If FALSE (default), all journeys \emph{start} from \code{stop_name}. If
+TRUE, all journeys \emph{end} at \code{stop_name}.}
 
 \item{max_transfers}{The maximimum number of transfers}
 
-\item{max_departure_time}{Either set this parameter or \code{time_range}. Only
-departures before \code{max_departure_time} are used. Accepts
-"HH:MM:SS" or seconds as numerical value.}
+\item{max_departure_time}{Either set this parameter or \code{time_range}. Only departures
+before \code{max_departure_time} are used. Accepts "HH:MM:SS" or
+seconds as numerical value. Unused if `arrival`` is TRUE.}
 
 \item{return_coords}{returns stop coordinates as columms. Default is FALSE.}
 
@@ -35,7 +36,7 @@ departures before \code{max_departure_time} are used. Accepts
 returns a tibble/tbl_df.}
 }
 \value{
-A table with travel times to all stops reachable from \code{stop_name} and their
+A table with travel times to/from all stops reachable by \code{stop_name} and their
 corresponding journey departure and arrival times.
 }
 \description{

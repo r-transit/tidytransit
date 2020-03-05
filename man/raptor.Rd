@@ -4,7 +4,7 @@
 \alias{raptor}
 \title{Calculate travel times from one stop to all reachable stops}
 \usage{
-raptor(stop_times, transfers, stop_ids, departure = TRUE,
+raptor(stop_times, transfers, stop_ids, arrival = FALSE,
   time_range = 3600, max_transfers = NULL, keep = "all")
 }
 \arguments{
@@ -15,46 +15,49 @@ happening on one day. Use \code{\link[=filter_stop_times]{filter_stop_times()}} 
 
 \item{transfers}{Transfers table from a gtfs feed. In general no preparation is needed.}
 
-\item{stop_ids}{character vector with stop_ids from where journeys should start}
+\item{stop_ids}{Character vector with stop_ids from where journeys should start (or end)}
 
-\item{departure}{If TRUE (default), all journeys \emph{start} from \code{stop_ids}. If
-FALSE, all journeys \emph{end} at \code{stop_ids}.}
+\item{arrival}{If FALSE (default), all journeys \emph{start} from \code{stop_ids}. If
+TRUE, all journeys \emph{end} at \code{stop_ids}.}
 
-\item{time_range}{All departures from the first departure of stop_times (not necessarily
-from stop_id in \code{stop_ids}) within \code{time_range} (in seconds) are
-considered. If \code{outgoing} is FALSE, all arrivals from}
+\item{time_range}{Departure or arrival time range in seconds. All departures from the
+first departure of stop_times (not necessarily from stop_id in
+\code{stop_ids}) within \code{time_range} (in seconds) are considered. If
+\code{arrival} is TRUE, all arrivals within \code{time_range} before the latest
+arrival of stop_times are considered.}
 
 \item{max_transfers}{Maximum number of transfers allowed, no limit (NULL) as default.}
 
-\item{keep}{One of c("all", "shortest", "earliest"). By default \code{all} journeys
-arriving at a stop are returned. With \code{shortest} the
-journey with shortest travel time is returned. With \code{earliest} the
-journey arriving at a stop the earliest is returned.}
+\item{keep}{One of c("all", "shortest", "earliest"). By default \code{all} journeys arriving
+at a stop are returned. With \code{shortest} the journey with shortest travel
+time is returned. With \code{earliest} the journey arriving at a stop the earliest
+is returned.}
 }
 \value{
-A data.table with travel times to all stop_ids reachable from \code{from_stop_ids}
-and their corresponding journey departure and arrival times.
+A data.table with journeys (departure, arrival and travel time) to/from all
+stop_ids reachable by \code{stop_ids}.
 }
 \description{
 \code{raptor} finds the minimal travel time and/or earliest arrival time for all
-stops in \code{stop_times} with journeys departing from \code{from_stop_ids} within
+stops in \code{stop_times} with journeys departing from \code{stop_ids} within
 \code{time_range}.
 }
 \details{
 With a modified \href{https://www.microsoft.com/en-us/research/publication/round-based-public-transit-routing}{Round-Based Public Transit Routing Algorithm}
 (RAPTOR) using data.table earliest arrival times for all stops are calculated. If two
 journeys arrive at the same time, the one with the later departure time and thus shorter
-travel time is kept. By default, all journeys within \code{time_range} that arrive
-at a stop are returned in a table. Journeys are defined by a departure stop_id, a
+travel time is kept. By default, all journeys departing within \code{time_range} that arrive
+at a stop are returned in a table. If you want all journeys \emph{arriving} at stop_ids within
+the specified time range, set \code{arrival} to TRUE.
+
+Journeys are defined by a "from" and "to" stop_id, a
 departure, arrival and travel time. Note that the exact journeys (with each intermediate
 stop and route id for example) is \emph{not} returned.
 
-For most cases, \code{stop_times} needs to be filtered as it should only contain trips
+For most cases, \code{stop_times} needs to be filtered, as it should only contain trips
 happening on a single day and departures later than a given journey start time, see
-\code{\link[=filter_stop_times]{filter_stop_times()}}.
-
-The algorithm scans all trips until it exceeds \code{max_transfers} or all trips
-in \code{stop_times} have been visited.
+\code{\link[=filter_stop_times]{filter_stop_times()}}. The algorithm scans all trips until it exceeds \code{max_transfers}
+or all trips in \code{stop_times} have been visited.
 }
 \examples{
 \donttest{

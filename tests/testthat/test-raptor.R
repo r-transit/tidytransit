@@ -230,7 +230,7 @@ test_that("raptor errors without any stop_ids", {
 })
 
 test_that("raptor travel times with to_stop_ids", {
-  rptr = raptor(stop_times, transfers, stop_ids = "stop4", departure = FALSE, keep = "shortest")
+  rptr = raptor(stop_times, transfers, stop_ids = "stop4", arrival = TRUE, keep = "shortest")
   setorder(rptr, from_stop_id)
   arr_expected = c(
     37*60, # stop1a 
@@ -269,7 +269,7 @@ test_that("raptor travel times with to_stop_ids", {
 
 test_that("travel_times with departure=FALSE stop_name", {
   fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
-  tt_to = travel_times(fst, stop_name = "Four", departure = FALSE)
+  tt_to = travel_times(fst, stop_name = "Four", arrival = TRUE)
   tt_to <- tt_to[order(tt_to$from_stop_id),]
   expect_equal(tt_to$journey_arrival_time, hms::hms(c(37,37,37,45,37,37,41,41)*60+7*3600))
 })
