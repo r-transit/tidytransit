@@ -15,8 +15,8 @@ test_that("travel times wrapper function", {
   fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
   tt = travel_times(
     filtered_stop_times = fst, 
-    from_stop_name = "One", 
-    departure_time_range = 3600)
+    stop_name = "One", 
+    time_range = 3600)
   expect_equal(nrow(tt), length(unique(g$stops$stop_name)))
   expect_equal(tt %>% dplyr::filter(to_stop_name == "One") %>% dplyr::pull(travel_time), 0)
   expect_equal(tt$travel_time[which(tt$to_stop_name == "One")], 0)
@@ -27,13 +27,19 @@ test_that("travel times wrapper function", {
   expect_equal(tt$travel_time[which(tt$to_stop_name == "Six")], (20-10)*60)
   expect_equal(tt$travel_time[which(tt$to_stop_name == "Seven")], (25-10)*60)
   expect_equal(tt$travel_time[which(tt$to_stop_name == "Eight")], (24-12)*60)
+  
+  tt2 = travel_times(filtered_stop_times = fst, stop_name = "One", 
+                     time_range = 3600, return_coords = TRUE)
+  expect_equal(
+    setdiff(colnames(tt2), colnames(tt)), 
+    c("from_stop_lon", "from_stop_lat", "to_stop_lon", "to_stop_lat"))
 })
 
 test_that("travel_time works with different params", {
   fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
   travel_times(fst, "One", max_departure_time = 7*3600+5*60)
   travel_times(fst, "One", max_departure_time = "07:05:00")
-  expect_warning(travel_times(fst, "One", departure_time_range = 1800,  max_departure_time = "07:45:00"))
+  expect_error(travel_times(fst, "One", time_range = 1800,  max_departure_time = "07:45:00"))
   expect_error(travel_times(fst, "unknown stop"))
   expect_error(travel_times(fst, "One", max_departure_time = "06:45:00"))
 })
@@ -50,7 +56,7 @@ test_that("stop times are filtered correctly", {
 
 test_that("raptor travel times", {
   r = raptor(stop_times, transfers,
-             test_from_stop_ids, departure_time_range = 3600,
+             test_from_stop_ids, time_range = 3600,
              keep = "shortest")
   actual = r[order(to_stop_id), travel_time]
   
@@ -72,21 +78,21 @@ test_that("raptor travel times", {
 
 test_that("ea and tt return the same result for one departure", {
   shortest = raptor(stop_times, transfers, test_from_stop_ids,
-                       departure_time_range = 60,
+                       time_range = 60,
                        keep = "shortest")[order(to_stop_id)]
   shortest_tt <- shortest$travel_time
   
   earliest_arrival = raptor(stop_times, transfers, test_from_stop_ids,
-                            departure_time_range = 60,
+                            time_range = 60,
                             keep = "earliest")[order(to_stop_id)]
   earliest_arrival_tt <- earliest_arrival$journey_arrival_time - 7*3600
 
   expect_equal(shortest_tt, earliest_arrival_tt)
 })
 
-test_that("travel_time with one stop and reduced departure_time_range", {
+test_that("travel_time with one stop and reduced time_range", {
   r = raptor(stop_times_0709, transfers, "stop1a",
-             departure_time_range = 30,
+             time_range = 30,
              keep = "shortest")[order(to_stop_id)]
   actual <- r$travel_time
   
@@ -120,14 +126,14 @@ test_that("parameters are checked", {
   expect_error(raptor(st, tr, 42))
   
   # time range type
-  expect_error(raptor(st, tr, "stop5", departure_time_range = "char"))
-  expect_error(raptor(st, tr, "stop5", departure_time_range = NULL))
-  expect_error(raptor(st, tr, "stop5", departure_time_range = 0))
-  expect_error(raptor(st, tr, "stop5", departure_time_range = -99))
-  expect_error(raptor(st, tr, "stop5", departure_time_range = hms::hms(900)))
+  expect_error(raptor(st, tr, "stop5", time_range = "char"))
+  expect_error(raptor(st, tr, "stop5", time_range = NULL))
+  expect_error(raptor(st, tr, "stop5", time_range = 0))
+  expect_error(raptor(st, tr, "stop5", time_range = -99))
+  expect_error(raptor(st, tr, "stop5", time_range = hms::hms(900)))
   
   # empty results
-  expect_equal(nrow(raptor(st, tr, "stop5", departure_time_range = 60)), 1)
+  expect_equal(nrow(raptor(st, tr, "stop5", time_range = 60)), 1)
 })
 
 test_that("earliest arrival times", {
@@ -176,8 +182,8 @@ test_that("transfers for travel_times", {
   fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
   tt = travel_times(
     filtered_stop_times = fst, 
-    from_stop_name = "One", 
-    departure_time_range = 3600) %>% 
+    stop_name = "One", 
+    time_range = 3600) %>% 
     arrange(to_stop_id)
   expect_equal(tt$transfers, 
                c(0, 0, 0, 1, 0, 0, 1, 0))
@@ -224,7 +230,7 @@ test_that("raptor errors without any stop_ids", {
 })
 
 test_that("raptor travel times with to_stop_ids", {
-  rptr = raptor(stop_times, transfers, to_stop_ids = "stop4", keep = "shortest")
+  rptr = raptor(stop_times, transfers, stop_ids = "stop4", departure = FALSE, keep = "shortest")
   setorder(rptr, from_stop_id)
   arr_expected = c(
     37*60, # stop1a 
@@ -261,23 +267,9 @@ test_that("raptor travel times with to_stop_ids", {
 })
 
 
-test_that("travel_times with to_stop_name", {
-  tt_to = travel_times(fst, to_stop_name = "Four")
+test_that("travel_times with departure=FALSE stop_name", {
+  fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
+  tt_to = travel_times(fst, stop_name = "Four", departure = FALSE)
   tt_to <- tt_to[order(tt_to$from_stop_id),]
   expect_equal(tt_to$journey_arrival_time, hms::hms(c(37,37,37,45,37,37,41,41)*60+7*3600))
-})
-
-test_that("raptor and travel_times with to_stop_ids and from_stop_ids", {
-  fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
-  
-  expect_error(raptor(stop_times, transfers))
-  expect_error(travel_times(fst))
-  
-  rr_frto = raptor(stop_times, transfers, c("stop1a", "stop1b"), c("stop4"), keep = "shortest")
-  tt_frto = travel_times(fst, from_stop_name = "One", to_stop_name = "Four")
-  expect_equal(nrow(tt_frto), 1)
-  expect_equal(tt_frto$travel_time, rr_frto$travel_time)
-  
-  rr_13_0t = raptor(stop_times, transfers, c("stop1a", "stop1b"), c("stop3a", "stop3b"), max_transfers = 0)
-  expect_equal(nrow(rr_13_0t), 5)
 })
