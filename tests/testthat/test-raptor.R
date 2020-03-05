@@ -260,6 +260,24 @@ test_that("raptor travel times with to_stop_ids", {
   expect_equal(unique(rptr$to_stop_id), "stop4")
 })
 
-test_that("raptor with to_stop_ids and from_stop_ids", {
+
+test_that("travel_times with to_stop_name", {
+  tt_to = travel_times(fst, to_stop_name = "Four")
+  tt_to <- tt_to[order(tt_to$from_stop_id),]
+  expect_equal(tt_to$journey_arrival_time, hms::hms(c(37,37,37,45,37,37,41,41)*60+7*3600))
+})
+
+test_that("raptor and travel_times with to_stop_ids and from_stop_ids", {
+  fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
+  
   expect_error(raptor(stop_times, transfers))
+  expect_error(travel_times(fst))
+  
+  rr_frto = raptor(stop_times, transfers, c("stop1a", "stop1b"), c("stop4"), keep = "shortest")
+  tt_frto = travel_times(fst, from_stop_name = "One", to_stop_name = "Four")
+  expect_equal(nrow(tt_frto), 1)
+  expect_equal(tt_frto$travel_time, rr_frto$travel_time)
+  
+  rr_13_0t = raptor(stop_times, transfers, c("stop1a", "stop1b"), c("stop3a", "stop3b"), max_transfers = 0)
+  expect_equal(nrow(rr_13_0t), 5)
 })

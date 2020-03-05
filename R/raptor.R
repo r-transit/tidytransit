@@ -113,7 +113,7 @@ raptor = function(stop_times,
     from_stop_ids <- setdiff(from_stop_ids, nonexistent_stop_ids)
     if(length(from_stop_ids) == 0) {
       warning("Stop not found in stop_times or transfers: ", paste(nonexistent_stop_ids, collapse = ", "))
-      empty_dt = data.table(to_stop_id = character(0), from_stop_id = character(0), travel_time = numeric(0),
+      empty_dt = data.table(from_stop_id = character(0), to_stop_id = character(0), travel_time = numeric(0),
         journey_departure_time = numeric(0), journey_arrival_time = character(0), transfers = numeric(0))
       return(empty_dt)
     }
@@ -286,6 +286,10 @@ raptor = function(stop_times,
   
   # optimize, only keep the "best" arrivals
   keep_by = ifelse(reverse_stop_times, "from_stop_id", "to_stop_id")
+  if(!is.null(from_stop_ids) && !is.null(to_stop_ids)) {
+    rptr <- rptr[(from_stop_id %in% from_stop_ids & to_stop_id %in% to_stop_ids),]
+  }
+  
   if(keep == "shortest") {
     setorder(rptr, travel_time, journey_arrival_time)
     rptr <- rptr[, .SD[1], by = keep_by]
@@ -295,7 +299,7 @@ raptor = function(stop_times,
   }
   
   # build result table
-  rptr <- rptr[, c("to_stop_id", "from_stop_id", "travel_time", 
+  rptr <- rptr[, c("from_stop_id", "to_stop_id", "travel_time", 
                    "journey_departure_time", "journey_arrival_time", "transfers")]
   return(rptr)
 }
@@ -323,6 +327,7 @@ raptor = function(stop_times,
 #' @param max_departure_time Either set this parameter or `departure_time_range`. Only 
 #'                           departures before `max_departure_time` are used. Accepts 
 #'                           "HH:MM:SS" or seconds as numerical value.
+#' @param return_coords returns stop coordinates as columms. Default is FALSE.                            
 #' @param return_DT travel_times() returns a data.table if TRUE. Default is FALSE which 
 #'                  returns a tibble/tbl_df.
 #'                           
@@ -354,6 +359,7 @@ travel_times = function(filtered_stop_times,
                         departure_time_range = 3600,
                         max_transfers = NULL,
                         max_departure_time = NULL,
+                        return_coords = FALSE,
                         return_DT = FALSE) {
   travel_time <- journey_arrival_time <- journey_departure_time <- NULL
   if("gtfs" %in% class(filtered_stop_times)) {
@@ -403,20 +409,19 @@ travel_times = function(filtered_stop_times,
                 keep = "shortest")
 
   # minimal travel_time by stop_name
-  stops1 = select(stops, from_stop_name = stop_name, from_stop_id = stop_id, 
-                  from_stop_lon = stop_lon, from_stop_lat = stop_lat)
-  stops2 = select(stops, to_stop_name = stop_name, to_stop_id = stop_id, 
-                  to_stop_lon = stop_lon, to_stop_lat = stop_lat)
-  rptr_names = merge(stops1, rptr, by = "from_stop_id")
-  rptr_names <- merge(stops2, rptr_names, by = "to_stop_id")
+  .select_stops = function(prefix) {
+    x = stops[,paste0("stop_", c("name", "id", "lon", "lat"))[1:fifelse(return_coords, 4, 2)], with=FALSE]
+    colnames(x) <- paste0(prefix, colnames(x))
+    return(x)
+  }
+  rptr_names = merge(.select_stops("from_"), rptr, by = "from_stop_id")
+  rptr_names <- merge(.select_stops("to_"), rptr_names, by = "to_stop_id")
   
   # keep minimal travel time for each stop name
   keep_by = "to_stop_name"
   if(!is.null(to_stop_ids)) {
     if(!is.null(from_stop_ids)) {
       keep_by <- c("to_stop_name", "from_stop_name")
-      rptr_names <- rptr_names[from_stop_id %in% from_stop_ids,]
-      rptr_names <- rptr_names[to_stop_id %in% to_stop_ids,]
     } else {
       keep_by <- "from_stop_name"
     }
@@ -433,7 +438,8 @@ travel_times = function(filtered_stop_times,
                               "journey_arrival_time", "transfers", 
                               "from_stop_id", "to_stop_id",
                               "from_stop_lon", "from_stop_lat",
-                              "to_stop_lon", "to_stop_lat")]
+                              "to_stop_lon", "to_stop_lat")[1:fifelse(return_coords,12,8)], 
+                           with = FALSE]
   
   if(!return_DT) {
     rptr_names <- tibble::as_tibble(rptr_names)
