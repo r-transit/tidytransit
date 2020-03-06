@@ -51,7 +51,7 @@ shapes_as_sf <- function(gtfs_shapes) {
   
   shape_linestrings <- sf::st_sfc(list_of_linestrings, crs = 4326)
   
-  shapes_sf <- sf::st_sf(shape_id = unique(gtfs_shapes$shape_id), geometry = shape_linestrings)
+  shapes_sf <- sf::st_sf(shape_id = names(list_of_line_tibbles), geometry = shape_linestrings)
   shapes_sf$shape_id <- as.character(shapes_sf$shape_id)
   
   return(shapes_sf)
