@@ -1,19 +1,19 @@
 #' Calculate travel times from one stop to all reachable stops
 #' 
-#' `raptor` finds the minimal travel time and/or earliest arrival time for all 
+#' `raptor` finds the minimal travel time, earliest or latest arrival time for all 
 #' stops in `stop_times` with journeys departing from `stop_ids` within 
 #' `time_range`.
 #' 
 #' With a modified [Round-Based Public Transit Routing Algorithm](https://www.microsoft.com/en-us/research/publication/round-based-public-transit-routing) 
-#' (RAPTOR) using data.table earliest arrival times for all stops are calculated. If two 
+#' (RAPTOR) using data.table, earliest arrival times for all stops are calculated. If two 
 #' journeys arrive at the same time, the one with the later departure time and thus shorter 
 #' travel time is kept. By default, all journeys departing within `time_range` that arrive 
 #' at a stop are returned in a table. If you want all journeys _arriving_ at stop_ids within
 #' the specified time range, set `arrival` to TRUE.
 #' 
-#' Journeys are defined by a "from" and "to" stop_id, a 
-#' departure, arrival and travel time. Note that the exact journeys (with each intermediate 
-#' stop and route id for example) is _not_ returned.
+#' Journeys are defined by a "from" and "to" stop_id, a departure, arrival and travel time. 
+#' Note that the exact journeys (with each intermediate stop and route ids for example) is 
+#' _not_ returned.
 #' 
 #' For most cases, `stop_times` needs to be filtered, as it should only contain trips 
 #' happening on a single day and departures later than a given journey start time, see 
@@ -30,22 +30,21 @@
 #'                TRUE, all journeys _end_ at `stop_ids`.
 #' @param time_range Departure or arrival time range in seconds. All departures from the 
 #'                   first departure of stop_times (not necessarily from stop_id in 
-#'                   `stop_ids`) within `time_range` (in seconds) are considered. If 
-#'                   `arrival` is TRUE, all arrivals within `time_range` before the latest 
-#'                   arrival of stop_times are considered.
+#'                   `stop_ids`) within `time_range` are considered. If `arrival` is TRUE, 
+#'                   all arrivals within `time_range` before the latest arrival time of 
+#'                   stop_times are considered.
 #' @param max_transfers Maximum number of transfers allowed, no limit (NULL) as default.
-#' @param keep One of c("all", "shortest", "earliest", "latest"). By default `all` journeys arriving 
-#'             at a stop are returned. With `shortest` the journey with shortest travel 
-#'             time is returned. With `earliest` the journey arriving at a stop the earliest 
-#'             is returned, `latest` works accordingly.
+#' @param keep One of c("all", "shortest", "earliest", "latest"). By default, `all` journeys 
+#'             arriving at a stop are returned. With `shortest` the journey with shortest 
+#'             travel time is returned. With `earliest` the journey arriving at a stop the 
+#'             earliest is returned, `latest` works accordingly.
 #'
 #' @return A data.table with journeys (departure, arrival and travel time) to/from all 
 #'         stop_ids reachable by `stop_ids`.
 #'
-#' @seealso [travel_times()] 
+#' @seealso [travel_times()] for an easier access to travel time calculations via stop_names.
 #' 
 #' @import data.table
-#' @seealso travel_times, filter_stop_times
 #' @export
 #' @examples \donttest{
 #' nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
@@ -305,20 +304,20 @@ raptor = function(stop_times,
 #' 
 #' @param filtered_stop_times stop_times data.table (with transfers and stops tables as 
 #'                            attributes) created with [filter_stop_times()] where the 
-#'                            deparuture time has been set.
-#' @param stop_name stop name for which travel times should becalculated. A vector with 
+#'                            departure or arrival time has been set.
+#' @param stop_name Stop name for which travel times should be calculated. A vector with 
 #'                  multiple names is accepted.
-#' @param arrival If FALSE (default), all journeys _start_ from `stop_name`. If
-#'                TRUE, all journeys _end_ at `stop_name`.
 #' @param time_range All departures within this range in seconds after the first departure 
 #'                   of `filtered_stop_times` are considered for journeys. If arrival is 
 #'                   TRUE, all journeys arriving within time range before the latest arrival 
 #'                   of `filtered_stop_times` are considered.                   
+#' @param arrival If FALSE (default), all journeys _start_ from `stop_name`. If
+#'                TRUE, all journeys _end_ at `stop_name`.
 #' @param max_transfers The maximimum number of transfers
 #' @param max_departure_time Either set this parameter or `time_range`. Only departures 
 #'                           before `max_departure_time` are used. Accepts "HH:MM:SS" or 
-#'                           seconds as numerical value. Unused if `arrival` is TRUE.
-#' @param return_coords returns stop coordinates as columms. Default is FALSE.                            
+#'                           seconds as a numerical value. Unused if `arrival` is TRUE.
+#' @param return_coords Returns stop coordinates as columms. Default is FALSE.                            
 #' @param return_DT travel_times() returns a data.table if TRUE. Default is FALSE which 
 #'                  returns a tibble/tbl_df.
 #'                           
@@ -426,7 +425,7 @@ travel_times = function(filtered_stop_times,
 #' 
 #' @param gtfs_obj a gtfs feed
 #' @param extract_date date to extract trips from in YYYY-MM-DD format
-#' @param min_departure_time The minimal departure time. Can be given as "HH:MM:SS", 
+#' @param min_departure_time The earliest departure time. Can be given as "HH:MM:SS", 
 #'                           hms object or numeric value in seconds.
 #' @param max_arrival_time The latest arrival time. Can be given as "HH:MM:SS", 
 #'                         hms object or numeric value in seconds
@@ -434,7 +433,7 @@ travel_times = function(filtered_stop_times,
 #' This function creates filtered `stop_times` for [travel_times()] and [raptor()]. If you
 #' want to filter a feed multiple times it is faster to precalculate date_service_table with
 #' [set_date_service_table()].
-#'                         
+#' 
 #' @export                
 #' @examples 
 #' feed_path <- system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")

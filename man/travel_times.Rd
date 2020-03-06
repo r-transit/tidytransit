@@ -11,9 +11,9 @@ travel_times(filtered_stop_times, stop_name, time_range = 3600,
 \arguments{
 \item{filtered_stop_times}{stop_times data.table (with transfers and stops tables as
 attributes) created with \code{\link[=filter_stop_times]{filter_stop_times()}} where the
-deparuture time has been set.}
+departure or arrival time has been set.}
 
-\item{stop_name}{stop name for which travel times should becalculated. A vector with
+\item{stop_name}{Stop name for which travel times should be calculated. A vector with
 multiple names is accepted.}
 
 \item{time_range}{All departures within this range in seconds after the first departure
@@ -28,9 +28,9 @@ TRUE, all journeys \emph{end} at \code{stop_name}.}
 
 \item{max_departure_time}{Either set this parameter or \code{time_range}. Only departures
 before \code{max_departure_time} are used. Accepts "HH:MM:SS" or
-seconds as numerical value. Unused if \code{arrival} is TRUE.}
+seconds as a numerical value. Unused if \code{arrival} is TRUE.}
 
-\item{return_coords}{returns stop coordinates as columms. Default is FALSE.}
+\item{return_coords}{Returns stop coordinates as columms. Default is FALSE.}
 
 \item{return_DT}{travel_times() returns a data.table if TRUE. Default is FALSE which
 returns a tibble/tbl_df.}

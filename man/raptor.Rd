@@ -22,37 +22,37 @@ TRUE, all journeys \emph{end} at \code{stop_ids}.}
 
 \item{time_range}{Departure or arrival time range in seconds. All departures from the
 first departure of stop_times (not necessarily from stop_id in
-\code{stop_ids}) within \code{time_range} (in seconds) are considered. If
-\code{arrival} is TRUE, all arrivals within \code{time_range} before the latest
-arrival of stop_times are considered.}
+\code{stop_ids}) within \code{time_range} are considered. If \code{arrival} is TRUE,
+all arrivals within \code{time_range} before the latest arrival time of
+stop_times are considered.}
 
 \item{max_transfers}{Maximum number of transfers allowed, no limit (NULL) as default.}
 
-\item{keep}{One of c("all", "shortest", "earliest"). By default \code{all} journeys arriving
-at a stop are returned. With \code{shortest} the journey with shortest travel
-time is returned. With \code{earliest} the journey arriving at a stop the earliest
-is returned.}
+\item{keep}{One of c("all", "shortest", "earliest", "latest"). By default, \code{all} journeys
+arriving at a stop are returned. With \code{shortest} the journey with shortest
+travel time is returned. With \code{earliest} the journey arriving at a stop the
+earliest is returned, \code{latest} works accordingly.}
 }
 \value{
 A data.table with journeys (departure, arrival and travel time) to/from all
 stop_ids reachable by \code{stop_ids}.
 }
 \description{
-\code{raptor} finds the minimal travel time and/or earliest arrival time for all
+\code{raptor} finds the minimal travel time, earliest or latest arrival time for all
 stops in \code{stop_times} with journeys departing from \code{stop_ids} within
 \code{time_range}.
 }
 \details{
 With a modified \href{https://www.microsoft.com/en-us/research/publication/round-based-public-transit-routing}{Round-Based Public Transit Routing Algorithm}
-(RAPTOR) using data.table earliest arrival times for all stops are calculated. If two
+(RAPTOR) using data.table, earliest arrival times for all stops are calculated. If two
 journeys arrive at the same time, the one with the later departure time and thus shorter
 travel time is kept. By default, all journeys departing within \code{time_range} that arrive
 at a stop are returned in a table. If you want all journeys \emph{arriving} at stop_ids within
 the specified time range, set \code{arrival} to TRUE.
 
-Journeys are defined by a "from" and "to" stop_id, a
-departure, arrival and travel time. Note that the exact journeys (with each intermediate
-stop and route id for example) is \emph{not} returned.
+Journeys are defined by a "from" and "to" stop_id, a departure, arrival and travel time.
+Note that the exact journeys (with each intermediate stop and route ids for example) is
+\emph{not} returned.
 
 For most cases, \code{stop_times} needs to be filtered, as it should only contain trips
 happening on a single day and departures later than a given journey start time, see
@@ -87,7 +87,5 @@ hist(shortest_travel_times$travel_time, breaks = 360)
 }
 }
 \seealso{
-\code{\link[=travel_times]{travel_times()}}
-
-travel_times, filter_stop_times
+\code{\link[=travel_times]{travel_times()}} for an easier access to travel time calculations via stop_names.
 }
