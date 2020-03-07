@@ -22,19 +22,26 @@ library(sf)
 
 # Introduction
 
-The focus of this vignette is on how to use R to make graphics about where and how often transit service operates based on schedule data published in the [General Transit Feed Specification](http://gtfs.org/). 
+The focus of this vignette is on how to use R to make graphics about where and how often transit service operates based on schedule data published in the [General Transit Feed Specification](http://gtfs.org/). We'll focus on the New York City Metropolitan Transit Agency's Subway schedule for this vignette, but you can easily apply it to thousands of other GTFS data sources. See the [tidytransit introductory vignette](http://tidytransit.r-transit.org/articles/introduction.html#finding-more-gtfs-feeds) for instructions on finding data for other cities and operators. 
 
-We're going to review how to use this package to:
+# Setup
+
+You'll need to have tidytransit installed. Please see the [install instructions](http://tidytransit.r-transit.org/articles/introduction.html#installation-dependencies) for more details. 
+
+# Outline
+
+So, to review, we're going to:
 
 1) Import Transit Data (GTFS)
 2) Identify Weekday Schedules of Service
-3) Calculate Schedule Headways
+3) Calculate Headways
 4) Map Headways By Route
 5) Map Departures by Stop and Route
+6) Validate Our Estimates With EPA Estimates
 
-# 1) Importing the NYC MTA Subway Schedule
+# 1) Import Transit Data (GTFS)
 
-We'll start by importing a snapshot of the NYC MTA's subway schedule, which is included with the package when [installed](http://tidytransit.r-transit.org/index.html#installation). 
+We'll start by importing a snapshot of the NYC MTA's subway schedule, which is included with the package when [installed](http://tidytransit.r-transit.org/index.html#installation).  
 
 ```{r}
 local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
@@ -57,7 +64,52 @@ We use one of the functions described in that vignette to create a table on the 
 gtfs <- set_servicepattern(gtfs)
 ```
 
-Below we use a service_pattern_id, `s_e25d6ca`, which we've selected based on a graphic in that vignette. Using that ID, we pull all GTFS service_id's that correspond to weekday service from Monday through Friday in NYC. 
+After setting the service patterns, we can summarise each service by the number of trips and stops. We'll also summarise the total distance covered by all trips in the service, and then check that against the total distance covered by the average route. First, we need to calculate the distance of each part of the route shapes.  
+
+```{r}
+shp1 <- shapes_as_sf(gtfs$shapes)
+shp1 <- st_transform(shp1, crs=2263)
+shp1$length <- st_length(shp1)
+shp2 <- shp1 %>% 
+  as.data.frame() %>% 
+  select(shape_id,length,-geometry) 
+```
+
+Now we're ready to roll the statistics up to services. 
+
+```{r}
+service_pattern_summary <- gtfs$trips %>%
+  left_join(gtfs$.$service_pattern, by="service_id") %>% 
+  left_join(shp2, by="shape_id") %>%
+  left_join(gtfs$stop_times, by="trip_id") %>% 
+  group_by(servicepattern_id) %>% 
+  summarise(trips = n(), 
+            routes = n_distinct(route_id),
+            total_distance_per_day_km = sum(as.numeric(length), 
+                                    na.rm=TRUE)/1e3,
+            route_avg_distance_km = (sum(as.numeric(length),
+                                    na.rm=TRUE)/1e3)/(trips*routes),
+            stops=(n_distinct(stop_id)/2))
+```
+
+We can also add the number of days that each service is in operation. 
+
+```{r}
+service_pattern_summary <- gtfs$.$date_servicepattern_table %>% 
+  group_by(servicepattern_id) %>% 
+  summarise(days_in_service = n()) %>% 
+  left_join(service_pattern_summary, by="servicepattern_id")
+```
+
+And then we'll print the summary. 
+
+```{r}
+knitr::kable(service_pattern_summary)
+```
+
+It seems that if we want to summarise the most common patterns of service in the NYC Metro system, we should use the `s_e25d6ca` service pattern, as it has the most days in service, the most trips, stops, and routes. 
+
+We'll use that pattern below to pull out the Service ID's that we need to use to identify trips in the GTFS feed for which we want to summarise service. 
 
 ```{r}
 service_ids <- gtfs$.$service_pattern %>% 
@@ -81,11 +133,11 @@ gtfs$trips %>%
   knitr::kable()
 ```
 
-Given the one-to-one relationship between service-id's and routes, we might conclude that the NYC Subway GTFS creates service_id's for each route that a trip runs on. Some GTFS feeds are simpler: a single service_id might relate to 'all vehicle trips running every weekdays'. 
+Given the one-to-one relationship between service-id's and routes, we might conclude that the NYC Subway GTFS creates service_id's for each route that a trip runs on. Some GTFS feeds are simpler: a single service_id might relate to 'all vehicle trips running every weekdays'. Service patterns get us around complications like this by describing service in terms of exhaustive calendar dates, regardless of whether an operator may break out each route as a different service. 
 
 # 3) Calculate Headways
 
-So, now that we've identified the set of service_id's that refer to all weekday trips, we can summarize service between 6 am and 10 am for the NYC Subway system on weekdays.  
+So, now that we've used service patterns to identify the set of service_id's that refer to all weekday trips, we can summarize service between 6 am and 10 am for the NYC Subway system on weekdays.  
 
 ```{r}
 am_freq <- get_stop_frequency(gtfs, start_hour = 6, end_hour = 10, service_ids = service_ids)
@@ -172,7 +224,8 @@ Now we'll use the `get_route_frequency` function to summarise transit service by
 
 ```{r}
 am_route_freq <- get_route_frequency(gtfs, service_ids = service_ids, start_hour = 6, end_hour = 10) 
-head(knitr::kable(am_route_freq))
+head(am_route_freq) %>%
+  knitr::kable()
 ```
 
 Since, under the hood, this table is a summary of stop frequencies along each route, it includes the same variables as a summary of the headways at each stop along the route, as well as a sum of all departures. Again, its important to note that this summary is based on the trips that happened within the time frame we specify. 
@@ -236,7 +289,7 @@ Now we have a rough representation of the question we set out to answer: where a
 We can combine this with stops to get a sense of how central stops relate to routes. 
 
 ```{r}
-nyc_stop_am_departures_main <- nyc_stops_sf %>% left_join(am_freq) %>% 
+nyc_stop_am_departures_main <- nyc_stops_sf %>% left_join(am_freq, by = "stop_id") %>% 
   filter(departures>50)
 ```
 
@@ -264,5 +317,121 @@ ggplot() +
   geom_sf(data=stop_departures, aes(size=total_departures), shape=1) + 
   labs(size = "Departures (Hundreds)") +
   theme_bw() +
-  theme(legend.position="none")
+  theme(legend.position="none") +
+  ggtitle("NYC MTA - Relative Departures by Route and Stop (AM)")
 ```
+
+# 6) Validate Service Estimates Against EPA Estimates
+
+How can we validate the estimates of transit service that we've made above? 
+
+The Environmental Protection Agency publishes data that includes estimates of transit service, called the [Smart Location Database](https://www.epa.gov/smartgrowth/smart-location-mapping#SLD), also based on GTFS data.  
+
+Below we check our estimates based on NYC MTA data against those published by the EPA. 
+
+The EPA's metric for transit service frequency is the 'Aggregate frequency of transit service (per hour during evening peak period) within .25 miles of block group boundary.' 
+
+So we'll pull frequency counts at stops between 4 and 7 pm. 
+
+```{r}
+pm_freq <- get_stop_frequency(gtfs, start_hour = 16, 
+                              end_hour = 19, 
+                              service_ids = service_ids) %>%
+  mutate(departures_per_hour=departures/3)
+
+nyc_stops_gtfs <- left_join(gtfs$stops,pm_freq, by="stop_id")
+
+stop_departures <- nyc_stops_gtfs %>%  
+  group_by(stop_name) %>%
+  summarise(total_departures=sum(departures_per_hour, na.rm=TRUE))
+
+nyc_stops_sf_pm <- right_join(nyc_stops_sf,
+                        stop_departures, by="stop_name")
+```
+
+Now we select block groups that intersect with these stops from the EPA data set.  
+
+First we have to load the EPA data into R. Since the EPA data set covers the entire united states, and is very large, I've linked to a selection from it for use in this vignette, which you can load using the URL below.  
+
+```{r}
+epa_nyc_service <- st_read("https://s3-us-west-2.amazonaws.com/tidytransit.r-transit.org/epa_nyc_transit.geojson",
+                           crs=2263)
+```
+
+We'll have to set the coordinate reference system for the GTFS data to match that of the EPA data set linked above.  
+
+```{r}
+nyc_stops_sf_pm_service <- st_transform(nyc_stops_sf_pm, crs=2263) %>%
+  select(total_departures)
+```
+
+Now we can join the two data sets spatially, summing up the count of departures from each transit stop that intersects a census block group in the EPA data set. 
+
+In order to do this, we will have to first add an ID column to the EPA data set so that we can sum departures from our data set by the ID of each block group. 
+
+```{r}
+epa_nyc_service$id <-  seq.int(nrow(epa_nyc_service))
+```
+
+Now we join the data sets spatially, sum the count of gtfs departures, and rename variables for clarity. 
+
+```{r}
+comparison_with_epa <- st_join(epa_nyc_service, 
+                             nyc_stops_sf_pm_service) %>%
+  rename(epa_departures=agg_freq_service_evening_peak_quarter_mile) %>%
+  group_by(id) %>% 
+    summarise(epa_departures = first(epa_departures), 
+              gtfs_departures = sum(total_departures))
+```
+
+In addition, we add a column with the difference between the two estimates, and filter the census block groups to just those that intersect with the GTFS stops we imported, since we can only make comparisons for those. 
+
+```{r}
+comparison_with_epa$gtfs_minus_epa <- comparison_with_epa$gtfs_departures-comparison_with_epa$epa_departures
+
+comparison_with_epa <- comparison_with_epa %>% filter(gtfs_departures>0)
+```
+
+Lets have a look at the histogram of the differences between the EPA estimate and ours. 
+
+```{r}
+ggplot(comparison_with_epa, aes(gtfs_minus_epa)) +
+  geom_histogram()
+```
+
+While the differences in the estimates are normally distributed, there is considerable variation in the count of departures, with a standard deviation in the count of departures of 338 departures per hour. Also, it seems as if our GTFS-based estimates skew somewhat higher than the EPA estimates, which is surprising, considering that we are not including buses, and we are only counting stops that are within the boundary of the block group, rather than a 1/4 mile around it. 
+
+We can also plot the difference between the estimates on a map to understand how the geographic distribution of the frequency may be related. 
+
+First we'll convert the polygon geomtries to points to make plotting simpler.  
+
+```{r}
+comparison_with_epa$geometry <- st_centroid(comparison_with_epa$geometry)
+```
+
+Then we will plot the differences, first on a black background, so that we can see all stops clearly. 
+
+```{r, fig.width=6, fig.height=10}
+ggplot() + 
+  geom_sf(data=comparison_with_epa, aes(color=gtfs_minus_epa), shape=1, alpha=0.4) + 
+  scale_colour_gradient2() + 
+  theme_dark() +
+  ggtitle("Difference in Transit Service Estimates (EPA/GTFS)")
+```
+
+Here we can see that many areas that are not on overlapping transit lines show 0 difference between the EPA's estimates and ours. However, in areas where we would expect transit lines to overlap considerably, such as manhattan, we can start to see that there are some major differences in the estimates.  
+
+Lets plot the same data on a white background, and add route lines for context to review these hunches in more detail. 
+
+```{r, fig.width=6, fig.height=10}
+ggplot() + 
+  geom_sf(data=routes_sf_buffer,colour=alpha("white",0),fill=alpha("grey80",0.1)) +      
+  geom_sf(data=comparison_with_epa, aes(color=gtfs_minus_epa), shape=1, alpha=1) + 
+  scale_colour_gradient2() + 
+  theme_bw() +
+  ggtitle("Difference in Transit Service Estimates (EPA/GTFS)")
+```
+
+Here we can see that stops where multiple lines come together have a consistently higher estimate according to our method. A notable exception to this pattern is near Jamaica, Queens. Could it be that that location saw significant changes in service since the EPA created their estimates? We'd have to check to be sure. 
+
+However, we have seen that there are some considerable differences in the two estimates worth looking into further.
