@@ -59,4 +59,4 @@ tidytransit is a
 
 # Contributing
 
-If you would like to contribute please feel free to issue a pull request or [open an issue](https://github.com/r-transit/tidytransit/issues/new).
+Please feel free to issue a pull request or [open an issue](https://github.com/r-transit/tidytransit/issues/new).
