@@ -4,8 +4,8 @@
 \alias{raptor}
 \title{Calculate travel times from one stop to all reachable stops}
 \usage{
-raptor(stop_times, transfers, from_stop_ids, departure_time_range = 3600,
-  max_transfers = NULL, keep = "all")
+raptor(stop_times, transfers, stop_ids, arrival = FALSE,
+  time_range = 3600, max_transfers = NULL, keep = "all")
 }
 \arguments{
 \item{stop_times}{A (prepared) stop_times table from a gtfs feed. Prepared means
@@ -15,43 +15,49 @@ happening on one day. Use \code{\link[=filter_stop_times]{filter_stop_times()}} 
 
 \item{transfers}{Transfers table from a gtfs feed. In general no preparation is needed.}
 
-\item{from_stop_ids}{Atomic char vector with stop_ids from where a journey should start}
+\item{stop_ids}{Character vector with stop_ids from where journeys should start (or end)}
 
-\item{departure_time_range}{All departures from the first departure of
-stop_times (not necessarily a from_stop) within
-\code{departure_time_range} (in seconds) are considered.}
+\item{arrival}{If FALSE (default), all journeys \emph{start} from \code{stop_ids}. If
+TRUE, all journeys \emph{end} at \code{stop_ids}.}
+
+\item{time_range}{Departure or arrival time range in seconds. All departures from the
+first departure of stop_times (not necessarily from stop_id in
+\code{stop_ids}) within \code{time_range} are considered. If \code{arrival} is TRUE,
+all arrivals within \code{time_range} before the latest arrival time of
+stop_times are considered.}
 
 \item{max_transfers}{Maximum number of transfers allowed, no limit (NULL) as default.}
 
-\item{keep}{One of c("all", "shortest", "earliest"). By default \code{all} journeys
-arriving at a stop are returned. With \code{shortest} the
-journey with shortest travel time is returned. With \code{earliest} the
-journey arriving at a stop the earliest is returned.}
+\item{keep}{One of c("all", "shortest", "earliest", "latest"). By default, \code{all} journeys
+arriving at a stop are returned. With \code{shortest} the journey with shortest
+travel time is returned. With \code{earliest} the journey arriving at a stop the
+earliest is returned, \code{latest} works accordingly.}
 }
 \value{
-A data.table with travel times to all stop_ids reachable from \code{from_stop_ids}
-and their corresponding journey departure and arrival times.
+A data.table with journeys (departure, arrival and travel time) to/from all
+stop_ids reachable by \code{stop_ids}.
 }
 \description{
-\code{raptor} finds the minimal travel time and/or earliest arrival time for all
-stops in \code{stop_times} with journeys departing from \code{from_stop_ids} within
-\code{departure_time_range}.
+\code{raptor} finds the minimal travel time, earliest or latest arrival time for all
+stops in \code{stop_times} with journeys departing from \code{stop_ids} within
+\code{time_range}.
 }
 \details{
 With a modified \href{https://www.microsoft.com/en-us/research/publication/round-based-public-transit-routing}{Round-Based Public Transit Routing Algorithm}
-(RAPTOR) using data.table earliest arrival times for all stops are calculated. If two
+(RAPTOR) using data.table, earliest arrival times for all stops are calculated. If two
 journeys arrive at the same time, the one with the later departure time and thus shorter
-travel time is kept. By default, all journeys within \code{departure_time_range} that arrive
-at a stop are returned in a table. Journeys are defined by a departure stop_id, a
-departure, arrival and travel time. Note that the exact journeys (with each intermediate
-stop and route id for example) is \emph{not} returned.
+travel time is kept. By default, all journeys departing within \code{time_range} that arrive
+at a stop are returned in a table. If you want all journeys \emph{arriving} at stop_ids within
+the specified time range, set \code{arrival} to TRUE.
 
-For most cases, \code{stop_times} needs to be filtered as it should only contain trips
+Journeys are defined by a "from" and "to" stop_id, a departure, arrival and travel time.
+Note that the exact journeys (with each intermediate stop and route ids for example) is
+\emph{not} returned.
+
+For most cases, \code{stop_times} needs to be filtered, as it should only contain trips
 happening on a single day and departures later than a given journey start time, see
-\code{\link[=filter_stop_times]{filter_stop_times()}}.
-
-The algorithm scans all trips until it exceeds \code{max_transfers} or all trips
-in \code{stop_times} have been visited.
+\code{\link[=filter_stop_times]{filter_stop_times()}}. The algorithm scans all trips until it exceeds \code{max_transfers}
+or all trips in \code{stop_times} have been visited.
 }
 \examples{
 \donttest{
@@ -68,20 +74,18 @@ walk_times <- data.frame(stop_id = c(stop_ids_harlem_st, stop_ids_155_st),
 stop_times <- filter_stop_times(nyc, "2018-06-26", 7*3600, 9*3600)
 
 # calculate all journeys departing from Harlem St or 155 St between 7:00 and 7:30
-rptr <- raptor(stop_times, nyc$transfers, walk_times$stop_id, departure_time_range = 1800,
+rptr <- raptor(stop_times, nyc$transfers, walk_times$stop_id, time_range = 1800,
                keep = "all")
 
 # add walk times to travel times
-rptr <- left_join(rptr, walk_times, by=c("journey_departure_stop_id" = "stop_id"))
+rptr <- left_join(rptr, walk_times, by=c("from_stop_id" = "stop_id"))
 rptr$travel_time_incl_walk <- rptr$travel_time + rptr$walk_time
 
 # get minimal travel times (with walk times) for all stop_ids 
-shortest_travel_times <- setDT(rptr)[order(travel_time_incl_walk)][, .SD[1], by = "stop_id"]
+shortest_travel_times <- setDT(rptr)[order(travel_time_incl_walk)][, .SD[1], by = "to_stop_id"]
 hist(shortest_travel_times$travel_time, breaks = 360)
 }
 }
 \seealso{
-\code{\link[=travel_times]{travel_times()}}
-
-travel_times, filter_stop_times
+\code{\link[=travel_times]{travel_times()}} for an easier access to travel time calculations via stop_names.
 }
