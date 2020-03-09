@@ -18,7 +18,7 @@ Tidytransit can be used to:
 - [estimate transit frequencies](http://tidytransit.r-transit.org/reference/get_route_frequency.html)
 - [calculate travel times between transit stops](http://tidytransit.r-transit.org/reference/travel_times.html)
 - [convert stops and routes to sf data frames](http://tidytransit.r-transit.org/reference/gtfs_as_sf.html)
-- map existing stops and routes
+- [map existing stops and routes](http://tidytransit.r-transit.org/articles/frequency.html)
 - [validate transit feeds and more](http://tidytransit.r-transit.org/reference/index.html)
 
 Have a look at the following vignettes to see how tidytransit can be used to analyse a feed:
@@ -55,17 +55,8 @@ more limited functionality, but it can read GTFS tables into R.
 
 tidytransit is a
 [fork](https://en.wikipedia.org/wiki/Fork_\(software_development\)) of
-[gtfsr](https://github.com/ropensci/gtfsr), published to
-[CRAN](https://cran.r-project.org/), with frequency/headway calculation
-functions. 
+[gtfsr](https://github.com/ropensci/gtfsr).
 
 # Contributing
 
 If you would like to contribute please feel free to issue a pull request or [open an issue](https://github.com/r-transit/tidytransit/issues/new).
-
-# Contributors
-
-Among the many
-[contributors](https://github.com/r-transit/tidytransit/graphs/contributors),
-[Danton Noriega](https://github.com/dantonnoriega) wrote much of this
-package.
