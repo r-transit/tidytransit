@@ -15,6 +15,7 @@ test_that("gtfs_as_sf doesn't crash without shapes", {
   gtfs_duke_wo_shapes <- gtfs_duke
   gtfs_duke_wo_shapes$shapes <- NULL
   expect_warning(gtfs_as_sf(gtfs_duke_wo_shapes))
+  expect_silent(gtfs_as_sf(gtfs_duke_wo_shapes, skip_shapes = TRUE))
 })
 
 duke_sf <- gtfs_as_sf(gtfs_duke)

@@ -16,7 +16,7 @@ gtfs_as_sf <- function(gtfs_obj, skip_shapes = FALSE, quiet = TRUE) {
   if(feed_contains(gtfs_obj, "shapes") && !skip_shapes) {
     if(!quiet) message('Converting shapes to simple features')
     gtfs_obj$shapes <- try(shapes_as_sf(gtfs_obj$shapes))
-  } else { 
+  } else if(!skip_shapes) { 
     warning('No shapes available in gtfs_obj') 
   }
   
