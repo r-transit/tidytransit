@@ -323,7 +323,7 @@ raptor = function(stop_times,
 #'                           
 #' @return A table with travel times to/from all stops reachable by `stop_name` and their
 #'         corresponding journey departure and arrival times.
-#'
+#' @importFrom data.table fifelse
 #' @export
 #' @examples \donttest{
 #' nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
@@ -391,7 +391,7 @@ travel_times = function(filtered_stop_times,
 
   # minimal travel_time by stop_name ####
   .select_stops = function(prefix) {
-    x = stops[,paste0("stop_", c("name", "id", "lon", "lat"))[1:fifelse(return_coords, 4, 2)], with=FALSE]
+    x = stops[,paste0("stop_", c("name", "id", "lon", "lat"))[1:data.table::fifelse(return_coords, 4, 2)], with=FALSE]
     colnames(x) <- paste0(prefix, colnames(x))
     return(x)
   }
@@ -411,7 +411,7 @@ travel_times = function(filtered_stop_times,
                               "journey_arrival_time", "transfers", 
                               "from_stop_id", "to_stop_id",
                               "from_stop_lon", "from_stop_lat",
-                              "to_stop_lon", "to_stop_lat")[1:fifelse(return_coords,12,8)], 
+                              "to_stop_lon", "to_stop_lat")[1:data.table::fifelse(return_coords,12,8)], 
                            with = FALSE]
   
   if(!return_DT) {
