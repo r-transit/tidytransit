@@ -1,7 +1,7 @@
 Package: tidytransit
 Type: Package
 Title: Read, Validate, Analyze, and Map Files in the General Transit Feed Specification  
-Version: 0.6.1
+Version: 0.7.0
 Authors@R: c(
     person("Flavio", "Poletti", role = c("aut"), email = "flavio.poletti@hotmail.ch"),
     person("Tom", "Buckley", role = c("aut", "cre"), email = "tom@tbuckl.com"),
@@ -28,7 +28,7 @@ Imports:
     zip (>= 2.0.1),
     tibble,
     readr,
-    data.table,
+    data.table (>= 1.12.8),
     httr,
     magrittr,
     assertthat,
