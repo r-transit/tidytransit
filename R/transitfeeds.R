@@ -7,7 +7,7 @@
 #' @seealso feedlist_df
 #'
 #' @export
-#' @examples \donttest{
+#' @examples \dontrun{
 #' feedlist_df <- get_feedlist()
 #' }
 get_feedlist <- function() {
