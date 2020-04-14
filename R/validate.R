@@ -90,10 +90,10 @@ validate_gtfs_structure <- function(gtfs_obj) {
   meta <- get_gtfs_meta()
   structure <- tibble::tibble()
   
-  all_df_names <- c(
+  all_df_names <- unique(c(
     names(gtfs_obj), # available dfs
     names(meta) # # dfs specified
-  ) %>% unique()
+  ))
   
   # check available data frames
   for(dfname in all_df_names) {

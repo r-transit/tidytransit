@@ -30,7 +30,6 @@ Imports:
     readr,
     data.table (>= 1.12.8),
     httr,
-    magrittr,
     assertthat,
     rlang,
     sf,
