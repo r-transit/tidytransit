@@ -207,7 +207,7 @@ test_that("travel_times return type", {
 
 test_that("travel_times from stop with departures from transfer stops", {
   g2 = g
-  g2$stops[nrow(g2$stops)+1,] <- c("stop0", "Zero", 46.9596, 7.39071, NA, 0)
+  g2$stops[nrow(g2$stops)+1,] <- list("stop0", "Zero", 46.9596, 7.39071, NA, 0)
   g2$transfers[nrow(g2$transfers)+1,] <- c("stop0", "stop1a", "2", 1)
   g2$transfers$min_transfer_time <- as.numeric(g2$transfers$min_transfer_time)
   fst2 = filter_stop_times(g2, "2018-10-01", 0, 24*3600)
