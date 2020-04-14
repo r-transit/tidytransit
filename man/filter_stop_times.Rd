@@ -4,8 +4,7 @@
 \alias{filter_stop_times}
 \title{Filter a \code{stop_times} table for a given date and timespan.}
 \usage{
-filter_stop_times(gtfs_obj, extract_date, min_departure_time,
-  max_arrival_time)
+filter_stop_times(gtfs_obj, extract_date, min_departure_time, max_arrival_time)
 }
 \arguments{
 \item{gtfs_obj}{a gtfs feed}

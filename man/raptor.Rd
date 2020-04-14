@@ -4,8 +4,15 @@
 \alias{raptor}
 \title{Calculate travel times from one stop to all reachable stops}
 \usage{
-raptor(stop_times, transfers, stop_ids, arrival = FALSE,
-  time_range = 3600, max_transfers = NULL, keep = "all")
+raptor(
+  stop_times,
+  transfers,
+  stop_ids,
+  arrival = FALSE,
+  time_range = 3600,
+  max_transfers = NULL,
+  keep = "all"
+)
 }
 \arguments{
 \item{stop_times}{A (prepared) stop_times table from a gtfs feed. Prepared means

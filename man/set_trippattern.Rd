@@ -4,8 +4,7 @@
 \alias{set_trippattern}
 \title{Add trip pattern data frame to the gtfs object}
 \usage{
-set_trippattern(gtfs_obj, id_prefix = "t_", hash_length = 7,
-  hash_algo = "md5")
+set_trippattern(gtfs_obj, id_prefix = "t_", hash_length = 7, hash_algo = "md5")
 }
 \arguments{
 \item{gtfs_obj}{gtfs feed}

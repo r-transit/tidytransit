@@ -4,8 +4,12 @@
 \alias{set_servicepattern}
 \title{Calculate servicepattern for the gtfs_obj}
 \usage{
-set_servicepattern(gtfs_obj, hash_algo = "md5", id_prefix = "s_",
-  hash_length = 7)
+set_servicepattern(
+  gtfs_obj,
+  hash_algo = "md5",
+  id_prefix = "s_",
+  hash_length = 7
+)
 }
 \arguments{
 \item{gtfs_obj}{gtfs feed}
