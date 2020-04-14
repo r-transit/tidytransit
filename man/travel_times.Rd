@@ -60,7 +60,7 @@ tts <- travel_times(stop_times, "34 St - Herald Sq", return_coords = TRUE)
 tts <- tts \%>\% filter(travel_time <= 3600)
 
 # travel time to Queensboro Plaza is 810 seconds, 13:30 minutes
-tts \%>\% filter(to_stop_name == "Queensboro Plaza") \%>\% dplyr::pull(travel_time) \%>\% hms::hms()
+tts \%>\% filter(to_stop_name == "Queensboro Plaza") \%>\% pull(travel_time) \%>\% hms::hms()
 
 # plot a simple map showing travel times to all reachable stops
 # this can be expanded to isochron maps

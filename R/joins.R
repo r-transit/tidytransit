@@ -145,6 +145,7 @@ shapes_for_routes <- function(g1,
 #' @return stops for a given service
 #' @export
 #' @examples \donttest{
+#' library(dplyr)
 #' local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
 #' nyc <- read_gtfs(local_gtfs_path)
 #' select_service_id <- filter(nyc$calendar, monday==1) %>% pull(service_id)
@@ -152,15 +153,15 @@ shapes_for_routes <- function(g1,
 #' filtered_stops_df <- filter_stops(nyc, select_service_id, select_route_id)
 #' }
 filter_stops <- function(gtfs_obj, service_ids, route_ids) {
-  some_trips <- gtfs_obj$trips %>%
-    dplyr::filter(.data$service_id %in% service_ids &
-                    .data$route_id %in% route_ids)
+  some_trips <- dplyr::filter(gtfs_obj$trips, 
+                              .data$service_id %in% service_ids &
+                                .data$route_id %in% route_ids)
   
-  some_stop_times <- gtfs_obj$stop_times %>% 
-    dplyr::filter(.data$trip_id %in% some_trips$trip_id) 
+  some_stop_times <- dplyr::filter(gtfs_obj$stop_times,
+                                   .data$trip_id %in% some_trips$trip_id) 
   
-  some_stops <- gtfs_obj$stops %>%
-    dplyr::filter(.data$stop_id %in% some_stop_times$stop_id)
+  some_stops <- dplyr::filter(gtfs_obj$stops,
+                              .data$stop_id %in% some_stop_times$stop_id)
   
   return(some_stops)
 }

@@ -336,7 +336,7 @@ raptor = function(stop_times,
 #' tts <- tts %>% filter(travel_time <= 3600)
 #' 
 #' # travel time to Queensboro Plaza is 810 seconds, 13:30 minutes
-#' tts %>% filter(to_stop_name == "Queensboro Plaza") %>% dplyr::pull(travel_time) %>% hms::hms()
+#' tts %>% filter(to_stop_name == "Queensboro Plaza") %>% pull(travel_time) %>% hms::hms()
 #' 
 #' # plot a simple map showing travel times to all reachable stops
 #' # this can be expanded to isochron maps

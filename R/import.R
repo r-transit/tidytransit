@@ -149,7 +149,7 @@ unzip_file <- function(zipfile,
 
   if(!quiet) {
     message(sprintf("Unzipped the following files to directory '%s'...", tmpdirpath))
-    list.files(tmpdirpath) %>% print
+    print(list.files(tmpdirpath))
   }
 
   return(tmpdirpath)
@@ -281,11 +281,9 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
 
     # get correct coltype, if possible
     # create "c" as coltype defaults
-    coltypes_character <- rep("c",
-                              dim(small_df)[2])
+    coltypes_character <- rep("c", dim(small_df)[2])
 
-    names(coltypes_character) <-
-      names(small_df) %>% tolower()
+    names(coltypes_character) <- tolower(names(small_df))
     # indx from valid cols in meta$field. NAs will return for invalid cols
     indx <- match(names(coltypes_character), meta$field)
 

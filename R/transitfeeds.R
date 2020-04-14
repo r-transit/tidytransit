@@ -1,7 +1,5 @@
 #' Get list of all available feeds from transitfeeds API
 #' @importFrom httr content RETRY
-#' @importFrom magrittr "%>%"
-#' @importFrom magrittr "%<>%"
 #' @importFrom utils "read.csv"
 #' @importFrom stats "na.omit"
 #' @importFrom stats "setNames"

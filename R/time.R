@@ -10,7 +10,7 @@ filter_stop_times_by_hour <- function(stop_times,
   # TODO use set_hms_times during import to avoid errors here?
   stopifnot("arrival_time_hms" %in% colnames(stop_times), "departure_time_hms" %in% colnames(stop_times))
   # it might be easier to just accept hms() objects
-  stop_times %>% filter(arrival_time_hms > 
+  dplyr::filter(stop_times, arrival_time_hms > 
                           hms::hms(hours = start_hour) & 
                           departure_time_hms < hms::hms(hours = end_hour))
 }
