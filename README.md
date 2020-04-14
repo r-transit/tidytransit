@@ -8,7 +8,7 @@ status](http://www.r-pkg.org/badges/version-ago/tidytransit?)](https://cran.r-pr
 
 # tidytransit
 
-Use tidytransit to map transit stops and routes, calculate transit
+Use tidytransit to map transit stops and routes, calculate travel times and transit
 frequencies, and validate transit feeds. tidytransit reads the 
 [General Transit Feed Specification](http://gtfs.org/) into 
 [tidyverse](https://tibble.tidyverse.org/) and 
@@ -35,7 +35,7 @@ This package requires a working installation of
 
 For the development version from Github:
 
-```
+```r
 # install.packages("devtools")
 devtools::install_github("r-transit/tidytransit")
 ```
@@ -45,12 +45,12 @@ dependencies. For these users,
 [`trread`](https://github.com/r-transit/trread) may work better. It has
 more limited functionality, but it can read GTFS tables into R.
 
-# Background
+## Background
 
 tidytransit is a
 [fork](https://en.wikipedia.org/wiki/Fork_\(software_development\)) of
 [gtfsr](https://github.com/ropensci/gtfsr).
 
-# Contributing
+## Contributing
 
 Please feel free to issue a pull request or [open an issue](https://github.com/r-transit/tidytransit/issues/new).
