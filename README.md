@@ -33,12 +33,6 @@ Have a look at the following vignettes to see how tidytransit can be used to ana
 This package requires a working installation of
 [sf](https://github.com/r-spatial/sf#installing).
 
-A CRAN version is available:
-
-``` r
-install.packages('tidytransit')
-```
-
 For the development version from Github:
 
 ```
