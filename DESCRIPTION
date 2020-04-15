@@ -22,7 +22,7 @@ Authors@R: c(
 Description: Read General Transit Feed Specification (GTFS) zipfiles into a list of R dataframes. Perform validation of the data structure against the specification. Analyze the headways and frequencies at routes and stops. Create maps and perform spatial analysis on the routes and stops. Please see the GTFS documentation here for more detail: <http://gtfs.org/>.
 License: GPL
 LazyData: TRUE
-Depends: R (>= 3.6.3)
+Depends: R (>= 3.6.0)
 Imports:
     dplyr,
     zip (>= 2.0.1),
