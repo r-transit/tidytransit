@@ -1,7 +1,7 @@
 Package: tidytransit
 Type: Package
 Title: Read, Validate, Analyze, and Map Files in the General Transit Feed Specification  
-Version: 0.7.0
+Version: 0.7.1
 Authors@R: c(
     person("Flavio", "Poletti", role = c("aut"), email = "flavio.poletti@hotmail.ch"),
     person("Tom", "Buckley", role = c("aut", "cre"), email = "tom@tbuckl.com"),
@@ -22,7 +22,7 @@ Authors@R: c(
 Description: Read General Transit Feed Specification (GTFS) zipfiles into a list of R dataframes. Perform validation of the data structure against the specification. Analyze the headways and frequencies at routes and stops. Create maps and perform spatial analysis on the routes and stops. Please see the GTFS documentation here for more detail: <http://gtfs.org/>.
 License: GPL
 LazyData: TRUE
-Depends: R (>= 3.2.5)
+Depends: R (>= 3.6.0)
 Imports:
     dplyr,
     zip (>= 2.0.1),
@@ -44,7 +44,7 @@ Suggests:
     rmarkdown,
     ggplot2,
     scales
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 URL: https://github.com/r-transit/tidytransit
 BugReports: https://github.com/r-transit/tidytransit
 Roxygen: list(markdown = TRUE)

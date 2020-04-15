@@ -4,11 +4,13 @@
 \name{route_type_names}
 \alias{route_type_names}
 \title{Dataframe of route type id's and the names of the types (e.g. "Cable Car")}
-\format{A data frame with 122 rows and 2 variables:
+\format{
+A data frame with 122 rows and 2 variables:
 \describe{
 \item{id}{the id of route type}
 \item{name}{name of the gtfs route type}
-}}
+}
+}
 \source{
 \url{https://gist.github.com/derhuerst/b0243339e22c310bee2386388151e11e}
 }

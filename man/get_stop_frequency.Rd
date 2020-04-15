@@ -4,9 +4,15 @@
 \alias{get_stop_frequency}
 \title{Get Stop Frequency}
 \usage{
-get_stop_frequency(gtfs_obj, start_hour = 6, end_hour = 22,
-  service_ids = c(), dow = c(1, 1, 1, 1, 1, 0, 0), by_route = TRUE,
-  wide = FALSE)
+get_stop_frequency(
+  gtfs_obj,
+  start_hour = 6,
+  end_hour = 22,
+  service_ids = c(),
+  dow = c(1, 1, 1, 1, 1, 0, 0),
+  by_route = TRUE,
+  wide = FALSE
+)
 }
 \arguments{
 \item{gtfs_obj}{a list of gtfs dataframes as read by \code{\link[=read_gtfs]{read_gtfs()}}.}

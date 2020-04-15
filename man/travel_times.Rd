@@ -4,9 +4,16 @@
 \alias{travel_times}
 \title{Calculate shortest travel times from a stop to all reachable stops}
 \usage{
-travel_times(filtered_stop_times, stop_name, time_range = 3600,
-  arrival = FALSE, max_transfers = NULL, max_departure_time = NULL,
-  return_coords = FALSE, return_DT = FALSE)
+travel_times(
+  filtered_stop_times,
+  stop_name,
+  time_range = 3600,
+  arrival = FALSE,
+  max_transfers = NULL,
+  max_departure_time = NULL,
+  return_coords = FALSE,
+  return_DT = FALSE
+)
 }
 \arguments{
 \item{filtered_stop_times}{stop_times data.table (with transfers and stops tables as

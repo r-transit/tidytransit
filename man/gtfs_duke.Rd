@@ -4,7 +4,9 @@
 \name{gtfs_duke}
 \alias{gtfs_duke}
 \title{Example GTFS data}
-\format{An object of class \code{gtfs} of length 24.}
+\format{
+An object of class \code{gtfs} of length 24.
+}
 \usage{
 gtfs_duke
 }
