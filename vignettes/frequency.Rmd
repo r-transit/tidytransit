@@ -37,7 +37,6 @@ So, to review, we're going to:
 3) Calculate Headways
 4) Map Headways By Route
 5) Map Departures by Stop and Route
-6) Validate Our Estimates With EPA Estimates
 
 # 1) Import Transit Data (GTFS)
 
