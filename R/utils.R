@@ -66,13 +66,20 @@ trigger_suppressWarnings <- function(expr, quiet) {
 #' @param gtfs_obj a gtfs feed object
 #' @param zipfile path to the zip file the feed should be written to
 #' @param compression_level a number between 1 and 9.9, passed to zip::zip
+#' @param as_dir if TRUE, the feed is not zipped and zipfile is used as a directory path. 
+#'               Files within the directory will be overwritten.
 #' @importFrom zip zipr
 #' @export
-write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9) {
+write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE) {
   stopifnot(is_gtfs_obj(gtfs_obj))
 
   meta <- get_gtfs_meta()
-  dir.create(tmp <- tempfile())
+  if(!as_dir) {
+    dir.create(outdir <- tempfile())
+  } else {
+    outdir <- zipfile
+    if(!dir.exists(outdir)) dir.create(outdir)
+  }
   filenames = names(gtfs_obj)
   filenames <- filenames[filenames != "."]
 
@@ -88,10 +95,13 @@ write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9) {
     cn <- colnames(dd)[which(!(colnames(dd) %in% c("arrival_time_hms", "departure_time_hms", "start_time_hms", "end_time_hms")))]
     dd <- dd[cn]
 
-    readr::write_csv(dd, paste0(tmp, "/", filename, ".txt"), )
+    readr::write_csv(dd, paste0(outdir, "/", filename, ".txt"))
   }
-  filelist = paste0(tmp, "/", filenames, ".txt")
-  zip::zipr(zipfile, filelist, recurse = F, compression_level = compression_level)
+  if(!as_dir) {
+    filelist = paste0(outdir, "/", filenames, ".txt")
+    zip::zipr(zipfile, filelist, recurse = F, compression_level = compression_level)
+  }
+  invisible(gtfs_obj)
 }
 
 #' Returns TRUE if the given gtfs_obj contains the table. Used to check for
