@@ -95,7 +95,7 @@ write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE)
     cn <- colnames(dd)[which(!(colnames(dd) %in% c("arrival_time_hms", "departure_time_hms", "start_time_hms", "end_time_hms")))]
     dd <- dd[cn]
 
-    readr::write_csv(dd, paste0(outdir, "/", filename, ".txt"))
+    readr::write_csv(dd, paste0(outdir, "/", filename, ".txt"), na = "")
   }
   if(!as_dir) {
     filelist = paste0(outdir, "/", filenames, ".txt")
