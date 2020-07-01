@@ -4,7 +4,7 @@
 \alias{write_gtfs}
 \title{Writes a gtfs object to a zip file. Calculated tidytransit tables and columns are not exported.}
 \usage{
-write_gtfs(gtfs_obj, zipfile, compression_level = 9)
+write_gtfs(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE)
 }
 \arguments{
 \item{gtfs_obj}{a gtfs feed object}
@@ -12,6 +12,8 @@ write_gtfs(gtfs_obj, zipfile, compression_level = 9)
 \item{zipfile}{path to the zip file the feed should be written to}
 
 \item{compression_level}{a number between 1 and 9.9, passed to zip::zip}
+
+\item{as_dir}{if TRUE, the feed is not zipped and zipfile is used as a directory path. Files within the directory will be overwritten.}
 }
 \description{
 Writes a gtfs object to a zip file. Calculated tidytransit tables and columns are not exported.

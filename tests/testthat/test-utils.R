@@ -13,3 +13,14 @@ if (Sys.getenv("USER") != "travis") {
     expect_error(write_gtfs(g1$agency, path2))
   })
 }
+
+if (Sys.getenv("USER") != "travis") {
+  test_that("write_gtfs as_dir", {
+    skip_on_cran()
+    path1 <- system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
+    path2 <- tempdir()
+    g1 <- read_gtfs(path1)
+    write_gtfs(g1, path2, as_dir = TRUE)
+    expect_true(file.exists(paste0(path2, "/agency.txt")))
+  })
+}
