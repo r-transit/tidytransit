@@ -5,6 +5,7 @@ status](http://www.r-pkg.org/badges/version-ago/tidytransit?)](https://cran.r-pr
 [![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active) 
 [![](https://cranlogs.r-pkg.org/badges/tidytransit)](https://cran.r-project.org/package=tidytransit)
 [![](https://cranlogs.r-pkg.org/badges/grand-total/tidytransit?color=lightgrey)](https://cran.r-project.org/package=tidytransit)
+![R-CMD-check](https://github.com/r-transit/tidytransit/workflows/R-CMD-check/badge.svg)
 
 # tidytransit
 
