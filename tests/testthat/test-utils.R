@@ -1,6 +1,6 @@
 context("Utils")
 
-if (Sys.getenv("USER") != "travis") {
+if(Sys.getenv("USER") != "travis") {
   test_that("write_gtfs creates the same feed as read by read_gtfs", {
     skip_on_cran()
     path1 <- system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
@@ -14,7 +14,7 @@ if (Sys.getenv("USER") != "travis") {
   })
 }
 
-if (Sys.getenv("USER") != "travis") {
+if(Sys.getenv("USER") != "travis") {
   test_that("write_gtfs as_dir", {
     skip_on_cran()
     path1 <- system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
