@@ -321,4 +321,17 @@ test_that("travel_times with arrival=TRUE stop_name", {
   expect_equal(tt_to$journey_arrival_time, hms::hms(c(37,37,37,45,37,37,41,41)*60+7*3600))
 })
 
+test_that("set_num_times w/o hms or num", {
+  local_gtfs_path = system.file("extdata", "routing.zip", package = "tidytransit")
+  g2 = read_gtfs(local_gtfs_path)
+  g_st_dt = as.data.table(g2$stop_times)
+  set_num_times(g_st_dt)
+  expect_true(all(c("arrival_time_num", "departure_time_num") %in% colnames(g_st_dt)))
+})
 
+test_that("catch invalid params", {
+  expect_error(travel_times(g, stop_name = "One"), "Travel times cannot be calculated on a gtfs object. Use filter_stop_times().")
+  fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
+  expect_error(raptor(fst, attributes(fst)$transfers, stop_id = "stop1a", max_transfers = -1), "max_transfers is less than 0")
+  expect_error(travel_times(fst, stop_name = "One", max_transfers = -1), "max_transfers is less than 0")
+})
