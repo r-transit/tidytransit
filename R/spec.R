@@ -1,7 +1,6 @@
 #' Function that creates gtfs meta data
 #' @return Environment with gtfs data.
 #' @noRd
-
 get_gtfs_meta <- function() {
 
   # required files ----------------------------------------------------------
@@ -254,84 +253,3 @@ get_gtfs_meta <- function() {
                   "opt", "opt",  "opt"))
   return(meta)
 }
-
-get_gtfs_plus_meta <- function() {
-  # calendar_attributes
-  assign("calendar_attributes", list())
-  calendar_attributes$field <- c("service_id", "service_description")
-  calendar_attributes$field_spec <- rep("req", times = 2)
-  calendar_attributes$coltype <- c("c", "c")
-  
-  # directions
-  assign("directions", list())
-  directions$field <- c("route_id", "direction_id", "direction")
-  directions$field_spec <- rep("req", times = 3)
-  directions$coltype <- c("c", "i", "c")
-  
-  # fare_rider_categories
-  assign("fare_rider_categories", list())
-  fare_rider_categories$field <- c("fare_id", "rider_category_id", "price")
-  fare_rider_categories$field_spec <- c("req", "req", "req")
-  fare_rider_categories$coltype <- c("c", "c", "d")
-  
-  # farezone_attributes
-  assign("farezone_attributes", list())
-  farezone_attributes$field <- c("zone_id", "zone_name")
-  farezone_attributes$field_spec <- c("req", "req")
-  farezone_attributes$coltype <- rep("c", length(farezone_attributes$field))
-  
-  # rider_categories
-  assign("rider_categories", list())
-  rider_categories$field <- c("rider_category_id", "rider_category_description")
-  rider_categories$field_spec <- c("req", "req")
-  rider_categories$coltype <- rep("c", length(rider_categories$field))
-  
-  # route_directions
-  assign("route_directions", list())
-  route_directions$field <- c("route_id", "direction_id", "direction_name")
-  route_directions$field_spec <- rep("req", length(route_directions$field))
-  route_directions$coltype <- rep("c", length(route_directions$field))
-  route_directions$coltype[route_directions$field %in% c("direction_id")] <- "i"
-  
-  # stop_attributes
-  assign("stop_attributes", list())
-  stop_attributes$field <- c("stop_id", "stop_city")
-  stop_attributes$field_spec <- c("req", "req")
-  stop_attributes$coltype <- c("c", "c")
-  
-  # timetable_stop_order
-  assign("timetable_stop_order", list())
-  timetable_stop_order$field <- c("timetable_id", "stop_id",
-                                  "stop_sequence", "stop_name",
-                                  "connected_routes")
-  timetable_stop_order$field_spec <- 
-    rep("req", length(timetable_stop_order$field))
-  timetable_stop_order$field_spec[timetable_stop_order$field %in% 
-                                    c("stop_name", "connected_routes")] <- "opt"
-  timetable_stop_order$coltype <- rep("c", 
-                                      length(timetable_stop_order$field))
-  timetable_stop_order$coltype[timetable_stop_order$field %in% 
-                                 c("stop_sequence")] <- "i"
-  
-  # timetables
-  assign("timetables", list())
-  timetables$field <- c("timetable_id", "route_id",
-                        "direction_id", "start_date",
-                        "end_date", "monday", "tuesday",
-                        "wednesday", "thursday", "friday",
-                        "saturday", "sunday", "route_label",
-                        "service_notes", "direction_label",
-                        "orientation")
-  timetables$field_spec <- rep("req", length(timetables$field))
-  timetables$field_spec[timetables$field %in% 
-                          c("route_label","service_notes",
-                            "direction_label","orientation")] <- "opt"
-  timetables$coltype <- rep("c", length(timetables$field))
-  timetables$coltype[timetables$field %in% 
-                       c("direction_id", "monday",
-                         "tuesday", "wednesday", "thursday",
-                         "friday", "saturday", "sunday")] <- "i"
-  
-  environment()
-}
-

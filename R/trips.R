@@ -1,4 +1,5 @@
-#' Add trip pattern data frame to the gtfs object
+#' Add trip pattern data frame to the gtfs object. Trips (in stop_times) with the same 
+#' set of stops, arrival time and departure time have the same trip pattern.
 #' 
 #' @param gtfs_obj gtfs feed
 #' @param id_prefix all ids start with this string
@@ -8,7 +9,7 @@
 #' @importFrom dplyr group_by summarise ungroup left_join
 #' @importFrom digest digest
 #' @importFrom rlang .data
-set_trippattern <- function(gtfs_obj, id_prefix = "t_", hash_length = 7, hash_algo = "md5") {
+set_trippattern <- function(gtfs_obj, id_prefix = "t_", hash_algo = "md5", hash_length = 8) {
   get_trippattern_id <- function(stop_ids, arrival_times, departure_times) {
     h <- c(stop_ids, arrival_times, departure_times)
     hash <- digest(h, hash_algo)
@@ -16,18 +17,8 @@ set_trippattern <- function(gtfs_obj, id_prefix = "t_", hash_length = 7, hash_al
     return(id)
   }
   
-  if(hash_length < 1) {
-    get_trippattern_id <- function(stop_ids, arrival_times, departure_times) {
-      h <- c(stop_ids, arrival_times, departure_times)
-      hash <- digest(h, hash_algo)
-      id <- paste0(id_prefix, hash)
-      return(id)
-    }
-  }
-  
   # TODO use frequencies too
-  # TODO add test coverage
-  
+
   # find servicepattern_ids for all services
   stop_sequence <- NULL # prevents CMD chek note on non-visible binding
   trip_pattern <- gtfs_obj$stop_times %>%
