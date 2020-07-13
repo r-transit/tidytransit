@@ -24,3 +24,12 @@ test_that("the metadata from transitfeeds is a data frame that is not empty", {
     expect_true(dim(feedlist_df)[1]>100)
   }
 })
+
+test_that("summary.gtfs", {
+  gpath <- system.file("extdata", "routing.zip", package = "tidytransit")
+  g1 = read_gtfs(gpath)
+  x1 = capture.output(summary(g1))
+  g2 <- set_date_service_table(g1)
+  x2 = capture.output(summary(g2))
+  expect_true(all(x1 == x2))
+})

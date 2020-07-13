@@ -66,3 +66,10 @@ test_that("plots work with and without shapes", {
   gtfs_duke_wo_stops$stops <- NULL
   expect_error(plot(gtfs_duke_wo_stops))
 })
+
+test_that("meaningful errors", {
+  expect_error(get_route_geometry(gtfs_duke), "shapes not converted to sf, use gtfs_obj <- gtfs_as_sf(gtfs_obj)", fixed = TRUE)
+  expect_error(get_trip_geometry(gtfs_duke), "shapes not converted to sf, use gtfs_obj <- gtfs_as_sf(gtfs_obj)", fixed = TRUE)
+  
+  gtfs_as_sf(gtfs_duke, quiet = FALSE)
+})
