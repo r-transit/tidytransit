@@ -22,5 +22,3 @@ test_that("set_servicepattern w/ more params", {
   expect_equal(unique(substr(gtfs_orig$.$service_pattern$servicepattern_id,0,5)), "pref_")
   expect_error(set_servicepattern(gtfs_orig, hash_algo = "dummy"))
 })
-
-

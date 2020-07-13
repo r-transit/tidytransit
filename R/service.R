@@ -1,15 +1,3 @@
-#' Get the most frequent service for a set of trips. 
-#' 
-#' @param trips gtfs dataframe with a service_trips count column grouped by the service_id, route, etc of interest
-#' @return trips gtfs data frame within groups that are in the most frequent service window
-#' @keywords internal
-#' @importFrom dplyr %>%
-#' @keywords internal
-most_frequent_service <- function(trips) {
-  trips %>%
-    dplyr::top_n(1, .data$service_trips)
-}
-
 #' Filter a gtfs calendar dataframe to service ids for specific days of the week.
 #' 
 #' @param gtfs_object object made by join_all_gtfs_tables
