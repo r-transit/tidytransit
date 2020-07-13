@@ -149,7 +149,7 @@ unzip_file <- function(zipfile,
 
   if(!quiet) {
     message(sprintf("Unzipped the following files to directory '%s'...", tmpdirpath))
-    print(list.files(tmpdirpath))
+    message("> ", paste0(list.files(tmpdirpath), collapse = "\n> "), "\n")
   }
 
   return(tmpdirpath)
@@ -257,8 +257,7 @@ parse_gtfs_file <- function(prefix, file_path, quiet = FALSE) {
     #if no meta data is found for a file
     #type but file is not empty, read as is.
     if(is.null(meta)) {
-      s <- sprintf("File %s not recognized,
-                   trying to read file as csv.",
+      s <- sprintf("File %s not recognized, trying to read file as csv.",
                    basename(file_path))
       if(!quiet) message(s)
 
