@@ -7,7 +7,8 @@ get_gtfs_meta <- function() {
 
   # agency
   assign("agency", list())
-  agency$field <- c("agency_id", "agency_name", "agency_url", "agency_timezone", "agency_lang", "agency_phone", "agency_fare_url", "agency_email")
+  agency$field <- c("agency_id", "agency_name", "agency_url", "agency_timezone", 
+                    "agency_lang", "agency_phone", "agency_fare_url", "agency_email")
   agency$field_spec <- c("opt", "req", "req", "req", "opt", "opt", "opt", "opt")
   names(agency$field_spec) <- agency$field
   agency$coltype <- rep("c", 8)
@@ -15,23 +16,22 @@ get_gtfs_meta <- function() {
   
   # stops
   assign("stops", list())
-  stops$field <- c("stop_id", "stop_code", "platform_code", 
-                   "stop_name", "stop_desc", "stop_lat", 
-                   "stop_lon", "zone_id", "stop_url", 
+  stops$field <- c("stop_id", "stop_code", "stop_name", 
+                   "stop_desc", "stop_lat", "stop_lon", 
+                   "zone_id", "stop_url", 
                    "location_type", "parent_station", 
-                   "stop_timezone", "wheelchair_boarding")
-  stops$field_spec <- c("req", "opt", "opt", 
-                        "req", "opt", "req", 
-                        "req", "opt", "opt", 
-                        "opt", "opt", "opt", 
-                        "opt")
+                   "stop_timezone", "wheelchair_boarding",
+                   "level_id", "platform_code")
+  stops$field_spec <- c("req", "opt", "req", "opt",
+                        "req", "req", 
+                        rep("opt", 8))
   names(stops$field_spec) <- stops$field
   stops$coltype <- rep("c", length(stops$field))
   stops$coltype[which(stops$field %in% 
                         c("stop_lat", "stop_lon"))] <- "d" # double
   stops$coltype[which(stops$field %in% 
                         c("location_type",
-                          "wheelchair_boarding"))] <- "i" #integers
+                          "wheelchair_boarding"))] <- "i" # integers
   stops$file_spec <- "req"
   
   # routes
@@ -39,14 +39,17 @@ get_gtfs_meta <- function() {
   routes$field <- c("route_id", "agency_id", "route_short_name", 
                     "route_long_name", "route_desc", "route_type", 
                     "route_url", "route_color", 
-                    "route_text_color", "route_sort_order")
+                    "route_text_color", "route_sort_order",
+                    "continuous_pickup", "continuous_drop_off")
   routes$field_spec <- c("req", "opt", "req", 
                          "req", "opt", "req", 
                          "opt", "opt", "opt", 
-                         "opt")
+                         "opt", "opt", "opt")
   names(routes$field_spec) <- routes$field
   routes$coltype <- rep("c", length(routes$field))
-  routes$coltype[routes$field %in% c("route_type", "route_sort_order")] <- "i"
+  routes$coltype[routes$field %in% c("route_type", "route_sort_order",
+                                     "continuous_pickup", 
+                                     "continuous_drop_off")] <- "i"
   routes$file_spec <- "req"
   
   # trips
@@ -71,19 +74,19 @@ get_gtfs_meta <- function() {
                         "departure_time", 
                         "stop_id", "stop_sequence", 
                         "stop_headsign", "pickup_type", 
-                        "drop_off_type", "shape_dist_traveled", 
+                        "drop_off_type", "continuous_pickup", 
+                        "continuous_drop_off", "shape_dist_traveled", 
                         "timepoint")
   stop_times$field_spec <- c("req", "req", "req", 
                              "req", "req", "opt", 
                              "opt", "opt", "opt", 
-                             "opt")
+                             "opt", "opt", "opt")
   names(stop_times$field_spec) <- stop_times$field
   stop_times$coltype <- rep("c", length(stop_times$field))
   stop_times$coltype[stop_times$field 
-                     %in% c("stop_sequence", 
-                            "pickup_type", 
-                            "drop_off_type", 
-                            "timepoint")] <- "i"
+                     %in% c("stop_sequence", "pickup_type", 
+                            "drop_off_type", "continuous_pickup", 
+                            "continuous_drop_off","timepoint")] <- "i"
   stop_times$coltype[stop_times$field %in% 
                        c("shape_dist_traveled")] <- "d"
   stop_times$file_spec <- "req"
