@@ -24,3 +24,11 @@ if(Sys.getenv("USER") != "travis") {
     expect_true(file.exists(paste0(path2, "/agency.txt")))
   })
 }
+
+test_that("filter_stops", {
+  g = read_gtfs(system.file("extdata", "routing.zip", package = "tidytransit"))
+  fs1 = filter_stops(g, service_ids = "WEEK", route_ids = c("lineA", "lineD"))
+  expect_equal(sort(unique(fs1$stop_id)), c("stop1a", "stop1b", "stop2", "stop3a", "stop3b", "stop4", "stop8b"))
+  fs2 = filter_stops(g, service_ids = "WEND", route_ids = c("lineA", "lineD"))
+  expect_equal(nrow(fs2), 0)
+})
