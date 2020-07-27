@@ -384,9 +384,10 @@ travel_times = function(filtered_stop_times,
   }
   
   # raptor in travel_times ####
-  rptr = raptor(filtered_stop_times,
-                transfers,
+  rptr = raptor(stop_times = filtered_stop_times,
+                transfers = transfers,
                 stop_ids = stop_ids,
+                max_transfers = max_transfers,
                 arrival = arrival,
                 time_range = time_range,
                 keep = "shortest")

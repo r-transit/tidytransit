@@ -1,15 +1,3 @@
-#' Get the most frequent service for a set of trips. 
-#' 
-#' @param trips gtfs dataframe with a service_trips count column grouped by the service_id, route, etc of interest
-#' @return trips gtfs data frame within groups that are in the most frequent service window
-#' @keywords internal
-#' @importFrom dplyr %>%
-#' @keywords internal
-most_frequent_service <- function(trips) {
-  trips %>%
-    dplyr::top_n(1, .data$service_trips)
-}
-
 #' Filter a gtfs calendar dataframe to service ids for specific days of the week.
 #' 
 #' @param gtfs_object object made by join_all_gtfs_tables
@@ -46,15 +34,15 @@ count_service_trips <- function(trips) {
 #' 
 #' @param gtfs_obj gtfs feed
 #' @param id_prefix all ids start with this string
-#' @param hash_length length the hash should be cut to with substr(). Use -1 if the full hash should be used
 #' @param hash_algo hashing algorithm used by digest
+#' @param hash_length length the hash should be cut to with substr(). Use -1 if the full hash should be used
 #' @return modified gtfs_obj with added servicepattern list and a table linking trips and pattern (trip_servicepatterns)
 #' @keywords internal
 #' @importFrom dplyr group_by summarise ungroup left_join
 #' @importFrom digest digest
 #' @importFrom rlang .data
 #' @export
-set_servicepattern <- function(gtfs_obj, hash_algo = "md5", id_prefix = "s_", hash_length = 7) {
+set_servicepattern <- function(gtfs_obj, id_prefix = "s_", hash_algo = "md5", hash_length = 7) {
   if(!feed_contains(gtfs_obj, "date_service_table")) {
     gtfs_obj <- set_date_service_table(gtfs_obj)
   }

@@ -6,17 +6,17 @@
 \usage{
 set_servicepattern(
   gtfs_obj,
-  hash_algo = "md5",
   id_prefix = "s_",
+  hash_algo = "md5",
   hash_length = 7
 )
 }
 \arguments{
 \item{gtfs_obj}{gtfs feed}
 
-\item{hash_algo}{hashing algorithm used by digest}
-
 \item{id_prefix}{all ids start with this string}
+
+\item{hash_algo}{hashing algorithm used by digest}
 
 \item{hash_length}{length the hash should be cut to with substr(). Use -1 if the full hash should be used}
 }
