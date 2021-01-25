@@ -44,7 +44,7 @@ Suggests:
     rmarkdown,
     ggplot2,
     scales
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 URL: https://github.com/r-transit/tidytransit
 BugReports: https://github.com/r-transit/tidytransit
 Roxygen: list(markdown = TRUE)

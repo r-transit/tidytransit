@@ -19,12 +19,14 @@
 "feedlist"
 
 #' Dataframe of route type id's and the names of the types (e.g. "Cable Car")
-#'
+#' 
+#' Extended GTFS Route Types: https://developers.google.com/transit/gtfs/reference/extended-route-types
+#' 
 #' @docType data
-#' @format A data frame with 122 rows and 2 variables:
+#' @format A data frame with 132 rows and 2 variables:
 #' \describe{
-#'   \item{id}{the id of route type}
-#'   \item{name}{name of the gtfs route type}
+#'   \item{route_type}{the id of route type}
+#'   \item{route_type_name}{name of the gtfs route type}
 #' }
 #' @source \url{https://gist.github.com/derhuerst/b0243339e22c310bee2386388151e11e}
 "route_type_names"

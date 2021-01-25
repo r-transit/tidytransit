@@ -1,4 +1,4 @@
-id	name
+route_type	route_type_name
 0	Tram, Light Rail, Streetcar
 1	Subway, Metro
 2	Rail
@@ -131,3 +131,5 @@ id	name
 1603	Hire Motorbike
 1604	Hire Cycle
 1605	All Self-Drive Vehicles
+1700	Miscellaneous Service
+1702	Horse-drawn Carriage
