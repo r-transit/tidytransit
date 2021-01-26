@@ -5,10 +5,10 @@
 \alias{route_type_names}
 \title{Dataframe of route type id's and the names of the types (e.g. "Cable Car")}
 \format{
-A data frame with 122 rows and 2 variables:
+A data frame with 132 rows and 2 variables:
 \describe{
-\item{id}{the id of route type}
-\item{name}{name of the gtfs route type}
+\item{route_type}{the id of route type}
+\item{route_type_name}{name of the gtfs route type}
 }
 }
 \source{
@@ -18,6 +18,6 @@ A data frame with 122 rows and 2 variables:
 route_type_names
 }
 \description{
-Dataframe of route type id's and the names of the types (e.g. "Cable Car")
+Extended GTFS Route Types: https://developers.google.com/transit/gtfs/reference/extended-route-types
 }
 \keyword{datasets}
