@@ -39,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -71,7 +71,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/r-transit/tidytransit/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -85,8 +85,7 @@
 
       
 
-      </header><script src="timetable_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="timetable_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="timetable_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="timetable_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Generate a Departure Timetable</h1>
@@ -125,10 +124,9 @@
 <code class="sourceCode R"><span class="co"># get the id of the first stop in the trip's stop sequence</span>
 <span class="va">first_stop_id</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">stop_times</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">trip_id</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/tidyverse.html">summarise</a></span><span class="op">(</span>stop_id <span class="op">=</span> <span class="va">stop_id</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html">which.min</a></span><span class="op">(</span><span class="va">stop_sequence</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></code></pre></div>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># join with the stops table to get the stop_name</span>
+  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/tidyverse.html">summarise</a></span><span class="op">(</span>stop_id <span class="op">=</span> <span class="va">stop_id</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html">which.min</a></span><span class="op">(</span><span class="va">stop_sequence</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
+
+<span class="co"># join with the stops table to get the stop_name</span>
 <span class="va">first_stop_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">first_stop_id</span>, <span class="va">gtfs</span><span class="op">$</span><span class="va">stops</span>, by<span class="op">=</span><span class="st">"stop_id"</span><span class="op">)</span>
 
 <span class="co"># rename the first stop_name as trip_origin</span>
@@ -136,7 +134,7 @@
 
 <span class="co"># join the trip origins back onto the trips</span>
 <span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span>, <span class="va">trip_origins</span>, by <span class="op">=</span> <span class="st">"trip_id"</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">route_id</span>, <span class="va">trip_origin</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
@@ -150,7 +148,7 @@
 ## 5 1        South Ferry                
 ## 6 1        Van Cortlandt Park - 242 St</code></pre>
 <p>In case <code>trip_headsign</code> does not exist in the feed it can be generated similarly to <code>trip_origin</code>:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/exists.html">exists</a></span><span class="op">(</span><span class="st">"trip_headsign"</span>, where <span class="op">=</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
   <span class="co"># get the last id of the trip's stop sequence</span>
   <span class="va">trip_headsigns</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">stop_times</span> <span class="op">%&gt;%</span> 
@@ -166,7 +164,7 @@
 <h2 class="hasAnchor">
 <a href="#create-a-departure-time-table" class="anchor"></a>Create A Departure Time Table</h2>
 <p>To create a departure timetable we first need to find the ids of all stops in the stops table with the same same name, as <code>stop_name</code> might cover different platforms and thus have multiple stop_ids in the stops table.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">stop_ids</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">stops</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">stop_name</span> <span class="op">==</span> <span class="st">"Times Sq - 42 St"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">stop_id</span><span class="op">)</span></code></pre></div>
@@ -175,7 +173,7 @@
 <h2 class="hasAnchor">
 <a href="#trips-departing-from-stop" class="anchor"></a>Trips departing from stop</h2>
 <p>To the selected stop_ids for Time Square, we can join trip columns: <code>route_id</code>, <code>service_id</code>, <code>trip_headsign</code>, and <code>trip_origin</code>. Because stop_ids and trips are linked via the stop_times data frame, we do this by joining the stop_ids we’ve selected to the stop_times data frame and then to the trips data frame.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">departures</span> <span class="op">&lt;-</span> <span class="va">stop_ids</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">inner_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">stop_times</span> <span class="op">%&gt;%</span> 
                <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">trip_id</span>, <span class="va">arrival_time_hms</span>, 
@@ -193,14 +191,14 @@
 <h2 class="hasAnchor">
 <a href="#add-route-info-route_short_name" class="anchor"></a>add route info (route_short_name)</h2>
 <p>Each trip belongs to a route, and the route short name can be added to the departures by joining the trips data frame with <code>gtfs$routes</code>.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">departures</span> <span class="op">&lt;-</span> <span class="va">departures</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">routes</span> <span class="op">%&gt;%</span> 
               <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">route_id</span>, 
                      <span class="va">route_short_name</span><span class="op">)</span>, 
             by <span class="op">=</span> <span class="st">"route_id"</span><span class="op">)</span></code></pre></div>
 <p>Now we have a data frame that tells us about the origin, destination, and time at which each train depart from Times Square for every possible schedule of service.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">departures</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">arrival_time_hms</span>,
          <span class="va">departure_time_hms</span>,
@@ -267,11 +265,11 @@
 <h2 class="hasAnchor">
 <a href="#preparing-a-date-service-table" class="anchor"></a>Preparing a Date Service Table</h2>
 <p>First, we need to calculate a table that maps calendar dates to service_ids for the entire schedule. To do this, we pipe the feed to the <code>set_date_service_table</code> function, which adds a <code>date_service_table</code> to the computed tables in the feed. Please the <code>servicepatterns</code> vignette for further examples on how to use this table.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">gtfs</span> <span class="op">&lt;-</span> <span class="va">gtfs</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="../reference/set_hms_times.html">set_hms_times</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="../reference/set_date_service_table.html">set_date_service_table</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">date_service_table</span><span class="op">)</span></code></pre></div>
 <pre><code>## # A tibble: 6 x 2
 ##   date       service_id             
@@ -288,14 +286,14 @@
 <a href="#extract-a-single-day" class="anchor"></a>Extract a single day</h2>
 <p>Now we are ready to extract the same service table for any given day of the year.</p>
 <p>For example, for August 23rd 2018, a typical weekday, we can filter as follows:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">services_on_180823</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">date_service_table</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">date</span> <span class="op">==</span> <span class="st">"2018-08-23"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">service_id</span><span class="op">)</span>
 
 <span class="va">departures_180823</span> <span class="op">&lt;-</span> <span class="va">departures</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">inner_join</a></span><span class="op">(</span><span class="va">services_on_180823</span>, by <span class="op">=</span> <span class="st">"service_id"</span><span class="op">)</span></code></pre></div>
 <p>How services and trips are set up depends largely on the feed. For an idea how to handle other dates and questions about schedules have a look at the <code>servicepatterns</code> vignette.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">departures_180823</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">departure_time_hms</span>, <span class="va">stop_id</span>, <span class="va">route_short_name</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">departure_time_hms</span>, <span class="va">stop_id</span>, <span class="va">route_short_name</span>, <span class="va">trip_headsign</span><span class="op">)</span> <span class="op">%&gt;%</span> 
@@ -485,7 +483,7 @@
 <h2 class="hasAnchor">
 <a href="#simple-plot" class="anchor"></a>Simple plot</h2>
 <p>We’ll now plot all departures from Times Square depending on trip_headsign and route. We can use the route colors provided in the feed.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">route_colors</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">routes</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">route_id</span>, <span class="va">route_short_name</span>, <span class="va">route_color</span><span class="op">)</span>
 <span class="va">route_colors</span><span class="op">$</span><span class="va">route_color</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">route_colors</span><span class="op">$</span><span class="va">route_color</span><span class="op">)</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"454545"</span>
 <span class="va">route_colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"#"</span>, <span class="va">route_colors</span><span class="op">$</span><span class="va">route_color</span><span class="op">)</span>, <span class="va">route_colors</span><span class="op">$</span><span class="va">route_short_name</span><span class="op">)</span>
@@ -499,7 +497,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Departures from Times Square on 08/23/18"</span><span class="op">)</span></code></pre></div>
 <p><img src="timetable_files/figure-html/unnamed-chunk-14-1.png" width="768"></p>
 <p>Now we plot departures for all stop_ids with the same name, we can separate for different stop_id. The following plot shows all departures for stop_ids 127N and 127S from 7 to 8 AM.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">departures_180823_sub_7to8</span> <span class="op">&lt;-</span> <span class="va">departures_180823</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">stop_id</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"127N"</span>, <span class="st">"127S"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">departure_time_hms</span> <span class="op">&gt;=</span> <span class="fu">hms</span><span class="fu">::</span><span class="fu"><a href="https://hms.tidyverse.org/reference/hms.html">hms</a></span><span class="op">(</span>hours <span class="op">=</span> <span class="fl">7</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">departure_time_hms</span> <span class="op">&lt;=</span> <span class="fu">hms</span><span class="fu">::</span><span class="fu"><a href="https://hms.tidyverse.org/reference/hms.html">hms</a></span><span class="op">(</span>hour <span class="op">=</span> <span class="fl">8</span><span class="op">)</span><span class="op">)</span>

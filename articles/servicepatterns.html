@@ -39,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -71,7 +71,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/r-transit/tidytransit/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -85,8 +85,7 @@
 
       
 
-      </header><script src="servicepatterns_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="servicepatterns_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="servicepatterns_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="servicepatterns_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Service Patterns and Calendar Schedules</h1>
@@ -263,13 +262,12 @@
 <code class="sourceCode R"><span class="va">servicepattern_names</span> <span class="op">=</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">date_servicepattern_table</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">servicepattern_id</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/tidyverse.html">summarise</a></span><span class="op">(</span>
     servicepattern_name <span class="op">=</span> <span class="fu">suggest_servicepattern_name</span><span class="op">(</span><span class="va">date</span>, <span class="va">calendar</span><span class="op">)</span>
-  <span class="op">)</span></code></pre></div>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">servicepattern_names</span><span class="op">)</span></code></pre></div>
+  <span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">servicepattern_names</span><span class="op">)</span></code></pre></div>
 <pre><code>## # A tibble: 7 x 2
 ##   servicepattern_id servicepattern_name                                         
-##   &lt;chr&gt;             &lt;chr&gt;                                                       
+## * &lt;chr&gt;             &lt;chr&gt;                                                       
 ## 1 s_128de43         Sundays (2018-06-24 - 2018-09-30)                           
 ## 2 s_498c8ac         Tuesday, Wednesday, Thursday, Friday (2018-06-26 - 2018-11-…
 ## 3 s_a4c6b26         Sundays and Labor Day (2018-06-24 - 2018-10-28)             
@@ -286,15 +284,14 @@
 <h3 class="hasAnchor">
 <a href="#plot-calendar-for-each-service-pattern" class="anchor"></a>Plot calendar for each service pattern</h3>
 <p>We can plot the service pattern like a calendar to visualise the different patterns. The original services can be plotted similarly (given it’s not too many) by using <code>date_service_table</code> and <code>service_id</code>.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">dates</span> <span class="op">=</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">date_servicepattern_table</span>
 <span class="va">dates</span><span class="op">$</span><span class="va">wday</span> <span class="op">&lt;-</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="http://lubridate.tidyverse.org/reference/day.html">wday</a></span><span class="op">(</span><span class="va">dates</span><span class="op">$</span><span class="va">date</span>, label <span class="op">=</span> <span class="cn">T</span>, abbr <span class="op">=</span> <span class="cn">T</span>, week_start <span class="op">=</span> <span class="fl">7</span><span class="op">)</span>
 <span class="va">dates</span><span class="op">$</span><span class="va">week_nr</span> <span class="op">&lt;-</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="http://lubridate.tidyverse.org/reference/week.html">week</a></span><span class="op">(</span><span class="va">dates</span><span class="op">$</span><span class="va">date</span><span class="op">)</span>
 
-<span class="va">dates</span> <span class="op">&lt;-</span> <span class="va">dates</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">week_nr</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/tidyverse.html">summarise</a></span><span class="op">(</span>week_first_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">right_join</a></span><span class="op">(</span><span class="va">dates</span>, by <span class="op">=</span> <span class="st">"week_nr"</span><span class="op">)</span></code></pre></div>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">week_labels</span> <span class="op">=</span> <span class="va">dates</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">week_nr</span>, <span class="va">week_first_date</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html">unique</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">dates</span> <span class="op">&lt;-</span> <span class="va">dates</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">week_nr</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/tidyverse.html">summarise</a></span><span class="op">(</span>week_first_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">right_join</a></span><span class="op">(</span><span class="va">dates</span>, by <span class="op">=</span> <span class="st">"week_nr"</span><span class="op">)</span>
+
+<span class="va">week_labels</span> <span class="op">=</span> <span class="va">dates</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">week_nr</span>, <span class="va">week_first_date</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html">unique</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">dates</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">wday</span>, y <span class="op">=</span> <span class="va">week_nr</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"#747474"</span><span class="op">)</span> <span class="op">+</span>
@@ -309,14 +306,12 @@
 <h3 class="hasAnchor">
 <a href="#plot-number-of-trips-per-day-as-calendar" class="anchor"></a>Plot number of trips per day as calendar</h3>
 <p>We can plot the number of trips for each day as a calendar heat map.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">trips_servicepattern</span> <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span>, <span class="va">trip_id</span>, <span class="va">service_id</span><span class="op">)</span>, <span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">service_pattern</span>, by <span class="op">=</span> <span class="st">"service_id"</span><span class="op">)</span>
 <span class="va">trip_dates</span> <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">date_servicepattern_table</span>, <span class="va">trips_servicepattern</span>, by <span class="op">=</span> <span class="st">"servicepattern_id"</span><span class="op">)</span>
 
-<span class="va">trip_dates_count</span> <span class="op">=</span> <span class="va">trip_dates</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/tidyverse.html">summarise</a></span><span class="op">(</span>count <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> </code></pre></div>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">trip_dates_count</span><span class="op">$</span><span class="va">weekday</span> <span class="op">&lt;-</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="http://lubridate.tidyverse.org/reference/day.html">wday</a></span><span class="op">(</span><span class="va">trip_dates_count</span><span class="op">$</span><span class="va">date</span>, label <span class="op">=</span> <span class="cn">T</span>, abbr <span class="op">=</span> <span class="cn">T</span>, week_start <span class="op">=</span> <span class="fl">7</span><span class="op">)</span>
+<span class="va">trip_dates_count</span> <span class="op">=</span> <span class="va">trip_dates</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/tidyverse.html">summarise</a></span><span class="op">(</span>count <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> 
+<span class="va">trip_dates_count</span><span class="op">$</span><span class="va">weekday</span> <span class="op">&lt;-</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="http://lubridate.tidyverse.org/reference/day.html">wday</a></span><span class="op">(</span><span class="va">trip_dates_count</span><span class="op">$</span><span class="va">date</span>, label <span class="op">=</span> <span class="cn">T</span>, abbr <span class="op">=</span> <span class="cn">T</span>, week_start <span class="op">=</span> <span class="fl">7</span><span class="op">)</span>
 <span class="va">trip_dates_count</span><span class="op">$</span><span class="va">day_of_month</span> <span class="op">&lt;-</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="http://lubridate.tidyverse.org/reference/day.html">day</a></span><span class="op">(</span><span class="va">trip_dates_count</span><span class="op">$</span><span class="va">date</span><span class="op">)</span>
 <span class="va">trip_dates_count</span><span class="op">$</span><span class="va">first_day_of_month</span> <span class="op">&lt;-</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="http://lubridate.tidyverse.org/reference/day.html">wday</a></span><span class="op">(</span><span class="va">trip_dates_count</span><span class="op">$</span><span class="va">date</span> <span class="op">-</span> <span class="va">trip_dates_count</span><span class="op">$</span><span class="va">day_of_month</span>,  week_start <span class="op">=</span> <span class="fl">7</span><span class="op">)</span>
 <span class="va">trip_dates_count</span><span class="op">$</span><span class="va">week_of_month</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">ceiling</a></span><span class="op">(</span><span class="op">(</span><span class="va">trip_dates_count</span><span class="op">$</span><span class="va">day_of_month</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">trip_dates_count</span><span class="op">$</span><span class="va">weekday</span><span class="op">)</span> <span class="op">-</span> <span class="va">trip_dates_count</span><span class="op">$</span><span class="va">first_day_of_month</span><span class="op">)</span> <span class="op">/</span> <span class="fl">7</span><span class="op">)</span>
