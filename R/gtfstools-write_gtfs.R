@@ -37,8 +37,9 @@
 #' gtfs_no_opt <- read_gtfs(tmp_file)
 #' names(gtfs_no_opt)
 #'
-#' @export
-write_gtfs <- function(gtfs,
+# TODO handle additional columns
+#' @noRd
+gtfstools_write_gtfs <- function(gtfs,
                        path,
                        optional = TRUE,
                        extra = TRUE,

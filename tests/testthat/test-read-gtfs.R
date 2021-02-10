@@ -30,18 +30,6 @@ test_that("loud read_gtfs", {
     "gtfs")
 })
 
-test_that("Downloading a zip file from a gtfs_example_url returns a file", {
-  skip_on_cran()
-  if(!working()){
-    skip("no internet, skipping")
-  }
-  else {  
-  zip <- download_from_url(gtfs_example_url, quiet = T)
-
-  expect_true(file.exists(zip))
-  }
-})
-
 test_that("import-bad paths throw good errors", {
   skip_on_cran()
   not_a_url <- "#!:D"
