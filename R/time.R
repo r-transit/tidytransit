@@ -43,6 +43,25 @@ set_hms_times <- function(gtfs_obj) {
   return(gtfs_obj)
 }
 
+set_dates <- function(gtfs_obj) {
+  if(!is.null(gtfs_obj[["calendar"]])) { # $calendar matches calendar_dates
+    gtfs_obj$calendar$start_date <- as.Date(gtfs_obj$calendar$start_date, format = "%Y%m%d")
+    gtfs_obj$calendar$end_date <- as.Date(gtfs_obj$calendar$end_date, format = "%Y%m%d")
+  }
+  if(!is.null(gtfs_obj[["calendar_dates"]])) {
+    gtfs_obj$calendar_dates$date <- as.Date(gtfs_obj$calendar_dates$date, format = "%Y%m%d")
+  }
+  if(!is.null(gtfs_obj[["feed_info"]])) {
+    if(!is.null(gtfs_obj$feed_info$feed_start_date)) {
+      gtfs_obj$feed_info$feed_start_date <- as.Date(gtfs_obj$feed_info$feed_start_date, format = "%Y%m%d")
+    }
+    if(!is.null(gtfs_obj$feed_info$feed_end_date)) {
+      gtfs_obj$feed_info$feed_end_date <- as.Date(gtfs_obj$feed_info$feed_end_date, format = "%Y%m%d")
+    }
+  }
+  gtfs_obj
+}
+
 #' Returns all possible date/service_id combinations as a data frame
 #' 
 #' Use it to summarise service. For example, get a count of the number of services for a date. See example. 

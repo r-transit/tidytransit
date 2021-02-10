@@ -9,7 +9,8 @@
 #'   existing files are read.
 #' @param quiet Whether to hide log messages and progress bars (defaults to TRUE).
 #' @param warnings Whether to display warning messages (defaults to TRUE).
-#'
+#' @param parse_dates date columns in calendar.txt, calendar_dates.txt and feed_info.txt
+#'   are converted to a Date object.
 #' @return A GTFS object: a list of data.tables in which each index represents a
 #'   GTFS text file.
 #'
@@ -25,7 +26,7 @@
 #' names(gtfs)
 #'
 #' @export
-read_gtfs <- function(path, files = NULL, quiet = TRUE, warnings = TRUE) {
+read_gtfs <- function(path, files = NULL, quiet = TRUE, warnings = TRUE, parse_dates = TRUE) {
 
   checkmate::assert_string(path)
   checkmate::assert_logical(quiet)
@@ -113,8 +114,11 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE, warnings = TRUE) {
 
   gtfs <- validate_gtfs(gtfs, files, quiet, warnings)
 
+  if(parse_dates) {
+    gtfs <- set_dates(gtfs)
+  }
+  
   return(gtfs)
-
 }
 
 
