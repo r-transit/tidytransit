@@ -46,7 +46,7 @@ write_gtfs <- function(gtfs,
                        quiet = TRUE,
                        warnings = TRUE) {
 
-  checkmate::assert_class(gtfs, "dt_gtfs")
+  checkmate::assert_class(gtfs, "gtfs")
   checkmate::assert_path_for_output(path, overwrite = overwrite, extension = "zip")
   checkmate::assert_logical(optional)
   checkmate::assert_logical(extra)
