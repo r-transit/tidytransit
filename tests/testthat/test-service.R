@@ -7,9 +7,9 @@ test_that("set_servicepattern", {
   # Create unique service_id for each trip_id
   g = gtfs_orig
   g$trips$service_id <- paste(g$trips$service_id, substr(g$trips$route_id, 5, 6), sep = "_")
-  g$calendar <- rbind(
+  g$calendar <- dplyr::bind_rows(
     g$calendar,
-    cbind(service_id = unique(g$trips$service_id), g$calendar[1,-1])
+    dplyr::bind_cols(service_id = unique(g$trips$service_id), g$calendar[1,-1])
   )
   g <- set_servicepattern(g)
   expect_equal(length(unique(g$.$service_pattern$servicepattern_id)), length(unique(gtfs_orig$calendar$service_id)))

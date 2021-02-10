@@ -154,12 +154,21 @@ read_files <- function(filename, temp_dir, quiet) {
       )
 
     }
-
+    
+    file_path = file.path(temp_dir, filename)
+    
+    # check if a file is empty. If so, return NULL.
+    flength <- suppressWarnings(length(scan(file_path, what = "", quiet = TRUE, sep = "\n")))
+    if(flength < 1) {
+      if(!quiet) message(sprintf("   File '%s' is empty.", basename(file_path)))
+      return(NULL)
+    }
+    
     full_dt <- data.table::fread(
-      file.path(temp_dir, filename),
+      file_path,
       colClasses = "character",
-      showProgress = !quiet
-    )
+      showProgress = !quiet)
+    
 
   } else {
     metadata_colclasses <- setNames(file_metadata$coltype, file_metadata$field)

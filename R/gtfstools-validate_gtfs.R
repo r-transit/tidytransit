@@ -92,7 +92,7 @@ validate_gtfs <- function(gtfs, files = NULL, quiet = TRUE, warnings = TRUE) {
 
       file_provided_status  <- TRUE
       file_spec             <- "ext"
-      field                 <- names(gtfs[[file]])
+      field                 <- names(gtfs[[file]]); if(is.null(field)) field <- NA
       field_spec            <- "ext"
       field_provided_status <- TRUE
 

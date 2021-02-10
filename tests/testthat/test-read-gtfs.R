@@ -48,32 +48,6 @@ test_that("import-bad paths throw good errors", {
   expect_error(read_gtfs(path)) # invalid path
 })
 
-test_that("import-empty txt files are not 
-          imported and non-empty ones are imported", {
-  skip_on_cran()
-  if(!working()){
-    skip("no internet, skipping")
-  }
-  else {
-    zip <- download_from_url(gtfs_example_url, quiet = T)
-    folder <- unzip_file(zip)
-    files <- list.files(folder, full.names = TRUE)
-    agency_file <- files[1]
-    # empty file
-    empty <- ""
-    write(empty, file.path(folder, "_empty.txt"))
-    files <- list.files(folder, full.names = TRUE)
-    empty_file <- files[1]
-    
-    expect_null(
-      parse_gtfs_file("_empty", 
-                                    empty_file))
-    expect_is(
-      parse_gtfs_file("agency", 
-                                    agency_file), "tbl_df") 
-  }
-})
-
 test_that("the read_gtfs function works", {
   skip_on_cran()
   if(!working()){
@@ -129,12 +103,12 @@ test_that("Files with BOM can be read", {
 
 test_that("Feed with additional data can be read", {
   g_plus_path <- system.file("extdata", "sample-feed-plus.zip", package = "tidytransit")
-  g <- read_gtfs(g_plus_path, F)
+  g <- read_gtfs(g_plus_path)
   expect_true(is_gtfs_obj(g))
 })
 
 test_that("validation", {
   g_invalid_path = system.file("extdata","sample-feed-invalid.zip", package = "tidytransit")
   expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required file(s): stop_times", fixed = TRUE)
-  expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required field(s): stop_id", fixed = TRUE)
+  expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required field(s) in stops: stop_id", fixed = TRUE)
 })
