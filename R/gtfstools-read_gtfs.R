@@ -49,23 +49,23 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE, warnings = TRUE) {
 
   checkmate::assert_file_exists(path, extension = "zip")
 
-  files_in_gtfs <- zip::zip_list(path)$filename
+  filenames_in_gtfs <- zip::zip_list(path)$filename
 
   if (is.null(files)) {
 
-    files_to_read <- files_in_gtfs
+    filenames_to_read <- filenames_in_gtfs
 
   } else {
 
-    checkmate::assert_names(files, subset.of = sub(".txt", "", files_in_gtfs))
+    checkmate::assert_names(files, subset.of = sub(".txt", "", filenames_in_gtfs))
 
-    files_to_read <- paste0(files, ".txt")
+    filenames_to_read <- paste0(files, ".txt")
 
   }
 
   temp_dir <- file.path(tempdir(), "gt_gtfsdir")
   unlink(temp_dir, recursive = TRUE)
-  zip::unzip(path, files = files_to_read, exdir = temp_dir, overwrite = TRUE)
+  zip::unzip(path, files = filenames_to_read, exdir = temp_dir, overwrite = TRUE)
 
   if (!quiet) {
     message(
@@ -73,15 +73,15 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE, warnings = TRUE) {
         "Unzipped the following files to directory ",
         normalizePath(temp_dir),
         ":\n",
-        paste0("> ", files_to_read, collapse = "\n")
+        paste0("> ", filenames_to_read, collapse = "\n")
       )
     )
   }
 
   # read files into list and assign GTFS class
 
-  gtfs <- lapply(files_to_read, read_files, temp_dir, quiet)
-  gtfs <- stats::setNames(gtfs, sub(".txt", "", files_to_read))
+  gtfs <- lapply(filenames_to_read, read_files, temp_dir, quiet)
+  gtfs <- stats::setNames(gtfs, sub(".txt", "", filenames_to_read))
   class(gtfs) <- c("gtfs", "list")
 
   # check if any parsing warnings were thrown
@@ -123,7 +123,7 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE, warnings = TRUE) {
 #'
 #' Reads a text file from the main zip file.
 #'
-#' @param file The name of the file (with \code{.txt} extension) to be read.
+#' @param filename The name of the file (with \code{.txt} extension) to be read.
 #' @param temp_dir The path to the temporary folder where the GTFS was unzipped.
 #' @param quiet Whether to hide log messages and progress bars (defaults to TRUE).
 #'
@@ -131,13 +131,13 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE, warnings = TRUE) {
 #'   any parsing warnings were thrown.
 #'
 #' @noRd
-read_files <- function(file, temp_dir, quiet) {
+read_files <- function(filename, temp_dir, quiet) {
 
   # uses internal data gtfs_metadata - check data-raw/gtfs_metadata.R
 
-  file_metadata <- gtfs_meta[[gsub(".txt", "", file)]]
+  file_metadata <- gtfs_meta[[gsub(".txt", "", filename)]]
   
-  if (!quiet) message(paste0("Reading ", file))
+  if (!quiet) message(paste0("Reading ", filename))
 
   # if metadata is null then file is undocumented. read everything as character
 
@@ -148,7 +148,7 @@ read_files <- function(file, temp_dir, quiet) {
       message(
         paste0(
           "  File ",
-          file,
+          filename,
           ".txt not recognized. Trying to read it as a csv."
         )
       )
@@ -156,7 +156,7 @@ read_files <- function(file, temp_dir, quiet) {
     }
 
     full_dt <- data.table::fread(
-      file.path(temp_dir, file),
+      file.path(temp_dir, filename),
       colClasses = "character",
       showProgress = !quiet
     )
@@ -167,7 +167,7 @@ read_files <- function(file, temp_dir, quiet) {
     # read first row to know what columns to read
 
     sample_dt <- suppressWarnings(
-      data.table::fread(file.path(temp_dir, file), nrows = 1)
+      data.table::fread(file.path(temp_dir, filename), nrows = 1)
     )
 
     # if file is completely empty (without even a header) return NULL data.table
@@ -192,7 +192,7 @@ read_files <- function(file, temp_dir, quiet) {
     names(col_classes)[is.na(names(col_classes))] <- extra_col
 
     full_dt <- tryCatch(
-      data.table::fread(file.path(temp_dir, file), select = col_classes),
+      data.table::fread(file.path(temp_dir, filename), select = col_classes),
       warning = function(w) w
     )
 

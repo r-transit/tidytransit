@@ -68,8 +68,8 @@ validate_gtfs <- function(gtfs, files = NULL, quiet = TRUE, warnings = TRUE) {
   if (is.null(files)) {
 
     specified_files   <- names(gtfs_meta)
-    extra_files       <- setdiff(paste0(names(gtfs), ".txt"), names(gtfs_meta))
-    files_to_validate <- c(specified_files, extra_files)
+    extra_filenames       <- setdiff(paste0(names(gtfs), ".txt"), names(gtfs_meta))
+    files_to_validate <- c(specified_files, extra_filenames)
 
   } else {
 
