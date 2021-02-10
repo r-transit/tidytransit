@@ -13,7 +13,6 @@
 #'
 #' @return A GTFS object. That is, a list of dataframes of GTFS data.
 #'
-#' @export
 #' @importFrom dplyr %>% arrange summarise group_by inner_join
 #' @examples \donttest{
 #' library(dplyr)
@@ -28,7 +27,8 @@
 #'         summarise(stop_count=n_distinct(stop_id)) %>%
 #'           arrange(desc(stop_count))
 #' }
-read_gtfs <- function(path, quiet = TRUE) {
+read_gtfs2 <- function(path, quiet = TRUE) {
+  stop("use read_gtfs")
   # download zip file
   if (valid_url(path)) {
     path <- download_from_url(url = path, quiet = quiet)

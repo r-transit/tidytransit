@@ -67,8 +67,8 @@ validate_gtfs <- function(gtfs, files = NULL, quiet = TRUE, warnings = TRUE) {
 
   if (is.null(files)) {
 
-    specified_files   <- names(gtfs_metadata)
-    extra_files       <- setdiff(paste0(names(gtfs), ".txt"), names(gtfs_metadata))
+    specified_files   <- names(gtfs_meta)
+    extra_files       <- setdiff(paste0(names(gtfs), ".txt"), names(gtfs_meta))
     files_to_validate <- c(specified_files, extra_files)
 
   } else {
@@ -83,7 +83,7 @@ validate_gtfs <- function(gtfs, files = NULL, quiet = TRUE, warnings = TRUE) {
 
   validation_result <- lapply(files_to_validate, function(filename) {
 
-    file_metadata <- gtfs_metadata[[filename]]
+    file_metadata <- gtfs_meta[[filename]]
     file          <- sub(".txt", "", filename)
 
     # if metadata is null then file is undocumented. validate it as an "extra" file

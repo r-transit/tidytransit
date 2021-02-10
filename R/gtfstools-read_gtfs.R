@@ -135,8 +135,8 @@ read_files <- function(file, temp_dir, quiet) {
 
   # uses internal data gtfs_metadata - check data-raw/gtfs_metadata.R
 
-  file_metadata <- gtfs_metadata[[file]]
-
+  file_metadata <- gtfs_meta[[gsub(".txt", "", file)]]
+  
   if (!quiet) message(paste0("Reading ", file))
 
   # if metadata is null then file is undocumented. read everything as character
@@ -162,7 +162,8 @@ read_files <- function(file, temp_dir, quiet) {
     )
 
   } else {
-
+    metadata_colclasses <- setNames(file_metadata$coltype, file_metadata$field)
+    
     # read first row to know what columns to read
 
     sample_dt <- suppressWarnings(
@@ -181,7 +182,7 @@ read_files <- function(file, temp_dir, quiet) {
     # read full file. if a parsing warning has been thrown save it
 
     col_to_read <- names(sample_dt)
-    col_classes <- file_metadata$coltype[col_to_read]
+    col_classes <- metadata_colclasses[col_to_read]
 
     # substitute NA elements in col_classes with undocumented column names and
     # "character" as the default column type
