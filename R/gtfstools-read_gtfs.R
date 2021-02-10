@@ -37,8 +37,9 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE, warnings = TRUE, parse_d
   if (grepl('http[s]?://.*', path)) {
 
     temp_file <- tempfile(pattern = "gtfs", fileext = ".zip")
-
-    utils::download.file(path, temp_file, method = "auto", quiet = quiet)
+    
+    suppressWarnings( # catch superfluous warning
+      utils::download.file(path, temp_file, method = "auto", quiet = quiet))
 
     if (!quiet) message(paste0("File downloaded to ", normalizePath(temp_file)))
 
