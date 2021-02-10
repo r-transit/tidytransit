@@ -24,7 +24,7 @@
 #'
 #' gtfs <- read_gtfs(data_path, files = c("trips", "stop_times"))
 #' names(gtfs)
-#'
+#' @import checkmate
 #' @export
 read_gtfs <- function(path, files = NULL, quiet = TRUE, warnings = TRUE, parse_dates = TRUE) {
 
