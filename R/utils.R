@@ -14,52 +14,42 @@ rmfolder <- function(folder) {
 #' @importFrom httr RETRY
 #' @noRd
 valid_url <- function(url, timeout = 5, test_url = TRUE, quiet = TRUE) {
-
-	stopifnot(is.character(url))
-
-	connecting <- function(url) {
-		r <- base::try({
-		    httr::RETRY(
-		        verb = "GET"
-		        , url = url
-		        , timeout = timeout
-		        , silent = TRUE
-		        , times = 5
-		        , terminate_on = c(403, 404)
-		        , terminate_on_success = TRUE
-		    )
-		})
-		if(!assertthat::is.error(r)) {
-			r$status_code == 200
-		} else {
-			if(!quiet) message("Timeout.")
-			return(FALSE)
-		}
-	}
-
-	url_cond1 <- grepl('http[s]?://.*', url) # valid zip file
-
-	# if valid zip file, test to see if anything connects
-	if(test_url) {
-		if(url_cond1) url_cond2 <- connecting(url) else url_cond2 <- FALSE
-	} else url_cond2 <- NULL
-
-	if(!quiet & test_url) {
-		message(sprintf("Validating '%s'...", url))
-		if(all(c(url_cond2, url_cond1))) message("PASS") else message("FAIL")
-	}
-
-	return(all(url_cond1, url_cond2))
-}
-
-#' Used to trigger suppressWarnings or not
-#' @param expr expression to suppress
-#' @param quiet Logical. Whether to suppress or not. \code{FALSE} by default.
-#' @noRd
-trigger_suppressWarnings <- function(expr, quiet) {
-
-	if(!quiet) expr else suppressWarnings(expr)
-
+  
+  stopifnot(is.character(url))
+  
+  connecting <- function(url) {
+    r <- base::try({
+      httr::RETRY(
+        verb = "GET"
+        , url = url
+        , timeout = timeout
+        , silent = TRUE
+        , times = 5
+        , terminate_on = c(403, 404)
+        , terminate_on_success = TRUE
+      )
+    })
+    if(!assertthat::is.error(r)) {
+      r$status_code == 200
+    } else {
+      if(!quiet) message("Timeout.")
+      return(FALSE)
+    }
+  }
+  
+  url_cond1 <- grepl('http[s]?://.*', url) # valid zip file
+  
+  # if valid zip file, test to see if anything connects
+  if(test_url) {
+    if(url_cond1) url_cond2 <- connecting(url) else url_cond2 <- FALSE
+  } else url_cond2 <- NULL
+  
+  if(!quiet & test_url) {
+    message(sprintf("Validating '%s'...", url))
+    if(all(c(url_cond2, url_cond1))) message("PASS") else message("FAIL")
+  }
+  
+  return(all(url_cond1, url_cond2))
 }
 
 #' Writes a gtfs object to a zip file. Calculated tidytransit tables and columns are not exported.
@@ -69,7 +59,6 @@ trigger_suppressWarnings <- function(expr, quiet) {
 #' @param as_dir if TRUE, the feed is not zipped and zipfile is used as a directory path. 
 #'               Files within the directory will be overwritten.
 #' @importFrom zip zipr
-#' @export
 write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE) {
   stopifnot(is_gtfs_obj(gtfs_obj))
 
@@ -112,3 +101,11 @@ feed_contains <- function(gtfs_obj, table_name) {
   exists(table_name, where = gtfs_obj) ||
     (exists(".", where = gtfs_obj) && exists(table_name, where = gtfs_obj$.))
 }
+
+#' Basic check if a given list is a gtfs object
+#' @param gtfs_obj as read by read_gtfs()
+#' @noRd
+is_gtfs_obj <- function(gtfs_obj) {
+  inherits(gtfs_obj, "gtfs")
+}
+

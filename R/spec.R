@@ -11,7 +11,7 @@ get_gtfs_meta <- function() {
                     "agency_lang", "agency_phone", "agency_fare_url", "agency_email")
   agency$field_spec <- c("opt", "req", "req", "req", "opt", "opt", "opt", "opt")
   names(agency$field_spec) <- agency$field
-  agency$coltype <- rep("c", 8)
+  agency$coltype <- rep("character", 8)
   agency$file_spec <- "req"
   
   # stops
@@ -26,12 +26,12 @@ get_gtfs_meta <- function() {
                         "req", "req", 
                         rep("opt", 8))
   names(stops$field_spec) <- stops$field
-  stops$coltype <- rep("c", length(stops$field))
+  stops$coltype <- rep("character", length(stops$field))
   stops$coltype[which(stops$field %in% 
-                        c("stop_lat", "stop_lon"))] <- "d" # double
+                        c("stop_lat", "stop_lon"))] <- "numeric" # double
   stops$coltype[which(stops$field %in% 
                         c("location_type",
-                          "wheelchair_boarding"))] <- "i" # integers
+                          "wheelchair_boarding"))] <- "integer" # integers
   stops$file_spec <- "req"
   
   # routes
@@ -46,10 +46,10 @@ get_gtfs_meta <- function() {
                          "opt", "opt", "opt", 
                          "opt", "opt", "opt")
   names(routes$field_spec) <- routes$field
-  routes$coltype <- rep("c", length(routes$field))
+  routes$coltype <- rep("character", length(routes$field))
   routes$coltype[routes$field %in% c("route_type", "route_sort_order",
                                      "continuous_pickup", 
-                                     "continuous_drop_off")] <- "i"
+                                     "continuous_drop_off")] <- "integer"
   routes$file_spec <- "req"
   
   # trips
@@ -62,10 +62,10 @@ get_gtfs_meta <- function() {
                         "opt", "opt", "opt", "opt", 
                         "opt", "opt")
   names(trips$field_spec) <- trips$field
-  trips$coltype <- rep("c", length(trips$field))
+  trips$coltype <- rep("character", length(trips$field))
   trips$coltype[trips$field %in% c("direction_id",
                                    "wheelchair_accessible", 
-                                   "bikes_allowed")] <- "i"
+                                   "bikes_allowed")] <- "integer"
   trips$file_spec <- "req"
   
   # stop_times
@@ -82,13 +82,13 @@ get_gtfs_meta <- function() {
                              "opt", "opt", "opt", 
                              "opt", "opt", "opt")
   names(stop_times$field_spec) <- stop_times$field
-  stop_times$coltype <- rep("c", length(stop_times$field))
+  stop_times$coltype <- rep("character", length(stop_times$field))
   stop_times$coltype[stop_times$field 
                      %in% c("stop_sequence", "pickup_type", 
                             "drop_off_type", "continuous_pickup", 
-                            "continuous_drop_off","timepoint")] <- "i"
+                            "continuous_drop_off","timepoint")] <- "integer"
   stop_times$coltype[stop_times$field %in% 
-                       c("shape_dist_traveled")] <- "d"
+                       c("shape_dist_traveled")] <- "numeric"
   stop_times$file_spec <- "req"
   
   # calendar
@@ -99,9 +99,9 @@ get_gtfs_meta <- function() {
                       "end_date")
   calendar$field_spec <- rep("req", times = length(calendar$field))
   names(calendar$field_spec) <- calendar$field
-  calendar$coltype <- rep("i", length(calendar$field))
-  calendar$coltype[calendar$field %in% c("service_id")] <- "c"
-  calendar$coltype[calendar$field %in% c("start_date", "end_date")] <- "D"
+  calendar$coltype <- rep("integer", length(calendar$field))
+  calendar$coltype[calendar$field %in% c("service_id")] <- "character"
+  calendar$coltype[calendar$field %in% c("start_date", "end_date")] <- "character" # Date
   calendar$file_spec <- "req"
 
   # optional files ----------------------------------------------------------
@@ -111,9 +111,9 @@ get_gtfs_meta <- function() {
   calendar_dates$field <- c("service_id", "date", "exception_type")
   calendar_dates$field_spec <- c("req", "req", "req")
   names(calendar_dates$field_spec) <- calendar_dates$field
-  calendar_dates$coltype <- rep("c", length(calendar_dates$field))
-  calendar_dates$coltype[calendar_dates$field %in% c("exception_type")] <- "i"
-  calendar_dates$coltype[calendar_dates$field %in% c("date")] <- "D"
+  calendar_dates$coltype <- rep("character", length(calendar_dates$field))
+  calendar_dates$coltype[calendar_dates$field %in% c("exception_type")] <- "integer"
+  calendar_dates$coltype[calendar_dates$field %in% c("date")] <- "character" # Date
   calendar_dates$file_spec <- "opt"
   
   # fare_attributes
@@ -124,11 +124,11 @@ get_gtfs_meta <- function() {
   fare_attributes$field_spec <- c("opt", "req", "req", 
                                   "req", "req", "req", "opt")
   names(fare_attributes$field_spec) <- fare_attributes$field
-  fare_attributes$coltype <- rep("c", length(fare_attributes$field))
+  fare_attributes$coltype <- rep("character", length(fare_attributes$field))
   fare_attributes$coltype[fare_attributes$field %in% 
-                            c("payment_method", "transfers")] <- "i"
+                            c("payment_method", "transfers")] <- "integer"
   fare_attributes$coltype[fare_attributes$field %in% 
-                            c("transfer_duration")] <- "d"
+                            c("transfer_duration")] <- "numeric"
   fare_attributes$file_spec <- "opt"
   
   # fare_rules
@@ -137,11 +137,11 @@ get_gtfs_meta <- function() {
                         "destination_id", "contains_id")
   fare_rules$field_spec <- c("req", "opt", "opt", "opt", "opt")
   names(fare_rules$field_spec) <- fare_rules$field
-  fare_rules$coltype <- rep("c", length(fare_rules$field))
+  fare_rules$coltype <- rep("character", length(fare_rules$field))
   fare_rules$coltype[fare_rules$field
                      %in% c("direction_id", 
                             "wheelchair_accessible", 
-                            "bikes_allowed")] <- "i"
+                            "bikes_allowed")] <- "integer"
   fare_rules$file_spec <- "opt"
     
   # shapes
@@ -151,9 +151,9 @@ get_gtfs_meta <- function() {
                     "shape_dist_traveled")
   shapes$field_spec <- c("req", "req", "req", "req", "opt")
   names(shapes$field_spec) <- shapes$field
-  shapes$coltype <- rep("d", length(shapes$field))
-  shapes$coltype[shapes$field %in% c("shape_id")] <- "c"
-  shapes$coltype[shapes$field %in% c("shape_pt_sequence")] <- "i"
+  shapes$coltype <- rep("numeric", length(shapes$field))
+  shapes$coltype[shapes$field %in% c("shape_id")] <- "character"
+  shapes$coltype[shapes$field %in% c("shape_pt_sequence")] <- "integer"
   shapes$file_spec <- "opt"
   
   # frequencies
@@ -163,9 +163,9 @@ get_gtfs_meta <- function() {
                          "exact_times")
   frequencies$field_spec <- c("req", "req", "req", "req", "opt")
   names(frequencies$field_spec) <- frequencies$field
-  frequencies$coltype <- rep("c", length(frequencies$field))
-  frequencies$coltype[frequencies$field %in% c("headway_secs")] <- "d"
-  frequencies$coltype[frequencies$field %in% c("exact_times")] <- "i"
+  frequencies$coltype <- rep("character", length(frequencies$field))
+  frequencies$coltype[frequencies$field %in% c("headway_secs")] <- "numeric"
+  frequencies$coltype[frequencies$field %in% c("exact_times")] <- "integer"
   frequencies$file_spec <- "opt"
   
   # transfers
@@ -174,8 +174,8 @@ get_gtfs_meta <- function() {
                        "transfer_type", "min_transfer_time")
   transfers$field_spec <- c("req", "req", "req", "opt")
   names(transfers$field_spec) <- transfers$field
-  transfers$coltype <- rep("c", length(transfers$field))
-  transfers$coltype[transfers$field %in% c("min_transfer_time")] <- "i"
+  transfers$coltype <- rep("character", length(transfers$field))
+  transfers$coltype[transfers$field %in% c("min_transfer_time")] <- "integer"
   transfers$file_spec <- "opt"
   
   # pathways
@@ -185,9 +185,9 @@ get_gtfs_meta <- function() {
     "stair_count", "max_slope", "min_width", "signposted_as", "reversed_signposted_as")
   pathways$field_spec <- c(rep("req", 5), rep("opt", 7))
   names(pathways$field_spec) <- pathways$field
-  pathways$coltype <- rep("c", length(pathways$field))
-  pathways$coltype[pathways$field %in% c("traversal_time", "stair_count")] <- "i"
-  pathways$coltype[pathways$field %in% c("length", "max_slope", "min_width")] <- "d"
+  pathways$coltype <- rep("character", length(pathways$field))
+  pathways$coltype[pathways$field %in% c("traversal_time", "stair_count")] <- "integer"
+  pathways$coltype[pathways$field %in% c("length", "max_slope", "min_width")] <- "numeric"
   pathways$file_spec <- "opt"
   
   # levels
@@ -195,7 +195,7 @@ get_gtfs_meta <- function() {
   levels$field <- c("level_id", "level_index", "level_name")
   levels$field_spec <- c("req", "req", "opt")
   names(levels$field_spec) <- levels$field
-  levels$coltype <- c("c", "d", "c")
+  levels$coltype <- c("character", "numeric", "character")
   levels$file_spec <- "opt"
   
   # feed_info 
@@ -207,9 +207,9 @@ get_gtfs_meta <- function() {
                             "opt", "opt", "opt", 
                             "opt", "opt")
   names(feed_info$field_spec) <- feed_info$field
-  feed_info$coltype <- rep("c", length(feed_info$field))
+  feed_info$coltype <- rep("character", length(feed_info$field))
   feed_info$coltype[transfers$field %in% 
-                      c("feed_start_date", "feed_end_date")] <- "D"
+                      c("feed_start_date", "feed_end_date")] <- "character" # Date
   feed_info$file_spec <- "opt"
   
   # translations
@@ -219,7 +219,7 @@ get_gtfs_meta <- function() {
   translations$field_spec <- c("req", "req", "req", "req",
                             "opt", "opt", "opt")
   names(translations$field_spec) <- translations$field
-  translations$coltype <- rep("c", length(translations$field))
+  translations$coltype <- rep("character", length(translations$field))
   translations$file_spec <- "opt"
   
   # attributions
@@ -230,7 +230,7 @@ get_gtfs_meta <- function() {
                           "attribution_email", "attribution_phone")
   attributions$field_spec <- c(rep("opt", 4), "req", rep("opt", 6))
   names(attributions$field_spec) <- attributions$field
-  attributions$coltype <- rep("c", length(attributions$field))
+  attributions$coltype <- rep("character", length(attributions$field))
   attributions$file_spec <- "opt"
   
   
@@ -256,3 +256,6 @@ get_gtfs_meta <- function() {
                   "opt", "opt",  "opt"))
   return(meta)
 }
+
+gtfs_meta = get_gtfs_meta()
+gtfs_reference = lapply(gtfs_meta, tibble::as_tibble)
