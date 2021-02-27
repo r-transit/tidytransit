@@ -35,12 +35,11 @@ Reads GTFS text files from either a local \code{.zip} file or an URL and
 validates them against GTFS specifications.
 }
 \examples{
-data_path <- system.file("extdata/spo_gtfs.zip", package = "gtfstools")
-
-gtfs <- read_gtfs(data_path)
+local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+gtfs <- read_gtfs(local_gtfs_path)
 names(gtfs)
 
-gtfs <- read_gtfs(data_path, files = c("trips", "stop_times"))
+gtfs <- read_gtfs(local_gtfs_path, files = c("trips", "stop_times"))
 names(gtfs)
 }
 \seealso{

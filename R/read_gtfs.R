@@ -21,7 +21,7 @@
 #' gtfs <- read_gtfs(local_gtfs_path)
 #' names(gtfs)
 #'
-#' gtfs <- read_gtfs(data_path, files = c("trips", "stop_times"))
+#' gtfs <- read_gtfs(local_gtfs_path, files = c("trips", "stop_times"))
 #' names(gtfs)
 #' @import checkmate
 #' @export
