@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get and validate dataframes of General Transit Feed Specification (GTFS) data. — read_gtfs • tidytransit</title>
+<title>Read and validate GTFS files — read_gtfs • tidytransit</title>
 
 
 <!-- jquery -->
@@ -39,10 +39,9 @@
 
 
 
-<meta property="og:title" content="Get and validate dataframes of General Transit Feed Specification (GTFS) data. — read_gtfs" />
-<meta property="og:description" content="This function reads GTFS text files from a local or remote zip file.
-It also validates the files against the GTFS specification by file, requirement status,
-and column name." />
+<meta property="og:title" content="Read and validate GTFS files — read_gtfs" />
+<meta property="og:description" content="Reads GTFS text files from either a local .zip file or an URL and
+validates them against GTFS specifications." />
 
 
 
@@ -74,7 +73,7 @@ and column name." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.3</span>
       </span>
     </div>
 
@@ -131,64 +130,70 @@ and column name." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get and validate dataframes of General Transit Feed Specification (GTFS) data.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-transit/tidytransit/blob/master/R/import.R'><code>R/import.R</code></a></small>
+    <h1>Read and validate GTFS files</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-transit/tidytransit/blob/master/R/read_gtfs.R'><code>R/read_gtfs.R</code></a></small>
     <div class="hidden name"><code>read_gtfs.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function reads GTFS text files from a local or remote zip file.
-It also validates the files against the GTFS specification by file, requirement status,
-and column name.</p>
+    <p>Reads GTFS text files from either a local <code>.zip</code> file or an URL and
+validates them against GTFS specifications.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>read_gtfs</span><span class='op'>(</span><span class='va'>path</span>, quiet <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>read_gtfs</span><span class='op'>(</span>
+  <span class='va'>path</span>,
+  files <span class='op'>=</span> <span class='cn'>NULL</span>,
+  quiet <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  warnings <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  parse_dates <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>path</th>
-      <td><p>Character. URL link to zip file OR path to local zip file.</p></td>
+      <td><p>The path to a GTFS <code>.zip</code> file.</p></td>
+    </tr>
+    <tr>
+      <th>files</th>
+      <td><p>A character vector containing the text files to be read from the
+GTFS (without the <code>.txt</code> extension). If <code>NULL</code> (the default) all
+existing files are read.</p></td>
     </tr>
     <tr>
       <th>quiet</th>
-      <td><p>Boolean. Whether to see file download progress and files extract. FALSE by default.</p></td>
+      <td><p>Whether to hide log messages and progress bars (defaults to TRUE).</p></td>
+    </tr>
+    <tr>
+      <th>warnings</th>
+      <td><p>Whether to display warning messages (defaults to TRUE).</p></td>
+    </tr>
+    <tr>
+      <th>parse_dates</th>
+      <td><p>date columns in calendar.txt, calendar_dates.txt and feed_info.txt
+are converted to a Date object.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A GTFS object. That is, a list of dataframes of GTFS data.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    <p>A GTFS object: a list of data.tables in which each index represents a
+GTFS text file.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p>The data are returned as a list of dataframes and a validation object,
-which contains details on whether all required files were found,
-and which required and optional columns are present.
-#'</p>
+    <div class='dont-index'><p><code><a href='validate_gtfs.html'>validate_gtfs</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
-<span class='va'>u1</span> <span class='op'>&lt;-</span> <span class='st'>"https://github.com/r-transit/tidytransit/raw/master/inst/extdata/sample-feed-fixed.zip"</span>
-<span class='va'>sample_gtfs</span> <span class='op'>&lt;-</span> <span class='fu'>read_gtfs</span><span class='op'>(</span><span class='va'>u1</span><span class='op'>)</span>
-<span class='kw'><a href='https://rdrr.io/r/base/attach.html'>attach</a></span><span class='op'>(</span><span class='va'>sample_gtfs</span><span class='op'>)</span>
-<span class='co'>#list routes by the number of stops they have</span>
-<span class='va'>routes</span> <span class='op'>%&gt;%</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>inner_join</a></span><span class='op'>(</span><span class='va'>trips</span>, by<span class='op'>=</span><span class='st'>"route_id"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>inner_join</a></span><span class='op'>(</span><span class='va'>stop_times</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-    <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>inner_join</a></span><span class='op'>(</span><span class='va'>stops</span>, by<span class='op'>=</span><span class='st'>"stop_id"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>route_long_name</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-        <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>stop_count<span class='op'>=</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/n_distinct.html'>n_distinct</a></span><span class='op'>(</span><span class='va'>stop_id</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-          <span class='fu'><a href='https://dplyr.tidyverse.org/reference/arrange.html'>arrange</a></span><span class='op'>(</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/desc.html'>desc</a></span><span class='op'>(</span><span class='va'>stop_count</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Joining, by = "trip_id"</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 5 x 2</span><span>
-#&gt;   route_long_name                 stop_count
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                                </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span> City                                     5
-#&gt; </span><span style='color: #555555;'>2</span><span> Airport - Amargosa Valley                2
-#&gt; </span><span style='color: #555555;'>3</span><span> Airport - Bullfrog                       2
-#&gt; </span><span style='color: #555555;'>4</span><span> Bullfrog - Furnace Creek Resort          2
-#&gt; </span><span style='color: #555555;'>5</span><span> Stagecoach - Airport Shuttle             2</div><div class='input'><span class='co'># }</span>
-</div></span></pre>
+    <pre class="examples"><div class='input'><span class='va'>local_gtfs_path</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"google_transit_nyc_subway.zip"</span>, package <span class='op'>=</span> <span class='st'>"tidytransit"</span><span class='op'>)</span>
+<span class='va'>gtfs</span> <span class='op'>&lt;-</span> <span class='fu'>read_gtfs</span><span class='op'>(</span><span class='va'>local_gtfs_path</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='va'>gtfs</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "trips"          "stop_times"     "agency"         "calendar"      
+#&gt; [5] "calendar_dates" "stops"          "routes"         "shapes"        
+#&gt; [9] "transfers"     </div><div class='input'>
+<span class='va'>gtfs</span> <span class='op'>&lt;-</span> <span class='fu'>read_gtfs</span><span class='op'>(</span><span class='va'>local_gtfs_path</span>, files <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"trips"</span>, <span class='st'>"stop_times"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='va'>gtfs</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "trips"      "stop_times"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -200,7 +205,7 @@ and which required and optional columns are present.
 
       <footer>
       <div class="copyright">
-  <p>Developed by Flavio Poletti, Tom Buckley, Danton Noriega-Goodwin, Mark Padgham.</p>
+  <p>Developed by Flavio Poletti, Daniel Herszenhut, Mark Padgham, Tom Buckley, Danton Noriega-Goodwin.</p>
 </div>
 
 <div class="pkgdown">

@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.3</span>
       </span>
     </div>
 
@@ -91,7 +91,7 @@
       <h1 data-toc-skip>Introduction to tidytransit</h1>
                         <h4 class="author">Tom Buckley</h4>
             
-            <h4 class="date">2021-01-26</h4>
+            <h4 class="date">2021-02-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r-transit/tidytransit/blob/master/vignettes/introduction.Rmd"><code>vignettes/introduction.Rmd</code></a></small>
       <div class="hidden name"><code>introduction.Rmd</code></div>
@@ -156,7 +156,7 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">nyc</span><span class="op">)</span></code></pre></div>
 <pre><code>## GTFS object
-## files        trips, stop_times, agency, calendar, stops, routes, calendar_dates, shapes, transfers
+## files        agency, stops, routes, trips, stop_times, calendar, calendar_dates, shapes, transfers, trips, stop_times, agency, calendar, calendar_dates, stops, routes, shapes, transfers
 ## agency       MTA New York City Transit
 ## service      from 2018-06-24 to 2018-11-03
 ## uses         stop_times (no frequencies)
@@ -168,16 +168,20 @@
 <p>Each of the source tables for the GTFS feed is now available in the nyc <code>gtfs</code> object. For example, stops:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">nyc</span><span class="op">$</span><span class="va">stops</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 6 x 10
-##   stop_id stop_code stop_name stop_desc stop_lat stop_lon zone_id stop_url
-##   &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;        &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;   
-## 1 101     &lt;NA&gt;      Van Cort… &lt;NA&gt;          40.9    -73.9 &lt;NA&gt;    &lt;NA&gt;    
-## 2 101N    &lt;NA&gt;      Van Cort… &lt;NA&gt;          40.9    -73.9 &lt;NA&gt;    &lt;NA&gt;    
-## 3 101S    &lt;NA&gt;      Van Cort… &lt;NA&gt;          40.9    -73.9 &lt;NA&gt;    &lt;NA&gt;    
-## 4 103     &lt;NA&gt;      238 St    &lt;NA&gt;          40.9    -73.9 &lt;NA&gt;    &lt;NA&gt;    
-## 5 103N    &lt;NA&gt;      238 St    &lt;NA&gt;          40.9    -73.9 &lt;NA&gt;    &lt;NA&gt;    
-## 6 103S    &lt;NA&gt;      238 St    &lt;NA&gt;          40.9    -73.9 &lt;NA&gt;    &lt;NA&gt;    
-## # … with 2 more variables: location_type &lt;int&gt;, parent_station &lt;chr&gt;</code></pre>
+<pre><code>##   stop_id stop_code                   stop_name stop_desc stop_lat  stop_lon
+## 1     101           Van Cortlandt Park - 242 St           40.88925 -73.89858
+## 2    101N           Van Cortlandt Park - 242 St           40.88925 -73.89858
+## 3    101S           Van Cortlandt Park - 242 St           40.88925 -73.89858
+## 4     103                                238 St           40.88467 -73.90087
+## 5    103N                                238 St           40.88467 -73.90087
+## 6    103S                                238 St           40.88467 -73.90087
+##   zone_id stop_url location_type parent_station
+## 1                              1               
+## 2                              0            101
+## 3                              0            101
+## 4                              1               
+## 5                              0            103
+## 6                              0            103</code></pre>
 <p>The tables available on each feed may vary. Below we can simply print the names of all the tables that were read in for this feed. Each of these is a table.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">nyc</span><span class="op">)</span></code></pre></div>
@@ -192,16 +196,20 @@
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">validation_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span><span class="op">(</span><span class="va">nyc</span>, <span class="st">"validation_result"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">validation_result</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 6 x 8
-##   file  file_spec file_provided_s… field field_spec field_provided_…
-##   &lt;chr&gt; &lt;chr&gt;     &lt;lgl&gt;            &lt;chr&gt; &lt;chr&gt;      &lt;lgl&gt;           
-## 1 trips req       TRUE             rout… req        TRUE            
-## 2 trips req       TRUE             serv… req        TRUE            
-## 3 trips req       TRUE             trip… req        TRUE            
-## 4 trips req       TRUE             trip… opt        TRUE            
-## 5 trips req       TRUE             trip… opt        FALSE           
-## 6 trips req       TRUE             dire… opt        TRUE            
-## # … with 2 more variables: validation_status &lt;chr&gt;, validation_details &lt;chr&gt;</code></pre>
+<pre><code>##     file file_spec file_provided_status           field field_spec
+## 1 agency       req                 TRUE       agency_id        opt
+## 2 agency       req                 TRUE     agency_name        req
+## 3 agency       req                 TRUE      agency_url        req
+## 4 agency       req                 TRUE agency_timezone        req
+## 5 agency       req                 TRUE     agency_lang        opt
+## 6 agency       req                 TRUE    agency_phone        opt
+##   field_provided_status validation_status validation_details
+## 1                  TRUE                ok               &lt;NA&gt;
+## 2                  TRUE                ok               &lt;NA&gt;
+## 3                  TRUE                ok               &lt;NA&gt;
+## 4                  TRUE                ok               &lt;NA&gt;
+## 5                  TRUE                ok               &lt;NA&gt;
+## 6                  TRUE                ok               &lt;NA&gt;</code></pre>
 </div>
 <div id="finding-more-gtfs-feeds" class="section level2">
 <h2 class="hasAnchor">
@@ -272,7 +280,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Flavio Poletti, Tom Buckley, Danton Noriega-Goodwin, Mark Padgham.</p>
+  <p>Developed by Flavio Poletti, Daniel Herszenhut, Mark Padgham, Tom Buckley, Danton Noriega-Goodwin.</p>
 </div>
 
 <div class="pkgdown">
