@@ -1,7 +1,7 @@
 Package: tidytransit
 Type: Package
 Title: Read, Validate, Analyze, and Map Files in the General Transit Feed Specification  
-Version: 0.7.2
+Version: 0.7.3
 Authors@R: c(
     person("Flavio", "Poletti", role = c("aut"), email = "flavio.poletti@hotmail.ch"),
     person(given = "Daniel",family = "Herszenhut",role = c("aut"),email = "dhersz@gmail.com",comment = c(ORCID = "0000-0001-8066-1105")),
