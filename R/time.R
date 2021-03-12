@@ -26,8 +26,6 @@ filter_stop_times_by_hour <- function(stop_times,
 #' @importFrom hms hms
 #' @export
 set_hms_times <- function(gtfs_obj) {
-  stopifnot(is_gtfs_obj(gtfs_obj))
-  
   gtfs_obj$stop_times$arrival_time_hms <- 
     hms::hms(hhmmss_to_seconds(gtfs_obj$stop_times$arrival_time))
   gtfs_obj$stop_times$departure_time_hms <- 
@@ -43,20 +41,24 @@ set_hms_times <- function(gtfs_obj) {
   return(gtfs_obj)
 }
 
+parse_gtfsio_date = function(gtfsio_date) {
+  as.Date(as.character(gtfsio_date), format = "%Y%m%d")
+}
+
 set_dates <- function(gtfs_obj) {
   if(!is.null(gtfs_obj[["calendar"]])) { # $calendar matches calendar_dates
-    gtfs_obj$calendar$start_date <- as.Date(gtfs_obj$calendar$start_date, format = "%Y%m%d")
-    gtfs_obj$calendar$end_date <- as.Date(gtfs_obj$calendar$end_date, format = "%Y%m%d")
+    gtfs_obj$calendar$start_date <- parse_gtfsio_date(gtfs_obj$calendar$start_date)
+    gtfs_obj$calendar$end_date <- parse_gtfsio_date(gtfs_obj$calendar$end_date)
   }
   if(!is.null(gtfs_obj[["calendar_dates"]])) {
-    gtfs_obj$calendar_dates$date <- as.Date(gtfs_obj$calendar_dates$date, format = "%Y%m%d")
+    gtfs_obj$calendar_dates$date <- parse_gtfsio_date(gtfs_obj$calendar_dates$date)
   }
   if(!is.null(gtfs_obj[["feed_info"]])) {
     if(!is.null(gtfs_obj$feed_info$feed_start_date)) {
-      gtfs_obj$feed_info$feed_start_date <- as.Date(gtfs_obj$feed_info$feed_start_date, format = "%Y%m%d")
+      gtfs_obj$feed_info$feed_start_date <- parse_gtfsio_date(gtfs_obj$feed_info$feed_start_date)
     }
     if(!is.null(gtfs_obj$feed_info$feed_end_date)) {
-      gtfs_obj$feed_info$feed_end_date <- as.Date(gtfs_obj$feed_info$feed_end_date, format = "%Y%m%d")
+      gtfs_obj$feed_info$feed_end_date <- parse_gtfsio_date(gtfs_obj$feed_info$feed_end_date)
     }
   }
   gtfs_obj
@@ -76,8 +78,6 @@ set_dates <- function(gtfs_obj) {
 #' # count the number of services running on each date
 #' nyc_services_by_date %>% group_by(date) %>% count()
 set_date_service_table <- function(gtfs_obj) {
-  stopifnot(is_gtfs_obj(gtfs_obj))
-  
   weekday <- function(date) {
     c("sunday", "monday", "tuesday", 
       "wednesday", "thursday", "friday", 
