@@ -60,19 +60,8 @@ test_that("the read_gtfs function fails gracefully on bad urls", {
   
     # non-specified path
     expect_error(read_gtfs(not_zip, quiet=TRUE))
-    expect_error(read_gtfs(bad_url, quiet=TRUE)) # not zip file warning
   }
   
-})
-
-test_that("Some minimal validation is performed and returned", {
-  skip_on_cran()
-  if(working()){
-    gtfs_obj1 <- read_gtfs(gtfs_example_url)
-    
-    expect_true(dim(attributes(gtfs_obj1)$validation_result)[1]>0)
-    expect_true(dim(attributes(gtfs_obj1)$validation_result)[2]>0)
-  }
 })
 
 test_that("unknown local file throws meaningful error", {
