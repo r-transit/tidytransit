@@ -23,26 +23,29 @@ filter_stop_times_by_hour <- function(stop_times,
 #' @param gtfs_obj a gtfs object in which hms times should be set, 
 #'                the modified gtfs_obj is returned
 #' @return gtfs_obj with added hms times columns for stop_times and frequencies
-#' @importFrom hms hms
-#' @export
+#' @importFrom hms new_hms
 set_hms_times <- function(gtfs_obj) {
   if(is.null(gtfs_obj$stop_times)) {
     stop("stop_times.txt not provided")    
   }
-
-  gtfs_obj$stop_times$arrival_time_hms <- 
-    hms::hms(hhmmss_to_seconds(gtfs_obj$stop_times$arrival_time))
-  gtfs_obj$stop_times$departure_time_hms <- 
-    hms::hms(hhmmss_to_seconds(gtfs_obj$stop_times$departure_time))
   
-  if(feed_contains(gtfs_obj, "frequencies") && nrow(gtfs_obj$frequencies) > 0) {
-    gtfs_obj$frequencies$start_time_hms <- 
-      hms::hms(hhmmss_to_seconds(gtfs_obj$frequencies$start_time))
-    gtfs_obj$frequencies$end_time_hms <- 
-      hms::hms(hhmmss_to_seconds(gtfs_obj$frequencies$end_time))
+  if(feed_contains(gtfs_obj, "stop_times")) {
+    stopifnot(inherits(gtfs_obj$stop_times, "data.table"))
+    gtfs_obj$stop_times[, arrival_time_hms := hms::new_hms(hhmmss_to_seconds(arrival_time))]
+    gtfs_obj$stop_times[, departure_time_hms := hms::new_hms(hhmmss_to_seconds(departure_time))]
+    # gtfs_obj$stop_times$arrival_time_hms <- hms::new_hms(hhmmss_to_seconds(gtfs_obj$stop_times$arrival_time))
+    # gtfs_obj$stop_times$departure_time_hms <- hms::new_hms(hhmmss_to_seconds(gtfs_obj$stop_times$departure_time))
   }
   
-  return(gtfs_obj)
+  if(feed_contains(gtfs_obj, "frequencies") && nrow(gtfs_obj$frequencies) > 0) {
+    stopifnot(inherits(gtfs_obj$frequencies, "data.table"))
+    gtfs_obj$frequencies[, start_time_hms := hms::new_hms(hhmmss_to_seconds(start_time))]
+    gtfs_obj$frequencies[, end_time_hms := hms::new_hms(hhmmss_to_seconds(start_time))]
+    # gtfs_obj$frequencies$start_time_hms <- hms::new_hms(hhmmss_to_seconds(gtfs_obj$frequencies$start_time))
+    # gtfs_obj$frequencies$end_time_hms <- hms::new_hms(hhmmss_to_seconds(gtfs_obj$frequencies$end_time))
+  }
+  
+  gtfs_obj
 }
 
 parse_gtfsio_date = function(gtfsio_date) {

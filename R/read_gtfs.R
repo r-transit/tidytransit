@@ -25,6 +25,8 @@
 #' @export
 read_gtfs <- function(path, files = NULL, quiet = TRUE) {
   g = gtfsio::import_gtfs(path, files = NULL, quiet = quiet)
+  
+  g <- set_hms_times(g)
 
   # validate
   validation_result <- validate_gtfs(g)
@@ -38,7 +40,6 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE) {
   # prep tidygtfs columns 
   g <- set_dates(g)
   g <- set_date_service_table(g)
-  g <- set_hms_times(g)
 
   g
 }
