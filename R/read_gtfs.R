@@ -26,20 +26,19 @@
 read_gtfs <- function(path, files = NULL, quiet = TRUE) {
   g = gtfsio::import_gtfs(path, files = NULL, quiet = quiet)
   
-  g <- set_hms_times(g)
-
   # validate
   validation_result <- validate_gtfs(g)
-
+  
+  # prep tidygtfs columns 
+  g <- set_hms_times(g)
+  g <- set_dates(g)
+  g <- set_date_service_table(g)
+  
   # convert to tibble
   g <- lapply(g, dplyr::as_tibble)
   gtfsio::new_gtfs(g)
   class(g) <- c("tidygtfs", "gtfs")
   attributes(g)$validation_result <- validation_result
     
-  # prep tidygtfs columns 
-  g <- set_dates(g)
-  g <- set_date_service_table(g)
-
   g
 }

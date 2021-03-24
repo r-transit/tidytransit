@@ -54,18 +54,21 @@ parse_gtfsio_date = function(gtfsio_date) {
 
 set_dates <- function(gtfs_obj) {
   if(!is.null(gtfs_obj[["calendar"]])) { # $calendar matches calendar_dates
-    gtfs_obj$calendar$start_date <- parse_gtfsio_date(gtfs_obj$calendar$start_date)
-    gtfs_obj$calendar$end_date <- parse_gtfsio_date(gtfs_obj$calendar$end_date)
+    stopifnot(inherits(gtfs_obj$calendar, "data.table"))
+    gtfs_obj$calendar[,start_date := parse_gtfsio_date(start_date)]
+    gtfs_obj$calendar[,end_date := parse_gtfsio_date(end_date)]
   }
   if(!is.null(gtfs_obj[["calendar_dates"]])) {
-    gtfs_obj$calendar_dates$date <- parse_gtfsio_date(gtfs_obj$calendar_dates$date)
+    stopifnot(inherits(gtfs_obj$calendar_dates, "data.table"))
+    gtfs_obj$calendar_dates[,date := parse_gtfsio_date(date)]
   }
   if(!is.null(gtfs_obj[["feed_info"]])) {
+    stopifnot(inherits(gtfs_obj$feed_info, "data.table"))
     if(!is.null(gtfs_obj$feed_info$feed_start_date)) {
-      gtfs_obj$feed_info$feed_start_date <- parse_gtfsio_date(gtfs_obj$feed_info$feed_start_date)
+      gtfs_obj$feed_info[,feed_start_date := parse_gtfsio_date(feed_start_date)]
     }
     if(!is.null(gtfs_obj$feed_info$feed_end_date)) {
-      gtfs_obj$feed_info$feed_end_date <- parse_gtfsio_date(gtfs_obj$feed_info$feed_end_date)
+      gtfs_obj$feed_info[,feed_end_date := parse_gtfsio_date(feed_end_date)]
     }
   }
   gtfs_obj
