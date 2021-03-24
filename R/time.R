@@ -159,7 +159,7 @@ set_date_service_table <- function(gtfs_obj) {
 # Function to convert "HH:MM:SS" time strings to seconds.
 # readr::parse_time() might be faster but doesn't accept hour values > 24
 hhmmss_to_seconds <- function(hhmmss_str) {
-  sapply(strsplit(hhmmss_str, ":"), function(Y) {
-    sum(as.numeric(Y) * c(3600, 60, 1))
-  })
+  as.numeric(substr(hhmmss_str, 0, 2)) * 3600 +
+    as.numeric(substr(hhmmss_str, 4, 5)) * 60 +
+    as.numeric(substr(hhmmss_str, 7, 8))
 }
