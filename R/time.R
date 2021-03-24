@@ -1,23 +1,20 @@
 #' Filter stop times by hour of the day
 #' 
-#' @param stop_times a gtfs_obj$stop_times dataframe with arrival_time and departure_time
+#' @param stop_times a gtfs_obj$stop_times dataframe with arrival_time and departure_time 
 #' @return dataframe with only stop times within the hours specified, with time columns as lubridate periods
 #' @keywords internal
 filter_stop_times_by_hour <- function(stop_times, 
                                       start_hour, 
                                       end_hour) {
-  # TODO use set_hms_times during import to avoid errors here?
-  stopifnot("arrival_time_hms" %in% colnames(stop_times), "departure_time_hms" %in% colnames(stop_times))
-  # it might be easier to just accept hms() objects
-  dplyr::filter(stop_times, arrival_time_hms > 
+  dplyr::filter(stop_times, arrival_time > 
                   hms::hms(hours = start_hour) & 
-                  departure_time_hms < hms::hms(hours = end_hour))
+                  departure_time < hms::hms(hours = end_hour))
 }
 
-#' Add hms::hms columns to feed
+#' Use hms::hms columns in feed
 #' 
-#' Adds columns to stop_times (arrival_time_hms, departure_time_hms) and 
-#' frequencies (start_time_hms, end_time_hms) with times converted with [hms::hms()].
+#' Overwirtes character columns in stop_times (arrival_time, departure_time) and 
+#' frequencies (start_time, end_time) with times converted with [hms::hms()].
 #' 
 #' @param gtfs_obj a gtfs object in which hms times should be set, 
 #'                the modified gtfs_obj is returned
@@ -27,21 +24,35 @@ set_hms_times <- function(gtfs_obj) {
   if(is.null(gtfs_obj$stop_times)) {
     stop("stop_times.txt not provided")    
   }
-  
+
   if(feed_contains(gtfs_obj, "stop_times")) {
     stopifnot(inherits(gtfs_obj$stop_times, "data.table"))
-    gtfs_obj$stop_times[, arrival_time_hms := hms::new_hms(hhmmss_to_seconds(arrival_time))]
-    gtfs_obj$stop_times[, departure_time_hms := hms::new_hms(hhmmss_to_seconds(departure_time))]
-    # gtfs_obj$stop_times$arrival_time_hms <- hms::new_hms(hhmmss_to_seconds(gtfs_obj$stop_times$arrival_time))
-    # gtfs_obj$stop_times$departure_time_hms <- hms::new_hms(hhmmss_to_seconds(gtfs_obj$stop_times$departure_time))
+    arr_nchar = nchar(gtfs_obj$stop_times$arrival_time)
+    if(any(arr_nchar < 8)) {
+      gtfs_obj$stop_times[arr_nchar < 8, arrival_time := paste0("0", arrival_time)]
+    }
+    gtfs_obj$stop_times[, arrival_time := hms::new_hms(hhmmss_to_seconds(arrival_time))]
+    
+    dep_nchar = nchar(gtfs_obj$stop_times$departure_time)
+    if(any(dep_nchar < 8)) {
+      gtfs_obj$stop_times[dep_nchar < 8, departure_time := paste0("0", departure_time)]
+    }
+    gtfs_obj$stop_times[, departure_time := hms::new_hms(hhmmss_to_seconds(departure_time))]
   }
   
   if(feed_contains(gtfs_obj, "frequencies") && nrow(gtfs_obj$frequencies) > 0) {
     stopifnot(inherits(gtfs_obj$frequencies, "data.table"))
-    gtfs_obj$frequencies[, start_time_hms := hms::new_hms(hhmmss_to_seconds(start_time))]
-    gtfs_obj$frequencies[, end_time_hms := hms::new_hms(hhmmss_to_seconds(start_time))]
-    # gtfs_obj$frequencies$start_time_hms <- hms::new_hms(hhmmss_to_seconds(gtfs_obj$frequencies$start_time))
-    # gtfs_obj$frequencies$end_time_hms <- hms::new_hms(hhmmss_to_seconds(gtfs_obj$frequencies$end_time))
+    start_nchar = nchar(gtfs_obj$frequencies$start_time)
+    if(any(start_nchar < 8)) {
+      gtfs_obj$frequencies[start_nchar < 8, start_time := paste0("0", start_time)]
+    }
+    gtfs_obj$frequencies[, start_time := hms::new_hms(hhmmss_to_seconds(start_time))]
+    
+    end_nchar = nchar(gtfs_obj$frequencies$end_time)
+    if(any(end_nchar < 8)) {
+      gtfs_obj$frequencies[end_nchar < 8, end_time := paste0("0", end_time)]
+    }
+    gtfs_obj$frequencies[, end_time := hms::new_hms(hhmmss_to_seconds(end_time))]
   }
   
   gtfs_obj
@@ -155,7 +166,7 @@ set_date_service_table <- function(gtfs_obj) {
   if(nrow(date_service_df) == 0) {
     warning("No start and end dates defined in feed")
   }
-  
+
   gtfs_obj$.$date_service_table <- date_service_df
   
   return(gtfs_obj)

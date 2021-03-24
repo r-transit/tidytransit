@@ -2,7 +2,7 @@
 % Please edit documentation in R/time.R
 \name{set_hms_times}
 \alias{set_hms_times}
-\title{Add hms::hms columns to feed}
+\title{Use hms::hms columns in feed}
 \usage{
 set_hms_times(gtfs_obj)
 }
@@ -14,6 +14,6 @@ the modified gtfs_obj is returned}
 gtfs_obj with added hms times columns for stop_times and frequencies
 }
 \description{
-Adds columns to stop_times (arrival_time_hms, departure_time_hms) and
-frequencies (start_time_hms, end_time_hms) with times converted with \code{\link[hms:hms]{hms::hms()}}.
+Overwirtes character columns in stop_times (arrival_time, departure_time) and
+frequencies (start_time, end_time) with times converted with \code{\link[hms:hms]{hms::hms()}}.
 }

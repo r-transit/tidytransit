@@ -81,8 +81,7 @@ write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE)
     dd[date_cols] <- format(dd[date_cols], "%Y%m%d")
 
     # remove columns from set_hms_times
-    cn <- colnames(dd)[which(!(colnames(dd) %in% c("arrival_time_hms", "departure_time_hms", "start_time_hms", "end_time_hms")))]
-    dd <- dd[cn]
+    # TODO convert hms_times to char?
 
     readr::write_csv(dd, paste0(outdir, "/", filename, ".txt"), na = "")
   }

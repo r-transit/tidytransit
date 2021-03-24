@@ -5,9 +5,9 @@ g <- read_gtfs(local_gtfs_path)
 test_from_stop_ids <- c("stop1a", "stop1b")
 
 stop_times = g$stop_times
-stop_times_0709 = dplyr::filter(g$stop_times, departure_time_hms >= 7*3600+10*60)
-stop_times_0711 = dplyr::filter(g$stop_times, departure_time_hms >= 7*3600+11*60)
-stop_times_0715 = dplyr::filter(g$stop_times, departure_time_hms >= 7*3600+15*60)
+stop_times_0709 = dplyr::filter(g$stop_times, departure_time >= 7*3600+10*60)
+stop_times_0711 = dplyr::filter(g$stop_times, departure_time >= 7*3600+11*60)
+stop_times_0715 = dplyr::filter(g$stop_times, departure_time >= 7*3600+15*60)
 transfers = g$transfers
 
 test_that("travel times wrapper function", {

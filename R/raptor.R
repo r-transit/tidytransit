@@ -546,13 +546,8 @@ set_num_times = function(stop_times_dt) {
   stopifnot(is.data.table(stop_times_dt))
   if(all(c("arrival_time_num", "departure_time_num") %in% colnames(stop_times_dt))) {
     invisible(stop_times_dt)
-  } else if(all(c("arrival_time_hms", "departure_time_hms") %in% colnames(stop_times_dt))) {
-    stop_times_dt[,arrival_time_num := as.numeric(arrival_time_hms)]
-    stop_times_dt[,departure_time_num := as.numeric(departure_time_hms)]
-    invisible(stop_times_dt)
-  } else {
-    stop_times_dt[,arrival_time_num := hhmmss_to_seconds(arrival_time)]
-    stop_times_dt[,departure_time_num := hhmmss_to_seconds(departure_time)]
-    invisible(stop_times_dt)
   }
+  stop_times_dt[,arrival_time_num := as.numeric(arrival_time)]
+  stop_times_dt[,departure_time_num := as.numeric(departure_time)]
+  invisible(stop_times_dt)
 }
