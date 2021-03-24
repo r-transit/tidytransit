@@ -30,14 +30,6 @@ gtfs <- read_gtfs(local_gtfs_path)
 # gtfs <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
 ```
 
-## Casting Time Data as hms
-
-In order to work with time fields in the GTFS feed data, we first need to convert them to [`hms::hms()`](https://CRAN.R-project.org/package=hms). Times for the whole feed can be converted with `set_hms_times()`. See the `set_hms_times()` reference for more detail. 
-
-```{r}
-gtfs <- gtfs %>% set_hms_times()
-```
-
 ## trip_origin and trip_headsign
 
 To display where a bus (or any public transit vehicle) is headed on a timetable we need the 
@@ -101,8 +93,8 @@ To the selected stop_ids for Time Square, we can join trip columns: `route_id`, 
 ```{r}
 departures <- stop_ids %>% 
   inner_join(gtfs$stop_times %>% 
-               select(trip_id, arrival_time_hms, 
-                      departure_time_hms, stop_id), 
+               select(trip_id, arrival_time, 
+                      departure_time, stop_id), 
              by = "stop_id")
 
 departures <- departures %>% 
@@ -129,8 +121,8 @@ Now we have a data frame that tells us about the origin, destination, and time a
 
 ```{r}
 departures %>% 
-  select(arrival_time_hms,
-         departure_time_hms,
+  select(arrival_time,
+         departure_time,
          trip_headsign,trip_origin,
          route_id) %>%
   head() %>%
@@ -141,13 +133,8 @@ However, we don't know days on which these trips run. Using the service_id colum
 
 ## Preparing a Date Service Table
 
+# TODO
 First, we need to calculate a table that maps calendar dates to service_ids for the entire schedule. To do this, we pipe the feed to the `set_date_service_table` function, which adds a `date_service_table` to the computed tables in the feed. Please the `servicepatterns` vignette for further examples on how to use this table. 
-
-```{r}
-gtfs <- gtfs %>% 
-  set_hms_times() %>% 
-  set_date_service_table()
-```
 
 ```{r}
 head(gtfs$.$date_service_table)
@@ -171,10 +158,10 @@ How services and trips are set up depends largely on the feed. For an idea how t
 
 ```{r}
 departures_180823 %>%
-  arrange(departure_time_hms, stop_id, route_short_name) %>% 
-  select(departure_time_hms, stop_id, route_short_name, trip_headsign) %>% 
-  filter(departure_time_hms >= hms::hms(hours = 7)) %>% 
-  filter(departure_time_hms < hms::hms(hours = 7, minutes = 10)) %>% 
+  arrange(departure_time, stop_id, route_short_name) %>% 
+  select(departure_time, stop_id, route_short_name, trip_headsign) %>% 
+  filter(departure_time >= hms::hms(hours = 7)) %>% 
+  filter(departure_time < hms::hms(hours = 7, minutes = 10)) %>% 
   knitr::kable()
 ```
 
@@ -189,8 +176,8 @@ route_colors$route_color[which(is.na(route_colors$route_color))] <- "454545"
 route_colors <- setNames(paste0("#", route_colors$route_color), route_colors$route_short_name)
 
 ggplot(departures_180823) + theme_bw() +
-  geom_point(aes(y=trip_headsign, x=departure_time_hms, color = route_short_name), size = 0.2) +
-  scale_x_time(breaks = seq(0, max(as.numeric(departures$departure_time_hms)), 3600), labels = scales::time_format("%H:%M")) +
+  geom_point(aes(y=trip_headsign, x=departure_time, color = route_short_name), size = 0.2) +
+  scale_x_time(breaks = seq(0, max(as.numeric(departures$departure_time)), 3600), labels = scales::time_format("%H:%M")) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   theme(legend.position = "bottom") +
   scale_color_manual(values = route_colors) +
@@ -203,10 +190,10 @@ stop_id. The following plot shows all departures for stop_ids 127N and 127S from
 ```{r fig.width=6, fig.height=6}
 departures_180823_sub_7to8 <- departures_180823 %>% 
   filter(stop_id %in% c("127N", "127S")) %>% 
-  filter(departure_time_hms >= hms::hms(hours = 7) & departure_time_hms <= hms::hms(hour = 8))
+  filter(departure_time >= hms::hms(hours = 7) & departure_time <= hms::hms(hour = 8))
 
 ggplot(departures_180823_sub_7to8) + theme_bw() +
-  geom_point(aes(y=trip_headsign, x=departure_time_hms, color = route_short_name), size = 1) +
+  geom_point(aes(y=trip_headsign, x=departure_time, color = route_short_name), size = 1) +
   scale_x_time(breaks = seq(7*3600, 9*3600, 300), labels = scales::time_format("%H:%M")) +
   scale_y_discrete(drop = F) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +

@@ -41,13 +41,13 @@ local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", packa
 gtfs <- read_gtfs(local_gtfs_path)
 # gtfs <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
 ```
-  
+
+# TODO
+
 With `set_date_service_table()` we add a table to the feed that indicates which `service_id` 
 runs on which date. This is later useful for linking dates and trips via `service_id`. 
 
 ```{r}
-gtfs <- set_date_service_table(gtfs)
-
 head(gtfs$.$date_service_table)
 ```
 
