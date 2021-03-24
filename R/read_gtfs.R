@@ -28,7 +28,15 @@
 #' @export
 read_gtfs <- function(path, files = NULL, quiet = TRUE) {
   g = gtfsio::import_gtfs(path, files = NULL, quiet = quiet)
+
+  # validate
+  g <- validate_gtfs(g)
+
+  # convert to tibble
   g <- lapply(g, dplyr::as_tibble)
+  class(g) <- "gtfs"
+  
+  # prep tidygtfs columns 
   g <- set_dates(g)
   g <- set_date_service_table(g)
   g <- set_hms_times(g)

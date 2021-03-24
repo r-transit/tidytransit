@@ -86,6 +86,10 @@ test_that("Feed with additional data can be read", {
 
 test_that("validation", {
   g_invalid_path = system.file("extdata","sample-feed-invalid.zip", package = "tidytransit")
-  expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required file(s): stop_times", fixed = TRUE)
-  expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required field(s) in stops: stop_id", fixed = TRUE)
+  expect_warning(
+    expect_error(read_gtfs(g_invalid_path), "stop_times.txt not provided", fixed = TRUE),
+    "Invalid feed. Missing required file(s): stop_times.txt", fixed = T)
+  expect_warning(
+    expect_error(read_gtfs(g_invalid_path), "stop_times.txt not provided", fixed = TRUE),
+    "Invalid feed. Missing required field(s) in stops: stop_id", fixed = T)
 })

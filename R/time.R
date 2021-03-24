@@ -26,6 +26,10 @@ filter_stop_times_by_hour <- function(stop_times,
 #' @importFrom hms hms
 #' @export
 set_hms_times <- function(gtfs_obj) {
+  if(is.null(gtfs_obj$stop_times)) {
+    stop("stop_times.txt not provided")    
+  }
+
   gtfs_obj$stop_times$arrival_time_hms <- 
     hms::hms(hhmmss_to_seconds(gtfs_obj$stop_times$arrival_time))
   gtfs_obj$stop_times$departure_time_hms <- 
