@@ -31,7 +31,6 @@ get_stop_frequency <- function(gtfs_obj,
                             dow=c(1, 1, 1, 1, 1, 0, 0),
                             by_route=TRUE,
                             wide=FALSE) {
-  gtfs_obj <- set_hms_times(gtfs_obj)
   trips <- gtfs_obj$trips
   stop_times <- gtfs_obj$stop_times
   calendar <- gtfs_obj$calendar

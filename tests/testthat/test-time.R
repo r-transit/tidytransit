@@ -15,8 +15,6 @@ test_that("set_hms_times() works with valid data", {
     end_time = c("12:00:00")
   )
 
-  gtest <- set_hms_times(gtest)  
-  
   expect_is(gtest$stop_times$arrival_time_hms, "hms")
   expect_is(gtest$stop_times$departure_time_hms, "hms")
   expect_is(gtest$stop_times$arrival_time, "character")

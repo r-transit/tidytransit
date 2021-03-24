@@ -2,7 +2,6 @@ context("raptor travel time routing")
 
 local_gtfs_path <- system.file("extdata", "routing.zip", package = "tidytransit")
 g <- read_gtfs(local_gtfs_path)
-g <- set_hms_times(g)
 test_from_stop_ids <- c("stop1a", "stop1b")
 
 stop_times = g$stop_times

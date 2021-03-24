@@ -1,7 +1,6 @@
 #' Filter stop times by hour of the day
 #' 
-#' @param stop_times a gtfs_obj$stop_times dataframe with arrival_time and departure_time 
-#'                   created by [set_hms_times()].
+#' @param stop_times a gtfs_obj$stop_times dataframe with arrival_time and departure_time
 #' @return dataframe with only stop times within the hours specified, with time columns as lubridate periods
 #' @keywords internal
 filter_stop_times_by_hour <- function(stop_times, 

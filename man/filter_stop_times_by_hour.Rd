@@ -7,8 +7,7 @@
 filter_stop_times_by_hour(stop_times, start_hour, end_hour)
 }
 \arguments{
-\item{stop_times}{a gtfs_obj$stop_times dataframe with arrival_time and departure_time
-created by \code{\link[=set_hms_times]{set_hms_times()}}.}
+\item{stop_times}{a gtfs_obj$stop_times dataframe with arrival_time and departure_time}
 }
 \value{
 dataframe with only stop times within the hours specified, with time columns as lubridate periods
