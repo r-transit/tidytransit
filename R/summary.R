@@ -4,7 +4,7 @@
 #' @export
 #' @param ... further specifications
 #' @importFrom dplyr select arrange filter
-summary.gtfs <- function(object, ...) {
+summary.tidygtfs <- function(object, ...) {
   dots <- list(...)
   
   # agency info

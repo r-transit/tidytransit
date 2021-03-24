@@ -237,9 +237,5 @@ validate_gtfs <- function(gtfs, files = NULL, quiet = TRUE, warnings = TRUE) {
   }
 
   # attach validation_result as an attribute of the given gtfs
-  validation_result <- as.data.frame(validation_result)
-  attr(gtfs, "validation_result") <- validation_result
-
-  return(gtfs)
-
+  dplyr::as_tibble(validation_result)
 }

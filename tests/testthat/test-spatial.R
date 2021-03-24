@@ -60,8 +60,8 @@ test_that("two shapes are returned even if trips use the same shape_id", {
 })
 
 test_that("plots work with and without shapes", {
-  plot(gtfs_duke)
-  plot(duke_sf)
+  pl1 = plot(gtfs_duke)
+  pl2 = plot(duke_sf)
   gtfs_duke_wo_stops <- gtfs_duke
   gtfs_duke_wo_stops$stops <- NULL
   expect_error(plot(gtfs_duke_wo_stops))
@@ -73,3 +73,4 @@ test_that("meaningful errors", {
   
   gtfs_as_sf(gtfs_duke, quiet = FALSE)
 })
+

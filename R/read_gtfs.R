@@ -9,9 +9,6 @@
 #'   GTFS (without the \code{.txt} extension). If \code{NULL} (the default) all
 #'   existing files are read.
 #' @param quiet Whether to hide log messages and progress bars (defaults to TRUE).
-#' @param warnings Whether to display warning messages (defaults to TRUE).
-#' @param parse_dates date columns in calendar.txt, calendar_dates.txt and feed_info.txt
-#'   are converted to a Date object.
 #' @return A GTFS object: a list of data.tables in which each index represents a
 #'   GTFS text file.
 #'
@@ -30,16 +27,18 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE) {
   g = gtfsio::import_gtfs(path, files = NULL, quiet = quiet)
 
   # validate
-  g <- validate_gtfs(g)
+  validation_result <- validate_gtfs(g)
 
   # convert to tibble
   g <- lapply(g, dplyr::as_tibble)
-  class(g) <- "gtfs"
-  
+  gtfsio::new_gtfs(g)
+  class(g) <- c("tidygtfs", "gtfs")
+  attributes(g)$validation_result <- validation_result
+    
   # prep tidygtfs columns 
   g <- set_dates(g)
   g <- set_date_service_table(g)
   g <- set_hms_times(g)
 
-  gtfsio::new_gtfs(g)
+  g
 }

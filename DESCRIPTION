@@ -25,6 +25,7 @@ License: GPL
 LazyData: TRUE
 Depends: R (>= 3.6.0)
 Imports:
+    gtfsio,
     dplyr,
     zip (>= 2.0.1),
     tibble,

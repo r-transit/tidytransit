@@ -19,7 +19,6 @@ gtfs_as_sf <- function(gtfs_obj, skip_shapes = FALSE, quiet = TRUE) {
   } else if(!skip_shapes) { 
     warning('No shapes available in gtfs_obj') 
   }
-  
   return(gtfs_obj)
 }
 
