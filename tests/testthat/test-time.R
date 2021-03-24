@@ -1,10 +1,8 @@
 context("Time manipulation")
 
 create_empty_gtfs_obj <- function() {
-  g <- list()
-  class(g) <- "gtfs"
-  attributes(g)$validation_result <- data.frame()
-  return(g)
+  g <- list(agency = data.frame())
+  gtfsio::new_gtfs(g)
 }
 
 test_that("set_hms_times() works with valid data", {
@@ -47,6 +45,8 @@ test_that("set_date_service_table() uses the right dates", {
     start_date = lubridate::ymd("20180101"), # monday
     end_date = lubridate::ymd("20180131")) # wednesday
 
+  set_date_service_table(gtest)
+  
   date_service <- set_date_service_table(gtest)$.$date_service_table
   
   expect_true(lubridate::ymd("20180101") %in% date_service$date)
@@ -110,3 +110,4 @@ test_that("set_date_service_table() works with additions and exceptions", {
     range[range$service_id == "wend", "max"], 
     dplyr::tibble(max = lubridate::ymd("20180429")))
 })
+

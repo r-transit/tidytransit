@@ -80,8 +80,8 @@ test_that("Files with BOM can be read", {
 
 test_that("Feed with additional data can be read", {
   g_plus_path <- system.file("extdata", "sample-feed-plus.zip", package = "tidytransit")
-  g <- read_gtfs(g_plus_path)
-  expect_true(is_gtfs_obj(g))
+  expect_warning(read_gtfs(g_plus_path), "gtfsio/empty_file.txt' has size 0. Returning a NULL data.table.")
+  expect_warning(read_gtfs(g_plus_path), "No valid dates defined in feed")
 })
 
 test_that("validation", {

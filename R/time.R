@@ -5,14 +5,14 @@
 #' @return dataframe with only stop times within the hours specified, with time columns as lubridate periods
 #' @keywords internal
 filter_stop_times_by_hour <- function(stop_times, 
-  start_hour, 
-  end_hour) {
+                                      start_hour, 
+                                      end_hour) {
   # TODO use set_hms_times during import to avoid errors here?
   stopifnot("arrival_time_hms" %in% colnames(stop_times), "departure_time_hms" %in% colnames(stop_times))
   # it might be easier to just accept hms() objects
   dplyr::filter(stop_times, arrival_time_hms > 
-                          hms::hms(hours = start_hour) & 
-                          departure_time_hms < hms::hms(hours = end_hour))
+                  hms::hms(hours = start_hour) & 
+                  departure_time_hms < hms::hms(hours = end_hour))
 }
 
 #' Add hms::hms columns to feed
@@ -84,40 +84,42 @@ set_date_service_table <- function(gtfs_obj) {
       "saturday")[as.POSIXlt(date)$wday + 1]
   }
   
-  if(all(is.na(gtfs_obj$calendar$start_date)) && 
-     all(is.na(gtfs_obj$calendar$end_date))) {
-    # TODO validate no start_date and end_date defined in calendar.txt
-    date_service_df <- dplyr::tibble(date=lubridate::ymd("19700101"), 
-                                     service_id="x") %>% 
-      dplyr::filter(service_id != "x")
+  # get first and last date of a feed
+  if(!is.null(gtfs_obj$calendar) && (
+     all(is.na(gtfs_obj$calendar[["start_date"]])) || 
+     all(is.na(gtfs_obj$calendar[["end_date"]])))) {
+    feed_dates <- gtfs_obj$calendar_dates$date[which(gtfs_obj$exception_type != 2)]
+    if(length(feed_dates) == 0) {
+      warning("No valid dates defined in feed")
+      return(gtfs_obj)
+    }
   } else {
-    # table to connect every date to corresponding services (all dates from earliest to latest)
-    dates <- dplyr::tibble(
-      date = seq(
-        min(gtfs_obj$calendar$start_date, na.rm = T),
-        max(gtfs_obj$calendar$end_date, na.rm = T),
-        1
-      ),
-      weekday = weekday(date)
-    )
-    
-    # gather services by weekdays
-    service_ids_weekdays <-
-      tidyr::gather(
-        gtfs_obj$calendar,
-        key = "weekday",
-        value = "bool",
-        -c(service_id, start_date, end_date)
-      ) %>%
-      dplyr::filter(bool == 1) %>% dplyr::select(-bool)
-    
-    # set services to dates according to weekdays and start/end date
-    date_service_df <- 
-      dplyr::full_join(dates, service_ids_weekdays, 
-                       by="weekday") %>% 
-      dplyr::filter(date >= start_date & date <= end_date) %>% 
-      dplyr::select(-weekday, -start_date, -end_date)
+    feed_dates = c(gtfs_obj$calendar$start_date, gtfs_obj$calendar$end_date)
   }
+  min_date = min(feed_dates, na.rm = T)
+  max_date = max(feed_dates, na.rm = T)
+  
+  # table to connect every date to corresponding services (all dates from earliest to latest)
+  dates <- dplyr::tibble(
+    date = seq(min_date, max_date, 1),
+    weekday = weekday(date)
+  )
+  
+  # gather services by weekdays
+  service_ids_weekdays <-
+    tidyr::gather(
+      gtfs_obj$calendar,
+      key = "weekday",
+      value = "bool",
+      -c(service_id, start_date, end_date)
+    ) %>%
+    dplyr::filter(bool == 1) %>% dplyr::select(-bool)
+  
+  # set services to dates according to weekdays and start/end date
+  date_service_df <- 
+    dplyr::full_join(dates, service_ids_weekdays, by="weekday") %>% 
+    dplyr::filter(date >= start_date & date <= end_date) %>% 
+    dplyr::select(-weekday, -start_date, -end_date)
   
   if(!is.null(gtfs_obj$calendar_dates)) {
     # add calendar_dates additions (1)
