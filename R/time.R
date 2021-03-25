@@ -24,35 +24,55 @@ set_hms_times <- function(gtfs_obj) {
   if(is.null(gtfs_obj$stop_times)) {
     stop("stop_times.txt not provided")    
   }
-
+  arrival_time_hms <- departure_time_hms <- start_time_hms <- end_time_hms <-  NULL
+  
   if(feed_contains(gtfs_obj, "stop_times")) {
     stopifnot(inherits(gtfs_obj$stop_times, "data.table"))
-    arr_nchar = nchar(gtfs_obj$stop_times$arrival_time)
-    if(any(arr_nchar < 8)) {
-      gtfs_obj$stop_times[arr_nchar < 8, arrival_time := paste0("0", arrival_time)]
+    # arrival_time
+    suppressWarnings(
+      gtfs_obj$stop_times[, arrival_time_hms := hms::new_hms(hhmmss_to_seconds(arrival_time))]
+    )
+    if(any(is.na(gtfs_obj$stop_times$arrival_time_hms))) {
+      # warning("malformed arrival_time strings in stop_times")
+      gtfs_obj$stop_times[, arrival_time_hms := hms::new_hms(hhmmss_to_sec_split(arrival_time))]
     }
-    gtfs_obj$stop_times[, arrival_time := hms::new_hms(hhmmss_to_seconds(arrival_time))]
-    
-    dep_nchar = nchar(gtfs_obj$stop_times$departure_time)
-    if(any(dep_nchar < 8)) {
-      gtfs_obj$stop_times[dep_nchar < 8, departure_time := paste0("0", departure_time)]
+    gtfs_obj$stop_times[, arrival_time := arrival_time_hms]
+    gtfs_obj$stop_times[, arrival_time_hms := NULL]
+
+    # departure_time    
+    suppressWarnings(
+      gtfs_obj$stop_times[, departure_time_hms := hms::new_hms(hhmmss_to_seconds(departure_time))]
+    )
+    if(any(is.na(gtfs_obj$stop_times$departure_time_hms))) {
+      # warning("malformed departure_time strings in stop_times")
+      gtfs_obj$stop_times[, departure_time_hms := hms::new_hms(hhmmss_to_sec_split(departure_time))]
     }
-    gtfs_obj$stop_times[, departure_time := hms::new_hms(hhmmss_to_seconds(departure_time))]
+    gtfs_obj$stop_times[, departure_time := departure_time_hms]
+    gtfs_obj$stop_times[, departure_time_hms := NULL]
   }
   
   if(feed_contains(gtfs_obj, "frequencies") && nrow(gtfs_obj$frequencies) > 0) {
     stopifnot(inherits(gtfs_obj$frequencies, "data.table"))
-    start_nchar = nchar(gtfs_obj$frequencies$start_time)
-    if(any(start_nchar < 8)) {
-      gtfs_obj$frequencies[start_nchar < 8, start_time := paste0("0", start_time)]
-    }
-    gtfs_obj$frequencies[, start_time := hms::new_hms(hhmmss_to_seconds(start_time))]
     
-    end_nchar = nchar(gtfs_obj$frequencies$end_time)
-    if(any(end_nchar < 8)) {
-      gtfs_obj$frequencies[end_nchar < 8, end_time := paste0("0", end_time)]
+    suppressWarnings(
+      gtfs_obj$frequencies[, start_time_hms := hms::new_hms(hhmmss_to_seconds(start_time))]
+    )
+    if(any(is.na(gtfs_obj$frequencies$start_time_hms))) {
+      # warning("malformed start_time strings in frequencies")
+      gtfs_obj$frequencies[, start_time_hms := hms::new_hms(hhmmss_to_sec_split(start_time))]
     }
-    gtfs_obj$frequencies[, end_time := hms::new_hms(hhmmss_to_seconds(end_time))]
+    gtfs_obj$frequencies[, start_time := start_time_hms]
+    gtfs_obj$frequencies[, start_time_hms := NULL]
+    
+    suppressWarnings(
+      gtfs_obj$frequencies[, end_time_hms := hms::new_hms(hhmmss_to_seconds(end_time))]
+    )
+    if(any(is.na(gtfs_obj$frequencies$end_time_hms))) {
+      # warning("malformed end_time strings in frequencies")
+      gtfs_obj$frequencies[, end_time_hms := hms::new_hms(hhmmss_to_sec_split(end_time))]
+    }
+    gtfs_obj$frequencies[, end_time := end_time_hms]
+    gtfs_obj$frequencies[, end_time_hms := NULL]
   }
   
   gtfs_obj
@@ -173,9 +193,14 @@ set_date_service_table <- function(gtfs_obj) {
 }
 
 # Function to convert "HH:MM:SS" time strings to seconds.
-# readr::parse_time() might be faster but doesn't accept hour values > 24
 hhmmss_to_seconds <- function(hhmmss_str) {
   as.numeric(substr(hhmmss_str, 0, 2)) * 3600 +
     as.numeric(substr(hhmmss_str, 4, 5)) * 60 +
     as.numeric(substr(hhmmss_str, 7, 8))
+}
+
+hhmmss_to_sec_split <- function(hhmmss_str) {
+  sapply(strsplit(hhmmss_str, ":"), function(Y) {
+    sum(as.numeric(Y) * c(3600, 60, 1))
+  })
 }
