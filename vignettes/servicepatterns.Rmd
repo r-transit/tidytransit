@@ -91,7 +91,7 @@ to an existing `service_id` (and by extension `trip_id`).
 head(gtfs$.$service_pattern)
 ```
 
-In addition, `gtfs$.$date_servicepattern_table` has been created which connects dates and service 
+In addition, `gtfs$.$dates_servicepatterns` has been created which connects dates and service 
 patterns (like `dates_services`). We can compare the number of service patterns to the number of services.
 
 ```{r}
@@ -113,7 +113,7 @@ uses around 15'600 service_ids which all identify unique date patterns.
 We'll now try to figure out usable names for those patterns. A good way to start is visualising the data.
 
 ```{r fig.height=4, fig.width=7}
-date_servicepattern_table <- gtfs$.$date_servicepattern_table %>% left_join(calendar, by = "date")
+date_servicepattern_table <- gtfs$.$dates_servicepatterns %>% left_join(calendar, by = "date")
 
 ggplot(date_servicepattern_table) + theme_bw() + 
   geom_point(aes(x = date, y = servicepattern_id, color = weekday), size = 1) + 
@@ -196,7 +196,7 @@ suggest_servicepattern_name = function(dates, calendar) {
 We'll apply this function to our service patterns and create a table with ids and names.
 
 ```{r}
-servicepattern_names = gtfs$.$date_servicepattern_table %>% 
+servicepattern_names = gtfs$.$dates_servicepatterns %>% 
   group_by(servicepattern_id) %>% summarise(
     servicepattern_name = suggest_servicepattern_name(date, calendar)
   )
@@ -212,7 +212,7 @@ We can plot the service pattern like a calendar to visualise the different patte
 services can be plotted similarly (given it's not too many) by using `dates_services` and `service_id`.
 
 ```{r fig.height=4, fig.width=7}
-dates = gtfs$.$date_servicepattern_table
+dates = gtfs$.$dates_servicepatterns
 dates$wday <- lubridate::wday(dates$date, label = T, abbr = T, week_start = 7)
 dates$week_nr <- lubridate::week(dates$date)
 
@@ -235,7 +235,7 @@ We can plot the number of trips for each day as a calendar heat map.
 
 ```{r fig.height=4, fig.width=7}
 trips_servicepattern = left_join(select(gtfs$trips, trip_id, service_id), gtfs$.$service_pattern, by = "service_id")
-trip_dates = left_join(gtfs$.$date_servicepattern_table, trips_servicepattern, by = "servicepattern_id")
+trip_dates = left_join(gtfs$.$dates_servicepatterns, trips_servicepattern, by = "servicepattern_id")
 
 trip_dates_count = trip_dates %>% group_by(date) %>% summarise(count = dplyr::n()) 
 trip_dates_count$weekday <- lubridate::wday(trip_dates_count$date, label = T, abbr = T, week_start = 7)

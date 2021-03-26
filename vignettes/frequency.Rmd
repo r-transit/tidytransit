@@ -94,7 +94,7 @@ service_pattern_summary <- gtfs$trips %>%
 We can also add the number of days that each service is in operation. 
 
 ```{r}
-service_pattern_summary <- gtfs$.$date_servicepattern_table %>% 
+service_pattern_summary <- gtfs$.$dates_servicepatterns %>% 
   group_by(servicepattern_id) %>% 
   summarise(days_in_service = n()) %>% 
   left_join(service_pattern_summary, by="servicepattern_id")
