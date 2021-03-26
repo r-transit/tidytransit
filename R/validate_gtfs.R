@@ -55,7 +55,6 @@
 validate_gtfs <- function(gtfs, files = NULL, quiet = TRUE, warnings = TRUE) {
 
   # input checking
-
   checkmate::assert_class(gtfs, "gtfs")
   checkmate::assert_logical(quiet)
   checkmate::assert_logical(warnings)
@@ -64,41 +63,28 @@ validate_gtfs <- function(gtfs, files = NULL, quiet = TRUE, warnings = TRUE) {
   # if any files have been specified in read_gtfs, only validate those
   # uses internal data gtfs_metadata - check data-raw/gtfs_metadata.R
 
-  if (is.null(files)) {
-
-    specified_files   <- names(gtfs_meta)
-    extra_filenames       <- setdiff(paste0(names(gtfs), ".txt"), names(gtfs_meta))
-    files_to_validate <- c(specified_files, extra_filenames)
-
+  if(is.null(files)) {
+    files_to_validate <- unique(c(names(gtfs_meta), names(gtfs)))
   } else {
-
     checkmate::assert_names(files, subset.of = names(gtfs))
-
     files_to_validate <- paste0(files, ".txt")
-
   }
 
   # build validation dt for each file
-
   validation_result <- lapply(files_to_validate, function(filename) {
-
     file_metadata <- gtfs_meta[[filename]]
     file          <- sub(".txt", "", filename)
 
     # if metadata is null then file is undocumented. validate it as an "extra" file
-
-    if (is.null(file_metadata)) {
-
+    if(is.null(file_metadata)) {
       file_provided_status  <- TRUE
       file_spec             <- "ext"
       field                 <- names(gtfs[[file]]); if(is.null(field)) field <- NA
       field_spec            <- "ext"
       field_provided_status <- TRUE
-
     } else {
 
       # undocumented fields are labeled as "extra" fields
-
       provided_fields   <- names(gtfs[[file]])
       documented_fields <- file_metadata$field
 
@@ -125,78 +111,65 @@ validate_gtfs <- function(gtfs, files = NULL, quiet = TRUE, warnings = TRUE) {
       field_spec,
       field_provided_status
     )
-
   })
 
   validation_result <- data.table::rbindlist(validation_result)
 
   # checks if calendar.txt is missing. if it is then it becomes optional and
   # calendar_dates.txt becomes required
-
-  if (! "calendar" %in% names(gtfs)) {
-
+  if(!"calendar" %in% names(gtfs)) {
     validation_result[file == "calendar", file_spec := "opt"]
     validation_result[file == "calendar_dates", file_spec := "req"]
-
   }
 
   # checks if translations.txt is provided. if it is, feed_info.txt becomes required
-
-  if ("translations" %in% names(gtfs)) {
+  if("translations" %in% names(gtfs)) {
     validation_result[file == "feed_info", file_spec := "req"]
   }
 
   # checks for validation status and details
-
   validation_result[, `:=`(validation_status = "ok", validation_details = NA_character_)]
 
   # if file is not provided and is required, mark as a problem
-
   validation_result[
     !file_provided_status & file_spec == "req",
     `:=`(validation_status = "problem", validation_details = "missing_req_file")
   ]
 
   # if file is not provided and is optional, mark as a info
-
   validation_result[
     !file_provided_status & file_spec == "opt",
     `:=`(validation_status = "info", validation_details = "missing_opt_file")
   ]
 
   # if file is provided but misses a required field, mark as a problem
-
   validation_result[
     file_provided_status & !field_provided_status & field_spec == "req",
     `:=`(validation_status = "problem", validation_details = "missing_req_field")
   ]
 
   # if file is provided but misses a optional field, mark as a info
-
   validation_result[
     file_provided_status & !field_provided_status & field_spec == "opt",
     `:=`(validation_status = "info", validation_details = "missing_opt_field")
   ]
 
   # if file is provided but undocumented in gtfs specifications, mark as a info
-
   validation_result[
     file_spec == "ext",
     `:=`(validation_status = "info", validation_details = "undocumented_file")
   ]
 
   # if field is provided but undocumented in gtfs specifications, mark as a info
-
   validation_result[
     file_spec != "ext" & field_spec == "ext",
     `:=`(validation_status = "info", validation_details = "undocumented_field")
   ]
 
   # raises warnings if problems are found
-
   files_problems <- validation_result[validation_details == "missing_req_file"]
 
-  if (nrow(files_problems) >= 1 & warnings) {
+  if(nrow(files_problems) >= 1 & warnings) {
 
     warning(
       paste0(
@@ -209,8 +182,7 @@ validate_gtfs <- function(gtfs, files = NULL, quiet = TRUE, warnings = TRUE) {
 
   fields_problems <- validation_result[validation_details == "missing_req_field"]
 
-  if (nrow(fields_problems) >= 1 & warnings) {
-
+  if(nrow(fields_problems) >= 1 & warnings) {
     problematic_files <- unique(fields_problems$file)
 
     problematic_fields <- unlist(
@@ -232,7 +204,7 @@ validate_gtfs <- function(gtfs, files = NULL, quiet = TRUE, warnings = TRUE) {
 
   }
 
-  if (nrow(files_problems) == 0 & nrow(fields_problems) == 0 & !quiet) {
+  if(nrow(files_problems) == 0 & nrow(fields_problems) == 0 & !quiet) {
     message("Valid gtfs data structure.")
   }
 
