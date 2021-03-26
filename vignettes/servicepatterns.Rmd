@@ -42,10 +42,9 @@ gtfs <- read_gtfs(local_gtfs_path)
 # gtfs <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
 ```
 
-# TODO
-
-With `set_date_service_table()` we add a table to the feed that indicates which `service_id` 
-runs on which date. This is later useful for linking dates and trips via `service_id`. 
+Tidytransit provides a `date_service_table` (stored in the list `.`) that indicates which
+`service_id` runs on which date. This is later useful for linking dates and trips via 
+`service_id`. 
 
 ```{r}
 head(gtfs$.$date_service_table)
@@ -76,10 +75,10 @@ head(calendar)
 To analyse on which dates trips run and to group similar services we use service patterns. 
 Such a pattern simply lists all dates a trip runs on. For example, a trip with a pattern 
 like _2019-03-07, 2019-03-14, 2019-03-21, 2019-03-28_ runs every Thursday in March 2019. 
-To handle these patterns we create a `servicepattern_id` using a hash function. Ideally there are 
-the same number of servicepattern_ids and service_ids. However, in real life feeds this is rarely 
-the case. In addition, the usability of service patterns depends largely on the feed and its 
-complexity.
+To handle these patterns we create a `servicepattern_id` using a hash function. Ideally 
+there are the same number of servicepattern_ids and service_ids. However, in real life feeds 
+this is rarely the case. In addition, the usability of service patterns depends largely on 
+the feed and its complexity.
 
 ```{r}
 gtfs <- set_servicepattern(gtfs)
