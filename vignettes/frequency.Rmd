@@ -78,7 +78,7 @@ Now we're ready to roll the statistics up to services.
 
 ```{r}
 service_pattern_summary <- gtfs$trips %>%
-  left_join(gtfs$.$service_pattern, by="service_id") %>% 
+  left_join(gtfs$.$servicepatterns, by="service_id") %>% 
   left_join(shp2, by="shape_id") %>%
   left_join(gtfs$stop_times, by="trip_id") %>% 
   group_by(servicepattern_id) %>% 
@@ -111,7 +111,7 @@ It seems that if we want to summarise the most common patterns of service in the
 We'll use that pattern below to pull out the Service ID's that we need to use to identify trips in the GTFS feed for which we want to summarise service. 
 
 ```{r}
-service_ids <- gtfs$.$service_pattern %>% 
+service_ids <- gtfs$.$servicepatterns %>% 
   filter(servicepattern_id == 's_e25d6ca') %>% 
   pull(service_id)
 

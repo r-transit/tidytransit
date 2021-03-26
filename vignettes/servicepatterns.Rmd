@@ -84,11 +84,11 @@ the feed and its complexity.
 gtfs <- set_servicepattern(gtfs)
 ```
 
-Our gtfs feed now contains the data frame `service_pattern` which links each `servicepattern_id`
+Our gtfs feed now contains the data frame `servicepatterns` which links each `servicepattern_id`
 to an existing `service_id` (and by extension `trip_id`). 
 
 ```{r}
-head(gtfs$.$service_pattern)
+head(gtfs$.$servicepatterns)
 ```
 
 In addition, `gtfs$.$dates_servicepatterns` has been created which connects dates and service 
@@ -99,7 +99,7 @@ patterns (like `dates_services`). We can compare the number of service patterns 
 n_services <-  length(unique(gtfs$trips$service_id)) # 70
 
 # unique date patterns 
-n_servicepatterns <- length(unique(gtfs$.$service_pattern$servicepattern_id)) # 7
+n_servicepatterns <- length(unique(gtfs$.$servicepatterns$servicepattern_id)) # 7
 ```
 
 The feed uses 70 service_ids but there are actually only 7 different date patterns. Other feeds 
@@ -234,7 +234,7 @@ ggplot(dates) + theme_bw() +
 We can plot the number of trips for each day as a calendar heat map.
 
 ```{r fig.height=4, fig.width=7}
-trips_servicepattern = left_join(select(gtfs$trips, trip_id, service_id), gtfs$.$service_pattern, by = "service_id")
+trips_servicepattern = left_join(select(gtfs$trips, trip_id, service_id), gtfs$.$servicepatterns, by = "service_id")
 trip_dates = left_join(gtfs$.$dates_servicepatterns, trips_servicepattern, by = "servicepattern_id")
 
 trip_dates_count = trip_dates %>% group_by(date) %>% summarise(count = dplyr::n()) 

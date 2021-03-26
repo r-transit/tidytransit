@@ -72,7 +72,7 @@ set_servicepattern <- function(gtfs_obj, id_prefix = "s_", hash_algo = "md5", ha
     summarise() %>% ungroup()
 
   # assign to gtfs_obj
-  gtfs_obj$.$service_pattern <- service_pattern
+  gtfs_obj$.$servicepatterns <- service_pattern
   gtfs_obj$.$dates_servicepatterns <- dates_servicepatterns
   
   return(gtfs_obj)
