@@ -39,11 +39,11 @@ summary.tidygtfs <- function(object, ...) {
   files <- filter(files, file_provided_status == TRUE)
 
   # date info
-  if(is.null(object$.$date_service_table)) {
-    object <- set_date_service_table(object)
+  if(is.null(object$.$dates_services)) {
+    object <- set_dates_services(object)
   }
-  date_min <- min(object$.$date_service_table$date)
-  date_max <- max(object$.$date_service_table$date)
+  date_min <- min(object$.$dates_services$date)
+  date_max <- max(object$.$dates_services$date)
   
   cat(paste0("GTFS object\n"))
   cat(paste0("files        ", paste(files$file, collapse=", "), "\n"))

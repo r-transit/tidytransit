@@ -42,12 +42,12 @@ gtfs <- read_gtfs(local_gtfs_path)
 # gtfs <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
 ```
 
-Tidytransit provides a `date_service_table` (stored in the list `.`) that indicates which
+Tidytransit provides a `dates_services` (stored in the list `.`) that indicates which
 `service_id` runs on which date. This is later useful for linking dates and trips via 
 `service_id`. 
 
 ```{r}
-head(gtfs$.$date_service_table)
+head(gtfs$.$dates_services)
 ```
 
 To understand service patterns better we need information on weekdays and holidays. With 
@@ -59,7 +59,7 @@ holidays = tribble(~date, ~holiday,
   ymd("2018-07-04"), "Independence Day",
   ymd("2018-09-03"), "Labor Day")
 
-calendar = tibble(date = unique(gtfs$.$date_service_table$date)) %>% 
+calendar = tibble(date = unique(gtfs$.$dates_services$date)) %>% 
   mutate(
     weekday = (function(date) {
       c("Sunday", "Monday", "Tuesday", 
@@ -92,7 +92,7 @@ head(gtfs$.$service_pattern)
 ```
 
 In addition, `gtfs$.$date_servicepattern_table` has been created which connects dates and service 
-patterns (like `date_service_table`). We can compare the number of service patterns to the number of services.
+patterns (like `dates_services`). We can compare the number of service patterns to the number of services.
 
 ```{r}
 # service ids used
@@ -209,7 +209,7 @@ print(servicepattern_names)
 ### Plot calendar for each service pattern
 
 We can plot the service pattern like a calendar to visualise the different patterns. The original 
-services can be plotted similarly (given it's not too many) by using `date_service_table` and `service_id`.
+services can be plotted similarly (given it's not too many) by using `dates_services` and `service_id`.
 
 ```{r fig.height=4, fig.width=7}
 dates = gtfs$.$date_servicepattern_table
