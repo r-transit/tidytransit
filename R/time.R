@@ -113,11 +113,11 @@ set_dates <- function(gtfs_obj) {
 #' @examples 
 #' library(dplyr)
 #' local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
-#' nyc <- read_gtfs(local_gtfs_path) %>% set_date_service_table()
-#' nyc_services_by_date <- nyc$.$date_service_table
+#' nyc <- read_gtfs(local_gtfs_path) %>% set_dates_services()
+#' nyc_services_by_date <- nyc$.$dates_services
 #' # count the number of services running on each date
 #' nyc_services_by_date %>% group_by(date) %>% count()
-set_date_service_table <- function(gtfs_obj) {
+set_dates_services <- function(gtfs_obj) {
   weekday <- function(date) {
     c("sunday", "monday", "tuesday", 
       "wednesday", "thursday", "friday", 
@@ -187,7 +187,7 @@ set_date_service_table <- function(gtfs_obj) {
     warning("No start and end dates defined in feed")
   }
 
-  gtfs_obj$.$date_service_table <- date_service_df
+  gtfs_obj$.$dates_services <- date_service_df
   
   return(gtfs_obj)
 }

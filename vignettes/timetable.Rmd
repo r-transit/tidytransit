@@ -136,11 +136,11 @@ departures %>%
 ```
 
 However, we don't know days on which these trips run. Using the service_id column on our 
-calculated departures, and tidytransit's calculated `date_service_table`, we can filter 
+calculated departures, and tidytransit's calculated `dates_services` data frame, we can filter 
 trips to a given date of interest. 
 
 ```{r}
-head(gtfs$.$date_service_table)
+head(gtfs$.$dates_services)
 ```
 
 Please see the `servicepatterns` vignette for further examples on how to use this table.  
@@ -152,7 +152,7 @@ Now we are ready to extract the same service table for any given day of the year
 For example, for August 23rd 2018, a typical weekday, we can filter as follows: 
 
 ```{r fig.width=8, fig.height=12}
-services_on_180823 <- gtfs$.$date_service_table %>% 
+services_on_180823 <- gtfs$.$dates_services %>% 
   filter(date == "2018-08-23") %>% select(service_id)
 
 departures_180823 <- departures %>% 

@@ -434,8 +434,8 @@ travel_times = function(filtered_stop_times,
 #'                         hms object or numeric value in seconds
 #' 
 #' This function creates filtered `stop_times` for [travel_times()] and [raptor()]. If you
-#' want to filter a feed multiple times it is faster to precalculate date_service_table with
-#' [set_date_service_table()].
+#' want to filter a feed multiple times it is faster to precalculate dates_services with
+#' [set_dates_services()].
 #' 
 #' @export                
 #' @examples 
@@ -467,11 +467,11 @@ filter_stop_times = function(gtfs_obj,
   }
   
   # trips running on day
-  if(!feed_contains(gtfs_obj, "date_service_table")) {
-    message("Consider using set_date_service_table beforehand if you filter this feed multiple times")
-    gtfs_obj <- set_date_service_table(gtfs_obj)
+  if(!feed_contains(gtfs_obj, "dates_services")) {
+    message("Consider using set_dates_services beforehand if you filter this feed multiple times")
+    gtfs_obj <- set_dates_services(gtfs_obj)
   }
-  service_ids = filter(gtfs_obj$.$date_service_table, date == extract_date)
+  service_ids = filter(gtfs_obj$.$dates_services, date == extract_date)
   if(nrow(service_ids) == 0) {
     stop(paste0("No stop_times on ", extract_date))
   }

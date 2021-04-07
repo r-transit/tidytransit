@@ -33,7 +33,7 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE) {
   g$. <- list()
   g <- set_hms_times(g)
   g <- set_dates(g)
-  g <- set_date_service_table(g)
+  g <- set_dates_services(g)
   
   # convert to tibble
   g[names(g) != "."] <- lapply(g[names(g) != "."], dplyr::as_tibble)
