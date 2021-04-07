@@ -37,7 +37,7 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE) {
   
   # convert to tibble
   g[names(g) != "."] <- lapply(g[names(g) != "."], dplyr::as_tibble)
-  gtfsio::new_gtfs(g)
+  g <- gtfsio::new_gtfs(g)
   class(g) <- c("tidygtfs", "gtfs")
   attributes(g)$validation_result <- validation_result
     

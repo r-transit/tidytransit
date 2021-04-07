@@ -1,3 +1,29 @@
+#' Print a GTFS object
+#'
+#' Prints a GTFS object suppressing the \code{class} attribute.
+#'
+#' @param x A GTFS object.
+#' @param ... Optional arguments ultimately passed to \code{format}.
+#'
+#' @return The GTFS object that was printed, invisibly.
+#'
+#' @examples  \dontrun{
+#' path = system.file("extdata", 
+#'            "google_transit_nyc_subway.zip", 
+#'            package = "tidytransit")
+#'
+#' g = read_gtfs(path)
+#' print(g)
+#' }
+#' @export
+print.tidygtfs = function(x, ...) {
+  validation_result <- attributes(x)$validation_result
+  attributes(x)$validation_result <- NULL
+  print(unclass(x), ...)
+  invisible(x)
+}
+
+
 #' GTFS feed summary
 #'
 #' @param object a gtfs_obj as read by [read_gtfs()]
