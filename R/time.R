@@ -20,10 +20,7 @@ filter_stop_times_by_hour <- function(stop_times,
 #'                the modified gtfs_obj is returned
 #' @return gtfs_obj with added hms times columns for stop_times and frequencies
 #' @importFrom hms new_hms
-set_hms_times <- function(gtfs_obj) {
-  if(is.null(gtfs_obj$stop_times)) {
-    stop("stop_times.txt not provided")    
-  }
+convert_times_to_hms <- function(gtfs_obj) {
   arrival_time_hms <- departure_time_hms <- start_time_hms <- end_time_hms <-  NULL
   
   if(feed_contains(gtfs_obj, "stop_times")) {
@@ -39,7 +36,7 @@ set_hms_times <- function(gtfs_obj) {
     gtfs_obj$stop_times[, arrival_time := arrival_time_hms]
     gtfs_obj$stop_times[, arrival_time_hms := NULL]
 
-    # departure_time    
+    # departure_time
     suppressWarnings(
       gtfs_obj$stop_times[, departure_time_hms := hms::new_hms(hhmmss_to_seconds(departure_time))]
     )
@@ -78,27 +75,53 @@ set_hms_times <- function(gtfs_obj) {
   gtfs_obj
 }
 
+hms_to_hhmmss = function(vec) {
+  format(vec, format = "%H:%M:%S")
+}
+
+convert_hms_to_char <- function(gtfs_obj) {
+  if(feed_contains(gtfs_obj, "stop_times")) {
+    stopifnot(inherits(gtfs_obj$stop_times, "data.table"))
+    gtfs_obj$stop_times[, arrival_time := hms_to_hhmmss(arrival_time)]
+    gtfs_obj$stop_times[, departure_time := hms_to_hhmmss(departure_time)]
+  }
+  
+  if(feed_contains(gtfs_obj, "frequencies") && nrow(gtfs_obj$frequencies) > 0) {
+    stopifnot(inherits(gtfs_obj$frequencies, "data.table"))
+    gtfs_obj$frequencies[, start_time := hms_to_hhmmss(start_time)]
+    gtfs_obj$frequencies[, end_time := hms_to_hhmmss(end_time)]
+  }
+  
+  gtfs_obj
+}
+
+
+# Dates ####
 parse_gtfsio_date = function(gtfsio_date) {
   as.Date(as.character(gtfsio_date), format = "%Y%m%d")
 }
 
-set_dates <- function(gtfs_obj) {
+date_as_gtfsio_char = function(date) {
+  format(date, format = "%Y%m%d")
+}
+
+convert_dates <- function(gtfs_obj, parse_function = parse_gtfsio_date) {
   if(!is.null(gtfs_obj[["calendar"]])) { # $calendar matches calendar_dates
     stopifnot(inherits(gtfs_obj$calendar, "data.table"))
-    gtfs_obj$calendar[,start_date := parse_gtfsio_date(start_date)]
-    gtfs_obj$calendar[,end_date := parse_gtfsio_date(end_date)]
+    gtfs_obj$calendar[,start_date := parse_function(start_date)]
+    gtfs_obj$calendar[,end_date := parse_function(end_date)]
   }
   if(!is.null(gtfs_obj[["calendar_dates"]])) {
     stopifnot(inherits(gtfs_obj$calendar_dates, "data.table"))
-    gtfs_obj$calendar_dates[,date := parse_gtfsio_date(date)]
+    gtfs_obj$calendar_dates[,date := parse_function(date)]
   }
   if(!is.null(gtfs_obj[["feed_info"]])) {
     stopifnot(inherits(gtfs_obj$feed_info, "data.table"))
     if(!is.null(gtfs_obj$feed_info$feed_start_date)) {
-      gtfs_obj$feed_info[,feed_start_date := parse_gtfsio_date(feed_start_date)]
+      gtfs_obj$feed_info[,feed_start_date := parse_function(feed_start_date)]
     }
     if(!is.null(gtfs_obj$feed_info$feed_end_date)) {
-      gtfs_obj$feed_info[,feed_end_date := parse_gtfsio_date(feed_end_date)]
+      gtfs_obj$feed_info[,feed_end_date := parse_function(feed_end_date)]
     }
   }
   gtfs_obj

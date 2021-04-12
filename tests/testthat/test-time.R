@@ -5,7 +5,7 @@ create_empty_gtfs_obj <- function() {
   gtfsio::new_gtfs(g)
 }
 
-test_that("set_hms_times() works with valid data", {
+test_that("convert_times_to_hms() works with valid data", {
   gtest <- create_empty_gtfs_obj()
   gtest$stop_times <- data.table::data.table(
     arrival_time = c("08:00:00", "14:00:00", "26:10:00"),
@@ -15,7 +15,7 @@ test_that("set_hms_times() works with valid data", {
     end_time = c("12:00:00")
   )
 
-  gtest <- set_hms_times(gtest)
+  gtest <- convert_times_to_hms(gtest)
   
   expect_is(gtest$stop_times$arrival_time, "hms")
   expect_is(gtest$stop_times$departure_time, "hms")
@@ -107,3 +107,10 @@ test_that("set_dates_services() works with additions and exceptions", {
     dplyr::tibble(max = lubridate::ymd("20180429")))
 })
 
+test_that("parse dates", {
+  x = "20180429"
+  y = parse_gtfsio_date(x)
+  expect_is(y, "Date")
+  z = date_as_gtfsio_char(y)
+  expect_equal(x, z)
+})

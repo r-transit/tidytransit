@@ -60,36 +60,18 @@ valid_url <- function(url, timeout = 5, test_url = TRUE, quiet = TRUE) {
 #'               Files within the directory will be overwritten.
 #' @importFrom zip zipr
 write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE) {
-  stopifnot(is_gtfs_obj(gtfs_obj))
-
-  meta <- get_gtfs_meta()
-  if(!as_dir) {
-    dir.create(outdir <- tempfile())
-  } else {
-    outdir <- zipfile
-    if(!dir.exists(outdir)) dir.create(outdir)
-  }
-  filenames = names(gtfs_obj)
-  filenames <- filenames[filenames != "."]
-
-  for(filename in filenames) {
-    dd <- as.data.frame(gtfs_obj[[filename]])
-
-    # formate dates yyyymmdd
-    colclasses <- sapply(dd, class)
-    date_cols <- which(colclasses == "Date")
-    dd[date_cols] <- format(dd[date_cols], "%Y%m%d")
-
-    # remove columns from set_hms_times
-    # TODO convert hms_times to char?
-
-    readr::write_csv(dd, paste0(outdir, "/", filename, ".txt"), na = "")
-  }
-  if(!as_dir) {
-    filelist = paste0(outdir, "/", filenames, ".txt")
-    zip::zipr(zipfile, filelist, recurse = F, compression_level = compression_level)
-  }
-  invisible(gtfs_obj)
+  stopifnot(inherits(gtfs_obj, "tidygtfs"))
+  gtfs_obj <- gtfs_obj[names(gtfs_obj) != "."]
+  gtfs_obj <- lapply(gtfs_obj, as.data.table)
+  class(gtfs_obj) <- list("gtfs")
+  gtfs_obj <- convert_dates(gtfs_obj, date_as_gtfsio_char)
+  
+  gtfs_obj <- convert_hms_to_char(gtfs_obj)
+  
+  gtfsio::export_gtfs(gtfs_obj, zipfile, 
+                      standard_only = FALSE,
+                      compression_level = 9, 
+                      as_dir = as_dir, overwrite = TRUE)
 }
 
 #' Returns TRUE if the given gtfs_obj contains the table. Used to check for

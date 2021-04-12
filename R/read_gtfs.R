@@ -31,8 +31,8 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE) {
   
   # prep tidygtfs columns
   g$. <- list()
-  g <- set_hms_times(g)
-  g <- set_dates(g)
+  g <- convert_times_to_hms(g)
+  g <- convert_dates(g)
   g <- set_dates_services(g)
   
   # convert to tibble
