@@ -14,11 +14,11 @@ test_that("write_gtfs creates the same feed as read by read_gtfs", {
 test_that("write_gtfs as_dir", {
   skip_on_cran()
   path1 <- system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
-  path2 <- "_test_tmp"
+  path2 <- tempfile()
   g1 <- read_gtfs(path1)
   write_gtfs(g1, path2, as_dir = TRUE)
   expect_true(file.exists(paste0(path2, "/agency.txt")))
-  unlink("_test_tmp")
+  unlink(path2)
 })
 
 test_that("summary.tidygtfs", {
