@@ -4,10 +4,13 @@
 \alias{stops_as_sf}
 \title{Convert stops into Simple Features Points}
 \usage{
-stops_as_sf(stops)
+stops_as_sf(stops, crs = NULL)
 }
 \arguments{
 \item{stops}{a gtfs$stops dataframe}
+
+\item{crs}{optional coordinate reference system (used by sf::st_transform) to transform
+lon/lat coordinates}
 }
 \value{
 an sf dataframe for gtfs routes with a point column

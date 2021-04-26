@@ -48,6 +48,15 @@ test_that("one shape per trip is returned", {
   expect_equal(nrow(trip_geom), n_ids)
 })
 
+test_that("crs is used", {
+  duke_sf = gtfs_as_sf(gtfs_duke)
+  expect_equal(st_crs(duke_sf$stops)$input, "EPSG:4326")
+  
+  duke_sf_crs = gtfs_as_sf(gtfs_duke, crs = 3358)
+  expect_equal(st_crs(duke_sf_crs$stops)$input, "EPSG:3358")
+  expect_equal(st_crs(duke_sf_crs$shapes)$input, "EPSG:3358")
+})
+
 test_that("two shapes are returned even if trips use the same shape_id", {
   route_id = "12945"
   trip_ids = c("t_726295_b_19493_tn_37", "t_726295_b_19493_tn_39")
