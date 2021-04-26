@@ -433,9 +433,7 @@ travel_times = function(filtered_stop_times,
 #' @param max_arrival_time The latest arrival time. Can be given as "HH:MM:SS", 
 #'                         hms object or numeric value in seconds
 #' 
-#' This function creates filtered `stop_times` for [travel_times()] and [raptor()]. If you
-#' want to filter a feed multiple times it is faster to precalculate dates_services with
-#' [set_dates_services()].
+#' This function creates filtered `stop_times` for [travel_times()] and [raptor()].
 #' 
 #' @export                
 #' @examples 
@@ -467,10 +465,6 @@ filter_stop_times = function(gtfs_obj,
   }
   
   # trips running on day
-  if(!feed_contains(gtfs_obj, "dates_services")) {
-    message("Consider using set_dates_services beforehand if you filter this feed multiple times")
-    gtfs_obj <- set_dates_services(gtfs_obj)
-  }
   service_ids = filter(gtfs_obj$.$dates_services, date == extract_date)
   if(nrow(service_ids) == 0) {
     stop(paste0("No stop_times on ", extract_date))

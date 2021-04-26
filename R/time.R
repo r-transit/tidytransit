@@ -136,7 +136,7 @@ convert_dates <- function(gtfs_obj, parse_function = parse_gtfsio_date) {
 #' @examples 
 #' library(dplyr)
 #' local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
-#' nyc <- read_gtfs(local_gtfs_path) %>% set_dates_services()
+#' nyc <- read_gtfs(local_gtfs_path)
 #' nyc_services_by_date <- nyc$.$dates_services
 #' # count the number of services running on each date
 #' nyc_services_by_date %>% group_by(date) %>% count()

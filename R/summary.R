@@ -65,9 +65,6 @@ summary.tidygtfs <- function(object, ...) {
   files <- filter(files, file_provided_status == TRUE)
 
   # date info
-  if(is.null(object$.$dates_services)) {
-    object <- set_dates_services(object)
-  }
   date_min <- min(object$.$dates_services$date)
   date_max <- max(object$.$dates_services$date)
   
