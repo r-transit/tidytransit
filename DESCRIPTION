@@ -44,6 +44,7 @@ Imports:
 Suggests:
     testthat,
     knitr,
+    markdown,
     rmarkdown,
     ggplot2,
     scales
