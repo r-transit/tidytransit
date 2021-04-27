@@ -2,19 +2,17 @@ context("Frequencies are calculated correctly")
 
 # TODO rewrite with synthesized sample data
 test_that("Stop frequencies (headways) for included data are as expected", {
-  stops_frequency <- get_stop_frequency(gtfs_duke, by_route = FALSE)
-  ex_address <- 
-    stops_frequency$headway[stops_frequency$stop_id==778037]
-  expect_equal(as.integer(240), as.integer(ex_address))
-})
+  expect_equal(nrow(get_stop_frequency(gtfs_duke)), 47)
+  expect_equal(nrow(get_stop_frequency(gtfs_duke, start_hour = 10, end_hour = 11)), 41)
 
-test_that("Route frequencies (headways) for included data are as expected", {
-  routes_frequency <- get_route_frequency(gtfs_duke)
-  expect_equal(routes_frequency[routes_frequency$route_id==13048, ]$median_headways, 104)
-})
-
-test_that("Route frequencies (headways) can be calculated for included data for a particular service id", {
-  # TODO rewrite with synthesized sample data
-  routes_frequency <- get_route_frequency(gtfs_duke, service_id = "c_853_b_22586_d_24")
-  expect_equal(routes_frequency[routes_frequency$route_id == 1693, ]$median_headways, 31)
+  stops_frequency <- get_stop_frequency(gtfs_duke, service_ids = "c_853_b_19828_d_64")
+  ex_address <- stops_frequency$mean_headway[stops_frequency$stop_id==778058]
+  expect_equal(as.integer(711), as.integer(ex_address))
+  
+  stops_frequency_by_route <- get_stop_frequency(gtfs_duke, 
+                                                 service_ids = "c_853_b_19828_d_64",
+                                                 by_route = TRUE)
+  expect_equal(
+    colnames(stops_frequency_by_route), 
+    c("stop_id", "route_id", "direction_id", "service_id", "n_departures", "mean_headway"))
 })

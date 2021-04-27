@@ -8,10 +8,8 @@ get_stop_frequency(
   gtfs_obj,
   start_hour = 6,
   end_hour = 22,
-  service_ids = c(),
-  dow = c(1, 1, 1, 1, 1, 0, 0),
-  by_route = TRUE,
-  wide = FALSE
+  service_ids = NULL,
+  by_route = FALSE
 )
 }
 \arguments{
@@ -21,13 +19,11 @@ get_stop_frequency(
 
 \item{end_hour}{(optional) an integer indicating the end hour (default 22)}
 
-\item{service_ids}{(optional) a set of service_ids from the calendar dataframe identifying a particular service id}
-
-\item{dow}{(optional) integer vector indicating which days of week to calculate for. default is weekday, e.g. c(1,1,1,1,1,0,0)}
+\item{service_ids}{(optional) a set of service_ids from the calendar dataframe
+identifying a particular service id. If not provided the service_id
+with the most departures is used}
 
 \item{by_route}{default TRUE, if FALSE then calculate headway for any line coming through the stop in the same direction on the same schedule.}
-
-\item{wide}{(optional) if true, then return a wide rather than tidy data frame}
 }
 \value{
 dataframe of stops with the number of departures and the headway
@@ -41,6 +37,6 @@ tidytransit calculates.
 \examples{
 data(gtfs_duke)
 stop_frequency <- get_stop_frequency(gtfs_duke)
-x <- order(stop_frequency$headway)
+x <- order(stop_frequency$mean_headway)
 head(stop_frequency[x,])
 }
