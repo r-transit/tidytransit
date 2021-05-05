@@ -447,7 +447,6 @@ filter_stop_times = function(gtfs_obj,
                              min_departure_time,
                              max_arrival_time) {
   departure_time_num <- arrival_time_num <- NULL
-  stopifnot(is_gtfs_obj(gtfs_obj))
   if(is.character(extract_date)) {
     extract_date <- readr::parse_date(extract_date)
   }
@@ -490,8 +489,10 @@ filter_stop_times = function(gtfs_obj,
   setkey(stops_dt, "stop_id")
   setindex(stops_dt, "stop_name")
   attributes(stop_times_dt)$stops <- stops_dt
-  
   attributes(stop_times_dt)$transfers <- gtfs_obj$transfers
+  attributes(stop_times_dt)$extract_date <- extract_date
+  attributes(stop_times_dt)$min_departure_time <- min_departure_time
+  attributes(stop_times_dt)$max_arrival_time <- max_arrival_time
   
   return(stop_times_dt)
 }

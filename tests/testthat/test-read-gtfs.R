@@ -73,7 +73,7 @@ test_that("Files with BOM can be read", {
               "sample-feed-bom.zip", 
               package = "tidytransit")
   g <- read_gtfs(bom_path)
-  expect_true(is_gtfs_obj(g))
+  expect_is(g, "tidygtfs")
 })
 
 test_that("Feed with additional data can be read", {

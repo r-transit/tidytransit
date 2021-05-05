@@ -21,7 +21,7 @@
 #'
 #' gtfs <- read_gtfs(local_gtfs_path, files = c("trips", "stop_times"))
 #' names(gtfs)
-#' @importFrom gtfsio import_gtfs
+#' @importFrom gtfsio import_gtfs new_gtfs
 #' @export
 read_gtfs <- function(path, files = NULL, quiet = TRUE) {
   g = gtfsio::import_gtfs(path, files = NULL, quiet = quiet)

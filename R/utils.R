@@ -59,6 +59,8 @@ valid_url <- function(url, timeout = 5, test_url = TRUE, quiet = TRUE) {
 #' @param as_dir if TRUE, the feed is not zipped and zipfile is used as a directory path. 
 #'               Files within the directory will be overwritten.
 #' @importFrom zip zipr
+#' @importFrom gtfsio export_gtfs
+#' @export
 write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE) {
   stopifnot(inherits(gtfs_obj, "tidygtfs"))
   gtfs_obj <- gtfs_obj[names(gtfs_obj) != "."]
@@ -82,11 +84,3 @@ feed_contains <- function(gtfs_obj, table_name) {
   exists(table_name, where = gtfs_obj) ||
     (exists(".", where = gtfs_obj) && exists(table_name, where = gtfs_obj$.))
 }
-
-#' Basic check if a given list is a gtfs object
-#' @param gtfs_obj as read by read_gtfs()
-#' @noRd
-is_gtfs_obj <- function(gtfs_obj) {
-  inherits(gtfs_obj, "gtfs")
-}
-
