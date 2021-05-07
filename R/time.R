@@ -1,16 +1,3 @@
-#' Filter stop times by hour of the day
-#' 
-#' @param stop_times a gtfs_obj$stop_times dataframe with arrival_time and departure_time 
-#' @return dataframe with only stop times within the hours specified, with time columns as lubridate periods
-#' @keywords internal
-filter_stop_times_by_hour <- function(stop_times, 
-                                      start_hour, 
-                                      end_hour) {
-  dplyr::filter(stop_times, arrival_time > 
-                  hms::hms(hours = start_hour) & 
-                  departure_time < hms::hms(hours = end_hour))
-}
-
 #' Use hms::hms columns in feed
 #' 
 #' Overwirtes character columns in stop_times (arrival_time, departure_time) and 
@@ -129,10 +116,12 @@ convert_dates <- function(gtfs_obj, parse_function = parse_gtfsio_date) {
 
 #' Returns all possible date/service_id combinations as a data frame
 #' 
-#' Use it to summarise service. For example, get a count of the number of services for a date. See example. 
-#' @return a date_service data frame
+#' Use it to summarise service. For example, get a count of the number of 
+#' services for a date. See example. 
+#' 
 #' @param gtfs_obj a gtfs_object as read by [read_gtfs()]
-#' @export
+#' @return a date_service data frame
+#' @keywords internal
 #' @examples 
 #' library(dplyr)
 #' local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")

@@ -16,8 +16,8 @@ existing files are read.}
 \item{quiet}{Whether to hide log messages and progress bars (defaults to TRUE).}
 }
 \value{
-A GTFS object: a list of data.tables in which each index represents a
-GTFS text file.
+A tidygtfs object: a list of tibbles in which each entry represents a
+GTFS text file. Additional tables are stored in the \code{.} sublist.
 }
 \description{
 Reads GTFS text files from either a local \code{.zip} file or an URL and

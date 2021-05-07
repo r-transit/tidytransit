@@ -52,7 +52,9 @@ valid_url <- function(url, timeout = 5, test_url = TRUE, quiet = TRUE) {
   return(all(url_cond1, url_cond2))
 }
 
-#' Writes a gtfs object to a zip file. Calculated tidytransit tables and columns are not exported.
+#' Write a tidygtfs object to a zip file
+#' 
+#' @note Auxilliary tidytransit tables (e.g. \code{dates_services}) are not exported.
 #' @param gtfs_obj a gtfs feed object
 #' @param zipfile path to the zip file the feed should be written to
 #' @param compression_level a number between 1 and 9.9, passed to zip::zip
@@ -72,7 +74,7 @@ write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE)
   
   gtfsio::export_gtfs(gtfs_obj, zipfile, 
                       standard_only = FALSE,
-                      compression_level = 9, 
+                      compression_level = compression_level, 
                       as_dir = as_dir, overwrite = TRUE)
 }
 

@@ -1,4 +1,4 @@
-#' Plot GTFS object routes and their frequencies
+#' Plot GTFS stops and trips
 #'
 #' @param x a gtfs_obj as read by read_gtfs()
 #' @export

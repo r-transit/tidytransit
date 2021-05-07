@@ -1,4 +1,4 @@
-#' Convert stops and shapes to Simple Features#' 
+#' Convert stops and shapes to Simple Features
 #' 
 #' Stops are converted to POINT sf data frames. Shapes are created as
 #' LINESTRING data frame. Note that this function replaces stops and shapes
@@ -7,7 +7,7 @@
 #' @param gtfs_obj a standard tidytransit gtfs object
 #' @param skip_shapes if TRUE, shapes are not converted. Default FALSE.
 #' @param crs optional coordinate reference system (used by sf::st_transform) to transform 
-#'            lon/lat coordinates
+#'            lon/lat coordinates of stops and shapes
 #' @param quiet boolean whether to print status messages
 #' @return gtfs_obj a tidytransit gtfs object with stops and shapes as sf data frames
 #' @export
@@ -70,7 +70,7 @@ shapes_as_sf <- function(gtfs_shapes, crs = NULL) {
   return(shapes_sf)
 }
 
-#' Get all trip shapes for a given route and service.
+#' Get all trip shapes for a given route and service
 #'
 #' @param gtfs_sf_obj tidytransit gtfs object with sf data frames
 #' @param route_ids routes to extract
@@ -113,7 +113,7 @@ get_route_geometry <- function(gtfs_sf_obj, route_ids = NULL, service_ids = NULL
   return(route_shapes)
 }
 
-#' Get all trip shapes for a given route and service.
+#' Get all trip shapes for given trip ids
 #'
 #' @param gtfs_sf_obj tidytransit gtfs object with sf data frames
 #' @param trip_ids trip_ids to extract shapes

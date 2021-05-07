@@ -2,7 +2,7 @@
 % Please edit documentation in R/spatial.R
 \name{get_route_geometry}
 \alias{get_route_geometry}
-\title{Get all trip shapes for a given route and service.}
+\title{Get all trip shapes for a given route and service}
 \usage{
 get_route_geometry(gtfs_sf_obj, route_ids = NULL, service_ids = NULL)
 }
@@ -17,7 +17,7 @@ get_route_geometry(gtfs_sf_obj, route_ids = NULL, service_ids = NULL)
 an sf dataframe for gtfs routes with a row/linestring for each trip
 }
 \description{
-Get all trip shapes for a given route and service.
+Get all trip shapes for a given route and service
 }
 \examples{
 data(gtfs_duke)

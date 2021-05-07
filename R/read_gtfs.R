@@ -1,4 +1,3 @@
-# TODO
 #' Read and validate GTFS files
 #'
 #' Reads GTFS text files from either a local \code{.zip} file or an URL and
@@ -9,8 +8,8 @@
 #'   GTFS (without the \code{.txt} extension). If \code{NULL} (the default) all
 #'   existing files are read.
 #' @param quiet Whether to hide log messages and progress bars (defaults to TRUE).
-#' @return A GTFS object: a list of data.tables in which each index represents a
-#'   GTFS text file.
+#' @return A tidygtfs object: a list of tibbles in which each entry represents a
+#'   GTFS text file. Additional tables are stored in the \code{.} sublist.
 #'
 #' @seealso \code{\link{validate_gtfs}}
 #'

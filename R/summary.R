@@ -17,7 +17,6 @@
 #' }
 #' @export
 print.tidygtfs = function(x, ...) {
-  validation_result <- attributes(x)$validation_result
   attributes(x)$validation_result <- NULL
   print(unclass(x), ...)
   invisible(x)

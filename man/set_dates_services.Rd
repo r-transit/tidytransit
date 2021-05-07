@@ -13,7 +13,8 @@ set_dates_services(gtfs_obj)
 a date_service data frame
 }
 \description{
-Use it to summarise service. For example, get a count of the number of services for a date. See example.
+Use it to summarise service. For example, get a count of the number of
+services for a date. See example.
 }
 \examples{
 library(dplyr)
@@ -23,3 +24,4 @@ nyc_services_by_date <- nyc$.$dates_services
 # count the number of services running on each date
 nyc_services_by_date \%>\% group_by(date) \%>\% count()
 }
+\keyword{internal}

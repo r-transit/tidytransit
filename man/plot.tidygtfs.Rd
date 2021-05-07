@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{plot.tidygtfs}
 \alias{plot.tidygtfs}
-\title{Plot GTFS object routes and their frequencies}
+\title{Plot GTFS stops and trips}
 \usage{
 \method{plot}{tidygtfs}(x, ...)
 }
@@ -12,7 +12,7 @@
 \item{...}{further specifications}
 }
 \description{
-Plot GTFS object routes and their frequencies
+Plot GTFS stops and trips
 }
 \examples{
 \donttest{

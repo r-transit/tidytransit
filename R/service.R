@@ -1,4 +1,4 @@
-#' Filter a gtfs calendar dataframe to service ids for specific days of the week.
+#' Filter a gtfs calendar dataframe to service ids for specific days of the week
 #' 
 #' @param gtfs_object object made by join_all_gtfs_tables
 #' @param dow default to "weekday" (1,1,1,1,1,0,0)
@@ -30,10 +30,15 @@ count_service_trips <- function(trips) {
         tibble::as_tibble()
 }
 
-#' Calculate servicepattern for the gtfs_obj
+#' Calculate servicepattern ids for a gtfs feed
 #' 
-#' @param gtfs_obj gtfs feed
-#' @param id_prefix all ids start with this string
+#' Each trip has a defined number of dates it runs on. This set of dates is called a 
+#' service pattern in tidytransit. Trips with the same servicepattern id run on the same
+#' dates. In general, \code{service_id} can work this way but it is not enforced by the
+#' GTFS standard.
+#' 
+#' @param gtfs_obj tidytransit gtfs feed
+#' @param id_prefix all servicepattern id will start with this string
 #' @param hash_algo hashing algorithm used by digest
 #' @param hash_length length the hash should be cut to with substr(). Use -1 if the full hash should be used
 #' @return modified gtfs_obj with added servicepattern list and a table linking trips and pattern (trip_servicepatterns)
