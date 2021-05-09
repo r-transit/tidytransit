@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Convert shapes into Simple Features Linestrings — shapes_as_sf • tidytransit</title>
+<title>Use hms::hms columns in feed — convert_times_to_hms • tidytransit</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Convert shapes into Simple Features Linestrings — shapes_as_sf" />
-<meta property="og:description" content="Convert shapes into Simple Features Linestrings" />
+<meta property="og:title" content="Use hms::hms columns in feed — convert_times_to_hms" />
+<meta property="og:description" content="Overwirtes character columns in stop_times (arrival_time, departure_time) and
+frequencies (start_time, end_time) with times converted with hms::hms()." />
 
 
 
@@ -126,34 +127,31 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Convert shapes into Simple Features Linestrings</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-transit/tidytransit/blob/master/R/spatial.R'><code>R/spatial.R</code></a></small>
-    <div class="hidden name"><code>shapes_as_sf.Rd</code></div>
+    <h1>Use hms::hms columns in feed</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-transit/tidytransit/blob/master/R/time.R'><code>R/time.R</code></a></small>
+    <div class="hidden name"><code>convert_times_to_hms.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Convert shapes into Simple Features Linestrings</p>
+    <p>Overwirtes character columns in stop_times (arrival_time, departure_time) and
+frequencies (start_time, end_time) with times converted with <code><a href='https://hms.tidyverse.org/reference/hms.html'>hms::hms()</a></code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>shapes_as_sf</span><span class='op'>(</span><span class='va'>gtfs_shapes</span>, crs <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>convert_times_to_hms</span><span class='op'>(</span><span class='va'>gtfs_obj</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>gtfs_shapes</th>
-      <td><p>a gtfs$shapes dataframe</p></td>
-    </tr>
-    <tr>
-      <th>crs</th>
-      <td><p>optional coordinate reference system (used by sf::st_transform) to transform
-lon/lat coordinates</p></td>
+      <th>gtfs_obj</th>
+      <td><p>a gtfs object in which hms times should be set,
+the modified gtfs_obj is returned</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>an sf dataframe for gtfs shapes</p>
+    <p>gtfs_obj with added hms times columns for stop_times and frequencies</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

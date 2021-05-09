@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -94,9 +94,6 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/frequency.html">Transit (GTFS) Service &amp; Headway Mapping with R</a>
-    </li>
     <li>
       <a href="../articles/introduction.html">Introduction to tidytransit</a>
     </li>
@@ -138,7 +135,7 @@
     <p>Convert stops into Simple Features Points</p>
     </div>
 
-    <pre class="usage"><span class='fu'>stops_as_sf</span><span class='op'>(</span><span class='va'>stops</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>stops_as_sf</span><span class='op'>(</span><span class='va'>stops</span>, crs <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -146,6 +143,11 @@
     <tr>
       <th>stops</th>
       <td><p>a gtfs$stops dataframe</p></td>
+    </tr>
+    <tr>
+      <th>crs</th>
+      <td><p>optional coordinate reference system (used by sf::st_transform) to transform
+lon/lat coordinates</p></td>
     </tr>
     </table>
 

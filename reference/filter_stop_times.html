@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -94,9 +94,6 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/frequency.html">Transit (GTFS) Service &amp; Headway Mapping with R</a>
-    </li>
     <li>
       <a href="../articles/introduction.html">Introduction to tidytransit</a>
     </li>
@@ -160,9 +157,7 @@ hms object or numeric value in seconds.</p></td>
       <th>max_arrival_time</th>
       <td><p>The latest arrival time. Can be given as "HH:MM:SS",
 hms object or numeric value in seconds</p>
-<p>This function creates filtered <code>stop_times</code> for <code><a href='travel_times.html'>travel_times()</a></code> and <code><a href='raptor.html'>raptor()</a></code>. If you
-want to filter a feed multiple times it is faster to precalculate date_service_table with
-<code><a href='set_date_service_table.html'>set_date_service_table()</a></code>.</p></td>
+<p>This function creates filtered <code>stop_times</code> for <code><a href='travel_times.html'>travel_times()</a></code> and <code><a href='raptor.html'>raptor()</a></code>.</p></td>
     </tr>
     </table>
 
@@ -173,7 +168,7 @@ want to filter a feed multiple times it is faster to precalculate date_service_t
 
 <span class='co'># filter the sample feed</span>
 <span class='va'>stop_times</span> <span class='op'>&lt;-</span> <span class='fu'>filter_stop_times</span><span class='op'>(</span><span class='va'>g</span>, <span class='st'>"2007-01-06"</span>, <span class='st'>"06:00:00"</span>, <span class='st'>"08:00:00"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Consider using set_date_service_table beforehand if you filter this feed multiple times</span></div></pre>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

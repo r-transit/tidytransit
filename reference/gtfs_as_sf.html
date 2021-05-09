@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Convert stops and shapes to Simple Features#' — gtfs_as_sf • tidytransit</title>
+<title>Convert stops and shapes to Simple Features — gtfs_as_sf • tidytransit</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Convert stops and shapes to Simple Features#' — gtfs_as_sf" />
+<meta property="og:title" content="Convert stops and shapes to Simple Features — gtfs_as_sf" />
 <meta property="og:description" content="Stops are converted to POINT sf data frames. Shapes are created as
 LINESTRING data frame. Note that this function replaces stops and shapes
 tables in gtfs_obj." />
@@ -74,7 +74,7 @@ tables in gtfs_obj." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -96,9 +96,6 @@ tables in gtfs_obj." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/frequency.html">Transit (GTFS) Service &amp; Headway Mapping with R</a>
-    </li>
     <li>
       <a href="../articles/introduction.html">Introduction to tidytransit</a>
     </li>
@@ -131,7 +128,7 @@ tables in gtfs_obj." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Convert stops and shapes to Simple Features#'</h1>
+    <h1>Convert stops and shapes to Simple Features</h1>
     <small class="dont-index">Source: <a href='https://github.com/r-transit/tidytransit/blob/master/R/spatial.R'><code>R/spatial.R</code></a></small>
     <div class="hidden name"><code>gtfs_as_sf.Rd</code></div>
     </div>
@@ -142,7 +139,7 @@ LINESTRING data frame. Note that this function replaces stops and shapes
 tables in gtfs_obj.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>gtfs_as_sf</span><span class='op'>(</span><span class='va'>gtfs_obj</span>, skip_shapes <span class='op'>=</span> <span class='cn'>FALSE</span>, quiet <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>gtfs_as_sf</span><span class='op'>(</span><span class='va'>gtfs_obj</span>, skip_shapes <span class='op'>=</span> <span class='cn'>FALSE</span>, crs <span class='op'>=</span> <span class='cn'>NULL</span>, quiet <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -154,6 +151,11 @@ tables in gtfs_obj.</p>
     <tr>
       <th>skip_shapes</th>
       <td><p>if TRUE, shapes are not converted. Default FALSE.</p></td>
+    </tr>
+    <tr>
+      <th>crs</th>
+      <td><p>optional coordinate reference system (used by sf::st_transform) to transform
+lon/lat coordinates of stops and shapes</p></td>
     </tr>
     <tr>
       <th>quiet</th>

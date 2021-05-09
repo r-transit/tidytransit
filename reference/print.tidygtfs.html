@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Convert shapes into Simple Features Linestrings — shapes_as_sf • tidytransit</title>
+<title>Print a GTFS object — print.tidygtfs • tidytransit</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Convert shapes into Simple Features Linestrings — shapes_as_sf" />
-<meta property="og:description" content="Convert shapes into Simple Features Linestrings" />
+<meta property="og:title" content="Print a GTFS object — print.tidygtfs" />
+<meta property="og:description" content="Prints a GTFS object suppressing the class attribute." />
 
 
 
@@ -126,35 +126,45 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Convert shapes into Simple Features Linestrings</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-transit/tidytransit/blob/master/R/spatial.R'><code>R/spatial.R</code></a></small>
-    <div class="hidden name"><code>shapes_as_sf.Rd</code></div>
+    <h1>Print a GTFS object</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-transit/tidytransit/blob/master/R/summary.R'><code>R/summary.R</code></a></small>
+    <div class="hidden name"><code>print.tidygtfs.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Convert shapes into Simple Features Linestrings</p>
+    <p>Prints a GTFS object suppressing the <code>class</code> attribute.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>shapes_as_sf</span><span class='op'>(</span><span class='va'>gtfs_shapes</span>, crs <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='co'># S3 method for tidygtfs</span>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>gtfs_shapes</th>
-      <td><p>a gtfs$shapes dataframe</p></td>
+      <th>x</th>
+      <td><p>A GTFS object.</p></td>
     </tr>
     <tr>
-      <th>crs</th>
-      <td><p>optional coordinate reference system (used by sf::st_transform) to transform
-lon/lat coordinates</p></td>
+      <th>...</th>
+      <td><p>Optional arguments ultimately passed to <code>format</code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>an sf dataframe for gtfs shapes</p>
+    <p>The GTFS object that was printed, invisibly.</p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'> <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>path</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, 
+           <span class='st'>"google_transit_nyc_subway.zip"</span>, 
+           package <span class='op'>=</span> <span class='st'>"tidytransit"</span><span class='op'>)</span>
+
+<span class='va'>g</span> <span class='op'>=</span> <span class='fu'><a href='read_gtfs.html'>read_gtfs</a></span><span class='op'>(</span><span class='va'>path</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>g</span><span class='op'>)</span>
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

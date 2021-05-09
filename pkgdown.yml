@@ -2,9 +2,8 @@ pandoc: 2.7.3
 pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
-  frequency: frequency.html
   introduction: introduction.html
   servicepatterns: servicepatterns.html
   timetable: timetable.html
-last_built: 2021-02-27T20:06Z
+last_built: 2021-05-09T20:04Z
 

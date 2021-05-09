@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -93,9 +93,6 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/frequency.html">Transit (GTFS) Service &amp; Headway Mapping with R</a>
-    </li>
     <li>
       <a href="../articles/introduction.html">Introduction to tidytransit</a>
     </li>
@@ -154,6 +151,12 @@
       <tr>
         
         <td>
+          <p><code><a href="convert_times_to_hms.html">convert_times_to_hms()</a></code> </p>
+        </td>
+        <td><p>Use hms::hms columns in feed</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="feed_contains.html">feed_contains()</a></code> </p>
         </td>
         <td><p>Returns TRUE if the given gtfs_obj contains the table. Used to check for
@@ -185,15 +188,9 @@ tidytransit's calculated tables in sublist</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="get_route_frequency.html">get_route_frequency()</a></code> </p>
-        </td>
-        <td><p>Get Route Frequency</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="get_route_geometry.html">get_route_geometry()</a></code> </p>
         </td>
-        <td><p>Get all trip shapes for a given route and service.</p></td>
+        <td><p>Get all trip shapes for a given route and service</p></td>
       </tr><tr>
         
         <td>
@@ -205,13 +202,13 @@ tidytransit's calculated tables in sublist</p></td>
         <td>
           <p><code><a href="get_trip_geometry.html">get_trip_geometry()</a></code> </p>
         </td>
-        <td><p>Get all trip shapes for a given route and service.</p></td>
+        <td><p>Get all trip shapes for given trip ids</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="gtfs_as_sf.html">gtfs_as_sf()</a></code> </p>
         </td>
-        <td><p>Convert stops and shapes to Simple Features#'</p></td>
+        <td><p>Convert stops and shapes to Simple Features</p></td>
       </tr><tr>
         
         <td>
@@ -221,9 +218,15 @@ tidytransit's calculated tables in sublist</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="plot.gtfs.html">plot(<i>&lt;gtfs&gt;</i>)</a></code> </p>
+          <p><code><a href="plot.tidygtfs.html">plot(<i>&lt;tidygtfs&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Plot GTFS object routes and their frequencies</p></td>
+        <td><p>Plot GTFS stops and trips</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="print.tidygtfs.html">print(<i>&lt;tidygtfs&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Print a GTFS object</p></td>
       </tr><tr>
         
         <td>
@@ -251,18 +254,6 @@ tidytransit's calculated tables in sublist</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="set_date_service_table.html">set_date_service_table()</a></code> </p>
-        </td>
-        <td><p>Returns all possible date/service_id combinations as a data frame</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="set_hms_times.html">set_hms_times()</a></code> </p>
-        </td>
-        <td><p>Add hms::hms columns to feed</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="shapes_as_sf.html">shapes_as_sf()</a></code> </p>
         </td>
         <td><p>Convert shapes into Simple Features Linestrings</p></td>
@@ -275,7 +266,7 @@ tidytransit's calculated tables in sublist</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="summary.gtfs.html">summary(<i>&lt;gtfs&gt;</i>)</a></code> </p>
+          <p><code><a href="summary.tidygtfs.html">summary(<i>&lt;tidygtfs&gt;</i>)</a></code> </p>
         </td>
         <td><p>GTFS feed summary</p></td>
       </tr><tr>
@@ -295,7 +286,7 @@ tidytransit's calculated tables in sublist</p></td>
         <td>
           <p><code><a href="write_gtfs.html">write_gtfs()</a></code> </p>
         </td>
-        <td><p>Writes a gtfs object to a zip file. Calculated tidytransit tables and columns are not exported.</p></td>
+        <td><p>Write a tidygtfs object to a zip file</p></td>
       </tr>
     </tbody>
     </table>

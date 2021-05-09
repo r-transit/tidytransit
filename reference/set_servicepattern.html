@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculate servicepattern for the gtfs_obj — set_servicepattern • tidytransit</title>
+<title>Calculate servicepattern ids for a gtfs feed — set_servicepattern • tidytransit</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,11 @@
 
 
 
-<meta property="og:title" content="Calculate servicepattern for the gtfs_obj — set_servicepattern" />
-<meta property="og:description" content="Calculate servicepattern for the gtfs_obj" />
+<meta property="og:title" content="Calculate servicepattern ids for a gtfs feed — set_servicepattern" />
+<meta property="og:description" content="Each trip has a defined number of dates it runs on. This set of dates is called a
+service pattern in tidytransit. Trips with the same servicepattern id run on the same
+dates. In general, service_id can work this way but it is not enforced by the
+GTFS standard." />
 
 
 
@@ -72,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -94,9 +97,6 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/frequency.html">Transit (GTFS) Service &amp; Headway Mapping with R</a>
-    </li>
     <li>
       <a href="../articles/introduction.html">Introduction to tidytransit</a>
     </li>
@@ -129,13 +129,16 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculate servicepattern for the gtfs_obj</h1>
+    <h1>Calculate servicepattern ids for a gtfs feed</h1>
     <small class="dont-index">Source: <a href='https://github.com/r-transit/tidytransit/blob/master/R/service.R'><code>R/service.R</code></a></small>
     <div class="hidden name"><code>set_servicepattern.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Calculate servicepattern for the gtfs_obj</p>
+    <p>Each trip has a defined number of dates it runs on. This set of dates is called a
+service pattern in tidytransit. Trips with the same servicepattern id run on the same
+dates. In general, <code>service_id</code> can work this way but it is not enforced by the
+GTFS standard.</p>
     </div>
 
     <pre class="usage"><span class='fu'>set_servicepattern</span><span class='op'>(</span>
@@ -150,11 +153,11 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>gtfs_obj</th>
-      <td><p>gtfs feed</p></td>
+      <td><p>tidytransit gtfs feed</p></td>
     </tr>
     <tr>
       <th>id_prefix</th>
-      <td><p>all ids start with this string</p></td>
+      <td><p>all servicepattern id will start with this string</p></td>
     </tr>
     <tr>
       <th>hash_algo</th>

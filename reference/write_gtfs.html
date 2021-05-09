@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Writes a gtfs object to a zip file. Calculated tidytransit tables and columns are not exported. — write_gtfs • tidytransit</title>
+<title>Write a tidygtfs object to a zip file — write_gtfs • tidytransit</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Writes a gtfs object to a zip file. Calculated tidytransit tables and columns are not exported. — write_gtfs" />
-<meta property="og:description" content="Writes a gtfs object to a zip file. Calculated tidytransit tables and columns are not exported." />
+<meta property="og:title" content="Write a tidygtfs object to a zip file — write_gtfs" />
+<meta property="og:description" content="Write a tidygtfs object to a zip file" />
 
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -94,9 +94,6 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/frequency.html">Transit (GTFS) Service &amp; Headway Mapping with R</a>
-    </li>
     <li>
       <a href="../articles/introduction.html">Introduction to tidytransit</a>
     </li>
@@ -129,13 +126,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Writes a gtfs object to a zip file. Calculated tidytransit tables and columns are not exported.</h1>
+    <h1>Write a tidygtfs object to a zip file</h1>
     <small class="dont-index">Source: <a href='https://github.com/r-transit/tidytransit/blob/master/R/utils.R'><code>R/utils.R</code></a></small>
     <div class="hidden name"><code>write_gtfs.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Writes a gtfs object to a zip file. Calculated tidytransit tables and columns are not exported.</p>
+    <p>Write a tidygtfs object to a zip file</p>
     </div>
 
     <pre class="usage"><span class='fu'>write_gtfs</span><span class='op'>(</span><span class='va'>gtfs_obj</span>, <span class='va'>zipfile</span>, compression_level <span class='op'>=</span> <span class='fl'>9</span>, as_dir <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
@@ -162,6 +159,9 @@ Files within the directory will be overwritten.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+
+    <p>Auxilliary tidytransit tables (e.g. <code>dates_services</code>) are not exported.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
