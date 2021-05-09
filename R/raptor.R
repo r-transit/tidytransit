@@ -433,9 +433,7 @@ travel_times = function(filtered_stop_times,
 #' @param max_arrival_time The latest arrival time. Can be given as "HH:MM:SS", 
 #'                         hms object or numeric value in seconds
 #' 
-#' This function creates filtered `stop_times` for [travel_times()] and [raptor()]. If you
-#' want to filter a feed multiple times it is faster to precalculate date_service_table with
-#' [set_date_service_table()].
+#' This function creates filtered `stop_times` for [travel_times()] and [raptor()].
 #' 
 #' @export                
 #' @examples 
@@ -449,7 +447,6 @@ filter_stop_times = function(gtfs_obj,
                              min_departure_time,
                              max_arrival_time) {
   departure_time_num <- arrival_time_num <- NULL
-  stopifnot(is_gtfs_obj(gtfs_obj))
   if(is.character(extract_date)) {
     extract_date <- readr::parse_date(extract_date)
   }
@@ -467,11 +464,7 @@ filter_stop_times = function(gtfs_obj,
   }
   
   # trips running on day
-  if(!feed_contains(gtfs_obj, "date_service_table")) {
-    message("Consider using set_date_service_table beforehand if you filter this feed multiple times")
-    gtfs_obj <- set_date_service_table(gtfs_obj)
-  }
-  service_ids = filter(gtfs_obj$.$date_service_table, date == extract_date)
+  service_ids = filter(gtfs_obj$.$dates_services, date == extract_date)
   if(nrow(service_ids) == 0) {
     stop(paste0("No stop_times on ", extract_date))
   }
@@ -496,8 +489,10 @@ filter_stop_times = function(gtfs_obj,
   setkey(stops_dt, "stop_id")
   setindex(stops_dt, "stop_name")
   attributes(stop_times_dt)$stops <- stops_dt
-  
   attributes(stop_times_dt)$transfers <- gtfs_obj$transfers
+  attributes(stop_times_dt)$extract_date <- extract_date
+  attributes(stop_times_dt)$min_departure_time <- min_departure_time
+  attributes(stop_times_dt)$max_arrival_time <- max_arrival_time
   
   return(stop_times_dt)
 }
@@ -546,13 +541,8 @@ set_num_times = function(stop_times_dt) {
   stopifnot(is.data.table(stop_times_dt))
   if(all(c("arrival_time_num", "departure_time_num") %in% colnames(stop_times_dt))) {
     invisible(stop_times_dt)
-  } else if(all(c("arrival_time_hms", "departure_time_hms") %in% colnames(stop_times_dt))) {
-    stop_times_dt[,arrival_time_num := as.numeric(arrival_time_hms)]
-    stop_times_dt[,departure_time_num := as.numeric(departure_time_hms)]
-    invisible(stop_times_dt)
-  } else {
-    stop_times_dt[,arrival_time_num := hhmmss_to_seconds(arrival_time)]
-    stop_times_dt[,departure_time_num := hhmmss_to_seconds(departure_time)]
-    invisible(stop_times_dt)
   }
+  stop_times_dt[,arrival_time_num := as.numeric(arrival_time)]
+  stop_times_dt[,departure_time_num := as.numeric(departure_time)]
+  invisible(stop_times_dt)
 }

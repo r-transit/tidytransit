@@ -17,9 +17,7 @@ hms object or numeric value in seconds.}
 \item{max_arrival_time}{The latest arrival time. Can be given as "HH:MM:SS",
 hms object or numeric value in seconds
 
-This function creates filtered \code{stop_times} for \code{\link[=travel_times]{travel_times()}} and \code{\link[=raptor]{raptor()}}. If you
-want to filter a feed multiple times it is faster to precalculate date_service_table with
-\code{\link[=set_date_service_table]{set_date_service_table()}}.}
+This function creates filtered \code{stop_times} for \code{\link[=travel_times]{travel_times()}} and \code{\link[=raptor]{raptor()}}.}
 }
 \description{
 Filter a \code{stop_times} table for a given date and timespan.

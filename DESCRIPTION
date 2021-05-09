@@ -1,7 +1,7 @@
 Package: tidytransit
 Type: Package
 Title: Read, Validate, Analyze, and Map Files in the General Transit Feed Specification  
-Version: 0.7.3
+Version: 1.0.0
 Authors@R: c(
     person("Flavio", "Poletti", role = c("aut"), email = "flavio.poletti@hotmail.ch"),
     person(given = "Daniel",family = "Herszenhut",role = c("aut"),email = "dhersz@gmail.com",comment = c(ORCID = "0000-0001-8066-1105")),
@@ -25,6 +25,7 @@ License: GPL
 LazyData: TRUE
 Depends: R (>= 3.6.0)
 Imports:
+    gtfsio (>= 0.1.0),
     dplyr,
     zip (>= 2.0.1),
     tibble,
@@ -43,6 +44,7 @@ Imports:
 Suggests:
     testthat,
     knitr,
+    markdown,
     rmarkdown,
     ggplot2,
     scales

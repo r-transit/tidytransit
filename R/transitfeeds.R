@@ -44,112 +44,7 @@ get_feedlist <- function() {
     dplyr::mutate(loc_lng = as.numeric(loc_lng), loc_lat = as.numeric(loc_lat))
 
   return(req_df)
-
 }
-
-#' Download a zipped GTFS feed file from a url
-#'
-#' @param url Character URL of GTFS feed.
-#' @param path Character. Folder into which to put zipped file. If NULL, then save a tempfile
-#' @param quiet Boolean. Whether to see file download progress. FALSE by default.
-#' @importFrom httr RETRY status_code
-#' @return File path
-#'
-#' @keywords internal
-get_feed <- function(url, path=NULL, quiet=FALSE) {
-
-  stopifnot(length(url) == 1)
-
-  # check if single element of dataframe
-  # was inputed. if so, convert to single value; error otherwise.
-  if(!is.null(dim(url))) {
-    if(all(dim(url) == c(1,1))) {
-      url <- unlist(url, use.names = FALSE)
-    } else {
-      stop('Please input a single url.')
-    }
-  }
-
-  # check if url links to a zip file
-  valid <- valid_url(url)
-  if(!valid) {
-    if(!quiet) {
-      warn1 <-
-        sprintf("Link '%s' is invalid;
-                failed to connect. NULL was returned.", url)
-      warning(warn1)
-    }
-    return(NULL)
-  }
-
-  # generate a temporary file path if no path is specified
-  if(is.null(path)) temp <-
-    tempfile(fileext = ".zip") else
-      temp <- file.path(path, 'gtfs_zip.zip')
-
-  r <- httr::RETRY(
-    verb = "GET"
-    , url = url
-    , times = 5
-    , terminate_on = c(403, 404)
-    , terminate_on_success = TRUE
-  )
-
-  # Get gtfs zip if url can be reach
-  if(httr::status_code(r) == 200) {
-    check <- try(utils::download.file(url, temp, quiet = quiet), silent=TRUE)
-    if(check %>% assertthat::is.error()) {
-      warn <- sprintf("Link '%s' failed to download. NULL was returned.", url)
-      warning(warn)
-      return(NULL)
-    }
-  } else {
-    warn <- sprintf("Link '%s' cannot be reached. NULL was returned.", url)
-    warning(warn)
-    return(NULL)
-  }
-
-  # return the temp path - for unzipping
-  return(temp)
-
-}
-
-#' Filter a feedlist to include only valid urls (ending in .zip and connect)
-#'
-#' @param feedlist_df A dataframe of feed metadata such as output from get_feedlist
-#' @param test_url Boolean. Whether to test if the url connects or not. FALSE by default (can take a while).
-#'
-#' @return A dataframe of feed metadata
-#' for all feeds in input that are downloadable
-#'
-#' @keywords internal
-filter_feedlist <- function(feedlist_df, test_url = FALSE) {
-
-  if (!is.data.frame(feedlist_df))
-    stop('Invalid feedlist_df input.  Must be a dataframe.')
-  if (!('url_d' %in% names(feedlist_df)))
-    stop('No valid URLs found - expected url_d column in feedlist_df.')
-
-  indx <- feedlist_df$url_d %>%
-    sapply(. %>% valid_url(test_url = test_url) %>% all, USE.NAMES = FALSE)
-  message(
-    paste0(
-      sum(!indx),
-      ' of ',
-      nrow(feedlist_df),
-      " feeds did not provide valid URLs. ",
-      sum(indx),
-      " returned."
-    )
-  )
-
-  feedlist_df <- feedlist_df %>%
-    dplyr::slice(which(indx))
-
-  return(feedlist_df)
-
-}
-
 
 # API Keys ------------------------------------------------
 
@@ -238,7 +133,6 @@ api_check <- function() {
 
 #' Get API key
 #' @keywords internal
-
 get_api_key <- function() {
   api_check()
   gtfs_api_key$get()
@@ -251,7 +145,6 @@ get_api_key <- function() {
 #' @return logical TRUE if key is not empty
 #'
 #' @keywords internal
-
 has_api_key <- function() {
   api_check()
   api_key <- gtfs_api_key$get()
@@ -270,7 +163,6 @@ has_api_key <- function() {
 #' Check HTTP status; stop if failure
 #' @param req The result of an httr::RETRY
 #' @noRd
-
 tfeeds_check <- function(req) {
   if (req$status_code < 400) return(invisible())
 
@@ -344,7 +236,6 @@ tfeeds_parse_getfeedlist <- function(req) {
 #' @noRd
 #' @return Dataframe of locations with id, descriptions, and lat/lng
 #'
-
 tfeeds_parse_getlocation <- function(req) {
 
   # parse content

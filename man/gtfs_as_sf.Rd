@@ -2,14 +2,17 @@
 % Please edit documentation in R/spatial.R
 \name{gtfs_as_sf}
 \alias{gtfs_as_sf}
-\title{Convert stops and shapes to Simple Features#'}
+\title{Convert stops and shapes to Simple Features}
 \usage{
-gtfs_as_sf(gtfs_obj, skip_shapes = FALSE, quiet = TRUE)
+gtfs_as_sf(gtfs_obj, skip_shapes = FALSE, crs = NULL, quiet = TRUE)
 }
 \arguments{
 \item{gtfs_obj}{a standard tidytransit gtfs object}
 
 \item{skip_shapes}{if TRUE, shapes are not converted. Default FALSE.}
+
+\item{crs}{optional coordinate reference system (used by sf::st_transform) to transform
+lon/lat coordinates of stops and shapes}
 
 \item{quiet}{boolean whether to print status messages}
 }

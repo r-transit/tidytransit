@@ -4,10 +4,13 @@
 \alias{shapes_as_sf}
 \title{Convert shapes into Simple Features Linestrings}
 \usage{
-shapes_as_sf(gtfs_shapes)
+shapes_as_sf(gtfs_shapes, crs = NULL)
 }
 \arguments{
 \item{gtfs_shapes}{a gtfs$shapes dataframe}
+
+\item{crs}{optional coordinate reference system (used by sf::st_transform) to transform
+lon/lat coordinates}
 }
 \value{
 an sf dataframe for gtfs shapes

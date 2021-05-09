@@ -2,7 +2,7 @@
 % Please edit documentation in R/service.R
 \name{service_by_dow}
 \alias{service_by_dow}
-\title{Filter a gtfs calendar dataframe to service ids for specific days of the week.}
+\title{Filter a gtfs calendar dataframe to service ids for specific days of the week}
 \usage{
 service_by_dow(calendar, dow = c(1, 1, 1, 1, 1, 0, 0))
 }
@@ -15,6 +15,6 @@ service_by_dow(calendar, dow = c(1, 1, 1, 1, 1, 0, 0))
 service ids that match the schedule specified
 }
 \description{
-Filter a gtfs calendar dataframe to service ids for specific days of the week.
+Filter a gtfs calendar dataframe to service ids for specific days of the week
 }
 \keyword{internal}

@@ -4,13 +4,7 @@
 \alias{read_gtfs}
 \title{Read and validate GTFS files}
 \usage{
-read_gtfs(
-  path,
-  files = NULL,
-  quiet = TRUE,
-  warnings = TRUE,
-  parse_dates = TRUE
-)
+read_gtfs(path, files = NULL, quiet = TRUE)
 }
 \arguments{
 \item{path}{The path to a GTFS \code{.zip} file.}
@@ -20,15 +14,10 @@ GTFS (without the \code{.txt} extension). If \code{NULL} (the default) all
 existing files are read.}
 
 \item{quiet}{Whether to hide log messages and progress bars (defaults to TRUE).}
-
-\item{warnings}{Whether to display warning messages (defaults to TRUE).}
-
-\item{parse_dates}{date columns in calendar.txt, calendar_dates.txt and feed_info.txt
-are converted to a Date object.}
 }
 \value{
-A GTFS object: a list of data.tables in which each index represents a
-GTFS text file.
+A tidygtfs object: a list of tibbles in which each entry represents a
+GTFS text file. Additional tables are stored in the \code{.} sublist.
 }
 \description{
 Reads GTFS text files from either a local \code{.zip} file or an URL and

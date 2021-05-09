@@ -5,8 +5,7 @@ test_that("write_gtfs creates the same feed as read by read_gtfs", {
   path1 <- system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
   path2 <- tempfile(fileext = ".zip")
   g1 <- read_gtfs(path1)
-  g1_hms <- set_hms_times(g1)
-  write_gtfs(g1_hms, path2)
+  write_gtfs(g1, path2)
   g2 <- read_gtfs(path2)
   expect_equal(g1, g2)
   expect_error(write_gtfs(g1$agency, path2))
@@ -15,18 +14,18 @@ test_that("write_gtfs creates the same feed as read by read_gtfs", {
 test_that("write_gtfs as_dir", {
   skip_on_cran()
   path1 <- system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
-  path2 <- tempdir()
+  path2 <- tempfile()
   g1 <- read_gtfs(path1)
   write_gtfs(g1, path2, as_dir = TRUE)
   expect_true(file.exists(paste0(path2, "/agency.txt")))
+  unlink(path2)
 })
 
-
-test_that("summary.gtfs", {
+test_that("summary.tidygtfs", {
   gpath <- system.file("extdata", "routing.zip", package = "tidytransit")
   g1 = read_gtfs(gpath)
   x1 = capture.output(summary(g1))
-  g2 <- set_date_service_table(g1)
+  g2 <- set_servicepattern(g1)
   x2 = capture.output(summary(g2))
   expect_true(all(x1 == x2))
 })

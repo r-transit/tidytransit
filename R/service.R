@@ -1,4 +1,4 @@
-#' Filter a gtfs calendar dataframe to service ids for specific days of the week.
+#' Filter a gtfs calendar dataframe to service ids for specific days of the week
 #' 
 #' @param gtfs_object object made by join_all_gtfs_tables
 #' @param dow default to "weekday" (1,1,1,1,1,0,0)
@@ -30,10 +30,15 @@ count_service_trips <- function(trips) {
         tibble::as_tibble()
 }
 
-#' Calculate servicepattern for the gtfs_obj
+#' Calculate servicepattern ids for a gtfs feed
 #' 
-#' @param gtfs_obj gtfs feed
-#' @param id_prefix all ids start with this string
+#' Each trip has a defined number of dates it runs on. This set of dates is called a 
+#' service pattern in tidytransit. Trips with the same servicepattern id run on the same
+#' dates. In general, \code{service_id} can work this way but it is not enforced by the
+#' GTFS standard.
+#' 
+#' @param gtfs_obj tidytransit gtfs feed
+#' @param id_prefix all servicepattern id will start with this string
 #' @param hash_algo hashing algorithm used by digest
 #' @param hash_length length the hash should be cut to with substr(). Use -1 if the full hash should be used
 #' @return modified gtfs_obj with added servicepattern list and a table linking trips and pattern (trip_servicepatterns)
@@ -43,10 +48,6 @@ count_service_trips <- function(trips) {
 #' @importFrom rlang .data
 #' @export
 set_servicepattern <- function(gtfs_obj, id_prefix = "s_", hash_algo = "md5", hash_length = 7) {
-  if(!feed_contains(gtfs_obj, "date_service_table")) {
-    gtfs_obj <- set_date_service_table(gtfs_obj)
-  }
-
   get_servicepattern_id <- function(dates) {
     hash <- digest(dates, hash_algo)
     id <- paste0(id_prefix, substr(hash, 0, hash_length))
@@ -63,21 +64,21 @@ set_servicepattern <- function(gtfs_obj, id_prefix = "s_", hash_algo = "md5", ha
   
   # find servicepattern_ids for all services
   servicepattern_id <- NULL # prevents CMD chek note on non-visible binding
-  service_pattern <- gtfs_obj$.$date_service_table %>% 
+  service_pattern <- gtfs_obj$.$dates_services %>% 
     group_by(service_id) %>%
     summarise(
       servicepattern_id = get_servicepattern_id(.data$date)
     ) %>% ungroup()
 
   # find dates for servicepattern
-  date_servicepattern_table <- gtfs_obj$.$date_service_table %>% 
+  dates_servicepatterns <- gtfs_obj$.$dates_services %>% 
     left_join(service_pattern, by = "service_id") %>% 
     group_by(date, servicepattern_id) %>% 
     summarise() %>% ungroup()
 
   # assign to gtfs_obj
-  gtfs_obj$.$service_pattern <- service_pattern
-  gtfs_obj$.$date_servicepattern_table <- date_servicepattern_table
+  gtfs_obj$.$servicepatterns <- service_pattern
+  gtfs_obj$.$dates_servicepatterns <- dates_servicepatterns
   
   return(gtfs_obj)
 }

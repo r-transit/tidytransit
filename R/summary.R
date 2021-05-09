@@ -1,10 +1,35 @@
+#' Print a GTFS object
+#'
+#' Prints a GTFS object suppressing the \code{class} attribute.
+#'
+#' @param x A GTFS object.
+#' @param ... Optional arguments ultimately passed to \code{format}.
+#'
+#' @return The GTFS object that was printed, invisibly.
+#'
+#' @examples  \dontrun{
+#' path = system.file("extdata", 
+#'            "google_transit_nyc_subway.zip", 
+#'            package = "tidytransit")
+#'
+#' g = read_gtfs(path)
+#' print(g)
+#' }
+#' @export
+print.tidygtfs = function(x, ...) {
+  attributes(x)$validation_result <- NULL
+  print(unclass(x), ...)
+  invisible(x)
+}
+
+
 #' GTFS feed summary
 #'
 #' @param object a gtfs_obj as read by [read_gtfs()]
 #' @export
 #' @param ... further specifications
 #' @importFrom dplyr select arrange filter
-summary.gtfs <- function(object, ...) {
+summary.tidygtfs <- function(object, ...) {
   dots <- list(...)
   
   # agency info
@@ -39,11 +64,8 @@ summary.gtfs <- function(object, ...) {
   files <- filter(files, file_provided_status == TRUE)
 
   # date info
-  if(is.null(object$.$date_service_table)) {
-    object <- set_date_service_table(object)
-  }
-  date_min <- min(object$.$date_service_table$date)
-  date_max <- max(object$.$date_service_table$date)
+  date_min <- min(object$.$dates_services$date)
+  date_max <- max(object$.$dates_services$date)
   
   cat(paste0("GTFS object\n"))
   cat(paste0("files        ", paste(files$file, collapse=", "), "\n"))

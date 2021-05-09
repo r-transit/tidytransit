@@ -52,45 +52,30 @@ valid_url <- function(url, timeout = 5, test_url = TRUE, quiet = TRUE) {
   return(all(url_cond1, url_cond2))
 }
 
-#' Writes a gtfs object to a zip file. Calculated tidytransit tables and columns are not exported.
+#' Write a tidygtfs object to a zip file
+#' 
+#' @note Auxilliary tidytransit tables (e.g. \code{dates_services}) are not exported.
 #' @param gtfs_obj a gtfs feed object
 #' @param zipfile path to the zip file the feed should be written to
 #' @param compression_level a number between 1 and 9.9, passed to zip::zip
 #' @param as_dir if TRUE, the feed is not zipped and zipfile is used as a directory path. 
 #'               Files within the directory will be overwritten.
 #' @importFrom zip zipr
+#' @importFrom gtfsio export_gtfs
+#' @export
 write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE) {
-  stopifnot(is_gtfs_obj(gtfs_obj))
-
-  meta <- get_gtfs_meta()
-  if(!as_dir) {
-    dir.create(outdir <- tempfile())
-  } else {
-    outdir <- zipfile
-    if(!dir.exists(outdir)) dir.create(outdir)
-  }
-  filenames = names(gtfs_obj)
-  filenames <- filenames[filenames != "."]
-
-  for(filename in filenames) {
-    dd <- as.data.frame(gtfs_obj[[filename]])
-
-    # formate dates yyyymmdd
-    colclasses <- sapply(dd, class)
-    date_cols <- which(colclasses == "Date")
-    dd[date_cols] <- format(dd[date_cols], "%Y%m%d")
-
-    # remove columns from set_hms_times
-    cn <- colnames(dd)[which(!(colnames(dd) %in% c("arrival_time_hms", "departure_time_hms", "start_time_hms", "end_time_hms")))]
-    dd <- dd[cn]
-
-    readr::write_csv(dd, paste0(outdir, "/", filename, ".txt"), na = "")
-  }
-  if(!as_dir) {
-    filelist = paste0(outdir, "/", filenames, ".txt")
-    zip::zipr(zipfile, filelist, recurse = F, compression_level = compression_level)
-  }
-  invisible(gtfs_obj)
+  stopifnot(inherits(gtfs_obj, "tidygtfs"))
+  gtfs_obj <- gtfs_obj[names(gtfs_obj) != "."]
+  gtfs_obj <- lapply(gtfs_obj, as.data.table)
+  class(gtfs_obj) <- list("gtfs")
+  gtfs_obj <- convert_dates(gtfs_obj, date_as_gtfsio_char)
+  
+  gtfs_obj <- convert_hms_to_char(gtfs_obj)
+  
+  gtfsio::export_gtfs(gtfs_obj, zipfile, 
+                      standard_only = FALSE,
+                      compression_level = compression_level, 
+                      as_dir = as_dir, overwrite = TRUE)
 }
 
 #' Returns TRUE if the given gtfs_obj contains the table. Used to check for
@@ -101,11 +86,3 @@ feed_contains <- function(gtfs_obj, table_name) {
   exists(table_name, where = gtfs_obj) ||
     (exists(".", where = gtfs_obj) && exists(table_name, where = gtfs_obj$.))
 }
-
-#' Basic check if a given list is a gtfs object
-#' @param gtfs_obj as read by read_gtfs()
-#' @noRd
-is_gtfs_obj <- function(gtfs_obj) {
-  inherits(gtfs_obj, "gtfs")
-}
-

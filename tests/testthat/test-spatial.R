@@ -48,6 +48,15 @@ test_that("one shape per trip is returned", {
   expect_equal(nrow(trip_geom), n_ids)
 })
 
+test_that("crs is used", {
+  duke_sf = gtfs_as_sf(gtfs_duke)
+  expect_equal(st_crs(duke_sf$stops)$input, "EPSG:4326")
+  
+  duke_sf_crs = gtfs_as_sf(gtfs_duke, crs = 3358)
+  expect_equal(st_crs(duke_sf_crs$stops)$input, "EPSG:3358")
+  expect_equal(st_crs(duke_sf_crs$shapes)$input, "EPSG:3358")
+})
+
 test_that("two shapes are returned even if trips use the same shape_id", {
   route_id = "12945"
   trip_ids = c("t_726295_b_19493_tn_37", "t_726295_b_19493_tn_39")
@@ -60,8 +69,8 @@ test_that("two shapes are returned even if trips use the same shape_id", {
 })
 
 test_that("plots work with and without shapes", {
-  plot(gtfs_duke)
-  plot(duke_sf)
+  pl1 = plot(gtfs_duke)
+  pl2 = plot(duke_sf)
   gtfs_duke_wo_stops <- gtfs_duke
   gtfs_duke_wo_stops$stops <- NULL
   expect_error(plot(gtfs_duke_wo_stops))
@@ -73,3 +82,4 @@ test_that("meaningful errors", {
   
   gtfs_as_sf(gtfs_duke, quiet = FALSE)
 })
+

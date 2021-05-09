@@ -2,13 +2,12 @@ context("raptor travel time routing")
 
 local_gtfs_path <- system.file("extdata", "routing.zip", package = "tidytransit")
 g <- read_gtfs(local_gtfs_path)
-g <- set_hms_times(g)
 test_from_stop_ids <- c("stop1a", "stop1b")
 
 stop_times = g$stop_times
-stop_times_0709 = dplyr::filter(g$stop_times, departure_time_hms >= 7*3600+10*60)
-stop_times_0711 = dplyr::filter(g$stop_times, departure_time_hms >= 7*3600+11*60)
-stop_times_0715 = dplyr::filter(g$stop_times, departure_time_hms >= 7*3600+15*60)
+stop_times_0709 = dplyr::filter(g$stop_times, departure_time >= 7*3600+10*60)
+stop_times_0711 = dplyr::filter(g$stop_times, departure_time >= 7*3600+11*60)
+stop_times_0715 = dplyr::filter(g$stop_times, departure_time >= 7*3600+15*60)
 transfers = g$transfers
 
 test_that("travel times wrapper function", {
@@ -208,7 +207,7 @@ test_that("travel_times return type", {
 test_that("travel_times from stop with departures from transfer stops", {
   g2 = g
   g2$stops[nrow(g2$stops)+1,] <- list("stop0", "Zero", 46.9596, 7.39071, NA, 0)
-  g2$transfers[nrow(g2$transfers)+1,] <- list("stop0", "stop1a", "2", 1)
+  g2$transfers[nrow(g2$transfers)+1,] <- list("stop0", "stop1a", 2, 1)
   g2$transfers$min_transfer_time <- as.numeric(g2$transfers$min_transfer_time)
   fst2 = filter_stop_times(g2, "2018-10-01", 0, 24*3600)
   expect_equal(nrow(travel_times(fst2, "Zero")), 9)
@@ -335,3 +334,4 @@ test_that("catch invalid params", {
   expect_error(raptor(fst, attributes(fst)$transfers, stop_id = "stop1a", max_transfers = -1), "max_transfers is less than 0")
   expect_error(travel_times(fst, stop_name = "One", max_transfers = -1), "max_transfers is less than 0")
 })
+

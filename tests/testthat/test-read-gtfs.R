@@ -40,8 +40,7 @@ test_that("the read_gtfs function works", {
   skip_on_cran()
   if(!working()){
       skip("no internet, skipping")
-  }
-  else {
+  } else {
     # non-specified path
     x <- read_gtfs(gtfs_example_url, quiet=TRUE)
     expect_is(x, "gtfs") # should return 'list' object
@@ -53,26 +52,14 @@ test_that("the read_gtfs function fails gracefully on bad urls", {
   skip_on_cran()
   if(!working()){
       skip("no internet, skipping")
-  }
-  else {
+  } else {
     not_zip <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zippy"
     bad_url <- "https://developers.google.com/transit/gtfs/examples/sample-feed-bad.zip"
   
     # non-specified path
     expect_error(read_gtfs(not_zip, quiet=TRUE))
-    expect_error(read_gtfs(bad_url, quiet=TRUE)) # not zip file warning
   }
   
-})
-
-test_that("Some minimal validation is performed and returned", {
-  skip_on_cran()
-  if(working()){
-    gtfs_obj1 <- read_gtfs(gtfs_example_url)
-    
-    expect_true(dim(attributes(gtfs_obj1)$validation_result)[1]>0)
-    expect_true(dim(attributes(gtfs_obj1)$validation_result)[2]>0)
-  }
 })
 
 test_that("unknown local file throws meaningful error", {
@@ -86,17 +73,17 @@ test_that("Files with BOM can be read", {
               "sample-feed-bom.zip", 
               package = "tidytransit")
   g <- read_gtfs(bom_path)
-  expect_true(is_gtfs_obj(g))
+  expect_is(g, "tidygtfs")
 })
 
 test_that("Feed with additional data can be read", {
   g_plus_path <- system.file("extdata", "sample-feed-plus.zip", package = "tidytransit")
-  g <- read_gtfs(g_plus_path)
-  expect_true(is_gtfs_obj(g))
+  expect_warning(read_gtfs(g_plus_path), "gtfsio/empty_file.txt' has size 0. Returning a NULL data.table.")
+  expect_warning(read_gtfs(g_plus_path), "No valid dates defined in feed")
 })
 
 test_that("validation", {
   g_invalid_path = system.file("extdata","sample-feed-invalid.zip", package = "tidytransit")
-  expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required file(s): stop_times", fixed = TRUE)
-  expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required field(s) in stops: stop_id", fixed = TRUE)
+  expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required file(s): stop_times.txt", fixed = T)
+  expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required field(s) in stops: stop_id", fixed = T)
 })
