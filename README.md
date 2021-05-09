@@ -16,10 +16,8 @@ frequencies, and validate transit feeds. tidytransit reads the
 [simple features](https://en.wikipedia.org/wiki/Simple_Features) data frames. 
 Tidytransit can be used to:
 - [read GTFS feeds into R](http://tidytransit.r-transit.org/reference/read_gtfs.html)
-- [estimate transit frequencies](http://tidytransit.r-transit.org/reference/get_route_frequency.html)
 - [calculate travel times between transit stops](http://tidytransit.r-transit.org/reference/travel_times.html)
 - [convert stops and routes to sf data frames](http://tidytransit.r-transit.org/reference/gtfs_as_sf.html)
-- [map existing stops and routes](http://tidytransit.r-transit.org/articles/frequency.html)
 - [validate transit feeds and more](http://tidytransit.r-transit.org/reference/index.html)
 
 Have a look at the following vignettes to see how tidytransit can be used to analyse a feed:
@@ -27,7 +25,6 @@ Have a look at the following vignettes to see how tidytransit can be used to ana
 - [the tutorial](http://tidytransit.r-transit.org/articles/introduction.html) 
 - [introduction to service patterns](http://tidytransit.r-transit.org/articles/servicepatterns.html)
 - [introduction to time tables](http://tidytransit.r-transit.org/articles/timetable.html)
-- [introduction to frequency calculation](http://tidytransit.r-transit.org/articles/frequency.html)  
 
 ## Installation
 
