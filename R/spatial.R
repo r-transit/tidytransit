@@ -151,3 +151,16 @@ shape_as_sf_linestring <- function(df) {
   return(sf::st_linestring(m))
 }
 
+#' Transform or convert coordinates of a gtfs feed
+#' @param gtfs_obj tidygtfs object
+#' @param crs target coordinate reference system, used by sf::st_transform
+#' @importFrom sf st_transform
+#' @export
+gtfs_transform = function(gtfs_obj, crs) {
+  if(!inherits(gtfs_obj$stops, "sf")) {
+    gtfs_obj <- gtfs_as_sf(gtfs_obj)
+  }
+  gtfs_obj$stops <- st_transform(gtfs_obj$stops, crs)
+  if(feed_contains(gtfs_obj, "shapes")) gtfs_obj$shapes <- st_transform(gtfs_obj$shapes, crs)
+  gtfs_obj
+}

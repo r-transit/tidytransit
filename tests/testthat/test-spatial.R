@@ -55,6 +55,8 @@ test_that("crs is used", {
   duke_sf_crs = gtfs_as_sf(gtfs_duke, crs = 3358)
   expect_equal(st_crs(duke_sf_crs$stops)$input, "EPSG:3358")
   expect_equal(st_crs(duke_sf_crs$shapes)$input, "EPSG:3358")
+  duke_sf_crs2 = gtfs_transform(duke_sf, 3358)
+  expect_equal(st_crs(duke_sf_crs2$shapes)$input, "EPSG:3358")
 })
 
 test_that("two shapes are returned even if trips use the same shape_id", {
