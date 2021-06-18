@@ -18,7 +18,7 @@ valid_url <- function(url, timeout = 5, test_url = TRUE, quiet = TRUE) {
   stopifnot(is.character(url))
   
   connecting <- function(url) {
-    r <- base::try({
+    r <- tryCatch({
       httr::RETRY(
         verb = "GET"
         , url = url
@@ -28,8 +28,9 @@ valid_url <- function(url, timeout = 5, test_url = TRUE, quiet = TRUE) {
         , terminate_on = c(403, 404)
         , terminate_on_success = TRUE
       )
-    })
-    if(!assertthat::is.error(r)) {
+    }, 
+    error = function(e) NA)
+    if(!is.na(r[1])) {
       r$status_code == 200
     } else {
       if(!quiet) message("Timeout.")
@@ -96,4 +97,8 @@ write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE)
 feed_contains <- function(gtfs_obj, table_name) {
   exists(table_name, where = gtfs_obj) ||
     (exists(".", where = gtfs_obj) && exists(table_name, where = gtfs_obj$.))
+}
+
+assertthat.is.error = function(call, env) {
+  paste0(deparse(call$x), " is not a try-error")
 }

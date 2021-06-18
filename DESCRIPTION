@@ -32,7 +32,6 @@ Imports:
     readr,
     data.table (>= 1.12.8),
     httr,
-    assertthat,
     rlang,
     sf,
     lubridate,
