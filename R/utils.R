@@ -65,11 +65,22 @@ valid_url <- function(url, timeout = 5, test_url = TRUE, quiet = TRUE) {
 #' @export
 write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE) {
   stopifnot(inherits(gtfs_obj, "tidygtfs"))
+  
+  # convert sf tables
+  if(inherits(gtfs_obj$stops, "sf")) {
+    gtfs_obj$stops <- sf_points_to_df(gtfs_obj$stops)
+  }
+  if(feed_contains(gtfs_obj, "shapes") && inherits(gtfs_obj$shapes, "sf")) {
+    gtfs_obj$shapes <- sf_lines_to_df(gtfs_obj$shapes)
+  }
+  
+  # data.tables
   gtfs_obj <- gtfs_obj[names(gtfs_obj) != "."]
   gtfs_obj <- lapply(gtfs_obj, as.data.table)
   class(gtfs_obj) <- list("gtfs")
-  gtfs_obj <- convert_dates(gtfs_obj, date_as_gtfsio_char)
   
+  # convert dates/times to strings
+  gtfs_obj <- convert_dates(gtfs_obj, date_as_gtfsio_char)
   gtfs_obj <- convert_hms_to_char(gtfs_obj)
   
   gtfsio::export_gtfs(gtfs_obj, zipfile, 

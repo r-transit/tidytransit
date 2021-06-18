@@ -21,6 +21,19 @@ test_that("write_gtfs as_dir", {
   unlink(path2)
 })
 
+test_that("write_gtfs with shapes", {
+  skip_on_cran()
+  duke_sf = gtfs_as_sf(gtfs_duke)
+  tmppath = tempfile(fileext = ".zip")
+  write_gtfs(duke_sf, tmppath)
+  gtfs_duke_reread = read_gtfs(tmppath)
+
+  for(nn in names(gtfs_duke)[which(names(gtfs_duke) != ".")]) {
+    expect_equal(gtfs_duke_reread[[nn]][colnames(gtfs_duke[[nn]])], gtfs_duke[[nn]], tolerance = 0.001)
+  }
+  expect_equal(gtfs_duke_reread$.$dates_services, gtfs_duke$.$dates_services)
+})
+
 test_that("summary.tidygtfs", {
   gpath <- system.file("extdata", "routing.zip", package = "tidytransit")
   g1 = read_gtfs(gpath)

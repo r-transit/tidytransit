@@ -164,3 +164,47 @@ gtfs_transform = function(gtfs_obj, crs) {
   if(feed_contains(gtfs_obj, "shapes")) gtfs_obj$shapes <- st_transform(gtfs_obj$shapes, crs)
   gtfs_obj
 }
+
+#' Adds the coordinates of an sf POINT object as columns
+#' @param pts_sf sf object
+#' @param coord_colnames names of the new columns (existing columns are overwritten)
+#' @param remove_geometry remove sf geometry column?
+sf_points_to_df = function(pts_sf,
+                           coord_colnames = c("stop_lon", "stop_lat"), 
+                           remove_geometry = TRUE) {
+  stopifnot(inherits(pts_sf, "sf"))
+  stopifnot(sf::st_geometry_type(pts_sf, FALSE) == "POINT")
+  stopifnot(length(coord_colnames) == 2)
+
+  mtrx = matrix(unlist(sf::st_geometry(pts_sf)), ncol = 2, byrow = T)
+  pts_sf[coord_colnames[1]] <- mtrx[,1]
+  pts_sf[coord_colnames[2]] <- mtrx[,2]
+
+  if(remove_geometry) {
+    pts_sf <- sf::st_set_geometry(pts_sf, NULL)
+  }
+  pts_sf
+}
+
+#' Adds the coordinates of an sf LINESTRING object as columns and rows
+#' @param lines_sf sf object
+#' @param coord_colnames names of the new columns (existing columns are overwritten)
+#' @param remove_geometry remove sf geometry column?
+#' @importFrom geodist geodist
+sf_lines_to_df = function(lines_sf,
+                          coord_colnames = c("shape_pt_lon", "shape_pt_lat"), 
+                          remove_geometry = TRUE) {
+  stopifnot(inherits(lines_sf, "sf"))
+  stopifnot(sf::st_geometry_type(lines_sf, FALSE) == "LINESTRING")
+  stopifnot(length(coord_colnames) == 2)
+  shps_list = lapply(sf::st_geometry(lines_sf), function(x) {
+    df = as.data.frame(as.matrix(x))
+    colnames(df) <- coord_colnames
+    df$shape_pt_sequence <- 1:nrow(df)
+    gdist = geodist(df[c("shape_pt_lon", "shape_pt_lat")], sequential = T)
+    df$shape_dist_traveled <- c(0, cumsum(round(gdist,1)))
+    df
+  })
+  
+  dplyr::bind_rows(shps_list, .id = "shape_id")
+}

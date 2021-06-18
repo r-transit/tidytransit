@@ -40,7 +40,8 @@ Imports:
     tidyr,
     tools,
     digest,
-    checkmate
+    checkmate,
+    geodist
 Suggests:
     testthat,
     knitr,
