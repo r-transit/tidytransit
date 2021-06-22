@@ -16,6 +16,8 @@ test_that("gtfs_as_sf doesn't crash without shapes", {
   gtfs_duke_wo_shapes$shapes <- NULL
   expect_silent(gtfs_as_sf(gtfs_duke_wo_shapes))
   expect_silent(gtfs_as_sf(gtfs_duke_wo_shapes, skip_shapes = TRUE))
+  gtfs_duke_wo_shapes$stops <- NULL
+  gtfs_as_sf(gtfs_duke_wo_shapes)
 })
 
 duke_sf <- gtfs_as_sf(gtfs_duke)
@@ -57,6 +59,7 @@ test_that("crs is used", {
   expect_equal(st_crs(duke_sf_crs$shapes)$input, "EPSG:3358")
   duke_sf_crs2 = gtfs_transform(duke_sf, 3358)
   expect_equal(st_crs(duke_sf_crs2$shapes)$input, "EPSG:3358")
+  expect_equal(gtfs_transform(gtfs_duke, 3358), duke_sf_crs)
 })
 
 test_that("two shapes are returned even if trips use the same shape_id", {

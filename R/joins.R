@@ -38,12 +38,18 @@ filter_stops <- function(gtfs_obj, service_ids, route_ids) {
 #'             (numeric vector with xmin, ymin, xmax, ymax) or a sf object.
 #' @export
 filter_trips_through_area <- function(gtfs_obj, area) {
-  if(inherits(gtfs_obj$stops, "sf") & inherits(area, "sf")) {
+  if(inherits(gtfs_obj$stops, "sf") && inherits(area, "sf")) {
+    if(sf::st_crs(gtfs_obj$stops) != sf::st_crs(area)) {
+      stop("feed and area are not in the same coordinate reference system")
+    }
     sf::st_agr(gtfs_obj$stops) <- "constant"
     stops_area = sf::st_intersection(gtfs_obj$stops, sf::st_geometry(area))
     stop_ids = stops_area$stop_id
   } else {
     if(inherits(area, "sf")) {
+      if(sf::st_crs(area)$input != "EPSG:4326") {
+        area <- sf::st_transform(area, 4326)
+      }
       area <- sf::st_bbox(area)
     } else {
       if(length(area) != 4 | !is.numeric(area)) {
@@ -70,6 +76,9 @@ filter_trips_through_area <- function(gtfs_obj, area) {
 #' @param stop_names vector with stop_names
 #' @export
 filter_trips = function(gtfs_obj, stop_ids = NULL, stop_names = NULL) {
+  if(inherits(stop_ids, "sf")) {
+    stop("Please use filter_trips_through_area with sf objects")
+  }
   if(!is.null(stop_names)) {
     if(!is.null(stop_ids)) stop("Please provide either stop_ids or stop_names")
     stop_ids = gtfs_obj$stops$stop_id[which(gtfs_obj$stops$stop_name %in% stop_names)]
@@ -117,21 +126,13 @@ filter_trips = function(gtfs_obj, stop_ids = NULL, stop_names = NULL) {
   gtfs_obj
 }
 
-filter_bbox <- function(data, bbox, buffer = 0, coord_cols = c("stop_lon", "stop_lat")) {
-  stopifnot(is.numeric(buffer))  
-  E_col = coord_cols[1]
-  N_col = coord_cols[2]
-  
+filter_bbox <- function(data, bbox, coord_cols = c("stop_lon", "stop_lat")) {
   if(is.null(names(bbox))) {
     names(bbox)  <- c("xmin", "ymin", "xmax", "ymax")
   }
   
-  if(buffer > 0) {
-    bbox <- bbox + c(-1,-1,1,1)*buffer
-  }
-  
-  data[which(data[[E_col]] >= bbox["xmin"] &
-               data[[N_col]] >= bbox["ymin"] &
-               data[[E_col]] <= bbox["xmax"] &
-               data[[N_col]] <= bbox["ymax"]),]
+  data[which(data[[coord_cols[1]]] >= bbox["xmin"] &
+               data[[coord_cols[2]]] >= bbox["ymin"] &
+               data[[coord_cols[1]]] <= bbox["xmax"] &
+               data[[coord_cols[2]]] <= bbox["ymax"]),]
 }

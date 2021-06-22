@@ -18,10 +18,9 @@ gtfs_as_sf <- function(gtfs_obj, skip_shapes = FALSE, crs = NULL, quiet = TRUE) 
   if(feed_contains(gtfs_obj, "shapes") && !skip_shapes) {
     if(!quiet) message('Converting shapes to simple features')
     gtfs_obj$shapes <- try(shapes_as_sf(gtfs_obj$shapes, crs))
-  } else if(feed_contains(gtfs_obj, "shapes") && !skip_shapes) { 
-    warning('No shapes available in gtfs_obj') 
   }
-  return(gtfs_obj)
+  
+  gtfs_obj
 }
 
 #' Convert stops into Simple Features Points
