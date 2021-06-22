@@ -17,19 +17,6 @@ service_by_dow <- function(calendar,
   return(calendar$service_id)
 }
 
-#' Summarise the number of trips per service
-#' 
-#' @param trips trips data frame
-#' @return count of service by id
-#' @export
-#' @keywords internal
-count_service_trips <- function(trips) {
-  trips %>%
-    dplyr::group_by(.data$service_id) %>% 
-      dplyr::mutate(service_trips = dplyr::n()) %>%
-        tibble::as_tibble()
-}
-
 #' Calculate servicepattern ids for a gtfs feed
 #' 
 #' Each trip has a defined number of dates it runs on. This set of dates is called a 

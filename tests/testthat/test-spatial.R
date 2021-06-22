@@ -1,4 +1,4 @@
-context("Converting GTFS routes and shapes into sf dataframes")
+context("Converting to sf objects")
 library(sf)
 
 test_that("convert gtfs stops and shapes to sf data frames", {

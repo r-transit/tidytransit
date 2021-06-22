@@ -42,3 +42,40 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE) {
     
   g
 }
+
+#' Write a tidygtfs object to a zip file
+#' 
+#' @note Auxilliary tidytransit tables (e.g. \code{dates_services}) are not exported.
+#' @param gtfs_obj a gtfs feed object
+#' @param zipfile path to the zip file the feed should be written to
+#' @param compression_level a number between 1 and 9.9, passed to zip::zip
+#' @param as_dir if TRUE, the feed is not zipped and zipfile is used as a directory path. 
+#'               Files within the directory will be overwritten.
+#' @importFrom zip zipr
+#' @importFrom gtfsio export_gtfs
+#' @export
+write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE) {
+  stopifnot(inherits(gtfs_obj, "tidygtfs"))
+  
+  # convert sf tables
+  if(inherits(gtfs_obj$stops, "sf")) {
+    gtfs_obj$stops <- sf_points_to_df(gtfs_obj$stops)
+  }
+  if(feed_contains(gtfs_obj, "shapes") && inherits(gtfs_obj$shapes, "sf")) {
+    gtfs_obj$shapes <- sf_lines_to_df(gtfs_obj$shapes)
+  }
+  
+  # data.tables
+  gtfs_obj <- gtfs_obj[names(gtfs_obj) != "."]
+  gtfs_obj <- lapply(gtfs_obj, as.data.table)
+  class(gtfs_obj) <- list("gtfs")
+  
+  # convert dates/times to strings
+  gtfs_obj <- convert_dates(gtfs_obj, date_as_gtfsio_char)
+  gtfs_obj <- convert_hms_to_char(gtfs_obj)
+  
+  gtfsio::export_gtfs(gtfs_obj, zipfile, 
+                      standard_only = FALSE,
+                      compression_level = compression_level, 
+                      as_dir = as_dir, overwrite = TRUE)
+}
