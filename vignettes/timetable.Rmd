@@ -178,12 +178,13 @@ use the route colors provided in the feed.
 
 ```{r fig.width=8, fig.height=6}
 route_colors <- gtfs$routes %>% select(route_id, route_short_name, route_color)
-route_colors$route_color[which(is.na(route_colors$route_color))] <- "454545"
+route_colors$route_color[which(route_colors$route_color == "")] <- "454545"
 route_colors <- setNames(paste0("#", route_colors$route_color), route_colors$route_short_name)
 
 ggplot(departures_180823) + theme_bw() +
   geom_point(aes(y=trip_headsign, x=departure_time, color = route_short_name), size = 0.2) +
-  scale_x_time(breaks = seq(0, max(as.numeric(departures$departure_time)), 3600), labels = scales::time_format("%H:%M")) +
+  scale_x_time(breaks = seq(0, max(as.numeric(departures$departure_time)), 3600), 
+               labels = scales::time_format("%H:%M")) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   theme(legend.position = "bottom") +
   scale_color_manual(values = route_colors) +
