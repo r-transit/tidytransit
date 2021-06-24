@@ -90,3 +90,17 @@ test_that("meaningful errors", {
   gtfs_as_sf(gtfs_duke, quiet = FALSE)
 })
 
+test_that("sf_as_tbl", {
+  duke_00 = gtfs_duke
+  duke_sf = gtfs_as_sf(duke_00, crs = 3358)
+  duke_df = sf_as_tbl(duke_sf)
+  attributes(duke_00$shapes)$.internal.selfref <- NULL
+  
+  expect_equal(duke_df$stops[colnames(gtfs_duke$stops)], gtfs_duke$stops, tolerance = 0.0001)
+  
+  x = duke_df$shapes[colnames(duke_00$shapes)] %>% arrange(shape_id, shape_pt_sequence)
+  y = duke_00$shapes %>% arrange(shape_id, shape_pt_sequence)
+  
+  expect_equal(x, y, tolerance = 0.001)
+})
+

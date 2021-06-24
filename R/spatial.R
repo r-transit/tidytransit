@@ -10,6 +10,7 @@
 #'            lon/lat coordinates of stops and shapes
 #' @param quiet boolean whether to print status messages
 #' @return gtfs_obj a tidytransit gtfs object with stops and shapes as sf data frames
+#' @seealso \code{\link{sf_as_tbl}}
 #' @export
 gtfs_as_sf <- function(gtfs_obj, skip_shapes = FALSE, crs = NULL, quiet = TRUE) {
   if(!quiet) message('Converting stops to simple features')
@@ -168,6 +169,22 @@ gtfs_transform = function(gtfs_obj, crs) {
   gtfs_obj
 }
 
+#' Convert stops and shapes from sf objects to tibbles
+#' 
+#' Coordinates are transformed to lon/lat
+#' @param gtfs_obj tidygtfs object
+#' @seealso \code{\link{gtfs_as_sf}}
+#' @export
+sf_as_tbl = function(gtfs_obj) {
+  if(inherits(gtfs_obj$stops, "sf")) {
+    gtfs_obj$stops <- dplyr::as_tibble(sf_points_to_df(gtfs_obj$stops))
+  }
+  if(feed_contains(gtfs_obj, "shapes") && inherits(gtfs_obj$shapes, "sf")) {
+    gtfs_obj$shapes <- dplyr::as_tibble(sf_lines_to_df(gtfs_obj$shapes))
+  }
+  gtfs_obj
+}
+
 #' Adds the coordinates of an sf POINT object as columns
 #' @param pts_sf sf object
 #' @param coord_colnames names of the new columns (existing columns are overwritten)
@@ -178,7 +195,8 @@ sf_points_to_df = function(pts_sf,
   stopifnot(inherits(pts_sf, "sf"))
   stopifnot(sf::st_geometry_type(pts_sf, FALSE) == "POINT")
   stopifnot(length(coord_colnames) == 2)
-
+  
+  pts_sf <- sf::st_transform(pts_sf, 4326)
   mtrx = matrix(unlist(sf::st_geometry(pts_sf)), ncol = 2, byrow = T)
   pts_sf[coord_colnames[1]] <- mtrx[,1]
   pts_sf[coord_colnames[2]] <- mtrx[,2]
@@ -200,6 +218,8 @@ sf_lines_to_df = function(lines_sf,
   stopifnot(inherits(lines_sf, "sf"))
   stopifnot(sf::st_geometry_type(lines_sf, FALSE) == "LINESTRING")
   stopifnot(length(coord_colnames) == 2)
+  
+  lines_sf <- sf::st_transform(lines_sf, 4326)
   shps_list = lapply(sf::st_geometry(lines_sf), function(x) {
     df = as.data.frame(as.matrix(x))
     colnames(df) <- coord_colnames
@@ -208,6 +228,6 @@ sf_lines_to_df = function(lines_sf,
     df$shape_dist_traveled <- c(0, cumsum(round(gdist,1)))
     df
   })
-  
+  names(shps_list) <- lines_sf$shape_id
   dplyr::bind_rows(shps_list, .id = "shape_id")
 }

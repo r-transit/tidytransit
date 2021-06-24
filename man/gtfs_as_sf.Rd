@@ -24,3 +24,6 @@ Stops are converted to POINT sf data frames. Shapes are created as
 LINESTRING data frame. Note that this function replaces stops and shapes
 tables in gtfs_obj.
 }
+\seealso{
+\code{\link{sf_as_tbl}}
+}

@@ -58,12 +58,7 @@ write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE)
   stopifnot(inherits(gtfs_obj, "tidygtfs"))
   
   # convert sf tables
-  if(inherits(gtfs_obj$stops, "sf")) {
-    gtfs_obj$stops <- sf_points_to_df(gtfs_obj$stops)
-  }
-  if(feed_contains(gtfs_obj, "shapes") && inherits(gtfs_obj$shapes, "sf")) {
-    gtfs_obj$shapes <- sf_lines_to_df(gtfs_obj$shapes)
-  }
+  gtfs_obj <- sf_as_tbl(gtfs_obj)
   
   # data.tables
   gtfs_obj <- gtfs_obj[names(gtfs_obj) != "."]
