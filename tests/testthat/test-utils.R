@@ -41,7 +41,6 @@ test_that("filter_trips", {
     sf::st_polygon(list(matrix(c(7.4077, 7.40783, 7.40924, 7.40906, 7.4077, 46.95457, 46.9534, 
                  46.9535, 46.95466, 46.95457), nrow = 5)))), crs = 4326)
   
-  expect_message(filter_trips_through_area(g_sf, bbox_sf), "although coordinates are longitude/latitude, st_intersection assumes that they are planar")
   f1 = suppressMessages(filter_trips_through_area(g_sf, bbox_sf))
   f2 = filter_trips_through_area(g, bbox)
   f3 = filter_trips(g, stop_names = "Six") 
