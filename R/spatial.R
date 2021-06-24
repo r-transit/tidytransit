@@ -13,9 +13,13 @@
 #' @export
 gtfs_as_sf <- function(gtfs_obj, skip_shapes = FALSE, crs = NULL, quiet = TRUE) {
   if(!quiet) message('Converting stops to simple features')
-  gtfs_obj$stops <- try(stops_as_sf(gtfs_obj$stops, crs))
+  if(!feed_contains(gtfs_obj, "stops")) {
+    stop("No stops table in feed")
+  } else if(!inherits(gtfs_obj$stops, "sf")) {
+    gtfs_obj$stops <- try(stops_as_sf(gtfs_obj$stops, crs))
+  }
   
-  if(feed_contains(gtfs_obj, "shapes") && !skip_shapes) {
+  if(feed_contains(gtfs_obj, "shapes") && !skip_shapes && !inherits(gtfs_obj$shapes, "sf")) {
     if(!quiet) message('Converting shapes to simple features')
     gtfs_obj$shapes <- try(shapes_as_sf(gtfs_obj$shapes, crs))
   }

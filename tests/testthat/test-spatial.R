@@ -9,6 +9,8 @@ test_that("convert gtfs stops and shapes to sf data frames", {
   duke_sf <- gtfs_as_sf(gtfs_duke)
   expect_is(duke_sf$shapes, "sf")
   expect_is(duke_sf$stops, "sf")
+  duke_sf2 = gtfs_as_sf(duke_sf)
+  expect_equal(duke_sf2, duke_sf)
 })
 
 test_that("gtfs_as_sf doesn't crash without shapes", {
@@ -17,7 +19,7 @@ test_that("gtfs_as_sf doesn't crash without shapes", {
   expect_silent(gtfs_as_sf(gtfs_duke_wo_shapes))
   expect_silent(gtfs_as_sf(gtfs_duke_wo_shapes, skip_shapes = TRUE))
   gtfs_duke_wo_shapes$stops <- NULL
-  gtfs_as_sf(gtfs_duke_wo_shapes)
+  expect_error(gtfs_as_sf(gtfs_duke_wo_shapes), "No stops table in feed")
 })
 
 duke_sf <- gtfs_as_sf(gtfs_duke)
