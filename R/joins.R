@@ -27,7 +27,7 @@ filter_stops <- function(gtfs_obj, service_ids, route_ids) {
   return(some_stops)
 }
 
-#' Filter all trips passing through an area
+#' Filter a gtfs feed so that it only contains trips that pass the given area
 #' 
 #' Only keeps trips that pass stops within the given through_area. 
 #' Only stops, routes, services, shapes, frequencies and transfers belonging to 
@@ -37,7 +37,7 @@ filter_stops <- function(gtfs_obj, service_ids, route_ids) {
 #' @param area all trips passing through this area are kept. Either a bounding box 
 #'             (numeric vector with xmin, ymin, xmax, ymax) or a sf object.
 #' @export
-filter_trips_through_area <- function(gtfs_obj, area) {
+filter_feed_by_area <- function(gtfs_obj, area) {
   if(inherits(gtfs_obj$stops, "sf") && inherits(area, "sf")) {
     if(sf::st_crs(gtfs_obj$stops) != sf::st_crs(area)) {
       stop("feed and area are not in the same coordinate reference system")
@@ -59,25 +59,27 @@ filter_trips_through_area <- function(gtfs_obj, area) {
     stop_ids = gtfs_obj$stops %>% filter_bbox(area)
     stop_ids <- unique(stop_ids$stop_id)
   }
-  gtfs_obj$stops$stop_in_area <- gtfs_obj$stops$stop_id %in% stop_ids
   
-  filter_trips(gtfs_obj, stop_ids)
+  filter_feed_by_stops(gtfs_obj, stop_ids)
 }
 
-#' Filter all trips that pass the given stops
+#' Filter a gtfs feed so that it only contains trips that pass the given stops
 #' 
 #' Only keeps trips that pass stops with the given stop_ids or stop_names.
 #' Only stops, routes, services, shapes, frequencies and transfers belonging to 
-#' one of those trips are kept.
-#' You can either provide stop_ids or stop_names (which are then converted to stop_ids)
+#' one of those trips are kept. You can either provide stop_ids or stop_names 
+#' (which are then converted to stop_ids)
+#' 
+#' Note that the returned gtfs_obj contains more than just the stops given (i.e. all stops
+#' that belong to a trip).
 #' 
 #' @param gtfs_obj tidygtfs object
 #' @param stop_ids vector with stop_ids
 #' @param stop_names vector with stop_names
 #' @export
-filter_trips = function(gtfs_obj, stop_ids = NULL, stop_names = NULL) {
+filter_feed_by_stops = function(gtfs_obj, stop_ids = NULL, stop_names = NULL) {
   if(inherits(stop_ids, "sf")) {
-    stop("Please use filter_trips_through_area with sf objects")
+    stop("Please use filter_feed_by_area with sf objects")
   }
   if(!is.null(stop_names)) {
     if(!is.null(stop_ids)) stop("Please provide either stop_ids or stop_names")
@@ -88,7 +90,7 @@ filter_trips = function(gtfs_obj, stop_ids = NULL, stop_names = NULL) {
   if(!any(stop_ids %in% gtfs_obj$stops$stop_id)) {
     stop("stop_ids found in stops table: ", paste(stop_ids, collapse = ", "))
   }
-    
+
   trip_ids = gtfs_obj$stop_times[which(gtfs_obj$stop_times$stop_id %in% stop_ids),]
   trip_ids <- unique(trip_ids$trip_id)
   route_ids = gtfs_obj$trips[which(gtfs_obj$trips$trip_id %in% trip_ids),]

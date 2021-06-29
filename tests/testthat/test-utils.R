@@ -32,7 +32,7 @@ test_that("filter_stops", {
   expect_equal(nrow(fs2), 0)
 })
 
-test_that("filter_trips", {
+test_that("filter_feed_by_stops", {
   g = read_gtfs(system.file("extdata", "routing.zip", package = "tidytransit"))
   g_sf = gtfs_as_sf(g)
   
@@ -41,17 +41,17 @@ test_that("filter_trips", {
     sf::st_polygon(list(matrix(c(7.4077, 7.40783, 7.40924, 7.40906, 7.4077, 46.95457, 46.9534, 
                  46.9535, 46.95466, 46.95457), nrow = 5)))), crs = 4326)
   
-  f1 = suppressMessages(filter_trips_through_area(g_sf, bbox_sf))
-  f2 = filter_trips_through_area(g, bbox)
-  f3 = filter_trips(g, stop_names = "Six") 
+  f1 = suppressMessages(filter_feed_by_area(g_sf, bbox_sf))
+  f2 = filter_feed_by_area(g, bbox)
+  f3 = filter_feed_by_stops(g, stop_names = "Six") 
   expect_equal(f1$stop_times, f2$stop_times)
   expect_equal(f1$trips, f2$trips)
   expect_equal(f1$trips, f3$trips)
   
-  expect_error(filter_trips_through_area(g, 1:3), "bbox_area must be a numeric vector of length four, with xmin, ymin, xmax and ymax values")
-  expect_error(filter_trips(g, "xyz"), "stop_ids found in stops table: xyz")
-  expect_error(filter_trips(g, "xyz", "XYZ"), "Please provide either stop_ids or stop_names")
-  expect_error(filter_trips(g), "Please provide either stop_ids or stop_names")
+  expect_error(filter_feed_by_area(g, 1:3), "bbox_area must be a numeric vector of length four, with xmin, ymin, xmax and ymax values")
+  expect_error(filter_feed_by_stops(g, "xyz"), "stop_ids found in stops table: xyz")
+  expect_error(filter_feed_by_stops(g, "xyz", "XYZ"), "Please provide either stop_ids or stop_names")
+  expect_error(filter_feed_by_stops(g), "Please provide either stop_ids or stop_names")
 })
 
 test_that("filter_trips with shapes", {
@@ -63,14 +63,14 @@ test_that("filter_trips with shapes", {
     sf::st_buffer(30)
   area_wgs84 = sf::st_transform(area_epsg, 4326)
   
-  expect_error(filter_trips(gtfs_duke, area_wgs84), "Please use filter_trips_through_area with sf objects")
-  expect_error(filter_trips_through_area(duke_wgs84, area_epsg), "feed and area are not in the same coordinate reference system")
-  duke_0_0 = filter_trips(gtfs_duke, "2382815")
+  expect_error(filter_feed_by_stops(gtfs_duke, area_wgs84), "Please use filter_feed_by_area with sf objects")
+  expect_error(filter_feed_by_area(duke_wgs84, area_epsg), "feed and area are not in the same coordinate reference system")
+  duke_0_0 = filter_feed_by_stops(gtfs_duke, "2382815")
   
-  duke_0_1 = filter_trips_through_area(gtfs_duke, area_wgs84)
-  duke_0_2 = filter_trips_through_area(gtfs_duke, area_epsg)
-  duke_1_1 = suppressMessages(filter_trips_through_area(duke_wgs84, area_wgs84))
-  duke_2_2 = filter_trips_through_area(duke_epsg, area_epsg)
+  duke_0_1 = filter_feed_by_area(gtfs_duke, area_wgs84)
+  duke_0_2 = filter_feed_by_area(gtfs_duke, area_epsg)
+  duke_1_1 = suppressMessages(filter_feed_by_area(duke_wgs84, area_wgs84))
+  duke_2_2 = filter_feed_by_area(duke_epsg, area_epsg)
   
   expect_equal(duke_0_1$trips, duke_0_0$trips)
   expect_equal(duke_0_2$trips, duke_0_0$trips)
