@@ -11,8 +11,11 @@ vignette: >
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+options(rmarkdown.html_vignette.check_title = FALSE)
 library(tidytransit)
 library(dplyr)
+library(sf)
+library(mapview)
 ```
 
 # Datensatz
@@ -23,7 +26,7 @@ Download Datensatz
 Auszug erstellen
 Weiterarbeit mit Auszug (wäre auch mit Gesamtdatensatz möglich)
 
-```{r Setup}
+```{r Load}
 gtfs_path = system.file("extdata", "gtfs_ch_zg.zip",  package = "tidytransit")
 g = read_gtfs(gtfs_path)
 ```
@@ -31,35 +34,25 @@ g = read_gtfs(gtfs_path)
 
 ### Ausschnitt
 ```{r Subset, echo=F}
-library(osmdata)
-library(sf)
-osmsf = opq(c(8.4820, 47.1494, 8.6003, 47.2328)) %>% 
-  add_osm_feature(key = "admin_level", value = "8") %>% 
-  osmdata_sf()
-
-baar = osmsf$osm_multipolygons %>% filter(name == "Baar") %>% st_transform(2056)
-
 stops = g$stops %>% 
   group_by(stop_name) %>%
-  summarise(stop_lon = mean(stop_lon), stop_lat = mean(stop_lat))
-
-stops = stops %>%
-  sf::st_as_sf(coords = c("stop_lon", "stop_lat"), crs = 4326) %>% 
-  sf::st_set_agr("constant") %>% 
-  st_transform(2056) %>% 
-  sf::st_intersection(sf::st_geometry(baar))
+  summarise(stop_lon = mean(stop_lon), stop_lat = mean(stop_lat)) %>% 
+  stops_as_sf(2056)
 ```
 
 ### Art der Verkehrsmittel
 ```{r Verkehrsmittel}
-stop_times = g$stop_times[c("stop_id", "trip_id", "arrival_time", "departure_time")] %>% 
-  inner_join(g$stops[c("stop_id", "stop_name")]) %>% 
-  inner_join(g$trips[c("trip_id", "route_id")]) %>% 
-  inner_join(g$routes[c("route_id", "route_type")])
+stop_times = filter_stop_times(g, "2021-06-30", "06:00:00", "20:00:00") %>% as_tibble()
+
+stop_times <- stop_times %>% 
+  select(stop_id, trip_id, arrival_time, departure_time) %>% 
+  inner_join(g$stops[c("stop_id", "stop_name")], "stop_id") %>% 
+  inner_join(g$trips[c("trip_id", "route_id")], "trip_id") %>% 
+  inner_join(g$routes[c("route_id", "route_type")], "route_id")
 
 vmg = stop_times %>% 
   select(route_type) %>% unique() %>%
-  inner_join(tidytransit::route_type_names) %>% 
+  inner_join(tidytransit::route_type_names, "route_type") %>% 
   arrange(route_type)
 
 vmg$Verkehrsmittelgruppe <- "B"
@@ -85,7 +78,6 @@ bknoten_blinie$n_routes <- NULL
 
 st_vm = stop_times %>% 
   inner_join(bknoten_blinie, c("stop_name", "Verkehrsmittelgruppe"))
-
 ```
 
 ### Kursintervall
@@ -127,13 +119,13 @@ hskat = inner_join(st_vm_ki, ARE_haltestellenkategorie, c("Verkehrsmittel", "Kur
 
 ### Distanz zur Haltestelle
 ```{r Distanz}
-ARE_gueteklasse = tibble(
+ARE_gueteklasse_tbl = tibble(
   Haltestellenkategorie = c("I", "II", "III", "IV", "V"),
   "< 300 m" = c("A", "A", "B", "C", "D"),
   "300 - 500 m" = c("A", "B", "C", "D", "keine"),
   "501 - 750 m" = c("B", "C", "D", "keine", "keine"),
   "751 - 1000 m" = c("C", "D", "keine", "keine", "keine"))
-ARE_gueteklasse <- ARE_gueteklasse %>%
+ARE_gueteklasse <- ARE_gueteklasse_tbl %>%
   tidyr::gather("Distanz", "Gueteklasse", -Haltestellenkategorie) %>% 
   filter(Gueteklasse != "keine") %>% 
   mutate(Haltestellenkategorie = factor(Haltestellenkategorie, c("I", "II", "III", "IV", "V"), ordered = TRUE)) %>% 
@@ -152,11 +144,11 @@ stop_dist = stops %>%
   inner_join(distance_num, "Distanz") %>% 
   filter(Gueteklasse != "keine")
   
-gueteklassen = st_buffer(stop_dist, stop_dist$distance)
+gueteklassen_buffer = st_buffer(stop_dist, stop_dist$distance)
 
-gueteklassen %>% arrange(desc(Gueteklasse)) %>% select(Gueteklasse) %>% plot()
+gueteklassen_buffer %>% arrange(desc(Gueteklasse)) %>% select(Gueteklasse) %>% plot()
 
-gueteklassen <- gueteklassen %>% 
+gueteklassen <- gueteklassen_buffer %>% 
   select(Gueteklasse) %>% 
   group_by(Gueteklasse) %>% 
   summarise() %>% 
@@ -167,6 +159,5 @@ gueteklassen <- gueteklassen %>%
 ## Map
 
 ```{r Map, out.width="100%"}
-library(mapview)
 mapview(gueteklassen, layer.name = "Güteklasse")
 ```
