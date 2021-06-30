@@ -7,6 +7,8 @@ route_type	route_type_name
 5	Cable Car
 6	Gondola, Suspended cable car
 7	Funicular
+11	Trolleybus
+12	Monorail
 100	Railway Service
 101	High Speed Rail Service
 102	Long Distance Trains

@@ -3,9 +3,9 @@
 \docType{data}
 \name{route_type_names}
 \alias{route_type_names}
-\title{Dataframe of route type id's and the names of the types (e.g. "Cable Car")}
+\title{Dataframe of route type id's and the names of the types (e.g. "Bus")}
 \format{
-A data frame with 132 rows and 2 variables:
+A data frame with 136 rows and 2 variables:
 \describe{
 \item{route_type}{the id of route type}
 \item{route_type_name}{name of the gtfs route type}
