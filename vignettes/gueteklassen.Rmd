@@ -24,8 +24,8 @@ Auszug erstellen
 Weiterarbeit mit Auszug (wäre auch mit Gesamtdatensatz möglich)
 
 ```{r Setup}
-gtfs_zug_path = system.file("extdata", "gtfs_ch_zug.zip",  package = "tidytransit")
-g = read_gtfs(gtfs_zug_path)
+gtfs_path = system.file("extdata", "gtfs_ch_zg.zip",  package = "tidytransit")
+g = read_gtfs(gtfs_path)
 ```
 # Vorgehen
 
@@ -57,16 +57,17 @@ stop_times = g$stop_times[c("stop_id", "trip_id", "arrival_time", "departure_tim
   inner_join(g$trips[c("trip_id", "route_id")]) %>% 
   inner_join(g$routes[c("route_id", "route_type")])
 
-verkehrsmittelgruppe = stop_times %>% 
+vmg = stop_times %>% 
   select(route_type) %>% unique() %>%
   inner_join(tidytransit::route_type_names) %>% 
   arrange(route_type)
 
-verkehrsmittelgruppe
-verkehrsmittelgruppe$Verkehrsmittelgruppe <- c(rep("A", 4), rep("B", 4), "C")
+vmg$Verkehrsmittelgruppe <- "B"
+vmg$Verkehrsmittelgruppe[which(vmg$route_type %in% c(1,2,100:120,400:410))] <- "A"
+vmg$Verkehrsmittelgruppe[which(vmg$route_type %in% c(6,7,1400))] <- "C"
 
 stop_times <- stop_times %>%
-  inner_join(verkehrsmittelgruppe[c("route_type", "Verkehrsmittelgruppe")], "route_type")
+  inner_join(vmg[c("route_type", "Verkehrsmittelgruppe")], "route_type")
 ```
 
 ### Bahnknoten/Bahnlinie
@@ -144,7 +145,7 @@ distance_num = tibble(Distanz = levels(ARE_gueteklasse$Distanz),
 ```
 
 ### ÖV-Güteklasse
-```{r Gueteklasse}
+```{r Gueteklasse, out.width="100%"}
 stop_dist = stops %>% 
   inner_join(hskat, "stop_name") %>%
   inner_join(ARE_gueteklasse, "Haltestellenkategorie") %>% 
@@ -165,6 +166,7 @@ gueteklassen <- gueteklassen %>%
 
 ## Map
 
-```{r Map}
-mapview::mapview(gueteklassen, layer.name = "Güteklasse")
+```{r Map, out.width="100%"}
+library(mapview)
+mapview(gueteklassen, layer.name = "Güteklasse")
 ```
