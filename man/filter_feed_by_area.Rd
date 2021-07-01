@@ -2,7 +2,7 @@
 % Please edit documentation in R/joins.R
 \name{filter_feed_by_area}
 \alias{filter_feed_by_area}
-\title{Filter a gtfs feed so that it only contains trips that pass the given area}
+\title{Filter a gtfs feed so that it only contains trips that pass a given area}
 \usage{
 filter_feed_by_area(gtfs_obj, area)
 }
@@ -12,8 +12,13 @@ filter_feed_by_area(gtfs_obj, area)
 \item{area}{all trips passing through this area are kept. Either a bounding box
 (numeric vector with xmin, ymin, xmax, ymax) or a sf object.}
 }
+\value{
+tidygtfs object with filtered tables
+}
 \description{
-Only keeps trips that pass stops within the given through_area.
-Only stops, routes, services, shapes, frequencies and transfers belonging to
-one of those trips are kept.
+Only stop_times, stops, routes, services (in calendar and calendar_dates), shapes,
+frequencies and transfers belonging to one of those trips are kept.
+}
+\seealso{
+\code{\link{filter_feed_by_stops}}, \code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_date}}
 }

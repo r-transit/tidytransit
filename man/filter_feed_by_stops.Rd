@@ -9,17 +9,21 @@ filter_feed_by_stops(gtfs_obj, stop_ids = NULL, stop_names = NULL)
 \arguments{
 \item{gtfs_obj}{tidygtfs object}
 
-\item{stop_ids}{vector with stop_ids}
+\item{stop_ids}{vector with stop_ids. You can either provide stop_ids or stop_names}
 
-\item{stop_names}{vector with stop_names}
+\item{stop_names}{vector with stop_names (will be converted to stop_ids)}
+}
+\value{
+tidygtfs object with filtered tables
 }
 \description{
-Only keeps trips that pass stops with the given stop_ids or stop_names.
-Only stops, routes, services, shapes, frequencies and transfers belonging to
-one of those trips are kept. You can either provide stop_ids or stop_names
-(which are then converted to stop_ids)
+Only stop_times, stops, routes, services (in calendar and calendar_dates), shapes,
+frequencies and transfers belonging to one of those trips are kept.
 }
-\details{
-Note that the returned gtfs_obj contains more than just the stops given (i.e. all stops
-that belong to a trip).
+\note{
+The returned gtfs_obj likely contains more than just the stops given (i.e. all stops
+that belong to a trip passing the initial stop).
+}
+\seealso{
+\code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_date}}
 }

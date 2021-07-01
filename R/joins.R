@@ -27,72 +27,18 @@ filter_stops <- function(gtfs_obj, service_ids, route_ids) {
   return(some_stops)
 }
 
-#' Filter a gtfs feed so that it only contains trips that pass the given area
+#' Filter a gtfs feed so that it only contains a given set of trips
 #' 
-#' Only keeps trips that pass stops within the given through_area. 
-#' Only stops, routes, services, shapes, frequencies and transfers belonging to 
-#' one of those trips are kept.
+#' Only stop_times, stops, routes, services (in calendar and calendar_dates), shapes, 
+#' frequencies and transfers belonging to one of those trips are kept.
 #' 
-#' @param gtfs_obj tidygtfs object
-#' @param area all trips passing through this area are kept. Either a bounding box 
-#'             (numeric vector with xmin, ymin, xmax, ymax) or a sf object.
-#' @export
-filter_feed_by_area <- function(gtfs_obj, area) {
-  if(inherits(gtfs_obj$stops, "sf") && inherits(area, "sf")) {
-    if(sf::st_crs(gtfs_obj$stops) != sf::st_crs(area)) {
-      stop("feed and area are not in the same coordinate reference system")
-    }
-    sf::st_agr(gtfs_obj$stops) <- "constant"
-    stops_area = sf::st_intersection(gtfs_obj$stops, sf::st_geometry(area))
-    stop_ids = stops_area$stop_id
-  } else {
-    if(inherits(area, "sf")) {
-      if(sf::st_crs(area)$input != "EPSG:4326") {
-        area <- sf::st_transform(area, 4326)
-      }
-      area <- sf::st_bbox(area)
-    } else {
-      if(length(area) != 4 | !is.numeric(area)) {
-        stop("bbox_area must be a numeric vector of length four, with xmin, ymin, xmax and ymax values")
-      }
-    }
-    stop_ids = gtfs_obj$stops %>% filter_bbox(area)
-    stop_ids <- unique(stop_ids$stop_id)
-  }
-  
-  filter_feed_by_stops(gtfs_obj, stop_ids)
-}
-
-#' Filter a gtfs feed so that it only contains trips that pass the given stops
-#' 
-#' Only keeps trips that pass stops with the given stop_ids or stop_names.
-#' Only stops, routes, services, shapes, frequencies and transfers belonging to 
-#' one of those trips are kept. You can either provide stop_ids or stop_names 
-#' (which are then converted to stop_ids)
-#' 
-#' Note that the returned gtfs_obj contains more than just the stops given (i.e. all stops
-#' that belong to a trip).
+#' @return tidygtfs object with filtered tables
 #' 
 #' @param gtfs_obj tidygtfs object
-#' @param stop_ids vector with stop_ids
-#' @param stop_names vector with stop_names
+#' @param trip_ids vector with trip_ids
+#' @seealso \code{\link{filter_feed_by_stops}}, \code{\link{filter_feed_by_area}}, \code{\link{filter_feed_by_date}}
 #' @export
-filter_feed_by_stops = function(gtfs_obj, stop_ids = NULL, stop_names = NULL) {
-  if(inherits(stop_ids, "sf")) {
-    stop("Please use filter_feed_by_area with sf objects")
-  }
-  if(!is.null(stop_names)) {
-    if(!is.null(stop_ids)) stop("Please provide either stop_ids or stop_names")
-    stop_ids = gtfs_obj$stops$stop_id[which(gtfs_obj$stops$stop_name %in% stop_names)]
-  }
-  if(is.null(stop_ids) && is.null(stop_names)) stop("Please provide either stop_ids or stop_names")
-  
-  if(!any(stop_ids %in% gtfs_obj$stops$stop_id)) {
-    stop("stop_ids found in stops table: ", paste(stop_ids, collapse = ", "))
-  }
-
-  trip_ids = gtfs_obj$stop_times[which(gtfs_obj$stop_times$stop_id %in% stop_ids),]
-  trip_ids <- unique(trip_ids$trip_id)
+filter_feed_by_trips = function(gtfs_obj, trip_ids) {
   route_ids = gtfs_obj$trips[which(gtfs_obj$trips$trip_id %in% trip_ids),]
   route_ids <- unique(route_ids$route_id)
   
@@ -127,6 +73,99 @@ filter_feed_by_stops = function(gtfs_obj, stop_ids = NULL, stop_names = NULL) {
   
   gtfs_obj
 }
+
+
+#' Filter a gtfs feed so that it only contains trips that pass a given area
+#' 
+#' @inherit filter_feed_by_trips description return
+#' 
+#' @param gtfs_obj tidygtfs object
+#' @param area all trips passing through this area are kept. Either a bounding box 
+#'             (numeric vector with xmin, ymin, xmax, ymax) or a sf object.
+#' @seealso \code{\link{filter_feed_by_stops}}, \code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_date}}
+#' @export
+filter_feed_by_area <- function(gtfs_obj, area) {
+  if(inherits(gtfs_obj$stops, "sf") && inherits(area, "sf")) {
+    if(sf::st_crs(gtfs_obj$stops) != sf::st_crs(area)) {
+      stop("feed and area are not in the same coordinate reference system")
+    }
+    sf::st_agr(gtfs_obj$stops) <- "constant"
+    stops_area = sf::st_intersection(gtfs_obj$stops, sf::st_geometry(area))
+    stop_ids = stops_area$stop_id
+  } else {
+    if(inherits(area, "sf")) {
+      if(sf::st_crs(area)$input != "EPSG:4326") {
+        area <- sf::st_transform(area, 4326)
+      }
+      area <- sf::st_bbox(area)
+    } else {
+      if(length(area) != 4 | !is.numeric(area)) {
+        stop("bbox_area must be a numeric vector of length four, with xmin, ymin, xmax and ymax values")
+      }
+    }
+    stop_ids = gtfs_obj$stops %>% filter_bbox(area)
+    stop_ids <- unique(stop_ids$stop_id)
+  }
+  
+  filter_feed_by_stops(gtfs_obj, stop_ids)
+}
+
+#' Filter a gtfs feed so that it only contains trips that pass the given stops
+#' 
+#' @inherit filter_feed_by_trips description return
+#' 
+#' @note
+#' The returned gtfs_obj likely contains more than just the stops given (i.e. all stops
+#' that belong to a trip passing the initial stop).
+#' 
+#' @param gtfs_obj tidygtfs object
+#' @param stop_ids vector with stop_ids. You can either provide stop_ids or stop_names 
+#' @param stop_names vector with stop_names (will be converted to stop_ids)
+#' @seealso \code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_date}}
+#' @export
+filter_feed_by_stops = function(gtfs_obj, stop_ids = NULL, stop_names = NULL) {
+  if(inherits(stop_ids, "sf")) {
+    stop("Please use filter_feed_by_area with sf objects")
+  }
+  if(!is.null(stop_names)) {
+    if(!is.null(stop_ids)) stop("Please provide either stop_ids or stop_names")
+    stop_ids = gtfs_obj$stops$stop_id[which(gtfs_obj$stops$stop_name %in% stop_names)]
+  }
+  if(is.null(stop_ids) && is.null(stop_names)) stop("Please provide either stop_ids or stop_names")
+  
+  if(!any(stop_ids %in% gtfs_obj$stops$stop_id)) {
+    stop("stop_ids found in stops table: ", paste(stop_ids, collapse = ", "))
+  }
+
+  trip_ids = gtfs_obj$stop_times[which(gtfs_obj$stop_times$stop_id %in% stop_ids),]
+  trip_ids <- unique(trip_ids$trip_id)
+  filter_feed_by_trips(gtfs_obj, trip_ids)
+}
+
+#' Filter a gtfs feed so that it only contains trips running on a given date
+#' 
+#' @inherit filter_feed_by_trips description return
+#' 
+#' @inheritParams filter_stop_times
+#' 
+#' @seealso \code{\link{filter_stop_times}}, \code{\link{filter_feed_by_trips}}, 
+#'          \code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_date}}
+#' @export
+filter_feed_by_date = function(gtfs_obj, extract_date,
+                               min_departure_time = "00:00:00", max_arrival_time = "48:00:00") {
+  st = filter_stop_times(gtfs_obj, extract_date, min_departure_time, max_arrival_time)
+  st <- dplyr::as_tibble(st)
+  attributes(st)$stops <- NULL
+  attributes(st)$transfers <- NULL
+  attributes(st)$sorted <- NULL
+  attributes(st)$index <- NULL
+  gtfs_obj$stop_times <- st[colnames(gtfs_obj$stop_times)]
+
+  trip_ids <- unique(gtfs_obj$stop_times$trip_id)
+  gtfs_obj$.$dates_services <- filter(gtfs_obj$.$dates_services, date == extract_date)
+  filter_feed_by_trips(gtfs_obj, trip_ids)
+}
+
 
 filter_bbox <- function(data, bbox, coord_cols = c("stop_lon", "stop_lat")) {
   if(is.null(names(bbox))) {

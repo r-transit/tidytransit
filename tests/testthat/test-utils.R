@@ -54,7 +54,7 @@ test_that("filter_feed_by_stops", {
   expect_error(filter_feed_by_stops(g), "Please provide either stop_ids or stop_names")
 })
 
-test_that("filter_trips with shapes", {
+test_that("filter_feed with shapes", {
   duke_wgs84 = gtfs_as_sf(gtfs_duke)
   duke_epsg = gtfs_as_sf(gtfs_duke, crs = 32119)
   
@@ -63,8 +63,10 @@ test_that("filter_trips with shapes", {
     sf::st_buffer(30)
   area_wgs84 = sf::st_transform(area_epsg, 4326)
   
-  expect_error(filter_feed_by_stops(gtfs_duke, area_wgs84), "Please use filter_feed_by_area with sf objects")
-  expect_error(filter_feed_by_area(duke_wgs84, area_epsg), "feed and area are not in the same coordinate reference system")
+  expect_error(filter_feed_by_stops(gtfs_duke, area_wgs84), 
+               "Please use filter_feed_by_area with sf objects")
+  expect_error(filter_feed_by_area(duke_wgs84, area_epsg), 
+               "feed and area are not in the same coordinate reference system")
   duke_0_0 = filter_feed_by_stops(gtfs_duke, "2382815")
   
   duke_0_1 = filter_feed_by_area(gtfs_duke, area_wgs84)
@@ -77,6 +79,22 @@ test_that("filter_trips with shapes", {
   expect_equal(duke_1_1$trips, duke_0_0$trips)
   expect_equal(duke_2_2$trips, duke_0_0$trips)
 })
+
+test_that("filter_feed_by_date", {
+  g0 = read_gtfs(system.file("extdata",
+                             "google_transit_nyc_subway.zip",
+                             package = "tidytransit"))
+  g1 = filter_feed_by_date(g0, "2018-06-28")
+  g2 = filter_feed_by_date(g0, "2018-10-30")
+  expect_true(all(g2$.$dates_services$date == as.Date("2018-10-30")))
+
+  expect_lt(nrow(g1$stops), nrow(g0$stops))
+  expect_lt(nrow(g2$stops), nrow(g0$stops))
+  
+  expect_is(g1$stop_times, "tbl_df")
+  expect_is(g2$stop_times, "tbl_df")
+})
+
 
 test_that("gtfs_meta", { # empty test
   expect_equal(gtfs_meta, get_gtfs_meta())

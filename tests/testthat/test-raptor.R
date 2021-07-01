@@ -329,9 +329,19 @@ test_that("set_num_times w/o hms or num", {
 })
 
 test_that("catch invalid params", {
-  expect_error(travel_times(g, stop_name = "One"), "Travel times cannot be calculated on a gtfs object. Use filter_stop_times().")
+  expect_error(travel_times(g, stop_name = "One"), "Travel times cannot be calculated on an unfiltered tidygtfs object. Use filter_feed_by_date().")
   fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
   expect_error(raptor(fst, attributes(fst)$transfers, stop_id = "stop1a", max_transfers = -1), "max_transfers is less than 0")
   expect_error(travel_times(fst, stop_name = "One", max_transfers = -1), "max_transfers is less than 0")
 })
 
+test_that("raptor with filtered feed", {
+  x1 = filter_stop_times(g, "2018-10-01", 0, 24*3600)
+  g2 = filter_feed_by_date(g, "2018-10-01", 0, 24*3600)
+
+  tt1 = travel_times(filtered_stop_times = x1, 
+                    stop_name = "One", time_range = 3600)
+  tt2 = travel_times(filtered_stop_times = g2, 
+                     stop_name = "One", time_range = 3600)
+  expect_equal(tt1, tt2)
+})
