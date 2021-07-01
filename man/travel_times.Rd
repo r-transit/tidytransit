@@ -18,7 +18,9 @@ travel_times(
 \arguments{
 \item{filtered_stop_times}{stop_times data.table (with transfers and stops tables as
 attributes) created with \code{\link[=filter_stop_times]{filter_stop_times()}} where the
-departure or arrival time has been set.}
+departure or arrival time has been set. Alternatively,
+a filtered feed created by \code{\link[=filter_feed_by_date]{filter_feed_by_date()}} can be
+used.}
 
 \item{stop_name}{Stop name for which travel times should be calculated. A vector with
 multiple names is accepted.}
@@ -49,7 +51,7 @@ corresponding journey departure and arrival times.
 \description{
 Function to calculate the shortest travel times from a stop (given by \code{stop_name})
 to all other stops of a feed. \code{filtered_stop_times} needs to be created before with
-\code{\link[=filter_stop_times]{filter_stop_times()}}.
+\code{\link[=filter_stop_times]{filter_stop_times()}} or \code{\link[=filter_feed_by_date]{filter_feed_by_date()}}.
 }
 \details{
 This function allows easier access to \code{\link[=raptor]{raptor()}} by using stop names instead of ids and

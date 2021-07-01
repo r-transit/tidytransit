@@ -1,4 +1,4 @@
-context("Service")
+context("Servicepattern")
 
 gpath <- system.file("extdata", "routing.zip", package = "tidytransit")
 

@@ -1,4 +1,4 @@
-context("Converting GTFS routes and shapes into sf dataframes")
+context("Converting to sf objects")
 library(sf)
 
 test_that("convert gtfs stops and shapes to sf data frames", {
@@ -9,13 +9,17 @@ test_that("convert gtfs stops and shapes to sf data frames", {
   duke_sf <- gtfs_as_sf(gtfs_duke)
   expect_is(duke_sf$shapes, "sf")
   expect_is(duke_sf$stops, "sf")
+  duke_sf2 = gtfs_as_sf(duke_sf)
+  expect_equal(duke_sf2, duke_sf)
 })
 
 test_that("gtfs_as_sf doesn't crash without shapes", {
   gtfs_duke_wo_shapes <- gtfs_duke
   gtfs_duke_wo_shapes$shapes <- NULL
-  expect_warning(gtfs_as_sf(gtfs_duke_wo_shapes))
+  expect_silent(gtfs_as_sf(gtfs_duke_wo_shapes))
   expect_silent(gtfs_as_sf(gtfs_duke_wo_shapes, skip_shapes = TRUE))
+  gtfs_duke_wo_shapes$stops <- NULL
+  expect_error(gtfs_as_sf(gtfs_duke_wo_shapes), "No stops table in feed")
 })
 
 duke_sf <- gtfs_as_sf(gtfs_duke)
@@ -55,6 +59,9 @@ test_that("crs is used", {
   duke_sf_crs = gtfs_as_sf(gtfs_duke, crs = 3358)
   expect_equal(st_crs(duke_sf_crs$stops)$input, "EPSG:3358")
   expect_equal(st_crs(duke_sf_crs$shapes)$input, "EPSG:3358")
+  duke_sf_crs2 = gtfs_transform(duke_sf, 3358)
+  expect_equal(st_crs(duke_sf_crs2$shapes)$input, "EPSG:3358")
+  expect_equal(gtfs_transform(gtfs_duke, 3358), duke_sf_crs)
 })
 
 test_that("two shapes are returned even if trips use the same shape_id", {
@@ -81,5 +88,19 @@ test_that("meaningful errors", {
   expect_error(get_trip_geometry(gtfs_duke), "shapes not converted to sf, use gtfs_obj <- gtfs_as_sf(gtfs_obj)", fixed = TRUE)
   
   gtfs_as_sf(gtfs_duke, quiet = FALSE)
+})
+
+test_that("sf_as_tbl", {
+  duke_00 = gtfs_duke
+  duke_sf = gtfs_as_sf(duke_00, crs = 3358)
+  duke_df = sf_as_tbl(duke_sf)
+  attributes(duke_00$shapes)$.internal.selfref <- NULL
+  
+  expect_equal(duke_df$stops[colnames(gtfs_duke$stops)], gtfs_duke$stops, tolerance = 0.0001)
+  
+  x = duke_df$shapes[colnames(duke_00$shapes)] %>% arrange(shape_id, shape_pt_sequence)
+  y = duke_00$shapes %>% arrange(shape_id, shape_pt_sequence)
+  
+  expect_equal(x, y, tolerance = 0.001)
 })
 

@@ -8,9 +8,10 @@ local_gtfs_path <- system.file("extdata",
 
 
 working <- function() {
-  connecting <- function(gtfs_example_url) {
-    r <- base::try(httr::GET(gtfs_example_url, httr::timeout(5)))
-    if(!assertthat::is.error(r)) r$status_code == 200 else FALSE
+  connecting <- function(gtfs_url) {
+    r <- tryCatch(httr::GET(gtfs_url, httr::timeout(5)), 
+             error = function(e) NA)
+    if(!is.na(r[1])) r$status_code == 200 else FALSE
   }
   connecting(gtfs_example_url)
 }

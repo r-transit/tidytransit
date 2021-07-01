@@ -194,10 +194,6 @@ set_dates_services <- function(gtfs_obj) {
                                           by=c("date", "service_id"))
     }
   }
-  
-  if(nrow(date_service_df) == 0) {
-    warning("No start and end dates defined in feed")
-  }
 
   gtfs_obj$.$dates_services <- date_service_df
   
