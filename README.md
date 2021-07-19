@@ -44,16 +44,13 @@ For the development version from Github:
 devtools::install_github("r-transit/tidytransit")
 ```
 
-For some users, `sf` is impractical to install due to system level
-dependencies. For these users,
-[`trread`](https://github.com/r-transit/trread) may work better. It has
-more limited functionality, but it can read GTFS tables into R.
+## GTFS-related packages
 
-## Background
+-   [`gtfsio`](https://github.com/r-transit/gtfsio) R package to read and write gtfs feeds, tidytransit builds on gtfsio
+-   [`gtfstools`](https://github.com/ipeaGIT/gtfstools) Tools for editing and analysing transit feeds
+-   [`gtfsrouter`](https://github.com/ATFutures/gtfs-router) Package for public transport routing 
+-   [`gtfs2gps`](https://github.com/ipeaGIT/gtfs2gps) Converting public transport data from GTFS format to GPS-like records
 
-tidytransit is a
-[fork](https://en.wikipedia.org/wiki/Fork_\(software_development\)) of
-[gtfsr](https://github.com/ropensci/gtfsr).
 
 ## Contributing
 
