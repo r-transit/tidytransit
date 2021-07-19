@@ -10,18 +10,22 @@
 #'            lon/lat coordinates of stops and shapes
 #' @param quiet boolean whether to print status messages
 #' @return gtfs_obj a tidytransit gtfs object with stops and shapes as sf data frames
+#' @seealso \code{\link{sf_as_tbl}}
 #' @export
 gtfs_as_sf <- function(gtfs_obj, skip_shapes = FALSE, crs = NULL, quiet = TRUE) {
   if(!quiet) message('Converting stops to simple features')
-  gtfs_obj$stops <- try(stops_as_sf(gtfs_obj$stops, crs))
+  if(!feed_contains(gtfs_obj, "stops")) {
+    stop("No stops table in feed")
+  } else if(!inherits(gtfs_obj$stops, "sf")) {
+    gtfs_obj$stops <- try(stops_as_sf(gtfs_obj$stops, crs))
+  }
   
-  if(feed_contains(gtfs_obj, "shapes") && !skip_shapes) {
+  if(feed_contains(gtfs_obj, "shapes") && !skip_shapes && !inherits(gtfs_obj$shapes, "sf")) {
     if(!quiet) message('Converting shapes to simple features')
     gtfs_obj$shapes <- try(shapes_as_sf(gtfs_obj$shapes, crs))
-  } else if(!skip_shapes) { 
-    warning('No shapes available in gtfs_obj') 
   }
-  return(gtfs_obj)
+  
+  gtfs_obj
 }
 
 #' Convert stops into Simple Features Points
@@ -151,3 +155,79 @@ shape_as_sf_linestring <- function(df) {
   return(sf::st_linestring(m))
 }
 
+#' Transform or convert coordinates of a gtfs feed
+#' @param gtfs_obj tidygtfs object
+#' @param crs target coordinate reference system, used by sf::st_transform
+#' @importFrom sf st_transform
+#' @export
+gtfs_transform = function(gtfs_obj, crs) {
+  if(!inherits(gtfs_obj$stops, "sf")) {
+    gtfs_obj <- gtfs_as_sf(gtfs_obj)
+  }
+  gtfs_obj$stops <- st_transform(gtfs_obj$stops, crs)
+  if(feed_contains(gtfs_obj, "shapes")) gtfs_obj$shapes <- st_transform(gtfs_obj$shapes, crs)
+  gtfs_obj
+}
+
+#' Convert stops and shapes from sf objects to tibbles
+#' 
+#' Coordinates are transformed to lon/lat
+#' @param gtfs_obj tidygtfs object
+#' @seealso \code{\link{gtfs_as_sf}}
+#' @export
+sf_as_tbl = function(gtfs_obj) {
+  if(inherits(gtfs_obj$stops, "sf")) {
+    gtfs_obj$stops <- dplyr::as_tibble(sf_points_to_df(gtfs_obj$stops))
+  }
+  if(feed_contains(gtfs_obj, "shapes") && inherits(gtfs_obj$shapes, "sf")) {
+    gtfs_obj$shapes <- dplyr::as_tibble(sf_lines_to_df(gtfs_obj$shapes))
+  }
+  gtfs_obj
+}
+
+#' Adds the coordinates of an sf POINT object as columns
+#' @param pts_sf sf object
+#' @param coord_colnames names of the new columns (existing columns are overwritten)
+#' @param remove_geometry remove sf geometry column?
+sf_points_to_df = function(pts_sf,
+                           coord_colnames = c("stop_lon", "stop_lat"), 
+                           remove_geometry = TRUE) {
+  stopifnot(inherits(pts_sf, "sf"))
+  stopifnot(sf::st_geometry_type(pts_sf, FALSE) == "POINT")
+  stopifnot(length(coord_colnames) == 2)
+  
+  pts_sf <- sf::st_transform(pts_sf, 4326)
+  mtrx = matrix(unlist(sf::st_geometry(pts_sf)), ncol = 2, byrow = T)
+  pts_sf[coord_colnames[1]] <- mtrx[,1]
+  pts_sf[coord_colnames[2]] <- mtrx[,2]
+
+  if(remove_geometry) {
+    pts_sf <- sf::st_set_geometry(pts_sf, NULL)
+  }
+  pts_sf
+}
+
+#' Adds the coordinates of an sf LINESTRING object as columns and rows
+#' @param lines_sf sf object
+#' @param coord_colnames names of the new columns (existing columns are overwritten)
+#' @param remove_geometry remove sf geometry column?
+#' @importFrom geodist geodist
+sf_lines_to_df = function(lines_sf,
+                          coord_colnames = c("shape_pt_lon", "shape_pt_lat"), 
+                          remove_geometry = TRUE) {
+  stopifnot(inherits(lines_sf, "sf"))
+  stopifnot(sf::st_geometry_type(lines_sf, FALSE) == "LINESTRING")
+  stopifnot(length(coord_colnames) == 2)
+  
+  lines_sf <- sf::st_transform(lines_sf, 4326)
+  shps_list = lapply(sf::st_geometry(lines_sf), function(x) {
+    df = as.data.frame(as.matrix(x))
+    colnames(df) <- coord_colnames
+    df$shape_pt_sequence <- 1:nrow(df)
+    gdist = geodist(df[c("shape_pt_lon", "shape_pt_lat")], sequential = T)
+    df$shape_dist_traveled <- c(0, cumsum(round(gdist,1)))
+    df
+  })
+  names(shps_list) <- lines_sf$shape_id
+  dplyr::bind_rows(shps_list, .id = "shape_id")
+}
