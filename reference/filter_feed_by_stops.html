@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Dataframe of route type id's and the names of the types (e.g. "Bus") — route_type_names • tidytransit</title>
+<title>Filter a gtfs feed so that it only contains trips that pass the given stops — filter_feed_by_stops • tidytransit</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Dataframe of route type id's and the names of the types (e.g. "Bus") — route_type_names" />
-<meta property="og:description" content="Extended GTFS Route Types: https://developers.google.com/transit/gtfs/reference/extended-route-types" />
+<meta property="og:title" content="Filter a gtfs feed so that it only contains trips that pass the given stops — filter_feed_by_stops" />
+<meta property="og:description" content="Only stop_times, stops, routes, services (in calendar and calendar_dates), shapes,
+frequencies and transfers belonging to one of those trips are kept." />
 
 
 
@@ -126,29 +127,45 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Dataframe of route type id's and the names of the types (e.g. "Bus")</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-transit/tidytransit/blob/master/R/data.R'><code>R/data.R</code></a></small>
-    <div class="hidden name"><code>route_type_names.Rd</code></div>
+    <h1>Filter a gtfs feed so that it only contains trips that pass the given stops</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-transit/tidytransit/blob/master/R/joins.R'><code>R/joins.R</code></a></small>
+    <div class="hidden name"><code>filter_feed_by_stops.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Extended GTFS Route Types: https://developers.google.com/transit/gtfs/reference/extended-route-types</p>
+    <p>Only stop_times, stops, routes, services (in calendar and calendar_dates), shapes,
+frequencies and transfers belonging to one of those trips are kept.</p>
     </div>
 
-    <pre class="usage"><span class='va'>route_type_names</span></pre>
+    <pre class="usage"><span class='fu'>filter_feed_by_stops</span><span class='op'>(</span><span class='va'>gtfs_obj</span>, stop_ids <span class='op'>=</span> <span class='cn'>NULL</span>, stop_names <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>gtfs_obj</th>
+      <td><p>tidygtfs object</p></td>
+    </tr>
+    <tr>
+      <th>stop_ids</th>
+      <td><p>vector with stop_ids. You can either provide stop_ids or stop_names</p></td>
+    </tr>
+    <tr>
+      <th>stop_names</th>
+      <td><p>vector with stop_names (will be converted to stop_ids)</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data frame with 136 rows and 2 variables:</p><dl>
-<dt>route_type</dt><dd><p>the id of route type</p></dd>
-<dt>route_type_name</dt><dd><p>name of the gtfs route type</p></dd>
+    <p>tidygtfs object with filtered tables</p>
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
-</dl>
+    <p>The returned gtfs_obj likely contains more than just the stops given (i.e. all stops
+that belong to a trip passing the initial stop).</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
-
-    <p><a href='https://gist.github.com/derhuerst/b0243339e22c310bee2386388151e11e'>https://gist.github.com/derhuerst/b0243339e22c310bee2386388151e11e</a></p>
+    <div class='dont-index'><p><code><a href='filter_feed_by_trips.html'>filter_feed_by_trips</a></code>, <code><a href='filter_feed_by_trips.html'>filter_feed_by_trips</a></code>, <code><a href='filter_feed_by_date.html'>filter_feed_by_date</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

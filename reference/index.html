@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -170,6 +170,30 @@ tidytransit's calculated tables in sublist</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="filter_feed_by_area.html">filter_feed_by_area()</a></code> </p>
+        </td>
+        <td><p>Filter a gtfs feed so that it only contains trips that pass a given area</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="filter_feed_by_date.html">filter_feed_by_date()</a></code> </p>
+        </td>
+        <td><p>Filter a gtfs feed so that it only contains trips running on a given date</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="filter_feed_by_stops.html">filter_feed_by_stops()</a></code> </p>
+        </td>
+        <td><p>Filter a gtfs feed so that it only contains trips that pass the given stops</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="filter_feed_by_trips.html">filter_feed_by_trips()</a></code> </p>
+        </td>
+        <td><p>Filter a gtfs feed so that it only contains a given set of trips</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="filter_stop_times.html">filter_stop_times()</a></code> </p>
         </td>
         <td><p>Filter a <code>stop_times</code> table for a given date and timespan.</p></td>
@@ -218,6 +242,12 @@ tidytransit's calculated tables in sublist</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="gtfs_transform.html">gtfs_transform()</a></code> </p>
+        </td>
+        <td><p>Transform or convert coordinates of a gtfs feed</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="plot.tidygtfs.html">plot(<i>&lt;tidygtfs&gt;</i>)</a></code> </p>
         </td>
         <td><p>Plot GTFS stops and trips</p></td>
@@ -244,13 +274,31 @@ tidytransit's calculated tables in sublist</p></td>
         <td>
           <p><code><a href="route_type_names.html">route_type_names</a></code> </p>
         </td>
-        <td><p>Dataframe of route type id's and the names of the types (e.g. "Cable Car")</p></td>
+        <td><p>Dataframe of route type id's and the names of the types (e.g. "Bus")</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="set_api_key.html">set_api_key()</a></code> </p>
         </td>
         <td><p>Set TransitFeeds API key for recall</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sf_as_tbl.html">sf_as_tbl()</a></code> </p>
+        </td>
+        <td><p>Convert stops and shapes from sf objects to tibbles</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sf_lines_to_df.html">sf_lines_to_df()</a></code> </p>
+        </td>
+        <td><p>Adds the coordinates of an sf LINESTRING object as columns and rows</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sf_points_to_df.html">sf_points_to_df()</a></code> </p>
+        </td>
+        <td><p>Adds the coordinates of an sf POINT object as columns</p></td>
       </tr><tr>
         
         <td>

@@ -42,7 +42,7 @@
 <meta property="og:title" content="Calculate shortest travel times from a stop to all reachable stops — travel_times" />
 <meta property="og:description" content="Function to calculate the shortest travel times from a stop (given by stop_name)
 to all other stops of a feed. filtered_stop_times needs to be created before with
-filter_stop_times()." />
+filter_stop_times() or filter_feed_by_date()." />
 
 
 
@@ -74,7 +74,7 @@ filter_stop_times()." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -136,7 +136,7 @@ filter_stop_times()." />
     <div class="ref-description">
     <p>Function to calculate the shortest travel times from a stop (given by <code>stop_name</code>)
 to all other stops of a feed. <code>filtered_stop_times</code> needs to be created before with
-<code><a href='filter_stop_times.html'>filter_stop_times()</a></code>.</p>
+<code><a href='filter_stop_times.html'>filter_stop_times()</a></code> or <code><a href='filter_feed_by_date.html'>filter_feed_by_date()</a></code>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>travel_times</span><span class='op'>(</span>
@@ -157,7 +157,9 @@ to all other stops of a feed. <code>filtered_stop_times</code> needs to be creat
       <th>filtered_stop_times</th>
       <td><p>stop_times data.table (with transfers and stops tables as
 attributes) created with <code><a href='filter_stop_times.html'>filter_stop_times()</a></code> where the
-departure or arrival time has been set.</p></td>
+departure or arrival time has been set. Alternatively,
+a filtered feed created by <code><a href='filter_feed_by_date.html'>filter_feed_by_date()</a></code> can be
+used.</p></td>
     </tr>
     <tr>
       <th>stop_name</th>

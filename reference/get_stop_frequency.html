@@ -74,7 +74,7 @@ tidytransit calculates." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -184,15 +184,15 @@ with the most departures is used</p></td>
 <span class='va'>stop_frequency</span> <span class='op'>&lt;-</span> <span class='fu'>get_stop_frequency</span><span class='op'>(</span><span class='va'>gtfs_duke</span><span class='op'>)</span>
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span><span class='op'>(</span><span class='va'>stop_frequency</span><span class='op'>$</span><span class='va'>mean_headway</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>stop_frequency</span><span class='op'>[</span><span class='va'>x</span>,<span class='op'>]</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 6 x 4</span><span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 6 x 4</span>
 #&gt;   stop_id service_id         n_departures mean_headway
-#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                     </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>        </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>1</span><span> 778127  c_876_b_21969_d_31          143          403
-#&gt; </span><span style='color: #BCBCBC;'>2</span><span> 778084  c_876_b_21969_d_31          128          450
-#&gt; </span><span style='color: #BCBCBC;'>3</span><span> 778046  c_876_b_21969_d_31          113          510
-#&gt; </span><span style='color: #BCBCBC;'>4</span><span> 778050  c_876_b_21969_d_31          105          549
-#&gt; </span><span style='color: #BCBCBC;'>5</span><span> 778039  c_876_b_21969_d_31           79          729
-#&gt; </span><span style='color: #BCBCBC;'>6</span><span> 778076  c_876_b_21969_d_31           79          729</div></span></pre>
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                     <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
+#&gt; <span style='color: #BCBCBC;'>1</span> 778127  c_876_b_21969_d_31          143          403
+#&gt; <span style='color: #BCBCBC;'>2</span> 778084  c_876_b_21969_d_31          128          450
+#&gt; <span style='color: #BCBCBC;'>3</span> 778046  c_876_b_21969_d_31          113          510
+#&gt; <span style='color: #BCBCBC;'>4</span> 778050  c_876_b_21969_d_31          105          549
+#&gt; <span style='color: #BCBCBC;'>5</span> 778039  c_876_b_21969_d_31           79          729
+#&gt; <span style='color: #BCBCBC;'>6</span> 778076  c_876_b_21969_d_31           79          729</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -73,7 +73,7 @@ required files/fields are not found. This function is called in read_gtfs." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -197,21 +197,21 @@ present, however, it becomes optional and <code>calendar_dates.txt</code>
     <pre class="examples"><div class='input'><span class='va'>local_gtfs_path</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"google_transit_nyc_subway.zip"</span>, package <span class='op'>=</span> <span class='st'>"tidytransit"</span><span class='op'>)</span>
 <span class='va'>gtfs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='read_gtfs.html'>read_gtfs</a></span><span class='op'>(</span><span class='va'>local_gtfs_path</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span><span class='op'>(</span><span class='va'>gtfs</span>, <span class='st'>"validation_result"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 136 x 8</span><span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 136 x 8</span>
 #&gt;    file   file_spec file_provided_stat… field      field_spec field_provided_st…
-#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span>               </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>      </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>      </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span>             
-#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> agency req       TRUE                agency_id  opt        TRUE              
-#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> agency req       TRUE                agency_na… req        TRUE              
-#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> agency req       TRUE                agency_url req        TRUE              
-#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> agency req       TRUE                agency_ti… req        TRUE              
-#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> agency req       TRUE                agency_la… opt        TRUE              
-#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> agency req       TRUE                agency_ph… opt        TRUE              
-#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> agency req       TRUE                agency_fa… opt        FALSE             
-#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> agency req       TRUE                agency_em… opt        FALSE             
-#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> stops  req       TRUE                stop_id    req        TRUE              
-#&gt; </span><span style='color: #BCBCBC;'>10</span><span> stops  req       TRUE                stop_code  opt        TRUE              
-#&gt; </span><span style='color: #949494;'># … with 126 more rows, and 2 more variables: validation_status &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   validation_details &lt;chr&gt;</span><span></div><div class='input'>
+#&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>               <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>      <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>      <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>             
+#&gt; <span style='color: #BCBCBC;'> 1</span> agency req       TRUE                agency_id  opt        TRUE              
+#&gt; <span style='color: #BCBCBC;'> 2</span> agency req       TRUE                agency_na… req        TRUE              
+#&gt; <span style='color: #BCBCBC;'> 3</span> agency req       TRUE                agency_url req        TRUE              
+#&gt; <span style='color: #BCBCBC;'> 4</span> agency req       TRUE                agency_ti… req        TRUE              
+#&gt; <span style='color: #BCBCBC;'> 5</span> agency req       TRUE                agency_la… opt        TRUE              
+#&gt; <span style='color: #BCBCBC;'> 6</span> agency req       TRUE                agency_ph… opt        TRUE              
+#&gt; <span style='color: #BCBCBC;'> 7</span> agency req       TRUE                agency_fa… opt        FALSE             
+#&gt; <span style='color: #BCBCBC;'> 8</span> agency req       TRUE                agency_em… opt        FALSE             
+#&gt; <span style='color: #BCBCBC;'> 9</span> stops  req       TRUE                stop_id    req        TRUE              
+#&gt; <span style='color: #BCBCBC;'>10</span> stops  req       TRUE                stop_code  opt        TRUE              
+#&gt; <span style='color: #949494;'># … with 126 more rows, and 2 more variables: validation_status &lt;chr&gt;,</span>
+#&gt; <span style='color: #949494;'>#   validation_details &lt;chr&gt;</span></div><div class='input'>
 <span class='va'>gtfs</span><span class='op'>$</span><span class='va'>shapes</span> <span class='op'>&lt;-</span> <span class='cn'>NULL</span>
 <span class='va'>validation_result</span> <span class='op'>&lt;-</span> <span class='fu'>validate_gtfs</span><span class='op'>(</span><span class='va'>gtfs</span><span class='op'>)</span>
 
@@ -219,7 +219,7 @@ present, however, it becomes optional and <code>calendar_dates.txt</code>
 <span class='va'>gtfs</span><span class='op'>$</span><span class='va'>stop_times</span> <span class='op'>&lt;-</span> <span class='cn'>NULL</span>
 <span class='va'>validation_result</span> <span class='op'>&lt;-</span> <span class='fu'>validate_gtfs</span><span class='op'>(</span><span class='va'>gtfs</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='warning'>Warning: Invalid feed. Missing required file(s): stop_times.txt</span></div><div class='input'>
-</div></span></pre>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

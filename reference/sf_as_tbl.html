@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Dataframe of route type id's and the names of the types (e.g. "Bus") — route_type_names • tidytransit</title>
+<title>Convert stops and shapes from sf objects to tibbles — sf_as_tbl • tidytransit</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Dataframe of route type id's and the names of the types (e.g. "Bus") — route_type_names" />
-<meta property="og:description" content="Extended GTFS Route Types: https://developers.google.com/transit/gtfs/reference/extended-route-types" />
+<meta property="og:title" content="Convert stops and shapes from sf objects to tibbles — sf_as_tbl" />
+<meta property="og:description" content="Coordinates are transformed to lon/lat" />
 
 
 
@@ -126,29 +126,29 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Dataframe of route type id's and the names of the types (e.g. "Bus")</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-transit/tidytransit/blob/master/R/data.R'><code>R/data.R</code></a></small>
-    <div class="hidden name"><code>route_type_names.Rd</code></div>
+    <h1>Convert stops and shapes from sf objects to tibbles</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-transit/tidytransit/blob/master/R/spatial.R'><code>R/spatial.R</code></a></small>
+    <div class="hidden name"><code>sf_as_tbl.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Extended GTFS Route Types: https://developers.google.com/transit/gtfs/reference/extended-route-types</p>
+    <p>Coordinates are transformed to lon/lat</p>
     </div>
 
-    <pre class="usage"><span class='va'>route_type_names</span></pre>
+    <pre class="usage"><span class='fu'>sf_as_tbl</span><span class='op'>(</span><span class='va'>gtfs_obj</span><span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>gtfs_obj</th>
+      <td><p>tidygtfs object</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p>A data frame with 136 rows and 2 variables:</p><dl>
-<dt>route_type</dt><dd><p>the id of route type</p></dd>
-<dt>route_type_name</dt><dd><p>name of the gtfs route type</p></dd>
-
-</dl>
-
-    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
-
-    <p><a href='https://gist.github.com/derhuerst/b0243339e22c310bee2386388151e11e'>https://gist.github.com/derhuerst/b0243339e22c310bee2386388151e11e</a></p>
+    <div class='dont-index'><p><code><a href='gtfs_as_sf.html'>gtfs_as_sf</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

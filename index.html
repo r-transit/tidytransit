@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -113,12 +113,20 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"r-transit/tidytransit"</span><span class="op">)</span></code></pre></div>
-<p>For some users, <code>sf</code> is impractical to install due to system level dependencies. For these users, <a href="https://github.com/r-transit/trread"><code>trread</code></a> may work better. It has more limited functionality, but it can read GTFS tables into R.</p>
 </div>
-<div id="background" class="section level2">
+<div id="gtfs-related-packages" class="section level2">
 <h2 class="hasAnchor">
-<a href="#background" class="anchor"></a>Background</h2>
-<p>tidytransit is a <a href="https://en.wikipedia.org/wiki/Fork_(software_development)">fork</a> of <a href="https://github.com/ropensci/gtfsr">gtfsr</a>.</p>
+<a href="#gtfs-related-packages" class="anchor"></a>GTFS-related packages</h2>
+<ul>
+<li>
+<a href="https://github.com/r-transit/gtfsio"><code>gtfsio</code></a> R package to read and write gtfs feeds, tidytransit builds on gtfsio</li>
+<li>
+<a href="https://github.com/ipeaGIT/gtfstools"><code>gtfstools</code></a> Tools for editing and analysing transit feeds</li>
+<li>
+<a href="https://github.com/ATFutures/gtfs-router"><code>gtfsrouter</code></a> Package for public transport routing</li>
+<li>
+<a href="https://github.com/ipeaGIT/gtfs2gps"><code>gtfs2gps</code></a> Converting public transport data from GTFS format to GPS-like records</li>
+</ul>
 </div>
 <div id="contributing" class="section level2">
 <h2 class="hasAnchor">
@@ -147,19 +155,13 @@
 <li>GPL</li>
 </ul>
 </div>
-<div class="community">
-<h2>Community</h2>
-<ul class="list-unstyled">
-<li><a href="CONTRIBUTING.html">Contributing guide</a></li>
-</ul>
-</div>
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
-<li>Flavio Poletti <br><small class="roles"> Author </small>  </li>
+<li>Flavio Poletti <br><small class="roles"> Author, maintainer </small>  </li>
 <li>Daniel Herszenhut <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0001-8066-1105" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 <li>Mark Padgham <br><small class="roles"> Author </small>  </li>
-<li>Tom Buckley <br><small class="roles"> Author, maintainer </small>  </li>
+<li>Tom Buckley <br><small class="roles"> Author </small>  </li>
 <li>Danton Noriega-Goodwin <br><small class="roles"> Author </small>  </li>
 <li><a href="authors.html">All authors...</a></li>
 </ul>
