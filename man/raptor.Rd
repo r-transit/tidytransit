@@ -50,7 +50,7 @@ stops in \code{stop_times} with journeys departing from \code{stop_ids} within
 \code{time_range}.
 }
 \details{
-With a modified \href{https://www.microsoft.com/en-us/research/publication/round-based-public-transit-routing}{Round-Based Public Transit Routing Algorithm}
+With a modified \href{https://www.microsoft.com/en-us/research/publication/round-based-public-transit-routing/}{Round-Based Public Transit Routing Algorithm}
 (RAPTOR) using data.table, earliest arrival times for all stops are calculated. If two
 journeys arrive at the same time, the one with the later departure time and thus shorter
 travel time is kept. By default, all journeys departing within \code{time_range} that arrive

@@ -4,7 +4,7 @@
 #' stops in `stop_times` with journeys departing from `stop_ids` within 
 #' `time_range`.
 #' 
-#' With a modified [Round-Based Public Transit Routing Algorithm](https://www.microsoft.com/en-us/research/publication/round-based-public-transit-routing) 
+#' With a modified [Round-Based Public Transit Routing Algorithm](https://www.microsoft.com/en-us/research/publication/round-based-public-transit-routing/) 
 #' (RAPTOR) using data.table, earliest arrival times for all stops are calculated. If two 
 #' journeys arrive at the same time, the one with the later departure time and thus shorter 
 #' travel time is kept. By default, all journeys departing within `time_range` that arrive 
