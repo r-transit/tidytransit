@@ -1,10 +1,9 @@
 #' Plot GTFS stops and trips
 #'
 #' @param x a gtfs_obj as read by read_gtfs()
-#' @export
 #' @param ... further specifications
-#' @importFrom graphics plot
-#' @importFrom dplyr select
+#' @return plot
+#'
 #' @examples \donttest{
 #' local_gtfs_path <- system.file("extdata",
 #'                               "google_transit_nyc_subway.zip",
@@ -12,6 +11,10 @@
 #' nyc <- read_gtfs(local_gtfs_path)
 #' plot(nyc)
 #' }
+#' 
+#' @importFrom graphics plot
+#' @importFrom dplyr select
+#' @export
 plot.tidygtfs <- function(x, ...) {
   dots <- list(...)
   if(!feed_contains(x, "stops")) {

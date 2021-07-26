@@ -9,6 +9,9 @@ sf_as_tbl(gtfs_obj)
 \arguments{
 \item{gtfs_obj}{tidygtfs object}
 }
+\value{
+tidygtfs object with stops and shapes converted to tibbles
+}
 \description{
 Coordinates are transformed to lon/lat
 }

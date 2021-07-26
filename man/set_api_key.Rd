@@ -6,6 +6,9 @@
 \usage{
 set_api_key()
 }
+\value{
+No value returned, function is used for setting environment variables
+}
 \description{
 Set TransitFeeds API key for recall
 }

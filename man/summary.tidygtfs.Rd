@@ -11,6 +11,9 @@
 
 \item{...}{further specifications}
 }
+\value{
+the tidygtfs object, invisibly
+}
 \description{
 GTFS feed summary
 }

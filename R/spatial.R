@@ -9,7 +9,7 @@
 #' @param crs optional coordinate reference system (used by sf::st_transform) to transform 
 #'            lon/lat coordinates of stops and shapes
 #' @param quiet boolean whether to print status messages
-#' @return gtfs_obj a tidytransit gtfs object with stops and shapes as sf data frames
+#' @return tidygtfs object with stops and shapes as sf dataframes
 #' @seealso \code{\link{sf_as_tbl}}
 #' @export
 gtfs_as_sf <- function(gtfs_obj, skip_shapes = FALSE, crs = NULL, quiet = TRUE) {
@@ -56,8 +56,8 @@ stops_as_sf <- function(stops, crs = NULL) {
 #' @param gtfs_shapes a gtfs$shapes dataframe
 #' @param crs optional coordinate reference system (used by sf::st_transform) to transform 
 #'            lon/lat coordinates 
-#' @export
 #' @return an sf dataframe for gtfs shapes
+#' @export
 shapes_as_sf <- function(gtfs_shapes, crs = NULL) {
   list_of_line_tibbles <- split(gtfs_shapes, gtfs_shapes$shape_id)
   list_of_linestrings <- lapply(list_of_line_tibbles, shape_as_sf_linestring)
@@ -80,6 +80,7 @@ shapes_as_sf <- function(gtfs_shapes, crs = NULL) {
 #' @param route_ids routes to extract
 #' @param service_ids service_ids to extract
 #' @return an sf dataframe for gtfs routes with a row/linestring for each trip
+#' 
 #' @importFrom dplyr inner_join distinct
 #' @importFrom sf st_cast
 #' @export
@@ -122,6 +123,7 @@ get_route_geometry <- function(gtfs_sf_obj, route_ids = NULL, service_ids = NULL
 #' @param gtfs_sf_obj tidytransit gtfs object with sf data frames
 #' @param trip_ids trip_ids to extract shapes
 #' @return an sf dataframe for gtfs routes with a row/linestring for each trip
+#' 
 #' @export
 #' @examples
 #' data(gtfs_duke)
@@ -158,6 +160,8 @@ shape_as_sf_linestring <- function(df) {
 #' Transform or convert coordinates of a gtfs feed
 #' @param gtfs_obj tidygtfs object
 #' @param crs target coordinate reference system, used by sf::st_transform
+#' @return tidygtfs object with transformed stops and shapes sf dataframes
+#' 
 #' @importFrom sf st_transform
 #' @export
 gtfs_transform = function(gtfs_obj, crs) {
@@ -173,6 +177,9 @@ gtfs_transform = function(gtfs_obj, crs) {
 #' 
 #' Coordinates are transformed to lon/lat
 #' @param gtfs_obj tidygtfs object
+#' 
+#' @return tidygtfs object with stops and shapes converted to tibbles
+#' 
 #' @seealso \code{\link{gtfs_as_sf}}
 #' @export
 sf_as_tbl = function(gtfs_obj) {

@@ -3,7 +3,7 @@
 #' @importFrom utils "read.csv"
 #' @importFrom stats "na.omit"
 #' @importFrom stats "setNames"
-#' @return a data frame with the gtfs feeds on transitfeeds.
+#' @return a data frame with the gtfs feeds on transitfeeds
 #' @seealso feedlist_df
 #'
 #' @export
@@ -121,8 +121,8 @@ gtfs_api_key <- tools_api_key()
 clear_api_key <- gtfs_api_key$clear
 
 #' Set TransitFeeds API key for recall
+#' @return No value returned, function is used for setting environment variables
 #' @export
-
 set_api_key <- gtfs_api_key$set
 
 api_check <- function() {

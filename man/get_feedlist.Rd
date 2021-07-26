@@ -7,7 +7,7 @@
 get_feedlist()
 }
 \value{
-a data frame with the gtfs feeds on transitfeeds.
+a data frame with the gtfs feeds on transitfeeds
 }
 \description{
 Get list of all available feeds from transitfeeds API

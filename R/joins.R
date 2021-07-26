@@ -3,7 +3,8 @@
 #' @param gtfs_obj as read by read_gtfs()
 #' @param service_ids the service for which to get stops 
 #' @param route_ids the route_ids for which to get stops 
-#' @return stops for a given service
+#' @return stops table for a given service
+#' 
 #' @export
 #' @examples \donttest{
 #' library(dplyr)
@@ -32,10 +33,10 @@ filter_stops <- function(gtfs_obj, service_ids, route_ids) {
 #' Only stop_times, stops, routes, services (in calendar and calendar_dates), shapes, 
 #' frequencies and transfers belonging to one of those trips are kept.
 #' 
-#' @return tidygtfs object with filtered tables
-#' 
 #' @param gtfs_obj tidygtfs object
 #' @param trip_ids vector with trip_ids
+#' @return tidygtfs object with filtered tables
+#' 
 #' @seealso \code{\link{filter_feed_by_stops}}, \code{\link{filter_feed_by_area}}, \code{\link{filter_feed_by_date}}
 #' @export
 filter_feed_by_trips = function(gtfs_obj, trip_ids) {
@@ -121,6 +122,7 @@ filter_feed_by_area <- function(gtfs_obj, area) {
 #' @param gtfs_obj tidygtfs object
 #' @param stop_ids vector with stop_ids. You can either provide stop_ids or stop_names 
 #' @param stop_names vector with stop_names (will be converted to stop_ids)
+#' 
 #' @seealso \code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_date}}
 #' @export
 filter_feed_by_stops = function(gtfs_obj, stop_ids = NULL, stop_names = NULL) {

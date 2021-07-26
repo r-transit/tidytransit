@@ -11,7 +11,7 @@
 #' @param quiet Whether to hide log messages (defaults to TRUE).
 #' @param warnings Whether to display warning messages (defaults to TRUE).
 #'
-#' @return A GTFS object with a \code{validation_result} attribute. This
+#' @return A tidygtfs with a \code{validation_result} attribute. This
 #'   attribute is a \code{tibble} containing the validation summary of all
 #'   possible fields from the specified files.
 #'

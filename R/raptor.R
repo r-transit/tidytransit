@@ -445,7 +445,7 @@ travel_times = function(filtered_stop_times,
 #' @param max_arrival_time The latest arrival time. Can be given as "HH:MM:SS", 
 #'                         hms object or numeric value in seconds
 #' 
-#' This function creates filtered `stop_times` for [travel_times()] and [raptor()].
+#' @return Filtered `stop_times` data.table for [travel_times()] and [raptor()].
 #' 
 #' @export                
 #' @examples 

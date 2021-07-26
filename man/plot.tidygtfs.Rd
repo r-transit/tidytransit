@@ -11,6 +11,9 @@
 
 \item{...}{further specifications}
 }
+\value{
+plot
+}
 \description{
 Plot GTFS stops and trips
 }
@@ -22,4 +25,5 @@ local_gtfs_path <- system.file("extdata",
 nyc <- read_gtfs(local_gtfs_path)
 plot(nyc)
 }
+
 }

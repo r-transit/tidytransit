@@ -11,7 +11,6 @@
 #'                    identifying a particular service id. If not provided the service_id 
 #'                    with the most departures is used
 #' @param by_route default TRUE, if FALSE then calculate headway for any line coming through the stop in the same direction on the same schedule. 
-#' @export
 #' @return dataframe of stops with the number of departures and the headway 
 #'         (departures divided by timespan) as columns.
 #'
@@ -19,6 +18,7 @@
 #' @importFrom rlang .data !! quo enquo
 #' @importFrom stats median sd
 #' @importFrom tidyr spread
+#' @export
 #' @examples 
 #' data(gtfs_duke)
 #' stop_frequency <- get_stop_frequency(gtfs_duke)

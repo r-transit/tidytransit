@@ -21,7 +21,8 @@ set_servicepattern(
 \item{hash_length}{length the hash should be cut to with substr(). Use -1 if the full hash should be used}
 }
 \value{
-modified gtfs_obj with added servicepattern list and a table linking trips and pattern (trip_servicepatterns)
+modified gtfs_obj with added servicepattern list and a table linking
+trips and pattern (trip_servicepatterns)
 }
 \description{
 Each trip has a defined number of dates it runs on. This set of dates is called a
@@ -29,4 +30,3 @@ service pattern in tidytransit. Trips with the same servicepattern id run on the
 dates. In general, \code{service_id} can work this way but it is not enforced by the
 GTFS standard.
 }
-\keyword{internal}

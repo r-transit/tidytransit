@@ -28,8 +28,9 @@ service_by_dow <- function(calendar,
 #' @param id_prefix all servicepattern id will start with this string
 #' @param hash_algo hashing algorithm used by digest
 #' @param hash_length length the hash should be cut to with substr(). Use -1 if the full hash should be used
-#' @return modified gtfs_obj with added servicepattern list and a table linking trips and pattern (trip_servicepatterns)
-#' @keywords internal
+#' @return modified gtfs_obj with added servicepattern list and a table linking 
+#'         trips and pattern (trip_servicepatterns)
+#' 
 #' @importFrom dplyr group_by summarise ungroup left_join
 #' @importFrom digest digest
 #' @importFrom rlang .data

@@ -7,7 +7,7 @@
 write_gtfs(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE)
 }
 \arguments{
-\item{gtfs_obj}{a gtfs feed object}
+\item{gtfs_obj}{a tidygtfs object}
 
 \item{zipfile}{path to the zip file the feed should be written to}
 
@@ -15,6 +15,9 @@ write_gtfs(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE)
 
 \item{as_dir}{if TRUE, the feed is not zipped and zipfile is used as a directory path.
 Files within the directory will be overwritten.}
+}
+\value{
+Invisibly returns gtfs_obj
 }
 \description{
 Write a tidygtfs object to a zip file

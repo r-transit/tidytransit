@@ -15,9 +15,10 @@ filter_stop_times(gtfs_obj, extract_date, min_departure_time, max_arrival_time)
 hms object or numeric value in seconds.}
 
 \item{max_arrival_time}{The latest arrival time. Can be given as "HH:MM:SS",
-hms object or numeric value in seconds
-
-This function creates filtered \code{stop_times} for \code{\link[=travel_times]{travel_times()}} and \code{\link[=raptor]{raptor()}}.}
+hms object or numeric value in seconds}
+}
+\value{
+Filtered \code{stop_times} data.table for \code{\link[=travel_times]{travel_times()}} and \code{\link[=raptor]{raptor()}}.
 }
 \description{
 Filter a \code{stop_times} table for a given date and timespan.

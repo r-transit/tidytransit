@@ -6,6 +6,14 @@
 \usage{
 agency_info(gtfs_obj, max_agencies = 3)
 }
+\arguments{
+\item{gtfs_obj}{tidygtfs object}
+
+\item{max_agencies}{max number of agencies to list before using "..."}
+}
+\value{
+called for side effects
+}
 \description{
 Create a text listing the first \code{max_agencies} agencies of the feed
 }

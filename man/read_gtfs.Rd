@@ -30,6 +30,7 @@ names(gtfs)
 
 gtfs <- read_gtfs(local_gtfs_path, files = c("trips", "stop_times"))
 names(gtfs)
+
 }
 \seealso{
 \code{\link{validate_gtfs}}

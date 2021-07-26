@@ -11,6 +11,9 @@ gtfs_transform(gtfs_obj, crs)
 
 \item{crs}{target coordinate reference system, used by sf::st_transform}
 }
+\value{
+tidygtfs object with transformed stops and shapes sf dataframes
+}
 \description{
 Transform or convert coordinates of a gtfs feed
 }

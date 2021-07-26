@@ -12,7 +12,7 @@
 \item{...}{Optional arguments ultimately passed to \code{format}.}
 }
 \value{
-The GTFS object that was printed, invisibly.
+The GTFS object that was printed, invisibly
 }
 \description{
 Prints a GTFS object suppressing the \code{class} attribute.

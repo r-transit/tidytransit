@@ -5,7 +5,7 @@
 #' @param x A GTFS object.
 #' @param ... Optional arguments ultimately passed to \code{format}.
 #'
-#' @return The GTFS object that was printed, invisibly.
+#' @return The GTFS object that was printed, invisibly
 #'
 #' @examples  \dontrun{
 #' path = system.file("extdata", 
@@ -27,6 +27,9 @@ print.tidygtfs = function(x, ...) {
 #'
 #' @param object a gtfs_obj as read by [read_gtfs()]
 #' @export
+#' 
+#' @return the tidygtfs object, invisibly
+#' 
 #' @param ... further specifications
 #' @importFrom dplyr select arrange filter
 summary.tidygtfs <- function(object, ...) {
@@ -77,10 +80,15 @@ summary.tidygtfs <- function(object, ...) {
   cat(paste0("# stop_ids   ", format(n_stop_ids, width = w), "\n"))
   cat(paste0("# stop_names ", format(n_stop_names, width = w), "\n"))
   cat(paste0("# shapes     ", format(n_shapes, width = w), "\n"))
+  
+  invisible(object)
 }
 
 #' Create a text listing the first `max_agencies` agencies of the feed
+#' @param gtfs_obj tidygtfs object
+#' @param max_agencies max number of agencies to list before using "..."
 #' @keywords internal
+#' @return called for side effects
 agency_info <- function(gtfs_obj, max_agencies = 3) {
   agencies <- gtfs_obj$agency$agency_name
   ag_n <- length(agencies)

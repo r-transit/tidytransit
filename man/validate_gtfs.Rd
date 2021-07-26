@@ -19,7 +19,7 @@ possible GTFS text files.}
 \item{warnings}{Whether to display warning messages (defaults to TRUE).}
 }
 \value{
-A GTFS object with a \code{validation_result} attribute. This
+A tidygtfs with a \code{validation_result} attribute. This
 attribute is a \code{tibble} containing the validation summary of all
 possible fields from the specified files.
 }
