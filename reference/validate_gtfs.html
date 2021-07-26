@@ -165,7 +165,7 @@ possible GTFS text files.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A GTFS object with a <code>validation_result</code> attribute. This
+    <p>A tidygtfs with a <code>validation_result</code> attribute. This
 attribute is a <code>tibble</code> containing the validation summary of all
 possible fields from the specified files.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
@@ -197,7 +197,7 @@ present, however, it becomes optional and <code>calendar_dates.txt</code>
     <pre class="examples"><div class='input'><span class='va'>local_gtfs_path</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"google_transit_nyc_subway.zip"</span>, package <span class='op'>=</span> <span class='st'>"tidytransit"</span><span class='op'>)</span>
 <span class='va'>gtfs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='read_gtfs.html'>read_gtfs</a></span><span class='op'>(</span><span class='va'>local_gtfs_path</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span><span class='op'>(</span><span class='va'>gtfs</span>, <span class='st'>"validation_result"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 136 x 8</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 136 × 8</span>
 #&gt;    file   file_spec file_provided_stat… field      field_spec field_provided_st…
 #&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>               <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>      <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>      <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>             
 #&gt; <span style='color: #BCBCBC;'> 1</span> agency req       TRUE                agency_id  opt        TRUE              

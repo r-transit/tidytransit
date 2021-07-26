@@ -184,7 +184,7 @@ with the most departures is used</p></td>
 <span class='va'>stop_frequency</span> <span class='op'>&lt;-</span> <span class='fu'>get_stop_frequency</span><span class='op'>(</span><span class='va'>gtfs_duke</span><span class='op'>)</span>
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span><span class='op'>(</span><span class='va'>stop_frequency</span><span class='op'>$</span><span class='va'>mean_headway</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>stop_frequency</span><span class='op'>[</span><span class='va'>x</span>,<span class='op'>]</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 6 x 4</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 6 × 4</span>
 #&gt;   stop_id service_id         n_departures mean_headway
 #&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                     <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
 #&gt; <span style='color: #BCBCBC;'>1</span> 778127  c_876_b_21969_d_31          143          403

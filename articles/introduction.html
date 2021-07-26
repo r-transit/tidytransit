@@ -88,7 +88,7 @@
       <h1 data-toc-skip>Introduction to tidytransit</h1>
                         <h4 class="author">Tom Buckley</h4>
             
-            <h4 class="date">2021-07-20</h4>
+            <h4 class="date">2021-07-26</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r-transit/tidytransit/blob/master/vignettes/introduction.Rmd"><code>vignettes/introduction.Rmd</code></a></small>
       <div class="hidden name"><code>introduction.Rmd</code></div>
@@ -164,7 +164,7 @@
 <p>Each of the source tables for the GTFS feed is now available in the nyc <code>gtfs</code> object. For example, stops:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">nyc</span><span class="op">$</span><span class="va">stops</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 6 x 10
+<pre><code>## # A tibble: 6 × 10
 ##   stop_id stop_code stop_name       stop_desc stop_lat stop_lon zone_id stop_url
 ##   &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;           &lt;chr&gt;        &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;   
 ## 1 101     ""        Van Cortlandt … ""            40.9    -73.9 ""      ""      
@@ -188,7 +188,7 @@
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">validation_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span><span class="op">(</span><span class="va">nyc</span>, <span class="st">"validation_result"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">validation_result</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 6 x 8
+<pre><code>## # A tibble: 6 × 8
 ##   file   file_spec file_provided_sta… field       field_spec field_provided_sta…
 ##   &lt;chr&gt;  &lt;chr&gt;     &lt;lgl&gt;              &lt;chr&gt;       &lt;chr&gt;      &lt;lgl&gt;              
 ## 1 agency req       TRUE               agency_id   opt        TRUE               

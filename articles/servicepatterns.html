@@ -113,7 +113,7 @@
 <p>Tidytransit provides a <code>dates_services</code> (stored in the list <code>.</code>) that indicates which <code>service_id</code> runs on which date. This is later useful for linking dates and trips via <code>service_id</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">dates_services</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 6 x 2
+<pre><code>## # A tibble: 6 × 2
 ##   date       service_id             
 ##   &lt;date&gt;     &lt;chr&gt;                  
 ## 1 2018-06-24 ASP18GEN-1037-Sunday-00
@@ -139,7 +139,7 @@
 
 <span class="va">calendar</span> <span class="op">&lt;-</span> <span class="va">calendar</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">holidays</span>, by <span class="op">=</span> <span class="st">"date"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">calendar</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 6 x 3
+<pre><code>## # A tibble: 6 × 3
 ##   date       weekday   holiday
 ##   &lt;date&gt;     &lt;chr&gt;     &lt;chr&gt;  
 ## 1 2018-06-24 Sunday    &lt;NA&gt;   
@@ -154,7 +154,7 @@
 <p>Our gtfs feed now contains the data frame <code>servicepatterns</code> which links each <code>servicepattern_id</code> to an existing <code>service_id</code> (and by extension <code>trip_id</code>).</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">servicepatterns</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 6 x 2
+<pre><code>## # A tibble: 6 × 2
 ##   service_id                servicepattern_id
 ##   &lt;chr&gt;                     &lt;chr&gt;            
 ## 1 ASP18GEN-1037-Sunday-00   s_a4c6b26        
@@ -260,7 +260,7 @@
   <span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">servicepattern_names</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 7 x 2
+<pre><code>## # A tibble: 7 × 2
 ##   servicepattern_id servicepattern_name                                         
 ##   &lt;chr&gt;             &lt;chr&gt;                                                       
 ## 1 s_128de43         Sundays (2018-06-24 - 2018-09-30)                           
