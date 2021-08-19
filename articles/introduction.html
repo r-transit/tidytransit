@@ -88,7 +88,7 @@
       <h1 data-toc-skip>Introduction to tidytransit</h1>
                         <h4 class="author">Tom Buckley</h4>
             
-            <h4 class="date">2021-07-26</h4>
+            <h4 class="date">2021-08-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r-transit/tidytransit/blob/master/vignettes/introduction.Rmd"><code>vignettes/introduction.Rmd</code></a></small>
       <div class="hidden name"><code>introduction.Rmd</code></div>
@@ -189,14 +189,14 @@
 <code class="sourceCode R"><span class="va">validation_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span><span class="op">(</span><span class="va">nyc</span>, <span class="st">"validation_result"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">validation_result</span><span class="op">)</span></code></pre></div>
 <pre><code>## # A tibble: 6 × 8
-##   file   file_spec file_provided_sta… field       field_spec field_provided_sta…
-##   &lt;chr&gt;  &lt;chr&gt;     &lt;lgl&gt;              &lt;chr&gt;       &lt;chr&gt;      &lt;lgl&gt;              
-## 1 agency req       TRUE               agency_id   opt        TRUE               
-## 2 agency req       TRUE               agency_name req        TRUE               
-## 3 agency req       TRUE               agency_url  req        TRUE               
-## 4 agency req       TRUE               agency_tim… req        TRUE               
-## 5 agency req       TRUE               agency_lang opt        TRUE               
-## 6 agency req       TRUE               agency_pho… opt        TRUE               
+##   file   file_spec file_provided_status field           field_spec field_provided_…
+##   &lt;chr&gt;  &lt;chr&gt;     &lt;lgl&gt;                &lt;chr&gt;           &lt;chr&gt;      &lt;lgl&gt;           
+## 1 agency req       TRUE                 agency_id       opt        TRUE            
+## 2 agency req       TRUE                 agency_name     req        TRUE            
+## 3 agency req       TRUE                 agency_url      req        TRUE            
+## 4 agency req       TRUE                 agency_timezone req        TRUE            
+## 5 agency req       TRUE                 agency_lang     opt        TRUE            
+## 6 agency req       TRUE                 agency_phone    opt        TRUE            
 ## # … with 2 more variables: validation_status &lt;chr&gt;, validation_details &lt;chr&gt;</code></pre>
 </div>
 <div id="finding-more-gtfs-feeds" class="section level2">
