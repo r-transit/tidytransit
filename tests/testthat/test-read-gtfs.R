@@ -88,3 +88,20 @@ test_that("validation", {
   expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required file(s): stop_times.txt", fixed = T)
   expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required field(s) in stops: stop_id", fixed = T)
 })
+
+test_that("files parameter", {
+  path = system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
+
+  file_status = as.data.frame(lapply(gtfs_meta, function(x) { x$file_spec }))
+  req_files = names(file_status)[file_status == "req"]
+  
+  g1 = read_gtfs(path)
+  g2 = read_gtfs(path, files = req_files)
+  expect_equal(setdiff(names(g1), names(g2)),
+               c("calendar_dates", "fare_attributes", "fare_rules", "frequencies", 
+                 "shapes"))
+  
+  for(f in names(g1)[names(g1) != "."]) {
+      expect_warning(read_gtfs(path, files = f))
+  }
+})

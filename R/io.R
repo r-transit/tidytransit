@@ -24,7 +24,7 @@
 #' @importFrom gtfsio import_gtfs new_gtfs
 #' @export
 read_gtfs <- function(path, files = NULL, quiet = TRUE) {
-  g = gtfsio::import_gtfs(path, files = NULL, quiet = quiet)
+  g = gtfsio::import_gtfs(path, files = files, quiet = quiet)
   
   # validate
   validation_result <- validate_gtfs(g)

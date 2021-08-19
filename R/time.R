@@ -136,6 +136,10 @@ set_dates_services <- function(gtfs_obj) {
       "saturday")[as.POSIXlt(date)$wday + 1]
   }
   
+  if(!feed_contains(gtfs_obj, "calendar") & !feed_contains(gtfs_obj, "calendar_dates")) {
+    return(gtfs_obj)
+  }
+  
   # get first and last date of a feed
   if(!is.null(gtfs_obj$calendar) && (
      all(is.na(gtfs_obj$calendar[["start_date"]])) || 
