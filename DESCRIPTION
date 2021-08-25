@@ -34,7 +34,6 @@ Imports:
     rlang,
     sf,
     hms,
-    tidyr,
     digest,
     checkmate,
     geodist

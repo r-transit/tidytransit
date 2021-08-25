@@ -17,7 +17,6 @@
 #' @importFrom dplyr %>%
 #' @importFrom rlang .data !! quo enquo
 #' @importFrom stats median sd
-#' @importFrom tidyr spread
 #' @export
 #' @examples 
 #' data(gtfs_duke)
