@@ -9,7 +9,7 @@ filter_stop_times(gtfs_obj, extract_date, min_departure_time, max_arrival_time)
 \arguments{
 \item{gtfs_obj}{a gtfs feed}
 
-\item{extract_date}{date to extract trips from in YYYY-MM-DD format}
+\item{extract_date}{date to extract trips from this day (Date or string in YYYY-MM-DD format)}
 
 \item{min_departure_time}{The earliest departure time. Can be given as "HH:MM:SS",
 hms object or numeric value in seconds.}

@@ -29,7 +29,6 @@ Imports:
     dplyr,
     zip (>= 2.0.1),
     tibble,
-    readr,
     data.table (>= 1.12.8),
     httr,
     rlang,
