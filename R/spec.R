@@ -258,4 +258,4 @@ get_gtfs_meta <- function() {
 }
 
 gtfs_meta = get_gtfs_meta()
-gtfs_reference = lapply(gtfs_meta, tibble::as_tibble)
+gtfs_reference = lapply(gtfs_meta, dplyr::as_tibble)

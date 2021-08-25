@@ -430,7 +430,7 @@ travel_times = function(filtered_stop_times,
                            with = FALSE]
   
   if(!return_DT) {
-    rptr_names <- tibble::as_tibble(rptr_names)
+    rptr_names <- dplyr::as_tibble(rptr_names)
   }
   
   return(rptr_names)
