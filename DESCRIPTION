@@ -27,7 +27,6 @@ Depends: R (>= 3.6.0)
 Imports:
     gtfsio (>= 0.1.0),
     dplyr,
-    zip (>= 2.0.1),
     data.table (>= 1.12.8),
     httr,
     rlang,

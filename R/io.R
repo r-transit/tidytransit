@@ -54,7 +54,6 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE) {
 #'               Files within the directory will be overwritten.
 #' @return Invisibly returns gtfs_obj
 #' 
-#' @importFrom zip zipr
 #' @importFrom gtfsio export_gtfs
 #' @export
 write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE) {
