@@ -122,6 +122,7 @@ convert_dates <- function(gtfs_obj, parse_function = parse_gtfsio_date) {
 #' @param gtfs_obj a gtfs_object as read by [read_gtfs()]
 #' @return a date_service data frame
 #' @keywords internal
+#' @importFrom stats reshape
 #' @examples 
 #' library(dplyr)
 #' local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
@@ -162,14 +163,13 @@ set_dates_services <- function(gtfs_obj) {
   )
   
   # gather services by weekdays
-  service_ids_weekdays <-
-    tidyr::gather(
-      gtfs_obj$calendar,
-      key = "weekday",
-      value = "bool",
-      -c(service_id, start_date, end_date)
-    ) %>%
-    dplyr::filter(bool == 1) %>% dplyr::select(-bool)
+  .days = c("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday") 
+  .cns_nondays = colnames(gtfs_obj$calendar)[which(!colnames(gtfs_obj$calendar) %in% .days)]
+  service_ids_weekdays = gtfs_obj$calendar %>% 
+    reshape(gc, direction = "long", idvar = .cns_nondays, varying = .days, 
+            v.names = "bool", timevar = "weekday_num") %>% 
+    left_join(data.frame(weekday_num = 1:7, weekday = .days), "weekday_num") %>% 
+    dplyr::filter(bool == 1) %>% dplyr::select(service_id, weekday, start_date, end_date)
   
   # set services to dates according to weekdays and start/end date
   date_service_df <- 

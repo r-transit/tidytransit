@@ -27,17 +27,11 @@ Depends: R (>= 3.6.0)
 Imports:
     gtfsio (>= 0.1.0),
     dplyr,
-    zip (>= 2.0.1),
-    tibble,
-    readr,
     data.table (>= 1.12.8),
     httr,
     rlang,
     sf,
-    lubridate,
     hms,
-    tidyr,
-    tools,
     digest,
     checkmate,
     geodist
@@ -47,7 +41,8 @@ Suggests:
     markdown,
     rmarkdown,
     ggplot2,
-    scales
+    scales,
+    lubridate
 RoxygenNote: 7.1.1
 URL: https://github.com/r-transit/tidytransit
 BugReports: https://github.com/r-transit/tidytransit

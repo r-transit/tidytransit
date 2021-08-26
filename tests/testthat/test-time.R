@@ -38,16 +38,16 @@ test_that("set_dates_services() uses the right dates", {
     friday = 0,
     saturday = 0,
     sunday = 0,
-    start_date = lubridate::ymd("20180101"), # monday
-    end_date = lubridate::ymd("20180131")) # wednesday
+    start_date = as.Date("2018-01-01"), # monday
+    end_date = as.Date("2018-01-31")) # wednesday
 
   set_dates_services(gtest)
   
   date_service <- set_dates_services(gtest)$.$dates_services
   
-  expect_true(lubridate::ymd("20180101") %in% date_service$date)
-  expect_false(lubridate::ymd("20180102") %in% date_service$date)
-  expect_true(lubridate::ymd("20180131") %in% date_service$date)
+  expect_true(as.Date("2018-01-01") %in% date_service$date)
+  expect_false(as.Date("2018-01-02") %in% date_service$date)
+  expect_true(as.Date("2018-01-31") %in% date_service$date)
 })
 
 test_that("set_dates_services() works with additions and exceptions", { 
@@ -61,13 +61,13 @@ test_that("set_dates_services() works with additions and exceptions", {
     friday = c(1, 1),
     saturday = c(0, 1),
     sunday = c(0, 1),
-    start_date = c(lubridate::ymd("20180201"), 
-                   lubridate::ymd("20180401")),
-    end_date = c(lubridate::ymd("20180430"), 
-                 lubridate::ymd("20180430")))
+    start_date = c(as.Date("2018-02-01"), 
+                   as.Date("2018-04-01")),
+    end_date = c(as.Date("2018-04-30"), 
+                 as.Date("2018-04-30")))
   gtest$calendar_dates <- dplyr::tibble(
     service_id = c("wdays", "wend"),
-    date = c(lubridate::ymd("20180314"), lubridate::ymd("20180226")),
+    date = c(as.Date("2018-03-14"), as.Date("2018-02-26")),
     exception_type = c(2, 1)
   )
   
@@ -75,22 +75,22 @@ test_that("set_dates_services() works with additions and exceptions", {
   
   # exception
   mar14 <- date_service[
-    date_service$date == lubridate::ymd("20180613"),]
+    date_service$date == as.Date("2018-06-13"),]
   expect_equal(nrow(mar14), 0)
   
   # addition
   feb26 <- date_service[
-    date_service$date == lubridate::ymd("20180226"),] # monday
+    date_service$date == as.Date("2018-02-26"),] # monday
   expect_equal(nrow(feb26), 2)
   
   # overlaps
   apr05 <- date_service[
-    date_service$date == lubridate::ymd("20180405"), ]
+    date_service$date == as.Date("2018-04-05"), ]
   expect_equal(apr05 %>% dplyr::group_by(date) %>% 
                  dplyr::count() %>% 
                  dplyr::pull(n), 1)
   apr06 <- date_service[
-    date_service$date == lubridate::ymd("20180406"), ] # friday
+    date_service$date == as.Date("2018-04-06"), ] # friday
   expect_equal(apr06 %>% 
                dplyr::group_by(date) %>% 
                dplyr::count() %>% 
@@ -101,10 +101,10 @@ test_that("set_dates_services() works with additions and exceptions", {
     dplyr::summarise(min = min(date), max = max(date))
   expect_equal(range[
     range$service_id == "wdays", "min"], 
-    dplyr::tibble(min = lubridate::ymd("20180201")))
+    dplyr::tibble(min = as.Date("2018-02-01")))
   expect_equal(
     range[range$service_id == "wend", "max"], 
-    dplyr::tibble(max = lubridate::ymd("20180429")))
+    dplyr::tibble(max = as.Date("2018-04-29")))
 })
 
 test_that("parse dates", {

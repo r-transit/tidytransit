@@ -430,7 +430,7 @@ travel_times = function(filtered_stop_times,
                            with = FALSE]
   
   if(!return_DT) {
-    rptr_names <- tibble::as_tibble(rptr_names)
+    rptr_names <- dplyr::as_tibble(rptr_names)
   }
   
   return(rptr_names)
@@ -439,7 +439,7 @@ travel_times = function(filtered_stop_times,
 #' Filter a `stop_times` table for a given date and timespan. 
 #' 
 #' @param gtfs_obj a gtfs feed
-#' @param extract_date date to extract trips from in YYYY-MM-DD format
+#' @param extract_date date to extract trips from this day (Date or "YYYY-MM-DD" string)
 #' @param min_departure_time The earliest departure time. Can be given as "HH:MM:SS", 
 #'                           hms object or numeric value in seconds.
 #' @param max_arrival_time The latest arrival time. Can be given as "HH:MM:SS", 
@@ -460,7 +460,7 @@ filter_stop_times = function(gtfs_obj,
                              max_arrival_time) {
   departure_time_num <- arrival_time_num <- NULL
   if(is.character(extract_date)) {
-    extract_date <- readr::parse_date(extract_date)
+    extract_date <- as.Date(extract_date)
   }
   if(is.character(min_departure_time)) {
     min_departure_time <- hhmmss_to_seconds(min_departure_time)

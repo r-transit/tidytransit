@@ -14,7 +14,7 @@ filter_feed_by_date(
 \arguments{
 \item{gtfs_obj}{a gtfs feed}
 
-\item{extract_date}{date to extract trips from in YYYY-MM-DD format}
+\item{extract_date}{date to extract trips from this day (Date or "YYYY-MM-DD" string)}
 
 \item{min_departure_time}{The earliest departure time. Can be given as "HH:MM:SS",
 hms object or numeric value in seconds.}
