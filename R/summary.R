@@ -70,7 +70,7 @@ summary.tidygtfs <- function(object, ...) {
   date_min <- min(object$.$dates_services$date)
   date_max <- max(object$.$dates_services$date)
   
-  cat(paste0("GTFS object\n"))
+  cat(paste0("tidygtfs object\n"))
   cat(paste0("files        ", paste(files$file, collapse=", "), "\n"))
   cat(paste0(agency_sing_plur, agencies_info, "\n"))
   cat(paste0("service      from ", date_min, " to ", date_max, "\n"))
