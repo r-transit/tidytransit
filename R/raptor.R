@@ -556,7 +556,7 @@ set_num_times = function(stop_times_dt) {
   arrival_time <- arrival_time_num <- departure_time <- departure_time_num <- NULL
   stopifnot(is.data.table(stop_times_dt))
   if(all(c("arrival_time_num", "departure_time_num") %in% colnames(stop_times_dt))) {
-    invisible(stop_times_dt)
+    return(invisible(stop_times_dt))
   }
   stop_times_dt[,arrival_time_num := as.numeric(arrival_time)]
   stop_times_dt[,departure_time_num := as.numeric(departure_time)]
