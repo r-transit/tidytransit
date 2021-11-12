@@ -249,7 +249,7 @@ ggplot(trip_dates_count, aes(x = weekday, y = -week_of_month)) + theme_bw() +
   geom_text(aes(label = day_of_month), size = 3, colour = "grey20") +
   facet_wrap(~month, ncol = 3) +
   scale_fill_gradient(low = "cornsilk1", high = "DarkOrange", na.value="white")+
-    scale_color_manual(guide = F, values = "grey50") +
+    scale_color_manual(guide = "none", values = "grey50") +
   theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
   theme(panel.grid = element_blank()) +
   labs(x = NULL, y = NULL, fill = "# trips") +
