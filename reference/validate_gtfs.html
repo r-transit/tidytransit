@@ -194,32 +194,34 @@ present, however, it becomes optional and <code>calendar_dates.txt</code>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>local_gtfs_path</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"google_transit_nyc_subway.zip"</span>, package <span class='op'>=</span> <span class='st'>"tidytransit"</span><span class='op'>)</span>
-<span class='va'>gtfs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='read_gtfs.html'>read_gtfs</a></span><span class='op'>(</span><span class='va'>local_gtfs_path</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span><span class='op'>(</span><span class='va'>gtfs</span>, <span class='st'>"validation_result"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 136 × 8</span>
-#&gt;    file   file_spec file_provided_status field           field_spec field_provided_…
-#&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>                <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>           <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>      <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>           
-#&gt; <span style='color: #BCBCBC;'> 1</span> agency req       TRUE                 agency_id       opt        TRUE            
-#&gt; <span style='color: #BCBCBC;'> 2</span> agency req       TRUE                 agency_name     req        TRUE            
-#&gt; <span style='color: #BCBCBC;'> 3</span> agency req       TRUE                 agency_url      req        TRUE            
-#&gt; <span style='color: #BCBCBC;'> 4</span> agency req       TRUE                 agency_timezone req        TRUE            
-#&gt; <span style='color: #BCBCBC;'> 5</span> agency req       TRUE                 agency_lang     opt        TRUE            
-#&gt; <span style='color: #BCBCBC;'> 6</span> agency req       TRUE                 agency_phone    opt        TRUE            
-#&gt; <span style='color: #BCBCBC;'> 7</span> agency req       TRUE                 agency_fare_url opt        FALSE           
-#&gt; <span style='color: #BCBCBC;'> 8</span> agency req       TRUE                 agency_email    opt        FALSE           
-#&gt; <span style='color: #BCBCBC;'> 9</span> stops  req       TRUE                 stop_id         req        TRUE            
-#&gt; <span style='color: #BCBCBC;'>10</span> stops  req       TRUE                 stop_code       opt        TRUE            
-#&gt; <span style='color: #949494;'># … with 126 more rows, and 2 more variables: validation_status &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   validation_details &lt;chr&gt;</span></div><div class='input'>
-<span class='va'>gtfs</span><span class='op'>$</span><span class='va'>shapes</span> <span class='op'>&lt;-</span> <span class='cn'>NULL</span>
-<span class='va'>validation_result</span> <span class='op'>&lt;-</span> <span class='fu'>validate_gtfs</span><span class='op'>(</span><span class='va'>gtfs</span><span class='op'>)</span>
-
-<span class='co'># should raise a warning</span>
-<span class='va'>gtfs</span><span class='op'>$</span><span class='va'>stop_times</span> <span class='op'>&lt;-</span> <span class='cn'>NULL</span>
-<span class='va'>validation_result</span> <span class='op'>&lt;-</span> <span class='fu'>validate_gtfs</span><span class='op'>(</span><span class='va'>gtfs</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Invalid feed. Missing required file(s): stop_times.txt</span></div><div class='input'>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='va'>local_gtfs_path</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"google_transit_nyc_subway.zip"</span>, package <span class='op'>=</span> <span class='st'>"tidytransit"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>gtfs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='read_gtfs.html'>read_gtfs</a></span><span class='op'>(</span><span class='va'>local_gtfs_path</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span><span class='op'>(</span><span class='va'>gtfs</span>, <span class='st'>"validation_result"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 136 × 8</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    file   file_spec file_provided_status field     field_spec field_provided_st…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>                <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>      <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>             </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> agency req       TRUE                 agency_id opt        TRUE              </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> agency req       TRUE                 agency_n… req        TRUE              </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> agency req       TRUE                 agency_u… req        TRUE              </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> agency req       TRUE                 agency_t… req        TRUE              </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> agency req       TRUE                 agency_l… opt        TRUE              </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> agency req       TRUE                 agency_p… opt        TRUE              </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> agency req       TRUE                 agency_f… opt        FALSE             </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> agency req       TRUE                 agency_e… opt        FALSE             </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> stops  req       TRUE                 stop_id   req        TRUE              </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> stops  req       TRUE                 stop_code opt        TRUE              </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 126 more rows, and 2 more variables: validation_status &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   validation_details &lt;chr&gt;</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>gtfs</span><span class='op'>$</span><span class='va'>shapes</span> <span class='op'>&lt;-</span> <span class='cn'>NULL</span></span>
+<span class='r-in'><span class='va'>validation_result</span> <span class='op'>&lt;-</span> <span class='fu'>validate_gtfs</span><span class='op'>(</span><span class='va'>gtfs</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># should raise a warning</span></span>
+<span class='r-in'><span class='va'>gtfs</span><span class='op'>$</span><span class='va'>stop_times</span> <span class='op'>&lt;-</span> <span class='cn'>NULL</span></span>
+<span class='r-in'><span class='va'>validation_result</span> <span class='op'>&lt;-</span> <span class='fu'>validate_gtfs</span><span class='op'>(</span><span class='va'>gtfs</span><span class='op'>)</span></span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>Invalid feed. Missing required file(s): stop_times.txt</span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

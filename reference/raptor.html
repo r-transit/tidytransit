@@ -217,36 +217,39 @@ or all trips in <code>stop_times</code> have been visited.</p>
     <div class='dont-index'><p><code><a href='travel_times.html'>travel_times()</a></code> for an easier access to travel time calculations via stop_names.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='va'>nyc_path</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"google_transit_nyc_subway.zip"</span>, package <span class='op'>=</span> <span class='st'>"tidytransit"</span><span class='op'>)</span>
-<span class='va'>nyc</span> <span class='op'>&lt;-</span> <span class='fu'><a href='read_gtfs.html'>read_gtfs</a></span><span class='op'>(</span><span class='va'>nyc_path</span><span class='op'>)</span>
-
-<span class='co'># you can use initial walk times to different stops in walking distance (arbitrary example values)</span>
-<span class='va'>stop_ids_harlem_st</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"301"</span>, <span class='st'>"301N"</span>, <span class='st'>"301S"</span><span class='op'>)</span>
-<span class='va'>stop_ids_155_st</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"A11"</span>, <span class='st'>"A11N"</span>, <span class='st'>"A11S"</span>, <span class='st'>"D12"</span>, <span class='st'>"D12N"</span>, <span class='st'>"D12S"</span><span class='op'>)</span>
-<span class='va'>walk_times</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>stop_id <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>stop_ids_harlem_st</span>, <span class='va'>stop_ids_155_st</span><span class='op'>)</span>, 
-                         walk_time <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>600</span>, <span class='fl'>3</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>410</span>, <span class='fl'>6</span><span class='op'>)</span><span class='op'>)</span>, stringsAsFactors <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-
-<span class='co'># Use journeys departing after 7 AM with arrival time before 11 AM on 26th of June</span>
-<span class='va'>stop_times</span> <span class='op'>&lt;-</span> <span class='fu'><a href='filter_stop_times.html'>filter_stop_times</a></span><span class='op'>(</span><span class='va'>nyc</span>, <span class='st'>"2018-06-26"</span>, <span class='fl'>7</span><span class='op'>*</span><span class='fl'>3600</span>, <span class='fl'>9</span><span class='op'>*</span><span class='fl'>3600</span><span class='op'>)</span>
-
-<span class='co'># calculate all journeys departing from Harlem St or 155 St between 7:00 and 7:30</span>
-<span class='va'>rptr</span> <span class='op'>&lt;-</span> <span class='fu'>raptor</span><span class='op'>(</span><span class='va'>stop_times</span>, <span class='va'>nyc</span><span class='op'>$</span><span class='va'>transfers</span>, <span class='va'>walk_times</span><span class='op'>$</span><span class='va'>stop_id</span>, time_range <span class='op'>=</span> <span class='fl'>1800</span>,
-               keep <span class='op'>=</span> <span class='st'>"all"</span><span class='op'>)</span>
-
-<span class='co'># add walk times to travel times</span>
-<span class='va'>rptr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/merge.html'>merge</a></span><span class='op'>(</span><span class='va'>rptr</span>, <span class='va'>walk_times</span>, by.x <span class='op'>=</span> <span class='st'>"from_stop_id"</span>, by.y <span class='op'>=</span> <span class='st'>"stop_id"</span><span class='op'>)</span>
-<span class='va'>rptr</span><span class='op'>$</span><span class='va'>travel_time_incl_walk</span> <span class='op'>&lt;-</span> <span class='va'>rptr</span><span class='op'>$</span><span class='va'>travel_time</span> <span class='op'>+</span> <span class='va'>rptr</span><span class='op'>$</span><span class='va'>walk_time</span>
-
-<span class='co'># get minimal travel times (with walk times) for all stop_ids</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://r-datatable.com'>data.table</a></span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attaching package: ‘data.table’</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:dplyr’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    between, first, last</span></div><div class='input'><span class='va'>shortest_travel_times</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/setDT.html'>setDT</a></span><span class='op'>(</span><span class='va'>rptr</span><span class='op'>)</span><span class='op'>[</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/setorder.html'>order</a></span><span class='op'>(</span><span class='va'>travel_time_incl_walk</span><span class='op'>)</span><span class='op'>]</span><span class='op'>[</span>, <span class='va'>.SD</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>, by <span class='op'>=</span> <span class='st'>"to_stop_id"</span><span class='op'>]</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span><span class='op'>(</span><span class='va'>shortest_travel_times</span><span class='op'>$</span><span class='va'>travel_time</span>, breaks <span class='op'>=</span> <span class='fl'>360</span><span class='op'>)</span>
-</div><div class='img'><img src='raptor-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># }</span>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># \donttest{</span></span>
+<span class='r-in'><span class='va'>nyc_path</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"google_transit_nyc_subway.zip"</span>, package <span class='op'>=</span> <span class='st'>"tidytransit"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>nyc</span> <span class='op'>&lt;-</span> <span class='fu'><a href='read_gtfs.html'>read_gtfs</a></span><span class='op'>(</span><span class='va'>nyc_path</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># you can use initial walk times to different stops in walking distance (arbitrary example values)</span></span>
+<span class='r-in'><span class='va'>stop_ids_harlem_st</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"301"</span>, <span class='st'>"301N"</span>, <span class='st'>"301S"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>stop_ids_155_st</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"A11"</span>, <span class='st'>"A11N"</span>, <span class='st'>"A11S"</span>, <span class='st'>"D12"</span>, <span class='st'>"D12N"</span>, <span class='st'>"D12S"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>walk_times</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>stop_id <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>stop_ids_harlem_st</span>, <span class='va'>stop_ids_155_st</span><span class='op'>)</span>, </span>
+<span class='r-in'>                         walk_time <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>600</span>, <span class='fl'>3</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>410</span>, <span class='fl'>6</span><span class='op'>)</span><span class='op'>)</span>, stringsAsFactors <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Use journeys departing after 7 AM with arrival time before 11 AM on 26th of June</span></span>
+<span class='r-in'><span class='va'>stop_times</span> <span class='op'>&lt;-</span> <span class='fu'><a href='filter_stop_times.html'>filter_stop_times</a></span><span class='op'>(</span><span class='va'>nyc</span>, <span class='st'>"2018-06-26"</span>, <span class='fl'>7</span><span class='op'>*</span><span class='fl'>3600</span>, <span class='fl'>9</span><span class='op'>*</span><span class='fl'>3600</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># calculate all journeys departing from Harlem St or 155 St between 7:00 and 7:30</span></span>
+<span class='r-in'><span class='va'>rptr</span> <span class='op'>&lt;-</span> <span class='fu'>raptor</span><span class='op'>(</span><span class='va'>stop_times</span>, <span class='va'>nyc</span><span class='op'>$</span><span class='va'>transfers</span>, <span class='va'>walk_times</span><span class='op'>$</span><span class='va'>stop_id</span>, time_range <span class='op'>=</span> <span class='fl'>1800</span>,</span>
+<span class='r-in'>               keep <span class='op'>=</span> <span class='st'>"all"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># add walk times to travel times</span></span>
+<span class='r-in'><span class='va'>rptr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/merge.html'>merge</a></span><span class='op'>(</span><span class='va'>rptr</span>, <span class='va'>walk_times</span>, by.x <span class='op'>=</span> <span class='st'>"from_stop_id"</span>, by.y <span class='op'>=</span> <span class='st'>"stop_id"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>rptr</span><span class='op'>$</span><span class='va'>travel_time_incl_walk</span> <span class='op'>&lt;-</span> <span class='va'>rptr</span><span class='op'>$</span><span class='va'>travel_time</span> <span class='op'>+</span> <span class='va'>rptr</span><span class='op'>$</span><span class='va'>walk_time</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># get minimal travel times (with walk times) for all stop_ids</span></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://r-datatable.com'>data.table</a></span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Attaching package: ‘data.table’</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> The following objects are masked from ‘package:dplyr’:</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>     between, first, last</span>
+<span class='r-in'><span class='va'>shortest_travel_times</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/setDT.html'>setDT</a></span><span class='op'>(</span><span class='va'>rptr</span><span class='op'>)</span><span class='op'>[</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/setorder.html'>order</a></span><span class='op'>(</span><span class='va'>travel_time_incl_walk</span><span class='op'>)</span><span class='op'>]</span><span class='op'>[</span>, <span class='va'>.SD</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>, by <span class='op'>=</span> <span class='st'>"to_stop_id"</span><span class='op'>]</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span><span class='op'>(</span><span class='va'>shortest_travel_times</span><span class='op'>$</span><span class='va'>travel_time</span>, breaks <span class='op'>=</span> <span class='fl'>360</span><span class='op'>)</span></span>
+<span class='r-plt img'><img src='raptor-1.png' alt='' width='700' height='433' /></span>
+<span class='r-in'><span class='co'># }</span></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -88,7 +88,7 @@
       <h1 data-toc-skip>Introduction to tidytransit</h1>
                         <h4 class="author">Tom Buckley</h4>
             
-            <h4 class="date">2021-09-15</h4>
+            <h4 class="date">2021-11-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r-transit/tidytransit/blob/master/vignettes/introduction.Rmd"><code>vignettes/introduction.Rmd</code></a></small>
       <div class="hidden name"><code>introduction.Rmd</code></div>
@@ -189,14 +189,14 @@
 <code class="sourceCode R"><span class="va">validation_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span><span class="op">(</span><span class="va">nyc</span>, <span class="st">"validation_result"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">validation_result</span><span class="op">)</span></code></pre></div>
 <pre><code>## # A tibble: 6 × 8
-##   file   file_spec file_provided_status field           field_spec field_provided_…
-##   &lt;chr&gt;  &lt;chr&gt;     &lt;lgl&gt;                &lt;chr&gt;           &lt;chr&gt;      &lt;lgl&gt;           
-## 1 agency req       TRUE                 agency_id       opt        TRUE            
-## 2 agency req       TRUE                 agency_name     req        TRUE            
-## 3 agency req       TRUE                 agency_url      req        TRUE            
-## 4 agency req       TRUE                 agency_timezone req        TRUE            
-## 5 agency req       TRUE                 agency_lang     opt        TRUE            
-## 6 agency req       TRUE                 agency_phone    opt        TRUE            
+##   file   file_spec file_provided_status field      field_spec field_provided_st…
+##   &lt;chr&gt;  &lt;chr&gt;     &lt;lgl&gt;                &lt;chr&gt;      &lt;chr&gt;      &lt;lgl&gt;             
+## 1 agency req       TRUE                 agency_id  opt        TRUE              
+## 2 agency req       TRUE                 agency_na… req        TRUE              
+## 3 agency req       TRUE                 agency_url req        TRUE              
+## 4 agency req       TRUE                 agency_ti… req        TRUE              
+## 5 agency req       TRUE                 agency_la… opt        TRUE              
+## 6 agency req       TRUE                 agency_ph… opt        TRUE              
 ## # … with 2 more variables: validation_status &lt;chr&gt;, validation_details &lt;chr&gt;</code></pre>
 </div>
 <div id="finding-more-gtfs-feeds" class="section level2">
@@ -237,9 +237,9 @@
 <p>Note that there is a url (<code>url_d</code>) for each feed, which can be used to read the feed for a given city into R.</p>
 <p>For example:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">nyc_ferries_gtfs</span> <span class="op">&lt;-</span> <span class="va">feedlist</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">t</span><span class="op">==</span><span class="st">"NYC Ferry GTFS"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">url_d</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<code class="sourceCode R"><span class="va">nyc_ferries_gtfs</span> <span class="op">&lt;-</span> <span class="va">feedlist</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">t</span><span class="op">==</span><span class="st">"NYC Ferry GTFS"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">url_d</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="../reference/read_gtfs.html">read_gtfs</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>Included in the transitfeeds table is a set of coordinates for each feed. This means you can filter feed sources by location. Or map all of them, as below:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
