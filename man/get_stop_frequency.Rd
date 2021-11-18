@@ -6,8 +6,8 @@
 \usage{
 get_stop_frequency(
   gtfs_obj,
-  start_hour = 6,
-  end_hour = 22,
+  start_time = "06:00:00",
+  end_time = "22:00:00",
   service_ids = NULL,
   by_route = TRUE
 )
@@ -15,13 +15,15 @@ get_stop_frequency(
 \arguments{
 \item{gtfs_obj}{a list of gtfs dataframes as read by \code{\link[=read_gtfs]{read_gtfs()}}.}
 
-\item{start_hour}{(optional) an integer indicating the start hour (default 6)}
+\item{start_time}{analysis start time, can be given as "HH:MM:SS",
+hms object or numeric value in seconds. as numeric}
 
-\item{end_hour}{(optional) an integer indicating the end hour (default 22)}
+\item{end_time}{analysis perdiod end time, can be given as "HH:MM:SS",
+hms object or numeric value in seconds.}
 
-\item{service_ids}{(optional) a set of service_ids from the calendar dataframe
+\item{service_ids}{A set of service_ids from the calendar dataframe
 identifying a particular service id. If not provided the service_id
-with the most departures is used}
+with the most departures is used.}
 
 \item{by_route}{Default TRUE, if FALSE then calculate headway for any line coming
 through the stop in the same direction on the same schedule.}
