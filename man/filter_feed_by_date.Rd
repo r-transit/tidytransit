@@ -7,8 +7,8 @@
 filter_feed_by_date(
   gtfs_obj,
   extract_date,
-  min_departure_time = "00:00:00",
-  max_arrival_time = "48:00:00"
+  min_departure_time,
+  max_arrival_time
 )
 }
 \arguments{
@@ -16,11 +16,11 @@ filter_feed_by_date(
 
 \item{extract_date}{date to extract trips from this day (Date or "YYYY-MM-DD" string)}
 
-\item{min_departure_time}{The earliest departure time. Can be given as "HH:MM:SS",
+\item{min_departure_time}{(optional) The earliest departure time. Can be given as "HH:MM:SS",
 hms object or numeric value in seconds.}
 
-\item{max_arrival_time}{The latest arrival time. Can be given as "HH:MM:SS",
-hms object or numeric value in seconds}
+\item{max_arrival_time}{(optional) The latest arrival time. Can be given as "HH:MM:SS",
+hms object or numeric value in seconds.}
 }
 \value{
 tidygtfs object with filtered tables

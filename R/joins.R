@@ -154,7 +154,7 @@ filter_feed_by_stops = function(gtfs_obj, stop_ids = NULL, stop_names = NULL) {
 #'          \code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_date}}
 #' @export
 filter_feed_by_date = function(gtfs_obj, extract_date,
-                               min_departure_time = "00:00:00", max_arrival_time = "48:00:00") {
+                               min_departure_time, max_arrival_time) {
   st = filter_stop_times(gtfs_obj, extract_date, min_departure_time, max_arrival_time)
   st <- dplyr::as_tibble(st)
   attributes(st)$stops <- NULL

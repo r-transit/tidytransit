@@ -11,11 +11,11 @@ filter_stop_times(gtfs_obj, extract_date, min_departure_time, max_arrival_time)
 
 \item{extract_date}{date to extract trips from this day (Date or "YYYY-MM-DD" string)}
 
-\item{min_departure_time}{The earliest departure time. Can be given as "HH:MM:SS",
+\item{min_departure_time}{(optional) The earliest departure time. Can be given as "HH:MM:SS",
 hms object or numeric value in seconds.}
 
-\item{max_arrival_time}{The latest arrival time. Can be given as "HH:MM:SS",
-hms object or numeric value in seconds}
+\item{max_arrival_time}{(optional) The latest arrival time. Can be given as "HH:MM:SS",
+hms object or numeric value in seconds.}
 }
 \value{
 Filtered \code{stop_times} data.table for \code{\link[=travel_times]{travel_times()}} and \code{\link[=raptor]{raptor()}}.

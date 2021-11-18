@@ -345,3 +345,9 @@ test_that("raptor with filtered feed", {
                      stop_name = "One", time_range = 3600)
   expect_equal(tt1, tt2)
 })
+
+test_that("filter feed without min/max time", {
+  st.1 = filter_stop_times(g, "2018-10-01")
+  st.2 = filter_stop_times(g, "2018-10-01", "00:00:00", 999*3600)
+  expect_true(all(st.1 == st.2))
+})
