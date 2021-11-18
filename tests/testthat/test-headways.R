@@ -16,3 +16,15 @@ test_that("Stop frequencies (headways) for included data are as expected", {
     colnames(stops_frequency_by_route), 
     c("stop_id", "route_id", "direction_id", "service_id", "n_departures", "mean_headway"))
 })
+
+test_that("Route frequencies (headways)", {
+  # TODO rewrite with synthesized sample data
+  routes_frequency <- get_route_frequency(gtfs_duke)
+  expect_equal(routes_frequency[routes_frequency$route_id == 1679, ]$median_headways, 24*60)
+})
+
+test_that("Route frequencies (headways) w/ service id", {
+  # TODO rewrite with synthesized sample data
+  routes_frequency <- get_route_frequency(gtfs_duke, service_id = "c_883_b_21967_d_31")
+  expect_equal(routes_frequency[routes_frequency$route_id == 1680, ]$median_headways, (53+1/3)*60)
+})
