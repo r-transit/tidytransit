@@ -9,7 +9,7 @@ get_stop_frequency(
   start_hour = 6,
   end_hour = 22,
   service_ids = NULL,
-  by_route = FALSE
+  by_route = TRUE
 )
 }
 \arguments{
@@ -23,7 +23,8 @@ get_stop_frequency(
 identifying a particular service id. If not provided the service_id
 with the most departures is used}
 
-\item{by_route}{default TRUE, if FALSE then calculate headway for any line coming through the stop in the same direction on the same schedule.}
+\item{by_route}{Default TRUE, if FALSE then calculate headway for any line coming
+through the stop in the same direction on the same schedule.}
 }
 \value{
 dataframe of stops with the number of departures and the headway
