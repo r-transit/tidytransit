@@ -18,10 +18,10 @@ library(dplyr)
 library(tidytransit)
 library(ggplot2)
 library(sf)
-summarise <- function(...) dplyr::summarise(..., .groups = "drop")
+options(dplyr.summarise.inform=F)
 ```
 
-# Introduction
+## Introduction
 
 The focus of this vignette is on how to use R to make graphics about where and how often 
 transit service operates based on schedule data published in the [General Transit Feed Specification](http://gtfs.org/). 
@@ -30,11 +30,11 @@ vignette, but you can easily apply it to thousands of other GTFS data sources. S
 [tidytransit introductory vignette](http://tidytransit.r-transit.org/articles/introduction.html#finding-more-gtfs-feeds) 
 for instructions on finding data for other cities and operators. 
 
-# Setup
+## Setup
 
 You'll need to have tidytransit installed. Please see the [install instructions](http://tidytransit.r-transit.org/articles/introduction.html#installation-dependencies) for more details. 
 
-# Outline
+## Outline
 
 So, to review, we're going to:
 
@@ -44,7 +44,7 @@ So, to review, we're going to:
 4) Map Headways By Route
 5) Map Departures by Stop and Route
 
-# 1) Import Transit Data (GTFS)
+### 1) Import Transit Data (GTFS)
 
 We'll start by importing a snapshot of the NYC MTA's subway schedule, which is included 
 with the package when [installed](http://tidytransit.r-transit.org/index.html#installation).  
@@ -54,13 +54,14 @@ local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", packa
 gtfs <- read_gtfs(local_gtfs_path)
 ```
 
-But note that you can also just uncomment the line below and import the data from the NYC MTA's URL directly. 
+But note that you can also just uncomment the line below and import the data from the NYC 
+MTA's URL directly. 
 
 ```{r}
 # gtfs <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
 ```
 
-# 2) Identify Weekday Schedules of Service
+### 2) Identify Weekday Schedules of Service
 
 GTFS feeds typically contain a schedule of all the schedules of service for a given system. 
 Selecting a schedule of service in NYC allows us to focus on, for example, non-holiday 
@@ -79,15 +80,17 @@ gtfs <- set_servicepattern(gtfs)
 After setting the service patterns, we can summarise each service by the number of trips and 
 stops. We'll also summarise the total distance covered by all trips in the service, and then 
 check that against the total distance covered by the average route. First, we need to 
-calculate the distance of each part of the route shapes.  
+calculate the distance of each part of the route shapes. To do this (and for creating maps
+later on) we convert stops and shapes to [simple features](https://r-spatial.github.io/sf/articles/sf1.html) 
+with `gtfs_as_sf`.
 
 ```{r}
-shp1 <- shapes_as_sf(gtfs$shapes)
-shp1 <- st_transform(shp1, crs=2263)
-shp1$length <- st_length(shp1)
-shp2 <- shp1 %>% 
+gtfs <- gtfs_as_sf(gtfs)
+gtfs$shapes$length <- st_length(gtfs$shapes)
+
+shape_lengths <- gtfs$shapes %>% 
   as.data.frame() %>% 
-  select(shape_id,length,-geometry) 
+  select(shape_id, length, -geometry)
 ```
 
 Now we're ready to roll the statistics up to services. 
@@ -95,21 +98,20 @@ Now we're ready to roll the statistics up to services.
 ```{r}
 service_pattern_summary <- gtfs$trips %>%
   left_join(gtfs$.$servicepatterns, by="service_id") %>% 
-  left_join(shp2, by="shape_id") %>%
+  left_join(shape_lengths, by="shape_id") %>%
   left_join(gtfs$stop_times, by="trip_id") %>% 
   group_by(servicepattern_id) %>% 
-  summarise(trips = n(), 
-            routes = n_distinct(route_id),
-            total_distance_per_day_km = sum(as.numeric(length), 
-                                    na.rm=TRUE)/1e3,
-            route_avg_distance_km = (sum(as.numeric(length),
-                                    na.rm=TRUE)/1e3)/(trips*routes),
-            stops=(n_distinct(stop_id)/2))
+  summarise(
+    trips = n(), 
+    routes = n_distinct(route_id),
+    total_distance_per_day_km = sum(as.numeric(length), na.rm=TRUE)/1e3,
+    route_avg_distance_km = (sum(as.numeric(length), na.rm=TRUE)/1e3)/(trips*routes),
+    stops=(n_distinct(stop_id)/2))
 ```
 
 We can also add the number of days that each service is in operation. 
 
-```{r}
+```{r} 
 service_pattern_summary <- gtfs$.$dates_servicepatterns %>% 
   group_by(servicepattern_id) %>% 
   summarise(days_in_service = n()) %>% 
@@ -126,7 +128,7 @@ It seems that if we want to summarise the most common patterns of service in the
 system, we should use the `s_e25d6ca` service pattern, as it has the most days in service, 
 the most trips, stops, and routes. 
 
-We'll use that pattern below to pull out the Service ID's that we need to use to identify 
+We'll use that pattern below to pull out the service_ids that we need to use to identify 
 trips in the GTFS feed for which we want to summarise service. 
 
 ```{r}
@@ -139,11 +141,11 @@ head(service_ids) %>%
 ```
 
 So, what are these service_id codes? How they are put together varies from operator to 
-operator. The important thing is that the service_id's are also a field on the `trips` 
-table, which describes all the trips taken in the system. 
+operator. The important thing is that the service_ids are also a field on the `trips` 
+table, which describes all the trips taken in the system.
 
-Lets see how many trips fall under each of these service_id's on the trips table, and how 
-they relate to routes. 
+Lets see how many trips fall under each of these service_ids on the trips table, and how 
+they relate to routes.
 
 ```{r}
 gtfs$trips %>%
@@ -154,50 +156,54 @@ gtfs$trips %>%
   knitr::kable()
 ```
 
-Given the one-to-one relationship between service-id's and routes, we might conclude that 
-the NYC Subway GTFS creates service_id's for each route that a trip runs on. Some GTFS feeds
+Given the one-to-one relationship between service_ids and routes, we might conclude that 
+the NYC Subway GTFS creates service_ids for each route that a trip runs on. Some GTFS feeds
 are simpler: a single service_id might relate to 'all vehicle trips running every weekdays'. 
 Service patterns get us around complications like this by describing service in terms of 
 exhaustive calendar dates, regardless of whether an operator may break out each route as 
-a different service. 
+a different service.
 
-# 3) Calculate Headways
+### 3) Calculate Headways
 
 So, now that we've used service patterns to identify the set of service_ids that refer to 
 all weekday trips, we can summarize service between 6 am and 10 am for the NYC Subway 
-system on weekdays.  
+system on weekdays.
 
 ```{r}
-am_freq <- get_stop_frequency(gtfs, start_time = 6*3600, end_time = 10*3600, service_ids = service_ids, by_route = T)
+am_stop_freq <- get_stop_frequency(gtfs, start_time = 6*3600, end_time = 10*3600, 
+                              service_ids = service_ids, by_route = TRUE)
 ```
 
 ```{r}
-knitr::kable(head(am_freq))
+knitr::kable(head(am_stop_freq))
 ```
 
 This table includes columns for the id for a given stop, the route_id, our selected 
-service_id's, and the number of departures and the average headway for a given direction 
-from 6 am to 10 am on weekdays. 
+service_ids, and the number of departures and the average headway for a given direction 
+from 6 am to 10 am on weekdays.
 
 The `get_stop_frequency` function simply counts the number of departures within the time 
-frame to get departures per stop. Then, to get headways, it divides the number of minutes 
-by the number of departures, and rounds to the nearest integer. 
+frame to get departures per stop. Then, to get headways, it divides the number of seconds 
+(between start_time and end_time) by the number of departures, and rounds to the nearest
+integer.
 
 Lets have a look at the headways for the 1 train, which runs from the Bronx down to the 
-Bottom of Manhattan. 
+Bottom of Manhattan.
 
-First, we filter the `am_freq` data frame to just stops going in 1 direction on the 1 train, 
-and then we join to the original `stops` table, which includes a more descriptive stop_name. 
+First, we filter the `am_stop_freq` data frame to just stops going in one direction on the 1 
+train, and then we join to the original `stops` table, which includes a more descriptive 
+stop_name. 
 
 ```{r}
-one_line_stops <- am_freq %>% 
-    filter(route_id==1 & direction_id==0) %>%
-    left_join(gtfs$stops, by ="stop_id")
+one_line_stops <- am_stop_freq %>% 
+    filter(route_id == 1 & direction_id == 0) %>%
+    left_join(gtfs$stops, by ="stop_id") %>% 
+    mutate(mean_headway_minutes = mean_headway/60)
 ```
 
 As we can see, some stops seem to have higher headways than others, even when the train is 
 running in the same direction. This may be counterintuitive, because we might expect the 
-train to run through every stop the same amount of times for a given direction. 
+train to run through every stop the same amount of times for a given direction.
 
 Lets inspect the stops at which headways are higher. 
 
@@ -224,27 +230,19 @@ noticeably higher headways (8 mins) at this time of day than the South Ferry Sto
 which is at the south end of Manhattan.
 
 Lets also plot the headways at these stops on a map to see how they are distributed across 
-the city. 
-First, we'll use the `stops_as_sf` function, which converts the latitudes and longitudes on 
-the stops table in the GTFS feed into [simple features](https://r-spatial.github.io/sf/articles/sf1.html).  
+the city. First, we join the stops sf object to the 1 line's calculated stop headways. 
 
 ```{r}
-nyc_stops_sf <- stops_as_sf(gtfs$stops)
-```
-
-Now we can join those stop coordinates to the 1 line's calculated stop headways. 
-
-```{r}
-one_line_stops_sf <- nyc_stops_sf %>%
+one_line_stops_sf <- gtfs$stops %>%
   right_join(one_line_stops, by="stop_id") 
 ```
 
 And then use ggplot's `geom_sf` to plot the headways. 
 
-```{r}
+```{r, fig.width=9}
 one_line_stops_sf %>% 
   ggplot() + 
-  geom_sf(aes(color = mean_headway)) +
+  geom_sf(aes(color = mean_headway_minutes)) +
   theme_bw()
 ```
 
@@ -256,19 +254,20 @@ Finally, we can easily summarise what the headways are like along the entire rou
 using R's default summary function for the vector of headways. 
 
 ```{r}
-summary(one_line_stops$headway)
+summary(one_line_stops$mean_headway)
 ```
 
 This is the same method that tidytransit uses to summarise headways along all routes in the 
 system when we use the `get_route_frequency` function, which we'll try next.  
 
-# 4) Map Headways By Route
+### 4) Map Headways By Route
 
 Now we'll use the `get_route_frequency` function to summarise transit service by route, for 
 the same time period. 
 
 ```{r}
-am_route_freq <- get_route_frequency(gtfs, service_ids = service_ids, start_time = 6*3600, end_time = 10*3600) 
+am_route_freq <- get_route_frequency(gtfs, service_ids = service_ids, 
+                                     start_time = 6*3600, end_time = 10*3600) 
 head(am_route_freq) %>%
   knitr::kable()
 ```
@@ -276,16 +275,15 @@ head(am_route_freq) %>%
 Since, under the hood, this table is a summary of stop frequencies along each route, it 
 includes the same variables as a summary of the headways at each stop along the route, as 
 well as a sum of all departures. Again, its important to note that this summary is based on 
-the trips that happened within the time frame we specify. 
+the trips that happened within the time frame we specify.
 
 As with the stops, we can easily join this table to simple features and then plot it on a 
-map. Note that here too we pass in the select service_id's from above, as the route run 
+map. Note that here too we pass in the select service_ids from above, as the route run 
 by a vehicle also depends on the selected service. 
 
 ```{r}
 # get_route_geometry needs a gtfs object that includes shapes as simple feature data frames
-gtfs_sf <- gtfs_as_sf(gtfs)
-routes_sf <- get_route_geometry(gtfs_sf, service_ids = service_ids)
+routes_sf <- get_route_geometry(gtfs, service_ids = service_ids)
 ```
 
 Then we join the geometries to the calculated frequencies:
@@ -306,12 +304,12 @@ routes_sf_crs %>%
   geom_sf(aes(colour=as.factor(median_headways))) + 
   labs(color = "Headways") +
   geom_sf_text(aes(label=route_id)) +
-  theme_bw() 
+  theme_bw()
 ```
 
 Its clear that a number of the route lines overlap.
 
-# 5) Map Departures by Stop and Route
+### 5) Map Departures by Stop and Route
 
 Still, we'd like to represent where and how frequently the subway runs in NYC in the 
 morning. How can we do so given that, graphically, the route lines overlap?
@@ -333,7 +331,7 @@ this a cartogram.
 
 ```{r}
 routes_sf_buffer <- st_buffer(routes_sf,
-                              dist=routes_sf$total_departures/1e6)
+                              dist = routes_sf$total_departures/1e6)
 ```
 
 Next, when we render the map, we'll make sure to make the borders around each route 
@@ -342,8 +340,8 @@ transparent, and set the opacity for the fill of all the polygons high again.
 ```{r, fig.width=6, fig.height=10}
 routes_sf_buffer %>% 
   ggplot() + 
-  geom_sf(colour=alpha("white",0),fill=alpha("red",0.2)) +
-  theme_bw() 
+  geom_sf(colour = alpha("white", 0), fill = alpha("red",0.2)) +
+  theme_bw()
 ```
 
 Now we have a rough representation of the question we set out to answer: where and how 
@@ -354,9 +352,11 @@ thickness of the lines represents how many run along each line.
 We can combine this with stops to get a sense of how central stops relate to routes. 
 
 ```{r}
-nyc_stop_am_departures_main <- nyc_stops_sf %>% 
-  left_join(am_freq, by = "stop_id") %>% 
-  filter(n_departures>50)
+gtfs$stops %>% 
+  inner_join(am_stop_freq, by = "stop_id") %>% 
+  filter(n_departures > 50) %>% 
+  select(stop_id, stop_name, n_departures, mean_headway) %>% 
+  knitr::kable()
 ```
 
 First, we'll leverage the common `stop_name` variable to group and count departures, in 
@@ -364,25 +364,24 @@ both directions, for all stops, filtering to out a number of smaller stops for m
 graphical clarity. 
 
 ```{r}
-nyc_stops <- left_join(gtfs$stops, am_freq, by="stop_id")
+am_stop_name_departures <- left_join(gtfs$stops, am_stop_freq, by="stop_id")
 
-stop_departures <- nyc_stops %>%  
+am_stop_name_departures <- am_stop_name_departures %>%  
   group_by(stop_name) %>%
   transmute(total_departures = sum(n_departures, na.rm=TRUE))
 
-nyc_stops1 <- right_join(nyc_stops_sf,
-                         stop_departures, by="stop_name")
-
-stop_departures <- nyc_stops1 %>%
-  filter(total_departures>100)
+am_stop_name_departures <- am_stop_name_departures %>%
+  filter(total_departures > 100)
 ```
 
 Finally, we can plot both the route line counts and the stop departure counts on one map:
 
 ```{r, fig.width=6, fig.height=10}
 ggplot() + 
-  geom_sf(data=routes_sf_buffer,colour=alpha("white",0),fill=alpha("red",0.3)) +
-  geom_sf(data=stop_departures, aes(size=total_departures), shape=1) + 
+  geom_sf(data = routes_sf_buffer, 
+          colour = alpha("white",0), fill = alpha("red",0.3)) +
+  geom_sf(data = am_stop_name_departures, 
+          aes(size = total_departures), shape=1) + 
   labs(size = "Departures (Hundreds)") +
   theme_bw() +
   theme(legend.position="none") +
