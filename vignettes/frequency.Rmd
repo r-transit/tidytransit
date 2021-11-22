@@ -24,15 +24,15 @@ options(dplyr.summarise.inform=F)
 ## Introduction
 
 The focus of this vignette is on how to use R to make graphics about where and how often 
-transit service operates based on schedule data published in the [General Transit Feed Specification](http://gtfs.org/). 
+transit service operates based on schedule data published in the [General Transit Feed Specification](https://gtfs.org/). 
 We'll focus on the New York City Metropolitan Transit Agency's Subway schedule for this 
 vignette, but you can easily apply it to thousands of other GTFS data sources. See the 
-[tidytransit introductory vignette](http://tidytransit.r-transit.org/articles/introduction.html#finding-more-gtfs-feeds) 
+[tidytransit introductory vignette](https://tidytransit.r-transit.org/articles/introduction.html#finding-more-gtfs-feeds) 
 for instructions on finding data for other cities and operators. 
 
 ## Setup
 
-You'll need to have tidytransit installed. Please see the [install instructions](http://tidytransit.r-transit.org/articles/introduction.html#installation-dependencies) for more details. 
+You'll need to have tidytransit installed. Please see the [install instructions](https://tidytransit.r-transit.org/articles/introduction.html#installation-dependencies) for more details. 
 
 ## Outline
 
@@ -47,7 +47,7 @@ So, to review, we're going to:
 ### 1) Import Transit Data (GTFS)
 
 We'll start by importing a snapshot of the NYC MTA's subway schedule, which is included 
-with the package when [installed](http://tidytransit.r-transit.org/index.html#installation).  
+with the package when [installed](https://tidytransit.r-transit.org/index.html#installation).  
 
 ```{r}
 local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")

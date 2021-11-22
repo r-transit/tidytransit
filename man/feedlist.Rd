@@ -20,7 +20,7 @@ A data frame with 911 rows and 10 variables:
 }
 }
 \source{
-\url{http://www.transitfeeds.com/}
+\url{https://transitfeeds.com/}
 }
 \usage{
 feedlist

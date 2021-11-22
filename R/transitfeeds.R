@@ -268,7 +268,7 @@ tfeeds_parse_getlocation <- function(req) {
 #' @noRd
 #' @return Result of httr::RETRY
 #'
-#' @details See http://transitfeeds.com/api/ for available API calls
+#' @details See https://transitfeeds.com/api/ for available API calls
 tfeeds_get <- function(path,
                        query,
                        ...,
@@ -283,7 +283,7 @@ tfeeds_get <- function(path,
 
   req <- httr::RETRY(
     verb = "GET"
-    , url = 'http://api.transitfeeds.com/'
+    , url = 'https://api.transitfeeds.com/'
     , path = paste0(version, path)
     , query = my_query
     , times = 5

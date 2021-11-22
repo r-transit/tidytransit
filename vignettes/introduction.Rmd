@@ -21,12 +21,12 @@ library(dplyr)
 
 Use tidytransit to:
 
-- [Read a GTFS Feed into R Data Types](http://tidytransit.r-transit.org/articles/introduction.html#read-gtfs-data)
-- [Validate transit feeds](http://tidytransit.r-transit.org/articles/introduction.html#feed-validation-results)
-- Coerce [stops and routes to 'simple features'](http://tidytransit.r-transit.org/reference/stops_as_sf.html) and [plot them](http://tidytransit.r-transit.org/reference/plot.gtfs.html)
-- [Create graphics about transit service](http://tidytransit.r-transit.org/articles/servicepatterns.html)
-- [Calculate travel time between transit stops](http://tidytransit.r-transit.org/reference/raptor.html)
-- [Look up GTFS feeds from around the world within R](http://tidytransit.r-transit.org/articles/introduction.html#finding-more-gtfs-feeds)
+- [Read a GTFS Feed into R Data Types](https://tidytransit.r-transit.org/articles/introduction.html#read-gtfs-data)
+- [Validate transit feeds](https://tidytransit.r-transit.org/articles/introduction.html#feed-validation-results)
+- Coerce [stops and routes to 'simple features'](https://tidytransit.r-transit.org/reference/stops_as_sf.html) and [plot them](https://tidytransit.r-transit.org/reference/plot.gtfs.html)
+- [Create graphics about transit service](https://tidytransit.r-transit.org/articles/servicepatterns.html)
+- [Calculate travel time between transit stops](https://tidytransit.r-transit.org/reference/raptor.html)
+- [Look up GTFS feeds from around the world within R](https://tidytransit.r-transit.org/articles/introduction.html#finding-more-gtfs-feeds)
 
 # Installation & Dependencies
 

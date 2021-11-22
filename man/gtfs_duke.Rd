@@ -12,7 +12,7 @@ gtfs_duke
 }
 \description{
 Data obtained from
-\url{http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip}.
+\url{https://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip}.
 }
 \seealso{
 read_gtfs

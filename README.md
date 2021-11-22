@@ -11,7 +11,7 @@ status](https://github.com/r-transit/tidytransit/workflows/R-CMD-check/badge.svg
 
 Use tidytransit to map transit stops and routes, calculate travel times and transit
 frequencies, and validate transit feeds. Tidytransit reads the 
-[General Transit Feed Specification](http://gtfs.org/) into 
+[General Transit Feed Specification](https://gtfs.org/) into 
 [tidyverse](https://tibble.tidyverse.org/) and 
 [simple features](https://en.wikipedia.org/wiki/Simple_Features) data frames. 
 Tidytransit can be used to:

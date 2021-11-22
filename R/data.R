@@ -15,7 +15,7 @@
 #'   \item{url_d}{GTFS feed url}
 #'   \item{url_i}{the metadata url for the feed}
 #' }
-#' @source \url{http://www.transitfeeds.com/}
+#' @source \url{https://transitfeeds.com/}
 "feedlist"
 
 #' Dataframe of route type id's and the names of the types (e.g. "Bus")
@@ -34,7 +34,7 @@
 #' Example GTFS data
 #' 
 #' Data obtained from 
-#' \url{http://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip}. 
+#' \url{https://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip}. 
 #' @docType data
 #' @seealso read_gtfs
 "gtfs_duke"
