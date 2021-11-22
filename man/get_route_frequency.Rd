@@ -29,7 +29,11 @@ a dataframe of routes with variables or headway/frequency in seconds for a route
 within a given time frame
 }
 \description{
-Note that some GTFS feeds contain a frequency data frame already.
+Calculate the number of departures and mean headways for routes within a given timespan
+and for given service_ids.
+}
+\note{
+Some GTFS feeds contain a frequency data frame already.
 Consider using this instead, as it will be more accurate than what
 tidytransit calculates.
 }

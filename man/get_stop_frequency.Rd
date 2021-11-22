@@ -33,7 +33,11 @@ dataframe of stops with the number of departures and the headway
 (departures divided by timespan) in seconds as columns
 }
 \description{
-Note that some GTFS feeds contain a frequency data frame already.
+Calculate the number of departures and mean headways for all stops within a
+given timespan and for given service_ids.
+}
+\note{
+Some GTFS feeds contain a frequency data frame already.
 Consider using this instead, as it will be more accurate than what
 tidytransit calculates.
 }

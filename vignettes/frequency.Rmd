@@ -356,6 +356,8 @@ gtfs$stops %>%
   inner_join(am_stop_freq, by = "stop_id") %>% 
   filter(n_departures > 50) %>% 
   select(stop_id, stop_name, n_departures, mean_headway) %>% 
+  arrange(n_departures) %>% 
+  head() %>% 
   knitr::kable()
 ```
 

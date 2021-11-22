@@ -1,6 +1,9 @@
 #' Get Stop Frequency
 #' 
-#' Note that some GTFS feeds contain a frequency data frame already. 
+#' Calculate the number of departures and mean headways for all stops within a
+#' given timespan and for given service_ids. 
+#' 
+#' @note Some GTFS feeds contain a frequency data frame already. 
 #' Consider using this instead, as it will be more accurate than what 
 #' tidytransit calculates.
 #' 
@@ -76,7 +79,10 @@ get_stop_frequency <- function(gtfs_obj,
 
 #' Get Route Frequency
 #' 
-#' Note that some GTFS feeds contain a frequency data frame already. 
+#' Calculate the number of departures and mean headways for routes within a given timespan
+#' and for given service_ids.
+#' 
+#' @note Some GTFS feeds contain a frequency data frame already. 
 #' Consider using this instead, as it will be more accurate than what 
 #' tidytransit calculates. 
 #' 
