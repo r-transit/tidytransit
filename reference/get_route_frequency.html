@@ -40,9 +40,8 @@
 
 
 <meta property="og:title" content="Get Route Frequency — get_route_frequency" />
-<meta property="og:description" content="Note that some GTFS feeds contain a frequency data frame already.
-Consider using this instead, as it will be more accurate than what
-tidytransit calculates." />
+<meta property="og:description" content="Calculate the number of departures and mean headways for routes within a given timespan
+and for given service_ids." />
 
 
 
@@ -74,7 +73,7 @@ tidytransit calculates." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -137,17 +136,15 @@ tidytransit calculates." />
     </div>
 
     <div class="ref-description">
-    <p>Note that some GTFS feeds contain a frequency data frame already.
-Consider using this instead, as it will be more accurate than what
-tidytransit calculates.</p>
+    <p>Calculate the number of departures and mean headways for routes within a given timespan
+and for given service_ids.</p>
     </div>
 
     <pre class="usage"><span class='fu'>get_route_frequency</span><span class='op'>(</span>
   <span class='va'>gtfs_obj</span>,
-  start_hour <span class='op'>=</span> <span class='fl'>6</span>,
-  end_hour <span class='op'>=</span> <span class='fl'>22</span>,
-  service_ids <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>)</span>,
-  dow <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>0</span>, <span class='fl'>0</span><span class='op'>)</span>
+  start_time <span class='op'>=</span> <span class='st'>"06:00:00"</span>,
+  end_time <span class='op'>=</span> <span class='st'>"22:00:00"</span>,
+  service_ids <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -158,43 +155,46 @@ tidytransit calculates.</p>
       <td><p>a list of gtfs dataframes as read by the trread package.</p></td>
     </tr>
     <tr>
-      <th>start_hour</th>
-      <td><p>(optional) an integer, default 6 (6 am)</p></td>
+      <th>start_time</th>
+      <td><p>analysis start time, can be given as "HH:MM:SS",
+hms object or numeric value in seconds.</p></td>
     </tr>
     <tr>
-      <th>end_hour</th>
-      <td><p>(optional) an integer, default 22 (10 pm)</p></td>
+      <th>end_time</th>
+      <td><p>analysis perdiod end time, can be given as "HH:MM:SS",
+hms object or numeric value in seconds.</p></td>
     </tr>
     <tr>
       <th>service_ids</th>
-      <td><p>(optional) a string from the calendar dataframe identifying a particular service schedule.</p></td>
-    </tr>
-    <tr>
-      <th>dow</th>
-      <td><p>(optional) an integer vector with days of week. monday=1. default: c(1,1,1,1,1,0,0)</p></td>
+      <td><p>A set of service_ids from the calendar dataframe
+identifying a particular service id. If not provided, the service_id
+with the most departures is used.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a dataframe of routes with variables (gtfs_obj$.$routes_frequency) for headway/frequency for a route within a given time frame</p>
+    <p>a dataframe of routes with variables or headway/frequency in seconds for a route
+within a given time frame</p>
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+
+    <p>Some GTFS feeds contain a frequency data frame already.
+Consider using this instead, as it will be more accurate than what
+tidytransit calculates.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>gtfs_duke</span><span class='op'>)</span>
-<span class='va'>routes_frequency</span> <span class='op'>&lt;-</span> <span class='fu'>get_route_frequency</span><span class='op'>(</span><span class='va'>gtfs_duke</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>A pre-calculated frequencies dataframe exists for this feed already, </span>
-#&gt; <span class='message'>            consider using that.</span></div><div class='input'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span><span class='op'>(</span><span class='va'>routes_frequency</span><span class='op'>$</span><span class='va'>median_headways</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>routes_frequency</span><span class='op'>[</span><span class='va'>x</span>,<span class='op'>]</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 6 x 6</span><span>
-#&gt;   route_id total_departures median_headways mean_headways st_dev_headways
-#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>               </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>           </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>           </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>1</span><span> 1679                  513              24            46           82.3 
-#&gt; </span><span style='color: #BCBCBC;'>2</span><span> 1690                 </span><span style='text-decoration: underline;'>1</span><span>242              25            24            3.83
-#&gt; </span><span style='color: #BCBCBC;'>3</span><span> 13048                 942              27            23            6.05
-#&gt; </span><span style='color: #BCBCBC;'>4</span><span> 1681                  770              27            27            4.69
-#&gt; </span><span style='color: #BCBCBC;'>5</span><span> 12945                </span><span style='text-decoration: underline;'>1</span><span>283              28           212          379.  
-#&gt; </span><span style='color: #BCBCBC;'>6</span><span> 1693                 </span><span style='text-decoration: underline;'>1</span><span>224              32           222          386.  
-#&gt; </span><span style='color: #949494;'># … with 1 more variable: stop_count &lt;int&gt;</span><span></div></span></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>gtfs_duke</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>routes_frequency</span> <span class='op'>&lt;-</span> <span class='fu'>get_route_frequency</span><span class='op'>(</span><span class='va'>gtfs_duke</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span><span class='op'>(</span><span class='va'>routes_frequency</span><span class='op'>$</span><span class='va'>median_headways</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>routes_frequency</span><span class='op'>[</span><span class='va'>x</span>,<span class='op'>]</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 3 × 6</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   route_id total_departures median_headways mean_headways st_dev_headways</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>               <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>           <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>           <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span> 1679                  513            <span style='text-decoration: underline;'>1</span>440          <span style='text-decoration: underline;'>2</span>771           <span style='text-decoration: underline;'>4</span>940.</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>2</span> 1690                 <span style='text-decoration: underline;'>1</span>242            <span style='text-decoration: underline;'>1</span>477          <span style='text-decoration: underline;'>1</span>403            223.</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>3</span> 1683                  644            <span style='text-decoration: underline;'>2</span>590          <span style='text-decoration: underline;'>4</span>515           <span style='text-decoration: underline;'>4</span>390.</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 1 more variable: stop_count &lt;int&gt;</span></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

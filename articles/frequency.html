@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -91,7 +91,7 @@
       <h1 data-toc-skip>Transit (GTFS) Service &amp; Headway Mapping with R</h1>
                         <h4 class="author">Tom Buckley</h4>
             
-            <h4 class="date">2021-02-27</h4>
+            <h4 class="date">2021-11-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r-transit/tidytransit/blob/master/vignettes/frequency.Rmd"><code>vignettes/frequency.Rmd</code></a></small>
       <div class="hidden name"><code>frequency.Rmd</code></div>
@@ -100,19 +100,19 @@
 
     
     
-<div id="introduction" class="section level1">
-<h1 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h1>
+<div id="introduction" class="section level2">
+<h2 class="hasAnchor">
+<a href="#introduction" class="anchor"></a>Introduction</h2>
 <p>The focus of this vignette is on how to use R to make graphics about where and how often transit service operates based on schedule data published in the <a href="http://gtfs.org/">General Transit Feed Specification</a>. We’ll focus on the New York City Metropolitan Transit Agency’s Subway schedule for this vignette, but you can easily apply it to thousands of other GTFS data sources. See the <a href="http://tidytransit.r-transit.org/articles/introduction.html#finding-more-gtfs-feeds">tidytransit introductory vignette</a> for instructions on finding data for other cities and operators.</p>
 </div>
-<div id="setup" class="section level1">
-<h1 class="hasAnchor">
-<a href="#setup" class="anchor"></a>Setup</h1>
+<div id="setup" class="section level2">
+<h2 class="hasAnchor">
+<a href="#setup" class="anchor"></a>Setup</h2>
 <p>You’ll need to have tidytransit installed. Please see the <a href="http://tidytransit.r-transit.org/articles/introduction.html#installation-dependencies">install instructions</a> for more details.</p>
 </div>
-<div id="outline" class="section level1">
-<h1 class="hasAnchor">
-<a href="#outline" class="anchor"></a>Outline</h1>
+<div id="outline" class="section level2">
+<h2 class="hasAnchor">
+<a href="#outline" class="anchor"></a>Outline</h2>
 <p>So, to review, we’re going to:</p>
 <ol style="list-style-type: decimal">
 <li>Import Transit Data (GTFS)</li>
@@ -121,10 +121,9 @@
 <li>Map Headways By Route</li>
 <li>Map Departures by Stop and Route</li>
 </ol>
-</div>
-<div id="import-transit-data-gtfs" class="section level1">
-<h1 class="hasAnchor">
-<a href="#import-transit-data-gtfs" class="anchor"></a>1) Import Transit Data (GTFS)</h1>
+<div id="import-transit-data-gtfs" class="section level3">
+<h3 class="hasAnchor">
+<a href="#import-transit-data-gtfs" class="anchor"></a>1) Import Transit Data (GTFS)</h3>
 <p>We’ll start by importing a snapshot of the NYC MTA’s subway schedule, which is included with the package when <a href="http://tidytransit.r-transit.org/index.html#installation">installed</a>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">local_gtfs_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"google_transit_nyc_subway.zip"</span>, package <span class="op">=</span> <span class="st">"tidytransit"</span><span class="op">)</span>
@@ -133,40 +132,39 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># gtfs &lt;- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")</span></code></pre></div>
 </div>
-<div id="identify-weekday-schedules-of-service" class="section level1">
-<h1 class="hasAnchor">
-<a href="#identify-weekday-schedules-of-service" class="anchor"></a>2) Identify Weekday Schedules of Service</h1>
+<div id="identify-weekday-schedules-of-service" class="section level3">
+<h3 class="hasAnchor">
+<a href="#identify-weekday-schedules-of-service" class="anchor"></a>2) Identify Weekday Schedules of Service</h3>
 <p>GTFS feeds typically contain a schedule of all the schedules of service for a given system. Selecting a schedule of service in NYC allows us to focus on, for example, non-holiday weekday service, in the Fall of 2019. In some feeds, service selection can be more or less complicated than NYC. In any case, you’ll want to read the <a href="http://tidytransit.r-transit.org/articles/servicepatterns.html">service patterns</a> vignette included in this package in order to see how you can select the right service for your needs.</p>
 <p>We use one of the functions described in that vignette to create a table on the gtfs feed that lets us filter by weekday/weekend service.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">gtfs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_servicepattern.html">set_servicepattern</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">)</span></code></pre></div>
-<p>After setting the service patterns, we can summarise each service by the number of trips and stops. We’ll also summarise the total distance covered by all trips in the service, and then check that against the total distance covered by the average route. First, we need to calculate the distance of each part of the route shapes.</p>
+<p>After setting the service patterns, we can summarise each service by the number of trips and stops. We’ll also summarise the total distance covered by all trips in the service, and then check that against the total distance covered by the average route. First, we need to calculate the distance of each part of the route shapes. To do this (and for creating maps later on) we convert stops and shapes to <a href="https://r-spatial.github.io/sf/articles/sf1.html">simple features</a> with <code>gtfs_as_sf</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">shp1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/shapes_as_sf.html">shapes_as_sf</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">shapes</span><span class="op">)</span>
-<span class="va">shp1</span> <span class="op">&lt;-</span> <span class="fu">st_transform</span><span class="op">(</span><span class="va">shp1</span>, crs<span class="op">=</span><span class="fl">2263</span><span class="op">)</span>
-<span class="va">shp1</span><span class="op">$</span><span class="va">length</span> <span class="op">&lt;-</span> <span class="fu">st_length</span><span class="op">(</span><span class="va">shp1</span><span class="op">)</span>
-<span class="va">shp2</span> <span class="op">&lt;-</span> <span class="va">shp1</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">shape_id</span>,<span class="va">length</span>,<span class="op">-</span><span class="va">geometry</span><span class="op">)</span> </code></pre></div>
+<code class="sourceCode R"><span class="va">gtfs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gtfs_as_sf.html">gtfs_as_sf</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">)</span>
+<span class="va">gtfs</span><span class="op">$</span><span class="va">shapes</span><span class="op">$</span><span class="va">length</span> <span class="op">&lt;-</span> <span class="fu">st_length</span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">shapes</span><span class="op">)</span>
+
+<span class="va">shape_lengths</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">shapes</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">shape_id</span>, <span class="va">length</span>, <span class="op">-</span><span class="va">geometry</span><span class="op">)</span></code></pre></div>
 <p>Now we’re ready to roll the statistics up to services.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">service_pattern_summary</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">service_pattern</span>, by<span class="op">=</span><span class="st">"service_id"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">shp2</span>, by<span class="op">=</span><span class="st">"shape_id"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">stop_times</span>, by<span class="op">=</span><span class="st">"trip_id"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">servicepattern_id</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>trips <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span>, 
-            routes <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/n_distinct.html">n_distinct</a></span><span class="op">(</span><span class="va">route_id</span><span class="op">)</span>,
-            total_distance_per_day_km <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">length</span><span class="op">)</span>, 
-                                    na.rm<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">/</span><span class="fl">1e3</span>,
-            route_avg_distance_km <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">length</span><span class="op">)</span>,
-                                    na.rm<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">/</span><span class="fl">1e3</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="va">trips</span><span class="op">*</span><span class="va">routes</span><span class="op">)</span>,
-            stops<span class="op">=</span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/n_distinct.html">n_distinct</a></span><span class="op">(</span><span class="va">stop_id</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">service_pattern_summary</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">servicepatterns</span>, by<span class="op">=</span><span class="st">"service_id"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">shape_lengths</span>, by<span class="op">=</span><span class="st">"shape_id"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">stop_times</span>, by<span class="op">=</span><span class="st">"trip_id"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">servicepattern_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>
+    trips <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span>, 
+    routes <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/n_distinct.html">n_distinct</a></span><span class="op">(</span><span class="va">route_id</span><span class="op">)</span>,
+    total_distance_per_day_km <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">length</span><span class="op">)</span>, na.rm<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">/</span><span class="fl">1e3</span>,
+    route_avg_distance_km <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">length</span><span class="op">)</span>, na.rm<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">/</span><span class="fl">1e3</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="va">trips</span><span class="op">*</span><span class="va">routes</span><span class="op">)</span>,
+    stops<span class="op">=</span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/n_distinct.html">n_distinct</a></span><span class="op">(</span><span class="va">stop_id</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>We can also add the number of days that each service is in operation.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">service_pattern_summary</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">date_servicepattern_table</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">servicepattern_id</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>days_in_service <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+<code class="sourceCode R"><span class="va">service_pattern_summary</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">dates_servicepatterns</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">servicepattern_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>days_in_service <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">service_pattern_summary</span>, by<span class="op">=</span><span class="st">"servicepattern_id"</span><span class="op">)</span></code></pre></div>
 <p>And then we’ll print the summary.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -214,8 +212,8 @@
 <td align="right">20</td>
 <td align="right">147987</td>
 <td align="right">22</td>
-<td align="right">14061874</td>
-<td align="right">4.319137</td>
+<td align="right">4284992</td>
+<td align="right">1.316145</td>
 <td align="right">474.5</td>
 </tr>
 <tr class="even">
@@ -223,8 +221,8 @@
 <td align="right">20</td>
 <td align="right">164132</td>
 <td align="right">22</td>
-<td align="right">15519287</td>
-<td align="right">4.297895</td>
+<td align="right">4729071</td>
+<td align="right">1.309664</td>
 <td align="right">474.5</td>
 </tr>
 <tr class="odd">
@@ -241,8 +239,8 @@
 <td align="right">93</td>
 <td align="right">229909</td>
 <td align="right">28</td>
-<td align="right">22006017</td>
-<td align="right">3.418436</td>
+<td align="right">6705569</td>
+<td align="right">1.041649</td>
 <td align="right">474.5</td>
 </tr>
 <tr class="odd">
@@ -257,13 +255,13 @@
 </tbody>
 </table>
 <p>It seems that if we want to summarise the most common patterns of service in the NYC Metro system, we should use the <code>s_e25d6ca</code> service pattern, as it has the most days in service, the most trips, stops, and routes.</p>
-<p>We’ll use that pattern below to pull out the Service ID’s that we need to use to identify trips in the GTFS feed for which we want to summarise service.</p>
+<p>We’ll use that pattern below to pull out the service_ids that we need to use to identify trips in the GTFS feed for which we want to summarise service.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">service_ids</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">service_pattern</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">servicepattern_id</span> <span class="op">==</span> <span class="st">'s_e25d6ca'</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+<code class="sourceCode R"><span class="va">service_ids</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">servicepattern</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">servicepattern_id</span> <span class="op">==</span> <span class="st">'s_e25d6ca'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">service_id</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">service_ids</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">service_ids</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
   <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -290,16 +288,15 @@
 </tr>
 </tbody>
 </table>
-<p>So, what are these service_id codes? How they are put together varies from operator to operator. The important thing is that the service_id’s are also a field on the <code>trips</code> table, which describes all the trips taken in the system.</p>
-<p>Lets see how many trips fall under each of these service_id’s on the trips table, and how they relate to routes.</p>
+<p>So, what are these service_id codes? How they are put together varies from operator to operator. The important thing is that the service_ids are also a field on the <code>trips</code> table, which describes all the trips taken in the system.</p>
+<p>Lets see how many trips fall under each of these service_ids on the trips table, and how they relate to routes.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">service_id</span> <span class="op">%in%</span> <span class="va">service_ids</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">service_id</span>, <span class="va">route_id</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>count <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; `summarise()` has grouped output by 'service_id'. You can override using the `.groups` argument.</span></code></pre></div>
+<code class="sourceCode R"><span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">service_id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="va">service_ids</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">service_id</span>, <span class="va">route_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>count <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">service_id</th>
@@ -339,207 +336,207 @@
 </tr>
 </tbody>
 </table>
-<p>Given the one-to-one relationship between service-id’s and routes, we might conclude that the NYC Subway GTFS creates service_id’s for each route that a trip runs on. Some GTFS feeds are simpler: a single service_id might relate to ‘all vehicle trips running every weekdays’. Service patterns get us around complications like this by describing service in terms of exhaustive calendar dates, regardless of whether an operator may break out each route as a different service.</p>
+<p>Given the one-to-one relationship between service_ids and routes, we might conclude that the NYC Subway GTFS creates service_ids for each route that a trip runs on. Some GTFS feeds are simpler: a single service_id might relate to ‘all vehicle trips running every weekdays’. Service patterns get us around complications like this by describing service in terms of exhaustive calendar dates, regardless of whether an operator may break out each route as a different service.</p>
 </div>
-<div id="calculate-headways" class="section level1">
-<h1 class="hasAnchor">
-<a href="#calculate-headways" class="anchor"></a>3) Calculate Headways</h1>
-<p>So, now that we’ve used service patterns to identify the set of service_id’s that refer to all weekday trips, we can summarize service between 6 am and 10 am for the NYC Subway system on weekdays.</p>
+<div id="calculate-headways" class="section level3">
+<h3 class="hasAnchor">
+<a href="#calculate-headways" class="anchor"></a>3) Calculate Headways</h3>
+<p>So, now that we’ve used service patterns to identify the set of service_ids that refer to all weekday trips, we can summarize service between 6 am and 10 am for the NYC Subway system on weekdays.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">am_freq</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_stop_frequency.html">get_stop_frequency</a></span><span class="op">(</span><span class="va">gtfs</span>, start_hour <span class="op">=</span> <span class="fl">6</span>, end_hour <span class="op">=</span> <span class="fl">10</span>, service_ids <span class="op">=</span> <span class="va">service_ids</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">am_stop_freq</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_stop_frequency.html">get_stop_frequency</a></span><span class="op">(</span><span class="va">gtfs</span>, start_time <span class="op">=</span> <span class="fl">6</span><span class="op">*</span><span class="fl">3600</span>, end_time <span class="op">=</span> <span class="fl">10</span><span class="op">*</span><span class="fl">3600</span>, 
+                              service_ids <span class="op">=</span> <span class="va">service_ids</span>, by_route <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">am_freq</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">am_stop_freq</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
+<th align="left">stop_id</th>
 <th align="left">route_id</th>
 <th align="right">direction_id</th>
-<th align="left">stop_id</th>
 <th align="left">service_id</th>
-<th align="right">departures</th>
-<th align="right">headway</th>
+<th align="right">n_departures</th>
+<th align="right">mean_headway</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">1</td>
-<td align="right">0</td>
 <td align="left">101N</td>
-<td align="left">ASP18GEN-1087-Weekday-00</td>
-<td align="right">30</td>
-<td align="right">8</td>
-</tr>
-<tr class="even">
 <td align="left">1</td>
 <td align="right">0</td>
+<td align="left">ASP18GEN-1087-Weekday-00</td>
+<td align="right">30</td>
+<td align="right">480</td>
+</tr>
+<tr class="even">
+<td align="left">101S</td>
+<td align="left">1</td>
+<td align="right">1</td>
+<td align="left">ASP18GEN-1087-Weekday-00</td>
+<td align="right">38</td>
+<td align="right">379</td>
+</tr>
+<tr class="odd">
 <td align="left">103N</td>
-<td align="left">ASP18GEN-1087-Weekday-00</td>
-<td align="right">30</td>
-<td align="right">8</td>
-</tr>
-<tr class="odd">
 <td align="left">1</td>
 <td align="right">0</td>
+<td align="left">ASP18GEN-1087-Weekday-00</td>
+<td align="right">31</td>
+<td align="right">465</td>
+</tr>
+<tr class="even">
+<td align="left">103S</td>
+<td align="left">1</td>
+<td align="right">1</td>
+<td align="left">ASP18GEN-1087-Weekday-00</td>
+<td align="right">46</td>
+<td align="right">313</td>
+</tr>
+<tr class="odd">
 <td align="left">104N</td>
+<td align="left">1</td>
+<td align="right">0</td>
 <td align="left">ASP18GEN-1087-Weekday-00</td>
 <td align="right">31</td>
-<td align="right">8</td>
+<td align="right">465</td>
 </tr>
 <tr class="even">
+<td align="left">104S</td>
 <td align="left">1</td>
-<td align="right">0</td>
-<td align="left">106N</td>
+<td align="right">1</td>
 <td align="left">ASP18GEN-1087-Weekday-00</td>
-<td align="right">31</td>
-<td align="right">8</td>
-</tr>
-<tr class="odd">
-<td align="left">1</td>
-<td align="right">0</td>
-<td align="left">107N</td>
-<td align="left">ASP18GEN-1087-Weekday-00</td>
-<td align="right">34</td>
-<td align="right">7</td>
-</tr>
-<tr class="even">
-<td align="left">1</td>
-<td align="right">0</td>
-<td align="left">108N</td>
-<td align="left">ASP18GEN-1087-Weekday-00</td>
-<td align="right">35</td>
-<td align="right">7</td>
+<td align="right">47</td>
+<td align="right">306</td>
 </tr>
 </tbody>
 </table>
-<p>This table includes columns for the id for a given stop, the route_id, our selected service_id’s, and the number of departures and the average headway for a given direction from 6 am to 10 am on weekdays.</p>
-<p>The <code>get_stop_frequency</code> function simply counts the number of departures within the time frame to get departures per stop. Then, to get headways, it divides the number of minutes by the number of departures, and rounds to the nearest integer.</p>
+<p>This table includes columns for the id for a given stop, the route_id, our selected service_ids, and the number of departures and the average headway for a given direction from 6 am to 10 am on weekdays.</p>
+<p>The <code>get_stop_frequency</code> function simply counts the number of departures within the time frame to get departures per stop. Then, to get headways, it divides the number of seconds (between start_time and end_time) by the number of departures, and rounds to the nearest integer.</p>
 <p>Lets have a look at the headways for the 1 train, which runs from the Bronx down to the Bottom of Manhattan.</p>
-<p>First, we filter the <code>am_freq</code> data frame to just stops going in 1 direction on the 1 train, and then we join to the original <code>stops</code> table, which includes a more descriptive stop_name.</p>
+<p>First, we filter the <code>am_stop_freq</code> data frame to just stops going in one direction on the 1 train, and then we join to the original <code>stops</code> table, which includes a more descriptive stop_name.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">one_line_stops</span> <span class="op">&lt;-</span> <span class="va">am_freq</span> <span class="op">%&gt;%</span> 
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">route_id</span><span class="op">==</span><span class="fl">1</span> <span class="op">&amp;</span> <span class="va">direction_id</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">stops</span>, by <span class="op">=</span><span class="st">"stop_id"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">one_line_stops</span> <span class="op">&lt;-</span> <span class="va">am_stop_freq</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">route_id</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">&amp;</span> <span class="va">direction_id</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">stops</span>, by <span class="op">=</span><span class="st">"stop_id"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>mean_headway_minutes <span class="op">=</span> <span class="va">mean_headway</span><span class="op">/</span><span class="fl">60</span><span class="op">)</span></code></pre></div>
 <p>As we can see, some stops seem to have higher headways than others, even when the train is running in the same direction. This may be counterintuitive, because we might expect the train to run through every stop the same amount of times for a given direction.</p>
 <p>Lets inspect the stops at which headways are higher.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">one_line_stops</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">headway</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">stop_name</span>, <span class="va">departures</span>, <span class="va">headway</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<code class="sourceCode R"><span class="va">one_line_stops</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">mean_headway</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">stop_name</span>, <span class="va">n_departures</span>, <span class="va">mean_headway</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">stop_name</th>
-<th align="right">departures</th>
-<th align="right">headway</th>
+<th align="right">n_departures</th>
+<th align="right">mean_headway</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">Van Cortlandt Park - 242 St</td>
 <td align="right">30</td>
-<td align="right">8</td>
+<td align="right">480</td>
 </tr>
 <tr class="even">
 <td align="left">238 St</td>
-<td align="right">30</td>
-<td align="right">8</td>
+<td align="right">31</td>
+<td align="right">465</td>
 </tr>
 <tr class="odd">
 <td align="left">231 St</td>
 <td align="right">31</td>
-<td align="right">8</td>
+<td align="right">465</td>
 </tr>
 <tr class="even">
 <td align="left">Marble Hill - 225 St</td>
 <td align="right">31</td>
-<td align="right">8</td>
+<td align="right">465</td>
 </tr>
 <tr class="odd">
 <td align="left">215 St</td>
 <td align="right">34</td>
-<td align="right">7</td>
+<td align="right">424</td>
 </tr>
 <tr class="even">
 <td align="left">207 St</td>
 <td align="right">35</td>
-<td align="right">7</td>
+<td align="right">411</td>
 </tr>
 </tbody>
 </table>
 <p>And those at which headways are lower:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">one_line_stops</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">headway</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">stop_name</span>, <span class="va">departures</span>, <span class="va">headway</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">tail</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<code class="sourceCode R"><span class="va">one_line_stops</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">mean_headway</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">stop_name</span>, <span class="va">n_departures</span>, <span class="va">mean_headway</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">tail</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">stop_name</th>
-<th align="right">departures</th>
-<th align="right">headway</th>
+<th align="right">n_departures</th>
+<th align="right">mean_headway</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">Canal St</td>
 <td align="right">47</td>
-<td align="right">5</td>
+<td align="right">306</td>
 </tr>
 <tr class="even">
 <td align="left">Franklin St</td>
 <td align="right">47</td>
-<td align="right">5</td>
+<td align="right">306</td>
 </tr>
 <tr class="odd">
 <td align="left">Chambers St</td>
 <td align="right">47</td>
-<td align="right">5</td>
+<td align="right">306</td>
 </tr>
 <tr class="even">
 <td align="left">Cortlandt St</td>
 <td align="right">48</td>
-<td align="right">5</td>
+<td align="right">300</td>
 </tr>
 <tr class="odd">
 <td align="left">Rector St</td>
 <td align="right">48</td>
-<td align="right">5</td>
+<td align="right">300</td>
 </tr>
 <tr class="even">
 <td align="left">South Ferry</td>
 <td align="right">48</td>
-<td align="right">5</td>
+<td align="right">300</td>
 </tr>
 </tbody>
 </table>
 <p>Here we can see that the 242-Van Cortland Stop, the last stop up North, in the Bronx, has noticeably higher headways (8 mins) at this time of day than the South Ferry Stop, which is at the south end of Manhattan.</p>
-<p>Lets also plot the headways at these stops on a map to see how they are distributed across the city. First, we’ll use the <code>stops_as_sf</code> function, which converts the latitudes and longitudes on the stops table in the GTFS feed into <a href="https://r-spatial.github.io/sf/articles/sf1.html">simple features</a>.</p>
+<p>Lets also plot the headways at these stops on a map to see how they are distributed across the city. First, we join the stops sf object to the 1 line’s calculated stop headways.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">nyc_stops_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/stops_as_sf.html">stops_as_sf</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">stops</span><span class="op">)</span></code></pre></div>
-<p>Now we can join those stop coordinates to the 1 line’s calculated stop headways.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">one_line_stops_sf</span> <span class="op">&lt;-</span> <span class="va">nyc_stops_sf</span> <span class="op">%&gt;%</span>
+<code class="sourceCode R"><span class="va">one_line_stops_sf</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">stops</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">right_join</a></span><span class="op">(</span><span class="va">one_line_stops</span>, by<span class="op">=</span><span class="st">"stop_id"</span><span class="op">)</span> </code></pre></div>
 <p>And then use ggplot’s <code>geom_sf</code> to plot the headways.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">one_line_stops_sf</span> <span class="op">%&gt;%</span> 
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">one_line_stops_sf</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color<span class="op">=</span><span class="va">headway</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">mean_headway_minutes</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p><img src="frequency_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
+<p><img src="frequency_files/figure-html/unnamed-chunk-16-1.png" width="864"></p>
 <p>On the map too, we can see that there is some variation in stop headways. During certain times of the day, the 1 train skips stops north of a certain stop in manhattan, presumably in order to turn around and provide shorter headways to stops south of that stop.</p>
-<p>Finally, we can easily summarise what the headways are like along the entire route now, by using r’s default summary function for the vector of headways.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">one_line_stops</span><span class="op">$</span><span class="va">headway</span><span class="op">)</span>
+<p>Finally, we can easily summarise what the headways are like along the entire route now, by using R’s default summary function for the vector of headways.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">one_line_stops</span><span class="op">$</span><span class="va">mean_headway</span><span class="op">)</span>
 <span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span>
-<span class="co">#&gt;   5.000   5.000   5.500   5.921   7.000   8.000</span></code></pre></div>
+<span class="co">#&gt;   300.0   313.0   327.0   353.8   400.0   480.0</span></code></pre></div>
 <p>This is the same method that tidytransit uses to summarise headways along all routes in the system when we use the <code>get_route_frequency</code> function, which we’ll try next.</p>
 </div>
-<div id="map-headways-by-route" class="section level1">
-<h1 class="hasAnchor">
-<a href="#map-headways-by-route" class="anchor"></a>4) Map Headways By Route</h1>
+<div id="map-headways-by-route" class="section level3">
+<h3 class="hasAnchor">
+<a href="#map-headways-by-route" class="anchor"></a>4) Map Headways By Route</h3>
 <p>Now we’ll use the <code>get_route_frequency</code> function to summarise transit service by route, for the same time period.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">am_route_freq</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_route_frequency.html">get_route_frequency</a></span><span class="op">(</span><span class="va">gtfs</span>, service_ids <span class="op">=</span> <span class="va">service_ids</span>, start_hour <span class="op">=</span> <span class="fl">6</span>, end_hour <span class="op">=</span> <span class="fl">10</span><span class="op">)</span> 
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">am_route_freq</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">am_route_freq</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_route_frequency.html">get_route_frequency</a></span><span class="op">(</span><span class="va">gtfs</span>, service_ids <span class="op">=</span> <span class="va">service_ids</span>, 
+                                     start_time <span class="op">=</span> <span class="fl">6</span><span class="op">*</span><span class="fl">3600</span>, end_time <span class="op">=</span> <span class="fl">10</span><span class="op">*</span><span class="fl">3600</span><span class="op">)</span> 
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">am_route_freq</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <colgroup>
@@ -561,151 +558,180 @@
 <tbody>
 <tr class="odd">
 <td align="left">1</td>
-<td align="right">3414</td>
-<td align="right">5</td>
-<td align="right">5</td>
-<td align="right">0.89</td>
+<td align="right">3429</td>
+<td align="right">313</td>
+<td align="right">325</td>
+<td align="right">49.96</td>
 <td align="right">76</td>
 </tr>
 <tr class="even">
 <td align="left">2</td>
-<td align="right">3198</td>
-<td align="right">8</td>
-<td align="right">37</td>
-<td align="right">70.70</td>
+<td align="right">3213</td>
+<td align="right">465</td>
+<td align="right">2183</td>
+<td align="right">4238.29</td>
 <td align="right">120</td>
 </tr>
 <tr class="odd">
 <td align="left">3</td>
-<td align="right">2017</td>
-<td align="right">8</td>
-<td align="right">8</td>
-<td align="right">0.94</td>
+<td align="right">2028</td>
+<td align="right">480</td>
+<td align="right">489</td>
+<td align="right">55.80</td>
 <td align="right">68</td>
 </tr>
 <tr class="even">
 <td align="left">4</td>
-<td align="right">2254</td>
-<td align="right">6</td>
-<td align="right">55</td>
-<td align="right">90.00</td>
+<td align="right">2268</td>
+<td align="right">379</td>
+<td align="right">3294</td>
+<td align="right">5400.82</td>
 <td align="right">77</td>
 </tr>
 <tr class="odd">
 <td align="left">5</td>
-<td align="right">2183</td>
-<td align="right">9</td>
-<td align="right">35</td>
-<td align="right">68.77</td>
+<td align="right">2188</td>
+<td align="right">514</td>
+<td align="right">2083</td>
+<td align="right">4127.14</td>
 <td align="right">92</td>
 </tr>
 <tr class="even">
 <td align="left">6</td>
-<td align="right">2799</td>
-<td align="right">7</td>
-<td align="right">19</td>
-<td align="right">53.22</td>
+<td align="right">2818</td>
+<td align="right">430</td>
+<td align="right">1141</td>
+<td align="right">3192.58</td>
 <td align="right">74</td>
 </tr>
 </tbody>
 </table>
-<p>Since, under the hood, this table is a summary of stop frequencies along each route, it includes the same variables as a summary of the headways at each stop along the route, as well as a sum of all departures. Again, its important to note that this summary is based on the trips that happened within the time frame we specify. As with the stops, we can easily join this table to simple features and then plot it on a map. Note that here too we pass in the select service_id’s from above, as the route run by a vehicle also depends on the selected service.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<p>Since, under the hood, this table is a summary of stop frequencies along each route, it includes the same variables as a summary of the headways at each stop along the route, as well as a sum of all departures. Again, its important to note that this summary is based on the trips that happened within the time frame we specify.</p>
+<p>As with the stops, we can easily join this table to simple features and then plot it on a map. Note that here too we pass in the select service_ids from above, as the route run by a vehicle also depends on the selected service.</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># get_route_geometry needs a gtfs object that includes shapes as simple feature data frames</span>
-<span class="va">gtfs_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gtfs_as_sf.html">gtfs_as_sf</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">)</span>
-<span class="va">routes_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_route_geometry.html">get_route_geometry</a></span><span class="op">(</span><span class="va">gtfs_sf</span>, service_ids <span class="op">=</span> <span class="va">service_ids</span><span class="op">)</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span>
-<span class="co">#&gt; although coordinates are longitude/latitude, st_union assumes that they are planar</span></code></pre></div>
+<span class="va">routes_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_route_geometry.html">get_route_geometry</a></span><span class="op">(</span><span class="va">gtfs</span>, service_ids <span class="op">=</span> <span class="va">service_ids</span><span class="op">)</span></code></pre></div>
 <p>Then we join the geometries to the calculated frequencies:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">routes_sf</span> <span class="op">&lt;-</span> <span class="va">routes_sf</span> <span class="op">%&gt;%</span> 
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">routes_sf</span> <span class="op">&lt;-</span> <span class="va">routes_sf</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">inner_join</a></span><span class="op">(</span><span class="va">am_route_freq</span>, by <span class="op">=</span> <span class="st">'route_id'</span><span class="op">)</span></code></pre></div>
 <p>And finally, lets plot the routes with median headways of less than 10 minutes in the morning.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># convert to an appropriate coordinate reference system</span>
 <span class="va">routes_sf_crs</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span><span class="va">routes_sf</span>, <span class="fl">26919</span><span class="op">)</span> 
-<span class="va">routes_sf_crs</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">median_headways</span><span class="op">&lt;</span><span class="fl">10</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<span class="va">routes_sf_crs</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">median_headways</span> <span class="op">&lt;</span> <span class="fl">10</span><span class="op">*</span><span class="fl">60</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>colour<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">median_headways</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"Headways"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>label<span class="op">=</span><span class="va">route_id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> </code></pre></div>
-<p><img src="frequency_files/figure-html/unnamed-chunk-22-1.png" width="576"></p>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<p><img src="frequency_files/figure-html/unnamed-chunk-21-1.png" width="576"></p>
 <p>Its clear that a number of the route lines overlap.</p>
 </div>
-<div id="map-departures-by-stop-and-route" class="section level1">
-<h1 class="hasAnchor">
-<a href="#map-departures-by-stop-and-route" class="anchor"></a>5) Map Departures by Stop and Route</h1>
+<div id="map-departures-by-stop-and-route" class="section level3">
+<h3 class="hasAnchor">
+<a href="#map-departures-by-stop-and-route" class="anchor"></a>5) Map Departures by Stop and Route</h3>
 <p>Still, we’d like to represent where and how frequently the subway runs in NYC in the morning. How can we do so given that, graphically, the route lines overlap?</p>
 <p>One method might be change the units we are representing graphically. Thus far, we have used stops and routes as units. But GTFS data also come with a <code>shapes</code> table, which, in theory, should allow us to say what the frequency of vehicles passing through any given shape is, using similar methods. This kind of method is beyond the scope of this vignette.</p>
 <p>Alternatively, regular ggplot users might expect the ggplot <code>dodge</code> function to allow us to move around these lines but, by design, thats not possible with <code>geom_sf</code>. One can see why: unlike a bar chart, the representations of route lines in geographic space on a map have a specific meaning.</p>
 <p>So we’ll use a cartographic trick, scaling each line according to total departures and close to a number around .001 <a href="https://en.wikipedia.org/wiki/Decimal_degrees">decimal degrees</a> which is a about the length of a street, which will fit on the map well. One might call this a cartogram.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">routes_sf_buffer</span> <span class="op">&lt;-</span> <span class="fu">st_buffer</span><span class="op">(</span><span class="va">routes_sf</span>,
-                              dist<span class="op">=</span><span class="va">routes_sf</span><span class="op">$</span><span class="va">total_departures</span><span class="op">/</span><span class="fl">1e6</span><span class="op">)</span>
-<span class="co">#&gt; Warning in st_buffer.sfc(st_geometry(x), dist, nQuadSegs, endCapStyle =</span>
-<span class="co">#&gt; endCapStyle, : st_buffer does not correctly buffer longitude/latitude data</span>
-<span class="co">#&gt; dist is assumed to be in decimal degrees (arc_degrees).</span></code></pre></div>
+                              dist <span class="op">=</span> <span class="va">routes_sf</span><span class="op">$</span><span class="va">total_departures</span><span class="op">/</span><span class="fl">1e6</span><span class="op">)</span></code></pre></div>
 <p>Next, when we render the map, we’ll make sure to make the borders around each route transparent, and set the opacity for the fill of all the polygons high again.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">routes_sf_buffer</span> <span class="op">%&gt;%</span> 
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">routes_sf_buffer</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>colour<span class="op">=</span><span class="fu"><a href="https://scales.r-lib.org//reference/alpha.html">alpha</a></span><span class="op">(</span><span class="st">"white"</span>,<span class="fl">0</span><span class="op">)</span>,fill<span class="op">=</span><span class="fu"><a href="https://scales.r-lib.org//reference/alpha.html">alpha</a></span><span class="op">(</span><span class="st">"red"</span>,<span class="fl">0.2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> </code></pre></div>
-<p><img src="frequency_files/figure-html/unnamed-chunk-24-1.png" width="576"></p>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="fu"><a href="https://scales.r-lib.org/reference/alpha.html">alpha</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="fl">0</span><span class="op">)</span>, fill <span class="op">=</span> <span class="fu"><a href="https://scales.r-lib.org/reference/alpha.html">alpha</a></span><span class="op">(</span><span class="st">"red"</span>,<span class="fl">0.2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<p><img src="frequency_files/figure-html/unnamed-chunk-23-1.png" width="576"></p>
 <p>Now we have a rough representation of the question we set out to answer: where and how frequently does transit service run in the AM in the NYC Subway. Note that in this graphic, the intensity of the red tells you how many overlapping trains run through the line and the thickness of the lines represents how many run along each line.</p>
 <p>We can combine this with stops to get a sense of how central stops relate to routes.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">nyc_stop_am_departures_main</span> <span class="op">&lt;-</span> <span class="va">nyc_stops_sf</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">am_freq</span>, by <span class="op">=</span> <span class="st">"stop_id"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">departures</span><span class="op">&gt;</span><span class="fl">50</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">gtfs</span><span class="op">$</span><span class="va">stops</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">inner_join</a></span><span class="op">(</span><span class="va">am_stop_freq</span>, by <span class="op">=</span> <span class="st">"stop_id"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">n_departures</span> <span class="op">&gt;</span> <span class="fl">50</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">stop_id</span>, <span class="va">stop_name</span>, <span class="va">n_departures</span>, <span class="va">mean_headway</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">n_departures</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">stop_id</th>
+<th align="left">stop_name</th>
+<th align="right">n_departures</th>
+<th align="right">mean_headway</th>
+<th align="left">geometry</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">115S</td>
+<td align="left">137 St - City College</td>
+<td align="right">51</td>
+<td align="right">282</td>
+<td align="left">POINT (-73.95368 40.82201)</td>
+</tr>
+<tr class="even">
+<td align="left">117S</td>
+<td align="left">116 St - Columbia University</td>
+<td align="right">51</td>
+<td align="right">282</td>
+<td align="left">POINT (-73.96411 40.80772)</td>
+</tr>
+<tr class="odd">
+<td align="left">118S</td>
+<td align="left">Cathedral Pkwy</td>
+<td align="right">51</td>
+<td align="right">282</td>
+<td align="left">POINT (-73.96685 40.80397)</td>
+</tr>
+<tr class="even">
+<td align="left">119S</td>
+<td align="left">103 St</td>
+<td align="right">51</td>
+<td align="right">282</td>
+<td align="left">POINT (-73.96838 40.79945)</td>
+</tr>
+<tr class="odd">
+<td align="left">121S</td>
+<td align="left">86 St</td>
+<td align="right">51</td>
+<td align="right">282</td>
+<td align="left">POINT (-73.97622 40.78864)</td>
+</tr>
+<tr class="even">
+<td align="left">122S</td>
+<td align="left">79 St</td>
+<td align="right">51</td>
+<td align="right">282</td>
+<td align="left">POINT (-73.97992 40.78393)</td>
+</tr>
+</tbody>
+</table>
 <p>First, we’ll leverage the common <code>stop_name</code> variable to group and count departures, in both directions, for all stops, filtering to out a number of smaller stops for more graphical clarity.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">nyc_stops</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">stops</span>,<span class="va">am_freq</span>, by<span class="op">=</span><span class="st">"stop_id"</span><span class="op">)</span>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">am_stop_name_departures</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">stops</span>, <span class="va">am_stop_freq</span>, by<span class="op">=</span><span class="st">"stop_id"</span><span class="op">)</span>
 
-<span class="va">stop_departures</span> <span class="op">&lt;-</span> <span class="va">nyc_stops</span> <span class="op">%&gt;%</span>  
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">stop_name</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">transmute</a></span><span class="op">(</span>total_departures<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">departures</span>, na.rm<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
+<span class="va">am_stop_name_departures</span> <span class="op">&lt;-</span> <span class="va">am_stop_name_departures</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>  
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">stop_name</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">transmute</a></span><span class="op">(</span>total_departures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">n_departures</span>, na.rm<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
 
-<span class="va">nyc_stops1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">right_join</a></span><span class="op">(</span><span class="va">nyc_stops_sf</span>,
-                        <span class="va">stop_departures</span>, by<span class="op">=</span><span class="st">"stop_name"</span><span class="op">)</span>
-
-<span class="va">stop_departures</span> <span class="op">&lt;-</span> <span class="va">nyc_stops1</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">total_departures</span><span class="op">&gt;</span><span class="fl">100</span><span class="op">)</span></code></pre></div>
+<span class="va">am_stop_name_departures</span> <span class="op">&lt;-</span> <span class="va">am_stop_name_departures</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">total_departures</span> <span class="op">&gt;</span> <span class="fl">100</span><span class="op">)</span></code></pre></div>
 <p>Finally, we can plot both the route line counts and the stop departure counts on one map:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">routes_sf_buffer</span>,colour<span class="op">=</span><span class="fu"><a href="https://scales.r-lib.org//reference/alpha.html">alpha</a></span><span class="op">(</span><span class="st">"white"</span>,<span class="fl">0</span><span class="op">)</span>,fill<span class="op">=</span><span class="fu"><a href="https://scales.r-lib.org//reference/alpha.html">alpha</a></span><span class="op">(</span><span class="st">"red"</span>,<span class="fl">0.3</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">stop_departures</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>size<span class="op">=</span><span class="va">total_departures</span><span class="op">)</span>, shape<span class="op">=</span><span class="fl">1</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">routes_sf_buffer</span>, 
+          colour <span class="op">=</span> <span class="fu"><a href="https://scales.r-lib.org/reference/alpha.html">alpha</a></span><span class="op">(</span><span class="st">"white"</span>,<span class="fl">0</span><span class="op">)</span>, fill <span class="op">=</span> <span class="fu"><a href="https://scales.r-lib.org/reference/alpha.html">alpha</a></span><span class="op">(</span><span class="st">"red"</span>,<span class="fl">0.3</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">am_stop_name_departures</span>, 
+          <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">total_departures</span><span class="op">)</span>, shape<span class="op">=</span><span class="fl">1</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>size <span class="op">=</span> <span class="st">"Departures (Hundreds)"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position<span class="op">=</span><span class="st">"none"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"NYC MTA - Relative Departures by Route and Stop (AM)"</span><span class="op">)</span></code></pre></div>
-<p><img src="frequency_files/figure-html/unnamed-chunk-27-1.png" width="576"></p>
+<p><img src="frequency_files/figure-html/unnamed-chunk-26-1.png" width="576"></p>
+</div>
 </div>
   </div>
 
