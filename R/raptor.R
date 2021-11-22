@@ -440,10 +440,10 @@ travel_times = function(filtered_stop_times,
 #' 
 #' @param gtfs_obj a gtfs feed
 #' @param extract_date date to extract trips from this day (Date or "YYYY-MM-DD" string)
-#' @param min_departure_time The earliest departure time. Can be given as "HH:MM:SS", 
+#' @param min_departure_time (optional) The earliest departure time. Can be given as "HH:MM:SS", 
 #'                           hms object or numeric value in seconds.
-#' @param max_arrival_time The latest arrival time. Can be given as "HH:MM:SS", 
-#'                         hms object or numeric value in seconds
+#' @param max_arrival_time (optional) The latest arrival time. Can be given as "HH:MM:SS", 
+#'                         hms object or numeric value in seconds.
 #' 
 #' @return Filtered `stop_times` data.table for [travel_times()] and [raptor()].
 #' 
@@ -462,10 +462,14 @@ filter_stop_times = function(gtfs_obj,
   if(is.character(extract_date)) {
     extract_date <- as.Date(extract_date)
   }
-  if(is.character(min_departure_time)) {
+  if(missing(min_departure_time)) {
+    min_departure_time <- 0 
+  } else if(is.character(min_departure_time)) {
     min_departure_time <- hhmmss_to_seconds(min_departure_time)
   }
-  if(is.character(max_arrival_time)) {
+  if(missing(max_arrival_time)) {
+    max_arrival_time <- max(gtfs_obj$stop_times$arrival_time)+1
+  } else if(is.character(max_arrival_time)) {
     max_arrival_time <- hhmmss_to_seconds(max_arrival_time)
   }
   min_departure_time <- as.numeric(min_departure_time)
