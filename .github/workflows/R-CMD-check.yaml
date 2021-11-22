@@ -22,7 +22,6 @@ jobs:
           #- {os: macOS-latest,   r: '4.0'}
           #- {os: windows-latest, r: 'devel'}
           - {os: windows-latest, r: '4.0'}
-          - {os: windows-latest, r: '3.6'}
           - {os: ubuntu-18.04,   r: '4.0', rspm: "https://packagemanager.rstudio.com/cran/__linux__/bionic/latest"}
           - {os: ubuntu-18.04,   r: '3.6', rspm: "https://packagemanager.rstudio.com/cran/__linux__/bionic/latest"}
 
