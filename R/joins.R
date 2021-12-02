@@ -68,7 +68,7 @@ filter_feed_by_trips = function(gtfs_obj, trip_ids) {
   }
   if(feed_contains(gtfs_obj, "transfers")) {
     gtfs_obj$transfers <- gtfs_obj$transfers[which(
-      gtfs_obj$transfers$from_stop_id %in% trip_stop_ids | 
+      gtfs_obj$transfers$from_stop_id %in% trip_stop_ids & 
         gtfs_obj$transfers$to_stop_id %in% trip_stop_ids),]
   }
   
