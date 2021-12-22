@@ -104,3 +104,37 @@ test_that("sf_as_tbl", {
   expect_equal(x, y, tolerance = 0.001)
 })
 
+# stop distances ####
+stopdist_df = dplyr::tibble(
+  stop_id = c("A1", "A2", "A3", "B1", "B2"), stop_name = c("A", "A", "A", "B", "B"),
+  stop_lon = c(8.47157, 8.47202, 8.47084, 8.45870, 8.45940),
+  stop_lat = c(47.18196, 47.18243, 47.18262, 47.18030, 47.18081))
+
+test_that("stop_distances", {
+  dist_df = stop_distances(stopdist_df)
+  stopdist_sf = stops_as_sf(stopdist_df)
+  dist_sf = stop_distances(stopdist_sf)
+  
+  expect_equal(dist_df[,c("from_stop_id", "to_stop_id")], dist_sf[,c("from_stop_id", "to_stop_id")])
+  diff = dist_df$dist - dist_sf$dist
+  expect_lt(max(abs(diff)), 1)
+})
+
+test_that("stop_group_distances", {
+  x = stop_group_distances(stopdist_df)
+  expect_is(x$dists[1][[1]], "matrix")
+  expect_equal(x$n_stop_ids, c(3,2))
+})
+
+test_that("stop_group_distances real feed", {
+  g_nyc = read_gtfs(system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit"))
+  x1 = stop_group_distances(g_nyc$stops)
+
+  g_nyc_sf = gtfs_as_sf(g_nyc)
+  x2 = stop_group_distances(g_nyc_sf$stops)
+  
+  expect_equal(colnames(x1), colnames(x2))
+  expect_equal(x1$stop_name, x2$stop_name)
+  expect_equal(x1[,c("n_stop_ids", "dist_mean", "dist_median", "dist_max")], 
+               x2[,c("n_stop_ids", "dist_mean", "dist_median", "dist_max")])
+})

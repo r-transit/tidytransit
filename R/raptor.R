@@ -86,7 +86,7 @@ raptor = function(stop_times,
   if(!is.character(stop_ids) && !is.null(stop_ids)) {
     stop("stop_ids must be a character vector (or NULL)")
   }
-
+  
   # check and params ####
   # stop ids need to be a character vector
   # use data.table for faster manipulation
@@ -324,6 +324,11 @@ raptor = function(stop_times,
 #' @param return_coords Returns stop coordinates as columms. Default is FALSE.                            
 #' @param return_DT travel_times() returns a data.table if TRUE. Default is FALSE which 
 #'                  returns a tibble/tbl_df.
+#' @param stop_dist_threshold stop_names are not structured identifiers like 
+#'                                    stop_ids or parent_stations, so it's possible that 
+#'                                    stops with the same name are far apart. travel_times()
+#'                                    issues a warning if the distance among stop_ids is 
+#'                                    above this threshold (in meters).
 #'                           
 #' @return A table with travel times to/from all stops reachable by `stop_name` and their
 #'         corresponding journey departure and arrival times.
@@ -355,8 +360,10 @@ travel_times = function(filtered_stop_times,
                         max_transfers = NULL,
                         max_departure_time = NULL,
                         return_coords = FALSE,
-                        return_DT = FALSE) {
+                        return_DT = FALSE,
+                        stop_dist_threshold = 300) {
   travel_time <- journey_arrival_time <- journey_departure_time <- NULL
+  stop_names = stop_name; rm(stop_name)
   if("tidygtfs" %in% class(filtered_stop_times)) {
     gtfs_obj = filtered_stop_times
     if(is.null(attributes(gtfs_obj$stop_times)$extract_date)) {
@@ -387,11 +394,19 @@ travel_times = function(filtered_stop_times,
   }
   
   # get stop_ids of names
-  stop_ids = NULL
-  if(!is.null(stop_name)) {
-    stop_ids = stops$stop_id[which(stops$stop_name %in% stop_name)]
-    if(length(stop_ids) == 0) {
-      stop(paste0("Stop name '", stop_name, "' not found in stops table"))
+  stop_ids = stops$stop_id[which(stops$stop_name %in% stop_names)]
+  if(length(stop_ids) == 0) {
+    stop(paste0("Stop name '", stop_names, "' not found in stops table"))
+  }
+  
+  # Check stop_name integrity
+  if(length(stop_ids) > 1) {
+    stop_dists = stop_distances(stops[stop_name %in% stop_names])
+    if(max(stop_dists$dist) > stop_dist_threshold) {
+      warn_stops = stop_dists[which(stop_dists$dist > stop_dist_threshold),]
+      warn_stops <- sort(unique(c(warn_stops$from_stop_id, warn_stops$to_stop_id)))
+      warning("Some stops (ids: ", paste(warn_stops, collapse = ", "), 
+              ") are more than ", stop_dist_threshold, " meters apart")     
     }
   }
   
