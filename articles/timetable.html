@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -70,7 +66,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/r-transit/tidytransit/">
+  <a href="https://github.com/r-transit/tidytransit/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -89,10 +85,10 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Generate a Departure Timetable</h1>
-                        <h4 class="author">Flavio Poletti</h4>
+                        <h4 data-toc-skip class="author">Flavio Poletti</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-transit/tidytransit/blob/master/vignettes/timetable.Rmd"><code>vignettes/timetable.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-transit/tidytransit/blob/HEAD/vignettes/timetable.Rmd" class="external-link"><code>vignettes/timetable.Rmd</code></a></small>
       <div class="hidden name"><code>timetable.Rmd</code></div>
 
     </div>
@@ -100,105 +96,105 @@
     
     
 <p>In this vignette a departure timetable for a stop is generated and visualised. For some analysis it is important to know how and when a single stop is served and workflows to gather and plot such data can help with this analysis.</p>
-<div id="read-gtfs-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#read-gtfs-data" class="anchor"></a>Read GTFS data</h2>
+<div class="section level2">
+<h2 id="read-gtfs-data">Read GTFS data<a class="anchor" aria-label="anchor" href="#read-gtfs-data"></a>
+</h2>
 <p>We use a feed from the New York Metropolitan Transportation Authority. It is provided as a sample feed with tidytransit but you can read it directly from the MTA’s website.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">local_gtfs_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"google_transit_nyc_subway.zip"</span>, package <span class="op">=</span> <span class="st">"tidytransit"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">local_gtfs_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"google_transit_nyc_subway.zip"</span>, package <span class="op">=</span> <span class="st">"tidytransit"</span><span class="op">)</span>
 <span class="va">gtfs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_gtfs.html">read_gtfs</a></span><span class="op">(</span><span class="va">local_gtfs_path</span><span class="op">)</span>
 <span class="co"># gtfs &lt;- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")</span></code></pre></div>
 </div>
-<div id="trip_origin-and-trip_headsign" class="section level2">
-<h2 class="hasAnchor">
-<a href="#trip_origin-and-trip_headsign" class="anchor"></a>trip_origin and trip_headsign</h2>
+<div class="section level2">
+<h2 id="trip_origin-and-trip_headsign">trip_origin and trip_headsign<a class="anchor" aria-label="anchor" href="#trip_origin-and-trip_headsign"></a>
+</h2>
 <p>To display where a bus (or any public transit vehicle) is headed on a timetable we need the column <code>trip_headsign</code> in <code>gtfs$trips</code>. This is an optional field but our example feed provides this information. To display where a vehicle comes from on the timetable we need to create a new column in <code>gtfs$trips</code> which we’ll call <code>trip_origin</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># get the id of the first stop in the trip's stop sequence</span>
-<span class="va">first_stop_id</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">stop_times</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">trip_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/tidyverse.html">summarise</a></span><span class="op">(</span>stop_id <span class="op">=</span> <span class="va">stop_id</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html">which.min</a></span><span class="op">(</span><span class="va">stop_sequence</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
+<span class="va">first_stop_id</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">stop_times</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">trip_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/tidyverse.html" class="external-link">summarise</a></span><span class="op">(</span>stop_id <span class="op">=</span> <span class="va">stop_id</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.min</a></span><span class="op">(</span><span class="va">stop_sequence</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
 
 <span class="co"># join with the stops table to get the stop_name</span>
-<span class="va">first_stop_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">first_stop_id</span>, <span class="va">gtfs</span><span class="op">$</span><span class="va">stops</span>, by<span class="op">=</span><span class="st">"stop_id"</span><span class="op">)</span>
+<span class="va">first_stop_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">first_stop_id</span>, <span class="va">gtfs</span><span class="op">$</span><span class="va">stops</span>, by<span class="op">=</span><span class="st">"stop_id"</span><span class="op">)</span>
 
 <span class="co"># rename the first stop_name as trip_origin</span>
-<span class="va">trip_origins</span> <span class="op">&lt;-</span> <span class="va">first_stop_names</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">trip_id</span>, trip_origin <span class="op">=</span> <span class="va">stop_name</span><span class="op">)</span>
+<span class="va">trip_origins</span> <span class="op">&lt;-</span> <span class="va">first_stop_names</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">trip_id</span>, trip_origin <span class="op">=</span> <span class="va">stop_name</span><span class="op">)</span>
 
 <span class="co"># join the trip origins back onto the trips</span>
-<span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span>, <span class="va">trip_origins</span>, by <span class="op">=</span> <span class="st">"trip_id"</span><span class="op">)</span></code></pre></div>
+<span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span>, <span class="va">trip_origins</span>, by <span class="op">=</span> <span class="st">"trip_id"</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">route_id</span>, <span class="va">trip_origin</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 6 × 2
-##   route_id trip_origin                
-##   &lt;chr&gt;    &lt;chr&gt;                      
-## 1 1        Van Cortlandt Park - 242 St
-## 2 1        Van Cortlandt Park - 242 St
-## 3 1        Van Cortlandt Park - 242 St
-## 4 1        Van Cortlandt Park - 242 St
-## 5 1        South Ferry                
-## 6 1        Van Cortlandt Park - 242 St</code></pre>
+<code class="sourceCode R"><span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">route_id</span>, <span class="va">trip_origin</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 6 × 2</span></span>
+<span class="co">##   route_id trip_origin                </span>
+<span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      </span>
+<span class="co">## <span style="color: #BCBCBC;">1</span> 1        Van Cortlandt Park - 242 St</span>
+<span class="co">## <span style="color: #BCBCBC;">2</span> 1        Van Cortlandt Park - 242 St</span>
+<span class="co">## <span style="color: #BCBCBC;">3</span> 1        Van Cortlandt Park - 242 St</span>
+<span class="co">## <span style="color: #BCBCBC;">4</span> 1        Van Cortlandt Park - 242 St</span>
+<span class="co">## <span style="color: #BCBCBC;">5</span> 1        South Ferry                </span>
+<span class="co">## <span style="color: #BCBCBC;">6</span> 1        Van Cortlandt Park - 242 St</span></code></pre>
 <p>In case <code>trip_headsign</code> does not exist in the feed it can be generated similarly to <code>trip_origin</code>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/exists.html">exists</a></span><span class="op">(</span><span class="st">"trip_headsign"</span>, where <span class="op">=</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+<code class="sourceCode R"><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/exists.html" class="external-link">exists</a></span><span class="op">(</span><span class="st">"trip_headsign"</span>, where <span class="op">=</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
   <span class="co"># get the last id of the trip's stop sequence</span>
-  <span class="va">trip_headsigns</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">stop_times</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">trip_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-    <span class="fu"><a href="https://r-spatial.github.io/sf/reference/tidyverse.html">summarise</a></span><span class="op">(</span>stop_id <span class="op">=</span> <span class="va">stop_id</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html">which.max</a></span><span class="op">(</span><span class="va">stop_sequence</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">stops</span>, by<span class="op">=</span><span class="st">"stop_id"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">trip_id</span>, trip_headsign.computed <span class="op">=</span> <span class="va">stop_name</span><span class="op">)</span>
+  <span class="va">trip_headsigns</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">stop_times</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">trip_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+    <span class="fu"><a href="https://r-spatial.github.io/sf/reference/tidyverse.html" class="external-link">summarise</a></span><span class="op">(</span>stop_id <span class="op">=</span> <span class="va">stop_id</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">stop_sequence</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">stops</span>, by<span class="op">=</span><span class="st">"stop_id"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">trip_id</span>, trip_headsign.computed <span class="op">=</span> <span class="va">stop_name</span><span class="op">)</span>
 
   <span class="co"># assign the headsign to the gtfs object </span>
-  <span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span>, <span class="va">trip_headsigns</span>, by <span class="op">=</span> <span class="st">"trip_id"</span><span class="op">)</span>
+  <span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span>, <span class="va">trip_headsigns</span>, by <span class="op">=</span> <span class="st">"trip_id"</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
 </div>
-<div id="create-a-departure-time-table" class="section level2">
-<h2 class="hasAnchor">
-<a href="#create-a-departure-time-table" class="anchor"></a>Create A Departure Time Table</h2>
+<div class="section level2">
+<h2 id="create-a-departure-time-table">Create A Departure Time Table<a class="anchor" aria-label="anchor" href="#create-a-departure-time-table"></a>
+</h2>
 <p>To create a departure timetable we first need to find the ids of all stops in the stops table with the same same name, as <code>stop_name</code> might cover different platforms and thus have multiple stop_ids in the stops table.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">stop_ids</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">stops</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">stop_name</span> <span class="op">==</span> <span class="st">"Times Sq - 42 St"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">stop_id</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">stop_ids</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">stops</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">stop_name</span> <span class="op">==</span> <span class="st">"Times Sq - 42 St"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">stop_id</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="trips-departing-from-stop" class="section level2">
-<h2 class="hasAnchor">
-<a href="#trips-departing-from-stop" class="anchor"></a>Trips departing from stop</h2>
+<div class="section level2">
+<h2 id="trips-departing-from-stop">Trips departing from stop<a class="anchor" aria-label="anchor" href="#trips-departing-from-stop"></a>
+</h2>
 <p>To the selected stop_ids for Time Square, we can join trip columns: <code>route_id</code>, <code>service_id</code>, <code>trip_headsign</code>, and <code>trip_origin</code>. Because stop_ids and trips are linked via the <code>stop_times</code> data frame, we do this by joining the stop_ids we’ve selected to the stop_times data frame and then to the trips data frame.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">departures</span> <span class="op">&lt;-</span> <span class="va">stop_ids</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">inner_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">stop_times</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-               <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">trip_id</span>, <span class="va">arrival_time</span>, 
+<code class="sourceCode R"><span class="va">departures</span> <span class="op">&lt;-</span> <span class="va">stop_ids</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">stop_times</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+               <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">trip_id</span>, <span class="va">arrival_time</span>, 
                       <span class="va">departure_time</span>, <span class="va">stop_id</span><span class="op">)</span>, 
              by <span class="op">=</span> <span class="st">"stop_id"</span><span class="op">)</span>
 
-<span class="va">departures</span> <span class="op">&lt;-</span> <span class="va">departures</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">trip_id</span>, <span class="va">route_id</span>, 
+<span class="va">departures</span> <span class="op">&lt;-</span> <span class="va">departures</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">trip_id</span>, <span class="va">route_id</span>, 
                      <span class="va">service_id</span>, <span class="va">trip_headsign</span>, 
                      <span class="va">trip_origin</span><span class="op">)</span>, 
             by <span class="op">=</span> <span class="st">"trip_id"</span><span class="op">)</span> </code></pre></div>
 </div>
-<div id="add-route-info-route_short_name" class="section level2">
-<h2 class="hasAnchor">
-<a href="#add-route-info-route_short_name" class="anchor"></a>add route info (route_short_name)</h2>
+<div class="section level2">
+<h2 id="add-route-info-route_short_name">add route info (route_short_name)<a class="anchor" aria-label="anchor" href="#add-route-info-route_short_name"></a>
+</h2>
 <p>Each trip belongs to a route, and the route short name can be added to the departures by joining the trips data frame with <code>gtfs$routes</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">departures</span> <span class="op">&lt;-</span> <span class="va">departures</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">routes</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">route_id</span>, 
+<code class="sourceCode R"><span class="va">departures</span> <span class="op">&lt;-</span> <span class="va">departures</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">routes</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">route_id</span>, 
                      <span class="va">route_short_name</span><span class="op">)</span>, 
             by <span class="op">=</span> <span class="st">"route_id"</span><span class="op">)</span></code></pre></div>
 <p>Now we have a data frame that tells us about the origin, destination, and time at which each train depart from Times Square for every possible schedule of service.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">departures</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">arrival_time</span>,
+<code class="sourceCode R"><span class="va">departures</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">arrival_time</span>,
          <span class="va">departure_time</span>,
          <span class="va">trip_headsign</span>,<span class="va">trip_origin</span>,
-         <span class="va">route_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+         <span class="va">route_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">arrival_time</th>
@@ -254,37 +250,37 @@
 </table>
 <p>However, we don’t know days on which these trips run. Using the service_id column on our calculated departures, and tidytransit’s calculated <code>dates_services</code> data frame, we can filter trips to a given date of interest.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">dates_services</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 6 × 2
-##   date       service_id             
-##   &lt;date&gt;     &lt;chr&gt;                  
-## 1 2018-06-24 ASP18GEN-1037-Sunday-00
-## 2 2018-06-24 ASP18GEN-2048-Sunday-00
-## 3 2018-06-24 ASP18GEN-3041-Sunday-00
-## 4 2018-06-24 ASP18GEN-4049-Sunday-00
-## 5 2018-06-24 ASP18GEN-5048-Sunday-00
-## 6 2018-06-24 ASP18GEN-6030-Sunday-00</code></pre>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">dates_services</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 6 × 2</span></span>
+<span class="co">##   date       service_id             </span>
+<span class="co">##   <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  </span>
+<span class="co">## <span style="color: #BCBCBC;">1</span> 2018-06-24 ASP18GEN-1037-Sunday-00</span>
+<span class="co">## <span style="color: #BCBCBC;">2</span> 2018-06-24 ASP18GEN-2048-Sunday-00</span>
+<span class="co">## <span style="color: #BCBCBC;">3</span> 2018-06-24 ASP18GEN-3041-Sunday-00</span>
+<span class="co">## <span style="color: #BCBCBC;">4</span> 2018-06-24 ASP18GEN-4049-Sunday-00</span>
+<span class="co">## <span style="color: #BCBCBC;">5</span> 2018-06-24 ASP18GEN-5048-Sunday-00</span>
+<span class="co">## <span style="color: #BCBCBC;">6</span> 2018-06-24 ASP18GEN-6030-Sunday-00</span></code></pre>
 <p>Please see the <code>servicepatterns</code> vignette for further examples on how to use this table.</p>
 </div>
-<div id="extract-a-single-day" class="section level2">
-<h2 class="hasAnchor">
-<a href="#extract-a-single-day" class="anchor"></a>Extract a single day</h2>
+<div class="section level2">
+<h2 id="extract-a-single-day">Extract a single day<a class="anchor" aria-label="anchor" href="#extract-a-single-day"></a>
+</h2>
 <p>Now we are ready to extract the same service table for any given day of the year.</p>
 <p>For example, for August 23rd 2018, a typical weekday, we can filter as follows:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">services_on_180823</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">dates_services</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">date</span> <span class="op">==</span> <span class="st">"2018-08-23"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">service_id</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">services_on_180823</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">dates_services</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">date</span> <span class="op">==</span> <span class="st">"2018-08-23"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">service_id</span><span class="op">)</span>
 
-<span class="va">departures_180823</span> <span class="op">&lt;-</span> <span class="va">departures</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">inner_join</a></span><span class="op">(</span><span class="va">services_on_180823</span>, by <span class="op">=</span> <span class="st">"service_id"</span><span class="op">)</span></code></pre></div>
+<span class="va">departures_180823</span> <span class="op">&lt;-</span> <span class="va">departures</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="va">services_on_180823</span>, by <span class="op">=</span> <span class="st">"service_id"</span><span class="op">)</span></code></pre></div>
 <p>How services and trips are set up depends largely on the feed. For an idea how to handle other dates and questions about schedules have a look at the <code>servicepatterns</code> vignette.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">departures_180823</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">departure_time</span>, <span class="va">stop_id</span>, <span class="va">route_short_name</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">departure_time</span>, <span class="va">stop_id</span>, <span class="va">route_short_name</span>, <span class="va">trip_headsign</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">departure_time</span> <span class="op">&gt;=</span> <span class="fu">hms</span><span class="fu">::</span><span class="fu"><a href="https://hms.tidyverse.org/reference/hms.html">hms</a></span><span class="op">(</span>hours <span class="op">=</span> <span class="fl">7</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">departure_time</span> <span class="op">&lt;</span> <span class="fu">hms</span><span class="fu">::</span><span class="fu"><a href="https://hms.tidyverse.org/reference/hms.html">hms</a></span><span class="op">(</span>hours <span class="op">=</span> <span class="fl">7</span>, minutes <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">departures_180823</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">departure_time</span>, <span class="va">stop_id</span>, <span class="va">route_short_name</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">departure_time</span>, <span class="va">stop_id</span>, <span class="va">route_short_name</span>, <span class="va">trip_headsign</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">departure_time</span> <span class="op">&gt;=</span> <span class="fu">hms</span><span class="fu">::</span><span class="fu"><a href="https://hms.tidyverse.org/reference/hms.html" class="external-link">hms</a></span><span class="op">(</span>hours <span class="op">=</span> <span class="fl">7</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">departure_time</span> <span class="op">&lt;</span> <span class="fu">hms</span><span class="fu">::</span><span class="fu"><a href="https://hms.tidyverse.org/reference/hms.html" class="external-link">hms</a></span><span class="op">(</span>hours <span class="op">=</span> <span class="fl">7</span>, minutes <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">departure_time</th>
@@ -464,38 +460,38 @@
 </tbody>
 </table>
 </div>
-<div id="simple-plot" class="section level2">
-<h2 class="hasAnchor">
-<a href="#simple-plot" class="anchor"></a>Simple plot</h2>
+<div class="section level2">
+<h2 id="simple-plot">Simple plot<a class="anchor" aria-label="anchor" href="#simple-plot"></a>
+</h2>
 <p>We’ll now plot all departures from Times Square depending on trip_headsign and route. We can use the route colors provided in the feed.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">route_colors</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">routes</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">route_id</span>, <span class="va">route_short_name</span>, <span class="va">route_color</span><span class="op">)</span>
-<span class="va">route_colors</span><span class="op">$</span><span class="va">route_color</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">route_colors</span><span class="op">$</span><span class="va">route_color</span> <span class="op">==</span> <span class="st">""</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"454545"</span>
-<span class="va">route_colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"#"</span>, <span class="va">route_colors</span><span class="op">$</span><span class="va">route_color</span><span class="op">)</span>, <span class="va">route_colors</span><span class="op">$</span><span class="va">route_short_name</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">route_colors</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">routes</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">route_id</span>, <span class="va">route_short_name</span>, <span class="va">route_color</span><span class="op">)</span>
+<span class="va">route_colors</span><span class="op">$</span><span class="va">route_color</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">route_colors</span><span class="op">$</span><span class="va">route_color</span> <span class="op">==</span> <span class="st">""</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"454545"</span>
+<span class="va">route_colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"#"</span>, <span class="va">route_colors</span><span class="op">$</span><span class="va">route_color</span><span class="op">)</span>, <span class="va">route_colors</span><span class="op">$</span><span class="va">route_short_name</span><span class="op">)</span>
 
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">departures_180823</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y<span class="op">=</span><span class="va">trip_headsign</span>, x<span class="op">=</span><span class="va">departure_time</span>, color <span class="op">=</span> <span class="va">route_short_name</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_date.html">scale_x_time</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">departures</span><span class="op">$</span><span class="va">departure_time</span><span class="op">)</span><span class="op">)</span>, <span class="fl">3600</span><span class="op">)</span>, 
-               labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_date.html">time_format</a></span><span class="op">(</span><span class="st">"%H:%M"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_color_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">route_colors</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Departures from Times Square on 08/23/18"</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">departures_180823</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y<span class="op">=</span><span class="va">trip_headsign</span>, x<span class="op">=</span><span class="va">departure_time</span>, color <span class="op">=</span> <span class="va">route_short_name</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_date.html" class="external-link">scale_x_time</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">departures</span><span class="op">$</span><span class="va">departure_time</span><span class="op">)</span><span class="op">)</span>, <span class="fl">3600</span><span class="op">)</span>, 
+               labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_date.html" class="external-link">time_format</a></span><span class="op">(</span><span class="st">"%H:%M"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_color_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">route_colors</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Departures from Times Square on 08/23/18"</span><span class="op">)</span></code></pre></div>
 <p><img src="timetable_files/figure-html/unnamed-chunk-12-1.png" width="768"></p>
 <p>Now we plot departures for all stop_ids with the same name, we can separate for different stop_id. The following plot shows all departures for stop_ids 127N and 127S from 7 to 8 AM.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">departures_180823_sub_7to8</span> <span class="op">&lt;-</span> <span class="va">departures_180823</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">stop_id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"127N"</span>, <span class="st">"127S"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">departure_time</span> <span class="op">&gt;=</span> <span class="fu">hms</span><span class="fu">::</span><span class="fu"><a href="https://hms.tidyverse.org/reference/hms.html">hms</a></span><span class="op">(</span>hours <span class="op">=</span> <span class="fl">7</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">departure_time</span> <span class="op">&lt;=</span> <span class="fu">hms</span><span class="fu">::</span><span class="fu"><a href="https://hms.tidyverse.org/reference/hms.html">hms</a></span><span class="op">(</span>hour <span class="op">=</span> <span class="fl">8</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">departures_180823_sub_7to8</span> <span class="op">&lt;-</span> <span class="va">departures_180823</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">stop_id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"127N"</span>, <span class="st">"127S"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">departure_time</span> <span class="op">&gt;=</span> <span class="fu">hms</span><span class="fu">::</span><span class="fu"><a href="https://hms.tidyverse.org/reference/hms.html" class="external-link">hms</a></span><span class="op">(</span>hours <span class="op">=</span> <span class="fl">7</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">departure_time</span> <span class="op">&lt;=</span> <span class="fu">hms</span><span class="fu">::</span><span class="fu"><a href="https://hms.tidyverse.org/reference/hms.html" class="external-link">hms</a></span><span class="op">(</span>hour <span class="op">=</span> <span class="fl">8</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">departures_180823_sub_7to8</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y<span class="op">=</span><span class="va">trip_headsign</span>, x<span class="op">=</span><span class="va">departure_time</span>, color <span class="op">=</span> <span class="va">route_short_name</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_date.html">scale_x_time</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">7</span><span class="op">*</span><span class="fl">3600</span>, <span class="fl">9</span><span class="op">*</span><span class="fl">3600</span>, <span class="fl">300</span><span class="op">)</span>, labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_date.html">time_format</a></span><span class="op">(</span><span class="st">"%H:%M"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_discrete.html">scale_y_discrete</a></span><span class="op">(</span>drop <span class="op">=</span> <span class="cn">F</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Departures from Times Square on 08/23/18"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">stop_id</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">departures_180823_sub_7to8</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y<span class="op">=</span><span class="va">trip_headsign</span>, x<span class="op">=</span><span class="va">departure_time</span>, color <span class="op">=</span> <span class="va">route_short_name</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_date.html" class="external-link">scale_x_time</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">7</span><span class="op">*</span><span class="fl">3600</span>, <span class="fl">9</span><span class="op">*</span><span class="fl">3600</span>, <span class="fl">300</span><span class="op">)</span>, labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_date.html" class="external-link">time_format</a></span><span class="op">(</span><span class="st">"%H:%M"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_discrete.html" class="external-link">scale_y_discrete</a></span><span class="op">(</span>drop <span class="op">=</span> <span class="cn">F</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Departures from Times Square on 08/23/18"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">stop_id</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
 <p><img src="timetable_files/figure-html/unnamed-chunk-13-1.png" width="576"></p>
 <p>Of course this plot idea can be expanded further. You could also differentiate each route by direction (using headsign, origin or next/previous stops). Another approach is to calculate frequencies and show different levels of service during the day, all depending on the goal of your analysis.</p>
 </div>
@@ -512,11 +508,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Flavio Poletti, Daniel Herszenhut, Mark Padgham, Tom Buckley, Danton Noriega-Goodwin.</p>
+  <p></p>
+<p>Developed by Flavio Poletti, Daniel Herszenhut, Mark Padgham, Tom Buckley, Danton Noriega-Goodwin.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -524,6 +522,8 @@
 
   
 
+
+  
 
   </body>
 </html>

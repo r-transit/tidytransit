@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
@@ -70,7 +66,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/r-transit/tidytransit/">
+  <a href="https://github.com/r-transit/tidytransit/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -89,53 +85,47 @@
   <div class="contents col-md-9">
 
 
-<div id="tidytransit" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#tidytransit" class="anchor"></a>tidytransit</h1></div>
-<p>Use tidytransit to map transit stops and routes, calculate travel times and transit frequencies, and validate transit feeds. Tidytransit reads the <a href="https://gtfs.org/">General Transit Feed Specification</a> into <a href="https://tibble.tidyverse.org/">tidyverse</a> and <a href="https://en.wikipedia.org/wiki/Simple_Features">simple features</a> data frames. Tidytransit can be used to:</p>
-<ul>
-<li><a href="http://tidytransit.r-transit.org/reference/read_gtfs.html">read GTFS feeds into R</a></li>
-<li><a href="http://tidytransit.r-transit.org/reference/travel_times.html">calculate travel times between transit stops</a></li>
-<li><a href="http://tidytransit.r-transit.org/reference/gtfs_as_sf.html">convert stops and routes to sf data frames</a></li>
-<li><a href="http://tidytransit.r-transit.org/reference/index.html">validate transit feeds and more</a></li>
-</ul>
+<div class="section level1">
+<div class="page-header"><h1 id="tidytransit">tidytransit<a class="anchor" aria-label="anchor" href="#tidytransit"></a>
+</h1></div>
+<p>Use tidytransit to map transit stops and routes, calculate travel times and transit frequencies, and validate transit feeds. Tidytransit reads the <a href="https://gtfs.org/" class="external-link">General Transit Feed Specification</a> into <a href="https://tibble.tidyverse.org/" class="external-link">tidyverse</a> and <a href="https://en.wikipedia.org/wiki/Simple_Features" class="external-link">simple features</a> data frames. Tidytransit can be used to: - <a href="http://tidytransit.r-transit.org/reference/read_gtfs.html" class="external-link">read GTFS feeds into R</a> - <a href="http://tidytransit.r-transit.org/reference/travel_times.html" class="external-link">calculate travel times between transit stops</a> - <a href="http://tidytransit.r-transit.org/reference/gtfs_as_sf.html" class="external-link">convert stops and routes to sf data frames</a> - <a href="http://tidytransit.r-transit.org/reference/index.html" class="external-link">validate transit feeds and more</a></p>
 <p>Have a look at the following vignettes to see how tidytransit can be used to analyse a feed:</p>
 <ul>
-<li><a href="http://tidytransit.r-transit.org/articles/introduction.html">the tutorial</a></li>
-<li><a href="http://tidytransit.r-transit.org/articles/servicepatterns.html">calendar and service patterns</a></li>
-<li><a href="http://tidytransit.r-transit.org/articles/timetable.html">create time tables for stops</a></li>
-<li><a href="http://tidytransit.r-transit.org/articles/frequency.html">frequency and headway calculations</a></li>
+<li><a href="http://tidytransit.r-transit.org/articles/introduction.html" class="external-link">the tutorial</a></li>
+<li><a href="http://tidytransit.r-transit.org/articles/servicepatterns.html" class="external-link">calendar and service patterns</a></li>
+<li><a href="http://tidytransit.r-transit.org/articles/timetable.html" class="external-link">create time tables for stops</a></li>
+<li><a href="http://tidytransit.r-transit.org/articles/frequency.html" class="external-link">frequency and headway calculations</a></li>
 </ul>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
-<p>This package requires a working installation of <a href="https://github.com/r-spatial/sf#installing">sf</a>.</p>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<p>This package requires a working installation of <a href="https://github.com/r-spatial/sf#installing" class="external-link">sf</a>.</p>
 <p>Install tidytransit from CRAN:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">'tidytransit'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">'tidytransit'</span><span class="op">)</span></code></pre></div>
 <p>For the development version from Github:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"r-transit/tidytransit"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="gtfs-related-packages" class="section level2">
-<h2 class="hasAnchor">
-<a href="#gtfs-related-packages" class="anchor"></a>GTFS-related packages</h2>
+<div class="section level2">
+<h2 id="gtfs-related-packages">GTFS-related packages<a class="anchor" aria-label="anchor" href="#gtfs-related-packages"></a>
+</h2>
 <ul>
 <li>
-<a href="https://github.com/r-transit/gtfsio"><code>gtfsio</code></a> R package to read and write gtfs feeds, tidytransit builds on gtfsio</li>
+<a href="https://github.com/r-transit/gtfsio" class="external-link"><code>gtfsio</code></a> R package to read and write gtfs feeds, tidytransit builds on gtfsio</li>
 <li>
-<a href="https://github.com/ipeaGIT/gtfstools"><code>gtfstools</code></a> Tools for editing and analysing transit feeds</li>
+<a href="https://github.com/ipeaGIT/gtfstools" class="external-link"><code>gtfstools</code></a> Tools for editing and analysing transit feeds</li>
 <li>
-<a href="https://github.com/ATFutures/gtfs-router"><code>gtfsrouter</code></a> Package for public transport routing</li>
+<a href="https://github.com/ATFutures/gtfs-router" class="external-link"><code>gtfsrouter</code></a> Package for public transport routing</li>
 <li>
-<a href="https://github.com/ipeaGIT/gtfs2gps"><code>gtfs2gps</code></a> Converting public transport data from GTFS format to GPS-like records</li>
+<a href="https://github.com/ipeaGIT/gtfs2gps" class="external-link"><code>gtfs2gps</code></a> Converting public transport data from GTFS format to GPS-like records</li>
 </ul>
 </div>
-<div id="contributing" class="section level2">
-<h2 class="hasAnchor">
-<a href="#contributing" class="anchor"></a>Contributing</h2>
-<p>Please feel free to issue a pull request or <a href="https://github.com/r-transit/tidytransit/issues/new">open an issue</a>.</p>
+<div class="section level2">
+<h2 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
+</h2>
+<p>Please feel free to issue a pull request or <a href="https://github.com/r-transit/tidytransit/issues/new" class="external-link">open an issue</a>.</p>
 </div>
 </div>
 
@@ -143,55 +133,65 @@
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=tidytransit">https://​cloud.r-project.org/​package=tidytransit</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/r-transit/tidytransit/">https://​github.com/​r-transit/​tidytransit/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/r-transit/tidytransit">https://​github.com/​r-transit/​tidytransit</a>
-</li>
+<li><a href="https://cloud.r-project.org/package=tidytransit" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/r-transit/tidytransit/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/r-transit/tidytransit" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li>GPL</li>
 </ul>
 </div>
-<div class="developers">
-<h2>Developers</h2>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li>Flavio Poletti <br><small class="roles"> Author, maintainer </small>  </li>
-<li>Daniel Herszenhut <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0001-8066-1105" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Mark Padgham <br><small class="roles"> Author </small>  </li>
-<li>Tom Buckley <br><small class="roles"> Author </small>  </li>
-<li>Danton Noriega-Goodwin <br><small class="roles"> Author </small>  </li>
-<li><a href="authors.html">All authors...</a></li>
+<li><a href="authors.html#citation">Citing tidytransit</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li><a href="https://cran.r-project.org/package=tidytransit"><img src="http://www.r-pkg.org/badges/version-ago/tidytransit?" alt="CRAN status"></a></li>
-<li><a href="http://www.repostatus.org/#active"><img src="http://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active"></a></li>
-<li><a href="https://cran.r-project.org/package=tidytransit"><img src="https://cranlogs.r-pkg.org/badges/tidytransit"></a></li>
-<li><a href="https://cran.r-project.org/package=tidytransit"><img src="https://cranlogs.r-pkg.org/badges/grand-total/tidytransit?color=lightgrey"></a></li>
-<li><a href="https://github.com/r-transit/tidytransit/actions?query=workflow%3AR-CMD-check"><img src="https://github.com/r-transit/tidytransit/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
-<li><a href="https://codecov.io/gh/r-transit/tidytransit"><img src="https://codecov.io/gh/r-transit/tidytransit/branch/master/graph/badge.svg" alt="codecov"></a></li>
+<li>Flavio Poletti <br><small class="roles"> Author, maintainer </small>  </li>
+<li>Daniel Herszenhut <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0001-8066-1105" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Mark Padgham <br><small class="roles"> Author </small>  </li>
+<li>Tom Buckley <br><small class="roles"> Author </small>  </li>
+<li>Danton Noriega-Goodwin <br><small class="roles"> Author </small>  </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://cran.r-project.org/package=tidytransit" class="external-link"><img src="http://www.r-pkg.org/badges/version-ago/tidytransit?" alt="CRAN status"></a></li>
+<li><a href="http://www.repostatus.org/#active" class="external-link"><img src="http://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active"></a></li>
+<li><a href="https://cran.r-project.org/package=tidytransit" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/tidytransit"></a></li>
+<li><a href="https://cran.r-project.org/package=tidytransit" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/grand-total/tidytransit?color=lightgrey"></a></li>
+<li><a href="https://github.com/r-transit/tidytransit/actions?query=workflow%3AR-CMD-check" class="external-link"><img src="https://github.com/r-transit/tidytransit/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+<li><a href="https://codecov.io/gh/r-transit/tidytransit" class="external-link"><img src="https://codecov.io/gh/r-transit/tidytransit/branch/master/graph/badge.svg" alt="codecov"></a></li>
+</ul>
 </div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Flavio Poletti, Daniel Herszenhut, Mark Padgham, Tom Buckley, Danton Noriega-Goodwin.</p>
+  <p></p>
+<p>Developed by Flavio Poletti, Daniel Herszenhut, Mark Padgham, Tom Buckley, Danton Noriega-Goodwin.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -199,6 +199,8 @@
 
   
 
+
+  
 
   </body>
 </html>
