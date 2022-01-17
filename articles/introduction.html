@@ -87,7 +87,7 @@
       <h1 data-toc-skip>Introduction to tidytransit</h1>
                         <h4 data-toc-skip class="author">Tom Buckley</h4>
             
-            <h4 data-toc-skip class="date">2022-01-10</h4>
+            <h4 data-toc-skip class="date">2022-01-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r-transit/tidytransit/blob/HEAD/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
       <div class="hidden name"><code>introduction.Rmd</code></div>
@@ -98,9 +98,9 @@
     
 <!-- [![CRAN -->
 <!-- status](https://www.r-pkg.org/badges/version/tidytransit?)](https://cran.r-project.org/package=tidytransit) -->
-<div class="section level1">
-<h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
-</h1>
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
 <p>Use tidytransit to:</p>
 <ul>
 <li><a href="https://tidytransit.r-transit.org/articles/introduction.html#read-gtfs-data" class="external-link">Read a GTFS Feed into R Data Types</a></li>
@@ -112,9 +112,9 @@
 <li><a href="https://tidytransit.r-transit.org/articles/introduction.html#finding-more-gtfs-feeds" class="external-link">Look up GTFS feeds from around the world within R</a></li>
 </ul>
 </div>
-<div class="section level1">
-<h1 id="installation-dependencies">Installation &amp; Dependencies<a class="anchor" aria-label="anchor" href="#installation-dependencies"></a>
-</h1>
+<div class="section level2">
+<h2 id="installation-dependencies">Installation &amp; Dependencies<a class="anchor" aria-label="anchor" href="#installation-dependencies"></a>
+</h2>
 <p>This package requires a working installation of <a href="https://github.com/r-spatial/sf#installing" class="external-link">sf</a>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Once sf is installed, you can install from CRAN with: </span>
@@ -125,17 +125,17 @@
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"r-transit/tidytransit"</span><span class="op">)</span></code></pre></div>
 <p>For some users, <code>sf</code> is impractical to install due to system level dependencies. For these users, <a href="https://github.com/r-transit/trread" class="external-link"><code>trread</code></a> may work better. Its tidytransit without geospatial tools.</p>
 </div>
-<div class="section level1">
-<h1 id="the-general-transit-feed-specification">The General Transit Feed Specification<a class="anchor" aria-label="anchor" href="#the-general-transit-feed-specification"></a>
-</h1>
+<div class="section level2">
+<h2 id="the-general-transit-feed-specification">The General Transit Feed Specification<a class="anchor" aria-label="anchor" href="#the-general-transit-feed-specification"></a>
+</h2>
 <p>The <a href="https://developers.google.com/transit/gtfs/#overview-of-a-gtfs-feed" class="external-link">summary page for the GTFS standard</a> is a good resource for more information on the standard.</p>
 <p>GTFS feeds contain many linked tables about published transit schedules about service schedules, trips, stops, and routes.</p>
 <p>Below is a diagram of these relationships and tables:</p>
 <p><img src="figures/GTFS_class_diagram.svg.png" alt="gtfs-relationship-diagram"> Source: Wikimedia, user -stk.</p>
 </div>
-<div class="section level1">
-<h1 id="read-a-gtfs-feed">Read a GTFS Feed<a class="anchor" aria-label="anchor" href="#read-a-gtfs-feed"></a>
-</h1>
+<div class="section level2">
+<h2 id="read-a-gtfs-feed">Read a GTFS Feed<a class="anchor" aria-label="anchor" href="#read-a-gtfs-feed"></a>
+</h2>
 <p>GTFS data come packaged as a zip file of tables in text form. The first thing tidytransit does is consolidate the reading of all those tables into a single R object, which contains a list of the tables in each feed.</p>
 <p>Below we use the tidytransit <code>read_gtfs</code> function in order to read a feed from the NYC MTA into R.</p>
 <p>We use a feed included in the package in the example below. But note that you can read directly from the New York City Metropolitan Transit Authority, as shown in the commented code below.</p>
@@ -179,9 +179,9 @@
 <pre><code><span class="co">##  [1] "trips"          "stop_times"     "agency"         "calendar"      </span>
 <span class="co">##  [5] "calendar_dates" "stops"          "routes"         "shapes"        </span>
 <span class="co">##  [9] "transfers"      "."</span></code></pre>
-<div class="section level2">
-<h2 id="feed-validation-results">Feed Validation Results<a class="anchor" aria-label="anchor" href="#feed-validation-results"></a>
-</h2>
+<div class="section level3">
+<h3 id="feed-validation-results">Feed Validation Results<a class="anchor" aria-label="anchor" href="#feed-validation-results"></a>
+</h3>
 <p>When reading a feed, it is checked against the GTFS specification, and an attribute is added to the resultant object called <code>validation_result</code>, which is a tibble about the files and fields in the GTFS feed and how they compare to the specification.</p>
 <p>You can get this tibble from the metadata about the feed.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -198,9 +198,9 @@
 <span class="co">## <span style="color: #BCBCBC;">6</span> agency req       TRUE                 agency_ph… opt        TRUE              </span>
 <span class="co">## <span style="color: #949494;"># … with 2 more variables: validation_status &lt;chr&gt;, validation_details &lt;chr&gt;</span></span></code></pre>
 </div>
-<div class="section level2">
-<h2 id="finding-more-gtfs-feeds">Finding More GTFS Feeds<a class="anchor" aria-label="anchor" href="#finding-more-gtfs-feeds"></a>
-</h2>
+<div class="section level3">
+<h3 id="finding-more-gtfs-feeds">Finding More GTFS Feeds<a class="anchor" aria-label="anchor" href="#finding-more-gtfs-feeds"></a>
+</h3>
 <p>Included in the tidytransit package is a dataframe with a list of urls, city names, and locations.</p>
 <p>You can browse it as a data frame:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
@@ -273,7 +273,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
