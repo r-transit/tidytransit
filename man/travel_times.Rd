@@ -48,8 +48,8 @@ returns a tibble/tbl_df.}
 \item{stop_dist_check}{stop_names are not structured identifiers like
 stop_ids or parent_stations, so it's possible that
 stops with the same name are far apart. travel_times()
-issues a warning if the distance among stop_ids is
-above this threshold (in meters).}
+errors if the distance among stop_ids is above this threshold
+(in meters). Use FALSE to turn check off.}
 }
 \value{
 A table with travel times to/from all stops reachable by \code{stop_name} and their
@@ -72,7 +72,7 @@ nyc <- read_gtfs(nyc_path)
 # Use journeys departing after 7 AM with arrival time before 9 AM on 26th June
 stop_times <- filter_stop_times(nyc, "2018-06-26", 7*3600, 9*3600)
 
-tts <- travel_times(stop_times, "34 St - Herald Sq", return_coords = TRUE)
+tts <- travel_times(stop_times, "34 St - Herald Sq", return_coords = TRUE, stop_dist_check = FALSE)
 library(dplyr)
 tts <- tts \%>\% filter(travel_time <= 3600)
 

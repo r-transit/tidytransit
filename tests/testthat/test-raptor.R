@@ -36,9 +36,8 @@ test_that("travel times wrapper function", {
 
 test_that("stop_dist warning", {
   fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
-  expect_warning(travel_times(filtered_stop_times = fst, stop_name = "One", 
-                              time_range = 3600, stop_dist_threshold = 30), 
-                 "[Some stops (ids: stop1, stop1a, stop1b) are more than 30 meters apart]")
+  expect_error(travel_times(filtered_stop_times = fst, stop_name = "One", 
+                            time_range = 3600, stop_dist_check = 30))
 })
 
 test_that("travel_time works with different params", {

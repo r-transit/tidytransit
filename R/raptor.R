@@ -327,10 +327,9 @@ raptor = function(stop_times,
 #' @param stop_dist_check stop_names are not structured identifiers like 
 #'                            stop_ids or parent_stations, so it's possible that 
 #'                            stops with the same name are far apart. travel_times()
-#'                            issues a warning if the distance among stop_ids is 
-#'                            above this threshold (in meters). 
-#'                            Use NULL to turn warning off.
-#'                           
+#'                            errors if the distance among stop_ids is above this threshold
+#'                            (in meters). Use FALSE to turn check off.
+#'
 #' @return A table with travel times to/from all stops reachable by `stop_name` and their
 #'         corresponding journey departure and arrival times.
 #' @importFrom data.table fifelse
@@ -342,7 +341,7 @@ raptor = function(stop_times,
 #' # Use journeys departing after 7 AM with arrival time before 9 AM on 26th June
 #' stop_times <- filter_stop_times(nyc, "2018-06-26", 7*3600, 9*3600)
 #' 
-#' tts <- travel_times(stop_times, "34 St - Herald Sq", return_coords = TRUE)
+#' tts <- travel_times(stop_times, "34 St - Herald Sq", return_coords = TRUE, stop_dist_check = FALSE)
 #' library(dplyr)
 #' tts <- tts %>% filter(travel_time <= 3600)
 #' 
@@ -401,13 +400,12 @@ travel_times = function(filtered_stop_times,
   }
   
   # Check stop_name integrity
-  if(length(stop_ids) > 1) {
-    stop_dists = stop_distances(stops[stop_name %in% stop_names])
-    if(max(stop_dists$dist) > stop_dist_threshold) {
-      warn_stops = stop_dists[which(stop_dists$dist > stop_dist_threshold),]
-      warn_stops <- sort(unique(c(warn_stops$from_stop_id, warn_stops$to_stop_id)))
-      warning("Some stops (ids: ", paste(warn_stops, collapse = ", "), 
-              ") are more than ", stop_dist_threshold, " meters apart")     
+  if(length(stop_ids) > 1 & !is.null(stop_dist_check) & !isFALSE(stop_dist_check)) {
+    stop_dists = stop_group_distances(stops, "stop_name")
+    
+    if(max(stop_dists$dist_max) > stop_dist_check) {
+      stop("Some stops with the same name are more than ", stop_dist_check, " meters apart.\n",
+           "Using travel_times() might lead to unexpected results. Set stop_dist_check=FALSE to ignore this error.")
     }
   }
   
