@@ -357,3 +357,18 @@ test_that("filter feed without min/max time", {
   st.2 = filter_stop_times(g, "2018-10-01", "00:00:00", 999*3600)
   expect_true(all(st.1 == st.2))
 })
+
+test_that("nyc feed", {
+  nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+  nyc <- read_gtfs(nyc_path)
+  
+  .child_index = which(nyc$stops$location_type == 0)
+  .parent_index = which(nyc$stops$location_type == 1)
+  nyc$stops$stop_name[.child_index] <- paste0(nyc$stops$stop_name[.child_index], " (", nyc$stops$parent_station[.child_index], ")")
+  nyc$stops$stop_name[.parent_index] <- paste0(nyc$stops$stop_name[.parent_index], " (", nyc$stops$stop_id[.parent_index], ")")
+  
+  nyc_st <- filter_stop_times(nyc, "2018-06-26", 7*3600, 9*3600)
+  
+  tts <- travel_times(nyc_st, "34 St - Herald Sq (D17)", return_coords = TRUE, stop_dist_check = FALSE)
+  expect_is(tts, "data.frame")
+})

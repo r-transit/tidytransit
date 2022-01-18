@@ -131,8 +131,8 @@ test_that("stop_group_distances real feed", {
   x1 = stop_group_distances(g_nyc$stops)
 
   g_nyc_sf = gtfs_as_sf(g_nyc)
-  x2 = stop_group_distances(g_nyc_sf$stops)
-  
+  x2 = stop_group_distances(g_nyc_sf$stops, "stop_name")
+
   expect_equal(colnames(x1), colnames(x2))
   expect_equal(x1$stop_name, x2$stop_name)
   expect_equal(x1[,c("n_stop_ids", "dist_mean", "dist_median", "dist_max")], 

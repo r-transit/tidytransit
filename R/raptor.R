@@ -298,11 +298,15 @@ raptor = function(stop_times,
 #' Calculate shortest travel times from a stop to all reachable stops
 #' 
 #' Function to calculate the shortest travel times from a stop (given by `stop_name`) 
-#' to all other stops of a feed. `filtered_stop_times` needs to be created before with 
+#' to all other stop_names of a feed. `filtered_stop_times` needs to be created before with 
 #' [filter_stop_times()] or [filter_feed_by_date()].
 #' 
 #' This function allows easier access to [raptor()] by using stop names instead of ids and 
 #' returning shortest travel times by default.
+#' 
+#' Note however that stop_name might not be a suitable identifier for a feed. It is possible
+#' that multiple stops have the same name while not being related or geographically close to
+#' each other.
 #' 
 #' @param filtered_stop_times stop_times data.table (with transfers and stops tables as 
 #'                            attributes) created with [filter_stop_times()] where the 
@@ -327,8 +331,11 @@ raptor = function(stop_times,
 #' @param stop_dist_check stop_names are not structured identifiers like 
 #'                            stop_ids or parent_stations, so it's possible that 
 #'                            stops with the same name are far apart. travel_times()
-#'                            errors if the distance among stop_ids is above this threshold
-#'                            (in meters). Use FALSE to turn check off.
+#'                            errors if the distance among stop_ids with the same name is
+#'                            above this threshold (in meters).
+#'                            Use FALSE to turn check off. However, it is recommended to
+#'                            either use [raptor()] or fix the feed 
+#'                            (see [stop_group_distances()]).
 #'
 #' @return A table with travel times to/from all stops reachable by `stop_name` and their
 #'         corresponding journey departure and arrival times.
@@ -404,7 +411,7 @@ travel_times = function(filtered_stop_times,
     stop_dists = stop_group_distances(stops, "stop_name")
     
     if(max(stop_dists$dist_max) > stop_dist_check) {
-      stop("Some stops with the same name are more than ", stop_dist_check, " meters apart.\n",
+      stop("Some stops with the same name are more than ", stop_dist_check, " meters apart, see stop_group_distances().\n",
            "Using travel_times() might lead to unexpected results. Set stop_dist_check=FALSE to ignore this error.")
     }
   }

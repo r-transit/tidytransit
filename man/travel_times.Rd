@@ -48,8 +48,11 @@ returns a tibble/tbl_df.}
 \item{stop_dist_check}{stop_names are not structured identifiers like
 stop_ids or parent_stations, so it's possible that
 stops with the same name are far apart. travel_times()
-errors if the distance among stop_ids is above this threshold
-(in meters). Use FALSE to turn check off.}
+errors if the distance among stop_ids with the same name is
+above this threshold (in meters).
+Use FALSE to turn check off. However, it is recommended to
+either use \code{\link[=raptor]{raptor()}} or fix the feed
+(see \code{\link[=stop_group_distances]{stop_group_distances()}}).}
 }
 \value{
 A table with travel times to/from all stops reachable by \code{stop_name} and their
@@ -57,12 +60,16 @@ corresponding journey departure and arrival times.
 }
 \description{
 Function to calculate the shortest travel times from a stop (given by \code{stop_name})
-to all other stops of a feed. \code{filtered_stop_times} needs to be created before with
+to all other stop_names of a feed. \code{filtered_stop_times} needs to be created before with
 \code{\link[=filter_stop_times]{filter_stop_times()}} or \code{\link[=filter_feed_by_date]{filter_feed_by_date()}}.
 }
 \details{
 This function allows easier access to \code{\link[=raptor]{raptor()}} by using stop names instead of ids and
 returning shortest travel times by default.
+
+Note however that stop_name might not be a suitable identifier for a feed. It is possible
+that multiple stops have the same name while not being related or geographically close to
+each other.
 }
 \examples{
 \donttest{

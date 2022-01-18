@@ -88,6 +88,17 @@ prep_dist_mtrx = function(dist_list) {
   v[!is.na(v)]
 }
 
+#' Calculates distances among stop within the same group column
+#' 
+#' By default calculates distances among stop_ids with the same name.
+#' 
+#' @param gtfs_stops gtfs stops table
+#' @param by group column, default: stop_name
+#' 
+#' @returns data.frame with one row per group containing a distance matrix (dists),
+#'          number of stop ids within that group (n_stop_ids) and distance summary values (dist_mean,, dist_median and dist_max).
+#' 
+#' @export
 stop_group_distances = function(gtfs_stops, by = "stop_name") {
   dists <- n_stop_ids <- dist_mean <- dist_media <- dist_max <- NULL
   if(inherits(gtfs_stops, "sf")) {
