@@ -324,11 +324,12 @@ raptor = function(stop_times,
 #' @param return_coords Returns stop coordinates as columms. Default is FALSE.                            
 #' @param return_DT travel_times() returns a data.table if TRUE. Default is FALSE which 
 #'                  returns a tibble/tbl_df.
-#' @param stop_dist_threshold stop_names are not structured identifiers like 
-#'                                    stop_ids or parent_stations, so it's possible that 
-#'                                    stops with the same name are far apart. travel_times()
-#'                                    issues a warning if the distance among stop_ids is 
-#'                                    above this threshold (in meters).
+#' @param stop_dist_check stop_names are not structured identifiers like 
+#'                            stop_ids or parent_stations, so it's possible that 
+#'                            stops with the same name are far apart. travel_times()
+#'                            issues a warning if the distance among stop_ids is 
+#'                            above this threshold (in meters). 
+#'                            Use NULL to turn warning off.
 #'                           
 #' @return A table with travel times to/from all stops reachable by `stop_name` and their
 #'         corresponding journey departure and arrival times.
@@ -361,7 +362,7 @@ travel_times = function(filtered_stop_times,
                         max_departure_time = NULL,
                         return_coords = FALSE,
                         return_DT = FALSE,
-                        stop_dist_threshold = 300) {
+                        stop_dist_check = 300) {
   travel_time <- journey_arrival_time <- journey_departure_time <- NULL
   stop_names = stop_name; rm(stop_name)
   if("tidygtfs" %in% class(filtered_stop_times)) {

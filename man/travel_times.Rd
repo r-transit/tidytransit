@@ -13,7 +13,7 @@ travel_times(
   max_departure_time = NULL,
   return_coords = FALSE,
   return_DT = FALSE,
-  stop_dist_threshold = 300
+  stop_dist_check = 300
 )
 }
 \arguments{
@@ -45,7 +45,7 @@ seconds as a numerical value. Unused if \code{arrival} is TRUE.}
 \item{return_DT}{travel_times() returns a data.table if TRUE. Default is FALSE which
 returns a tibble/tbl_df.}
 
-\item{stop_dist_threshold}{stop_names are not structured identifiers like
+\item{stop_dist_check}{stop_names are not structured identifiers like
 stop_ids or parent_stations, so it's possible that
 stops with the same name are far apart. travel_times()
 issues a warning if the distance among stop_ids is

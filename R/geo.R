@@ -1,3 +1,40 @@
+#' Calculate distances between a given set of stops
+#' 
+#' @param gtfs_stops stops table 
+#' 
+#' @return Returns a data.frame with each row containing a pair of stop_ids and the 
+#'         distance between them (in meters)
+#'        
+#' @note The resulting data.frame has nrow(gtfs_stops)^2 rows, distances calculations 
+#'       among all stops for large feeds should be avoided
+#'       
+#' @examples
+#' library(dplyr)
+#' 
+#' nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+#' nyc <- read_gtfs(nyc_path)
+#' 
+#' nyc$stops %>%
+#'   filter(stop_name == "Borough Hall") %>%
+#'   tidytransit::stop_distances() %>%
+#'   arrange(desc(dist))
+#'
+#' #> # A tibble: 36 × 3
+#' #>    from_stop_id to_stop_id  dist
+#' #>    <chr>        <chr>      <dbl>
+#' #>  1 423          232         91.5
+#' #>  2 423N         232         91.5
+#' #>  3 423S         232         91.5
+#' #>  4 423          232N        91.5
+#' #>  5 423N         232N        91.5
+#' #>  6 423S         232N        91.5
+#' #>  7 423          232S        91.5
+#' #>  8 423N         232S        91.5
+#' #>  9 423S         232S        91.5
+#' #> 10 232          423         91.5
+#' #> # … with 26 more rows
+#' 
+#' @export
 stop_distances = function(gtfs_stops) {
   stopifnot(nrow(gtfs_stops) > 1)
   from_stop_id <- NULL
@@ -83,7 +120,7 @@ stop_group_distances = function(gtfs_stops, by = "stop_name") {
   gtfs_single_stops <- gtfs_single_stops %>% 
     select(stop_name) %>% 
     dplyr::mutate(dists = list(matrix(0)), n_stop_ids = 1, dist_mean = 0, dist_median = 0, dist_max = 0)
-  
-  dists = dplyr::bind_rows(gtfs_single_stops, gtfs_multip_stops)
-  dists[order(dists$dist_max, dists$n_stop_ids, dists$stop_name, decreasing = T),]
+
+  dists = dplyr::as_tibble(dplyr::bind_rows(gtfs_single_stops, gtfs_multip_stops))
+  dists[order(dists$dist_max, dists$n_stop_ids, dists[[by]], decreasing = T),]
 }
