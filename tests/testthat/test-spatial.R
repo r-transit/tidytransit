@@ -126,8 +126,9 @@ test_that("stop_group_distances", {
   expect_equal(x$n_stop_ids, c(3,2))
 })
 
+g_nyc = read_gtfs(system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit"))
+
 test_that("stop_group_distances real feed", {
-  g_nyc = read_gtfs(system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit"))
   x1 = stop_group_distances(g_nyc$stops)
 
   g_nyc_sf = gtfs_as_sf(g_nyc)
@@ -137,4 +138,24 @@ test_that("stop_group_distances real feed", {
   expect_equal(x1$stop_name, x2$stop_name)
   expect_equal(x1[,c("n_stop_ids", "dist_mean", "dist_median", "dist_max")], 
                x2[,c("n_stop_ids", "dist_mean", "dist_median", "dist_max")])
+})
+
+test_that("stops cluster", {
+  g_nyc2 <- filter_feed_by_area(g_nyc, c(-74.0144, 40.7402, -73.9581, 40.7696))
+
+  x1 = cluster_stops(g_nyc2$stops)
+  expect_true(c("stop_name_cluster") %in% colnames(x1))
+  x2 = cluster_stops(g_nyc2$stops, max_dist = 5000, "stop_id", "stop_id_cluster")
+  expect_equal(length(unique(x2$stop_id)), length(unique(x2$stop_id_cluster)))
+  x3 = cluster_stops(g_nyc2$stops, max_dist = 2000, "stop_name", "stop_name")
+  expect_gt(nrow(filter(x3, grepl("\\[1\\]", stop_name))), 0)
+
+  # with sf
+  g_nyc_sf <- gtfs_as_sf(g_nyc2)
+  x4 = cluster_stops(g_nyc_sf$stops)
+  expect_equal(length(unique(x1$stop_name_cluster)), length(unique(x4$stop_name_cluster)))
+  
+  # piping gtfs_obj
+  g_nyc2 = cluster_stops(g_nyc2)
+  expect_is(g_nyc2, "tidygtfs")
 })

@@ -13,7 +13,8 @@ stop_group_distances(gtfs_stops, by = "stop_name")
 }
 \value{
 data.frame with one row per group containing a distance matrix (dists),
-number of stop ids within that group (n_stop_ids) and distance summary values (dist_mean,, dist_median and dist_max).
+number of stop ids within that group (n_stop_ids) and distance summary values
+(dist_mean, dist_median and dist_max).
 }
 \description{
 By default calculates distances among stop_ids with the same name.

@@ -306,8 +306,9 @@ raptor = function(stop_times,
 #' 
 #' Note however that stop_name might not be a suitable identifier for a feed. It is possible
 #' that multiple stops have the same name while not being related or geographically close to
-#' each other.
-#' 
+#' each other. [stop_group_distances()] and [cluster_stops()] can help identify and fix 
+#' issues with stop_names.
+#'  
 #' @param filtered_stop_times stop_times data.table (with transfers and stops tables as 
 #'                            attributes) created with [filter_stop_times()] where the 
 #'                            departure or arrival time has been set. Alternatively,
@@ -334,21 +335,24 @@ raptor = function(stop_times,
 #'                            errors if the distance among stop_ids with the same name is
 #'                            above this threshold (in meters).
 #'                            Use FALSE to turn check off. However, it is recommended to
-#'                            either use [raptor()] or fix the feed 
-#'                            (see [stop_group_distances()]).
+#'                            either use [raptor()] or fix the feed (see [cluster_stops()]).
 #'
 #' @return A table with travel times to/from all stops reachable by `stop_name` and their
 #'         corresponding journey departure and arrival times.
+#'         
 #' @importFrom data.table fifelse
 #' @export
 #' @examples \donttest{
 #' nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
 #' nyc <- read_gtfs(nyc_path)
 #' 
+#' # stop_names in this feed are not restricted to an area, create clusters of stops to fix
+#' nyc <- cluster_stops(nyc, group_col = "stop_name", cluster_colname = "stop_name")
+#' 
 #' # Use journeys departing after 7 AM with arrival time before 9 AM on 26th June
 #' stop_times <- filter_stop_times(nyc, "2018-06-26", 7*3600, 9*3600)
 #' 
-#' tts <- travel_times(stop_times, "34 St - Herald Sq", return_coords = TRUE, stop_dist_check = FALSE)
+#' tts <- travel_times(stop_times, "34 St - Herald Sq", return_coords = TRUE)
 #' library(dplyr)
 #' tts <- tts %>% filter(travel_time <= 3600)
 #' 

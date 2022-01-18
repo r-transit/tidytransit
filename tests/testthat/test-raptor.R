@@ -367,6 +367,10 @@ test_that("nyc feed", {
   nyc$stops$stop_name[.child_index] <- paste0(nyc$stops$stop_name[.child_index], " (", nyc$stops$parent_station[.child_index], ")")
   nyc$stops$stop_name[.parent_index] <- paste0(nyc$stops$stop_name[.parent_index], " (", nyc$stops$stop_id[.parent_index], ")")
   
+  length(unique(nyc$stops$stop_name))
+  x2 = cluster_stops(nyc$stops)
+  length(unique(x2$stop_name_cluster))
+  
   nyc_st <- filter_stop_times(nyc, "2018-06-26", 7*3600, 9*3600)
   
   tts <- travel_times(nyc_st, "34 St - Herald Sq (D17)", return_coords = TRUE, stop_dist_check = FALSE)
