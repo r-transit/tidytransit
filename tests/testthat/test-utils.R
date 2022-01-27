@@ -100,3 +100,21 @@ test_that("gtfs_meta", { # empty test
   expect_equal(gtfs_meta, get_gtfs_meta())
 })
 
+test_that("empty_strings_to_na", {
+  gpath = system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
+  g1 = read_gtfs(gpath)
+  g_na = empty_strings_to_na(g1)
+  g2 = na_to_empty_strings(g_na)
+
+  for(tbl in names(g1)) {
+    expect_equal(g1[[tbl]], g2[[tbl]])
+  }
+  
+  tmppath = tempfile(fileext = ".zip")
+  write_gtfs(g_na, tmppath)
+  g3 = read_gtfs(tmppath)
+   
+  for(tbl in names(g1)) {
+    expect_equal(g1[[tbl]], g3[[tbl]])
+  } 
+})

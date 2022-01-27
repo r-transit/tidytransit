@@ -62,6 +62,9 @@ write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE)
   # convert sf tables
   gtfs_out = sf_as_tbl(gtfs_obj)
   
+  # convert NA to empty strings
+  gtfs_out <- na_to_empty_strings(gtfs_out)
+  
   # data.tables
   gtfs_out <- gtfs_out[names(gtfs_out) != "."]
   gtfs_out <- lapply(gtfs_out, as.data.table)
