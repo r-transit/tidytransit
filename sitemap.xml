@@ -43,6 +43,9 @@
     <loc>/reference/convert_times_to_hms.html</loc>
   </url>
   <url>
+    <loc>/reference/empty_strings_to_na.html</loc>
+  </url>
+  <url>
     <loc>/reference/feed_contains.html</loc>
   </url>
   <url>
@@ -98,6 +101,9 @@
   </url>
   <url>
     <loc>/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/na_to_empty_strings.html</loc>
   </url>
   <url>
     <loc>/reference/plot.tidygtfs.html</loc>
