@@ -1,9 +1,10 @@
 #' Calculate distances between a given set of stops
 #' 
-#' @param gtfs_stops stops table 
+#' @param gtfs_stops gtfs stops table either as data frame (with at least `stop_id`, 
+#'                   `stop_lon` and `stop_lat` columns) or as `sf` object.
 #' 
-#' @return Returns a data.frame with each row containing a pair of stop_ids and the 
-#'         distance between them (in meters)
+#' @return Returns a data.frame with each row containing a pair of stop_ids (columns
+#'         `from_stop_id` and `to_stop_id`) and the `distance` between them (in meters)
 #'        
 #' @note The resulting data.frame has nrow(gtfs_stops)^2 rows, distances calculations 
 #'       among all stops for large feeds should be avoided
@@ -16,22 +17,22 @@
 #' 
 #' nyc$stops %>%
 #'   filter(stop_name == "Borough Hall") %>%
-#'   tidytransit::stop_distances() %>%
-#'   arrange(desc(dist))
+#'   stop_distances() %>%
+#'   arrange(desc(distance))
 #'
 #' #> # A tibble: 36 × 3
-#' #>    from_stop_id to_stop_id  dist
-#' #>    <chr>        <chr>      <dbl>
-#' #>  1 423          232         91.5
-#' #>  2 423N         232         91.5
-#' #>  3 423S         232         91.5
-#' #>  4 423          232N        91.5
-#' #>  5 423N         232N        91.5
-#' #>  6 423S         232N        91.5
-#' #>  7 423          232S        91.5
-#' #>  8 423N         232S        91.5
-#' #>  9 423S         232S        91.5
-#' #> 10 232          423         91.5
+#' #>    from_stop_id to_stop_id  distance
+#' #>    <chr>        <chr>          <dbl>
+#' #>  1 423          232             91.5
+#' #>  2 423N         232             91.5
+#' #>  3 423S         232             91.5
+#' #>  4 423          232N            91.5
+#' #>  5 423N         232N            91.5
+#' #>  6 423S         232N            91.5
+#' #>  7 423          232S            91.5
+#' #>  8 423N         232S            91.5
+#' #>  9 423S         232S            91.5
+#' #> 10 232          423             91.5
 #' #> # … with 26 more rows
 #' 
 #' @export
@@ -44,7 +45,7 @@ stop_distances = function(gtfs_stops) {
   if(inherits(gtfs_stops, "sf")) {
     dist_matrix = sf::st_distance(gtfs_stops)
   } else {
-    dist_matrix = geodist::geodist(gtfs_stops)
+    dist_matrix = geodist::geodist(gtfs_stops[,c("stop_id", "stop_lon", "stop_lat")])
   }
   
   rownames(dist_matrix) <- gtfs_stops$stop_id
@@ -54,11 +55,11 @@ stop_distances = function(gtfs_stops) {
   # replace gather (no dependency on tidyr)
   # dists_gathered = gather(dplyr::as_tibble(dist_matrix_df), "to_stop_id", "dist", -from_stop_id)
   dists = reshape(as.data.frame(dist_matrix_df), direction = "long",
-          idvar = "from_stop_id", timevar = "to_stop_id", v.names = "dist",
+          idvar = "from_stop_id", timevar = "to_stop_id", v.names = "distance",
           varying = dist_matrix_df$from_stop_id)
   
   dists$to_stop_id <- rep(dist_matrix_df$from_stop_id, each = length(dist_matrix_df$from_stop_id))
-  dists$dist <- as.numeric(dists$dist)
+  dists$distance <- as.numeric(dists$distance)
 
   dplyr::as_tibble(dists)
 }
@@ -90,18 +91,40 @@ prep_dist_mtrx = function(dist_list) {
 
 #' Calculates distances among stop within the same group column
 #' 
-#' By default calculates distances among stop_ids with the same name.
+#' By default calculates distances among stop_ids with the same stop_name.
 #' 
-#' @param gtfs_stops gtfs stops table
+#' @inheritParams stop_distances
 #' @param by group column, default: stop_name
 #' 
-#' @returns data.frame with one row per group containing a distance matrix (dists),
+#' @returns data.frame with one row per group containing a distance matrix (distances),
 #'          number of stop ids within that group (n_stop_ids) and distance summary values 
 #'          (dist_mean, dist_median and dist_max).
+#'          
+#' @examples
+#' library(dplyr)
+#' 
+#' nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+#' nyc <- read_gtfs(nyc_path)
+#' 
+#' stop_group_distances(nyc$stops)
+#' #> # A tibble: 380 × 6
+#' #>    stop_name   distances       n_stop_ids dist_mean dist_median dist_max
+#' #>    <chr>       <list>               <dbl>     <dbl>       <dbl>    <dbl>
+#' #>  1 86 St       <dbl [18 × 18]>         18     5395.       5395.   21811.
+#' #>  2 79 St       <dbl [6 × 6]>            6    19053.      19053.   19053.
+#' #>  3 Prospect Av <dbl [6 × 6]>            6    18804.      18804.   18804.
+#' #>  4 77 St       <dbl [6 × 6]>            6    16947.      16947.   16947.
+#' #>  5 59 St       <dbl [6 × 6]>            6    14130.      14130.   14130.
+#' #>  6 50 St       <dbl [9 × 9]>            9     7097.       7097.   14068.
+#' #>  7 36 St       <dbl [6 × 6]>            6    12496.      12496.   12496.
+#' #>  8 8 Av        <dbl [6 × 6]>            6    11682.      11682.   11682.
+#' #>  9 7 Av        <dbl [9 × 9]>            9     5479.       5479.   10753.
+#' #> 10 111 St      <dbl [9 × 9]>            9     3877.       3877.    7753.
+#' #> # … with 370 more rows
 #' 
 #' @export
 stop_group_distances = function(gtfs_stops, by = "stop_name") {
-  dists <- n_stop_ids <- dist_mean <- dist_media <- dist_max <- NULL
+  distances <- n_stop_ids <- dist_mean <- dist_median <- dist_max <- NULL
   if(inherits(gtfs_stops, "sf")) {
     gtfs_stops <- sf_points_to_df(gtfs_stops, c("stop_lon", "stop_lat"), TRUE)
   }
@@ -115,23 +138,23 @@ stop_group_distances = function(gtfs_stops, by = "stop_name") {
 
   gtfs_multip_stops <- gtfs_multip_stops %>%
     dplyr::group_by_at(by) %>%
-    dplyr::summarise(dists = geodist_list(stop_lon, stop_lat, stop_id), .groups = "keep") %>%
-    dplyr::mutate(n_stop_ids = nrow(dists[[1]]),
-                  dist_mean = median(prep_dist_mtrx(dists)),
-                  dist_median = median(prep_dist_mtrx(dists)),
-                  dist_max = max(prep_dist_mtrx(dists))) %>% ungroup()
+    dplyr::summarise(distances = geodist_list(stop_lon, stop_lat, stop_id), .groups = "keep") %>%
+    dplyr::mutate(n_stop_ids = nrow(distances[[1]]),
+                  dist_mean = median(prep_dist_mtrx(distances)),
+                  dist_median = median(prep_dist_mtrx(distances)),
+                  dist_max = max(prep_dist_mtrx(distances))) %>% ungroup()
   
   # tidytable version
   # gtfs_multip_stops <- gtfs_multip_stops %>%
-  #   tidytable::summarise.(dists = geodist_list(stop_lon, stop_lat, stop_id), .by = by) %>%
-  #   tidytable::mutate.(n_stop_ids = nrow(dists[[1]]),
-  #                      dist_mean = median(prep_dist_mtrx(dists)),
-  #                      dist_median = median(prep_dist_mtrx(dists)),
-  #                      dist_max = max(prep_dist_mtrx(dists)), .by = "stop_name")
+  #   tidytable::summarise.(distances = geodist_list(stop_lon, stop_lat, stop_id), .by = by) %>%
+  #   tidytable::mutate.(n_stop_ids = nrow(distances[[1]]),
+  #                      dist_mean = median(prep_dist_mtrx(distances)),
+  #                      dist_median = median(prep_dist_mtrx(distances)),
+  #                      dist_max = max(prep_dist_mtrx(distances)), .by = "stop_name")
 
   gtfs_single_stops <- gtfs_single_stops %>% 
     select(stop_name) %>% 
-    dplyr::mutate(dists = list(matrix(0)), n_stop_ids = 1, dist_mean = 0, dist_median = 0, dist_max = 0)
+    dplyr::mutate(distances = list(matrix(0)), n_stop_ids = 1, dist_mean = 0, dist_median = 0, dist_max = 0)
 
   dists = dplyr::as_tibble(dplyr::bind_rows(gtfs_single_stops, gtfs_multip_stops))
   dists[order(dists$dist_max, dists$n_stop_ids, dists[[by]], decreasing = T),]
@@ -141,8 +164,8 @@ stop_group_distances = function(gtfs_stops, by = "stop_name") {
 #' 
 #' Finds clusters of stops for each unique value in `group_col` (e.g. stop_name). Can 
 #' be used to find different groups of stops that share the same name but are located more
-#' than `max_dist` apart. `gtfs_stops` is assigned a new column 
-#' (named `cluster_colname`) which contains the `group_col` value and the cluster number.
+#' than `max_dist` apart. `gtfs_stops` is assigned a new column (named `cluster_colname`) 
+#' which contains the `group_col` value and the cluster number.
 #' 
 #' [stats::kmeans()] is used for clustering.
 #' 
@@ -205,7 +228,7 @@ cluster_stops = function(gtfs_stops,
     if(nrow(stop_name_set) == 1) return(stop_name_set)
     
     dists = stop_distances(stop_name_set)
-    if(max(dists$dist) > max_dist) {
+    if(max(dists$distance) > max_dist) {
       if(is_sf) {
         stop_name_lonlat = do.call(rbind, sf::st_geometry(stop_name_set))
       } else {
@@ -213,7 +236,7 @@ cluster_stops = function(gtfs_stops,
       }
       
       stops_unique_coords = unique(stop_name_lonlat)
-      n_dists = min(length(unique(dists$dist)), nrow(stops_unique_coords))
+      n_dists = min(length(unique(dists$distance)), nrow(stops_unique_coords))
       n_clusters = min(n_dists, nrow(stop_name_set)-1)
       
       kms = kmeans(stop_name_lonlat, n_clusters)

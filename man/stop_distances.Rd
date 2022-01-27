@@ -7,11 +7,12 @@
 stop_distances(gtfs_stops)
 }
 \arguments{
-\item{gtfs_stops}{stops table}
+\item{gtfs_stops}{gtfs stops table either as data frame (with at least \code{stop_id},
+\code{stop_lon} and \code{stop_lat} columns) or as \code{sf} object.}
 }
 \value{
-Returns a data.frame with each row containing a pair of stop_ids and the
-distance between them (in meters)
+Returns a data.frame with each row containing a pair of stop_ids (columns
+\code{from_stop_id} and \code{to_stop_id}) and the \code{distance} between them (in meters)
 }
 \description{
 Calculate distances between a given set of stops
@@ -28,22 +29,22 @@ nyc <- read_gtfs(nyc_path)
 
 nyc$stops \%>\%
   filter(stop_name == "Borough Hall") \%>\%
-  tidytransit::stop_distances() \%>\%
-  arrange(desc(dist))
+  stop_distances() \%>\%
+  arrange(desc(distance))
 
 #> # A tibble: 36 × 3
-#>    from_stop_id to_stop_id  dist
-#>    <chr>        <chr>      <dbl>
-#>  1 423          232         91.5
-#>  2 423N         232         91.5
-#>  3 423S         232         91.5
-#>  4 423          232N        91.5
-#>  5 423N         232N        91.5
-#>  6 423S         232N        91.5
-#>  7 423          232S        91.5
-#>  8 423N         232S        91.5
-#>  9 423S         232S        91.5
-#> 10 232          423         91.5
+#>    from_stop_id to_stop_id  distance
+#>    <chr>        <chr>          <dbl>
+#>  1 423          232             91.5
+#>  2 423N         232             91.5
+#>  3 423S         232             91.5
+#>  4 423          232N            91.5
+#>  5 423N         232N            91.5
+#>  6 423S         232N            91.5
+#>  7 423          232S            91.5
+#>  8 423N         232S            91.5
+#>  9 423S         232S            91.5
+#> 10 232          423             91.5
 #> # … with 26 more rows
 
 }

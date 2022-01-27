@@ -30,8 +30,8 @@ modified tidygtfs object is return
 \description{
 Finds clusters of stops for each unique value in \code{group_col} (e.g. stop_name). Can
 be used to find different groups of stops that share the same name but are located more
-than \code{max_dist} apart. \code{gtfs_stops} is assigned a new column
-(named \code{cluster_colname}) which contains the \code{group_col} value and the cluster number.
+than \code{max_dist} apart. \code{gtfs_stops} is assigned a new column (named \code{cluster_colname})
+which contains the \code{group_col} value and the cluster number.
 }
 \details{
 \code{\link[stats:kmeans]{stats::kmeans()}} is used for clustering.
