@@ -37,6 +37,9 @@
     <loc>/reference/clear_api_key.html</loc>
   </url>
   <url>
+    <loc>/reference/cluster_stops.html</loc>
+  </url>
+  <url>
     <loc>/reference/convert_times_to_hms.html</loc>
   </url>
   <url>
@@ -134,6 +137,12 @@
   </url>
   <url>
     <loc>/reference/shapes_as_sf.html</loc>
+  </url>
+  <url>
+    <loc>/reference/stop_distances.html</loc>
+  </url>
+  <url>
+    <loc>/reference/stop_group_distances.html</loc>
   </url>
   <url>
     <loc>/reference/stops_as_sf.html</loc>

@@ -87,7 +87,7 @@
       <h1 data-toc-skip>Introduction to tidytransit</h1>
                         <h4 data-toc-skip class="author">Tom Buckley</h4>
             
-            <h4 data-toc-skip class="date">2022-01-17</h4>
+            <h4 data-toc-skip class="date">2022-01-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r-transit/tidytransit/blob/HEAD/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
       <div class="hidden name"><code>introduction.Rmd</code></div>
@@ -188,14 +188,14 @@
 <code class="sourceCode R"><span class="va">validation_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">nyc</span>, <span class="st">"validation_result"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">validation_result</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## <span style="color: #949494;"># A tibble: 6 × 8</span></span>
-<span class="co">##   file   file_spec file_provided_status field      field_spec field_provided_st…</span>
-<span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             </span>
-<span class="co">## <span style="color: #BCBCBC;">1</span> agency req       TRUE                 agency_id  opt        TRUE              </span>
-<span class="co">## <span style="color: #BCBCBC;">2</span> agency req       TRUE                 agency_na… req        TRUE              </span>
-<span class="co">## <span style="color: #BCBCBC;">3</span> agency req       TRUE                 agency_url req        TRUE              </span>
-<span class="co">## <span style="color: #BCBCBC;">4</span> agency req       TRUE                 agency_ti… req        TRUE              </span>
-<span class="co">## <span style="color: #BCBCBC;">5</span> agency req       TRUE                 agency_la… opt        TRUE              </span>
-<span class="co">## <span style="color: #BCBCBC;">6</span> agency req       TRUE                 agency_ph… opt        TRUE              </span>
+<span class="co">##   file   file_spec file_provided_status field        field_spec field_provided_…</span>
+<span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           </span>
+<span class="co">## <span style="color: #BCBCBC;">1</span> agency req       TRUE                 agency_id    opt        TRUE            </span>
+<span class="co">## <span style="color: #BCBCBC;">2</span> agency req       TRUE                 agency_name  req        TRUE            </span>
+<span class="co">## <span style="color: #BCBCBC;">3</span> agency req       TRUE                 agency_url   req        TRUE            </span>
+<span class="co">## <span style="color: #BCBCBC;">4</span> agency req       TRUE                 agency_time… req        TRUE            </span>
+<span class="co">## <span style="color: #BCBCBC;">5</span> agency req       TRUE                 agency_lang  opt        TRUE            </span>
+<span class="co">## <span style="color: #BCBCBC;">6</span> agency req       TRUE                 agency_phone opt        TRUE            </span>
 <span class="co">## <span style="color: #949494;"># … with 2 more variables: validation_status &lt;chr&gt;, validation_details &lt;chr&gt;</span></span></code></pre>
 </div>
 <div class="section level3">
