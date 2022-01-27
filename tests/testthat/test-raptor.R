@@ -34,6 +34,12 @@ test_that("travel times wrapper function", {
     c("from_stop_lon", "from_stop_lat", "to_stop_lon", "to_stop_lat"))
 })
 
+test_that("stop_dist warning", {
+  fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
+  expect_error(travel_times(filtered_stop_times = fst, stop_name = "One", 
+                            time_range = 3600, stop_dist_check = 30))
+})
+
 test_that("travel_time works with different params", {
   fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
   travel_times(fst, "One", max_departure_time = 7*3600+5*60)
@@ -350,4 +356,23 @@ test_that("filter feed without min/max time", {
   st.1 = filter_stop_times(g, "2018-10-01")
   st.2 = filter_stop_times(g, "2018-10-01", "00:00:00", 999*3600)
   expect_true(all(st.1 == st.2))
+})
+
+test_that("nyc feed", {
+  nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+  nyc <- read_gtfs(nyc_path)
+  
+  .child_index = which(nyc$stops$location_type == 0)
+  .parent_index = which(nyc$stops$location_type == 1)
+  nyc$stops$stop_name[.child_index] <- paste0(nyc$stops$stop_name[.child_index], " (", nyc$stops$parent_station[.child_index], ")")
+  nyc$stops$stop_name[.parent_index] <- paste0(nyc$stops$stop_name[.parent_index], " (", nyc$stops$stop_id[.parent_index], ")")
+  
+  length(unique(nyc$stops$stop_name))
+  x2 = cluster_stops(nyc$stops)
+  length(unique(x2$stop_name_cluster))
+  
+  nyc_st <- filter_stop_times(nyc, "2018-06-26", 7*3600, 9*3600)
+  
+  tts <- travel_times(nyc_st, "34 St - Herald Sq (D17)", return_coords = TRUE, stop_dist_check = FALSE)
+  expect_is(tts, "data.frame")
 })

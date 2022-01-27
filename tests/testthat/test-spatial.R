@@ -104,3 +104,61 @@ test_that("sf_as_tbl", {
   expect_equal(x, y, tolerance = 0.001)
 })
 
+# stop distances ####
+stopdist_df = dplyr::tibble(
+  stop_id = c("A1", "A2", "A3", "B1", "B2"), stop_name = c("A", "A", "A", "B", "B"),
+  stop_lon = c(8.47157, 8.47202, 8.47084, 8.45870, 8.45940),
+  stop_lat = c(47.18196, 47.18243, 47.18262, 47.18030, 47.18081),
+  fake_lon = 1:5)
+
+test_that("stop_distances", {
+  dist_df = stop_distances(stopdist_df)
+  stopdist_sf = stops_as_sf(stopdist_df)
+  dist_sf = stop_distances(stopdist_sf)
+  
+  expect_equal(colnames(dist_df), c("from_stop_id", "to_stop_id", "distance"))
+  expect_equal(dist_df[,c("from_stop_id", "to_stop_id")], dist_sf[,c("from_stop_id", "to_stop_id")])
+  diff = dist_df$distance - dist_sf$distance
+  expect_lt(max(abs(diff)), 1)
+})
+
+test_that("stop_group_distances", {
+  x = stop_group_distances(stopdist_df)
+  expect_equal(colnames(x), c("stop_name", "distances", "n_stop_ids", "dist_mean", "dist_median", "dist_max"))
+  expect_is(x$distances[1][[1]], "matrix")
+  expect_equal(x$n_stop_ids, c(3,2))
+})
+
+g_nyc = read_gtfs(system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit"))
+
+test_that("stop_group_distances real feed", {
+  x1 = stop_group_distances(g_nyc$stops)
+
+  g_nyc_sf = gtfs_as_sf(g_nyc)
+  x2 = stop_group_distances(g_nyc_sf$stops, "stop_name")
+
+  expect_equal(colnames(x1), colnames(x2))
+  expect_equal(x1$stop_name, x2$stop_name)
+  expect_equal(x1[,c("n_stop_ids", "dist_mean", "dist_median", "dist_max")], 
+               x2[,c("n_stop_ids", "dist_mean", "dist_median", "dist_max")])
+})
+
+test_that("stops cluster", {
+  g_nyc2 <- filter_feed_by_area(g_nyc, c(-74.0144, 40.7402, -73.9581, 40.7696))
+
+  x1 = cluster_stops(g_nyc2$stops)
+  expect_true(c("stop_name_cluster") %in% colnames(x1))
+  x2 = cluster_stops(g_nyc2$stops, max_dist = 5000, "stop_id", "stop_id_cluster")
+  expect_equal(length(unique(x2$stop_id)), length(unique(x2$stop_id_cluster)))
+  x3 = cluster_stops(g_nyc2$stops, max_dist = 2000, "stop_name", "stop_name")
+  expect_gt(nrow(filter(x3, grepl("\\[1\\]", stop_name))), 0)
+
+  # with sf
+  g_nyc_sf <- gtfs_as_sf(g_nyc2)
+  x4 = cluster_stops(g_nyc_sf$stops)
+  expect_equal(length(unique(x1$stop_name_cluster)), length(unique(x4$stop_name_cluster)))
+  
+  # piping gtfs_obj
+  g_nyc2 = cluster_stops(g_nyc2)
+  expect_is(g_nyc2, "tidygtfs")
+})

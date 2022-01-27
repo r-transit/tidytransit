@@ -86,7 +86,7 @@ raptor = function(stop_times,
   if(!is.character(stop_ids) && !is.null(stop_ids)) {
     stop("stop_ids must be a character vector (or NULL)")
   }
-
+  
   # check and params ####
   # stop ids need to be a character vector
   # use data.table for faster manipulation
@@ -298,12 +298,17 @@ raptor = function(stop_times,
 #' Calculate shortest travel times from a stop to all reachable stops
 #' 
 #' Function to calculate the shortest travel times from a stop (given by `stop_name`) 
-#' to all other stops of a feed. `filtered_stop_times` needs to be created before with 
+#' to all other stop_names of a feed. `filtered_stop_times` needs to be created before with 
 #' [filter_stop_times()] or [filter_feed_by_date()].
 #' 
 #' This function allows easier access to [raptor()] by using stop names instead of ids and 
 #' returning shortest travel times by default.
 #' 
+#' Note however that stop_name might not be a suitable identifier for a feed. It is possible
+#' that multiple stops have the same name while not being related or geographically close to
+#' each other. [stop_group_distances()] and [cluster_stops()] can help identify and fix 
+#' issues with stop_names.
+#'  
 #' @param filtered_stop_times stop_times data.table (with transfers and stops tables as 
 #'                            attributes) created with [filter_stop_times()] where the 
 #'                            departure or arrival time has been set. Alternatively,
@@ -324,14 +329,25 @@ raptor = function(stop_times,
 #' @param return_coords Returns stop coordinates as columms. Default is FALSE.                            
 #' @param return_DT travel_times() returns a data.table if TRUE. Default is FALSE which 
 #'                  returns a tibble/tbl_df.
-#'                           
+#' @param stop_dist_check stop_names are not structured identifiers like 
+#'                            stop_ids or parent_stations, so it's possible that 
+#'                            stops with the same name are far apart. travel_times()
+#'                            errors if the distance among stop_ids with the same name is
+#'                            above this threshold (in meters).
+#'                            Use FALSE to turn check off. However, it is recommended to
+#'                            either use [raptor()] or fix the feed (see [cluster_stops()]).
+#'
 #' @return A table with travel times to/from all stops reachable by `stop_name` and their
 #'         corresponding journey departure and arrival times.
+#'         
 #' @importFrom data.table fifelse
 #' @export
 #' @examples \donttest{
 #' nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
 #' nyc <- read_gtfs(nyc_path)
+#' 
+#' # stop_names in this feed are not restricted to an area, create clusters of stops to fix
+#' nyc <- cluster_stops(nyc, group_col = "stop_name", cluster_colname = "stop_name")
 #' 
 #' # Use journeys departing after 7 AM with arrival time before 9 AM on 26th June
 #' stop_times <- filter_stop_times(nyc, "2018-06-26", 7*3600, 9*3600)
@@ -355,8 +371,10 @@ travel_times = function(filtered_stop_times,
                         max_transfers = NULL,
                         max_departure_time = NULL,
                         return_coords = FALSE,
-                        return_DT = FALSE) {
+                        return_DT = FALSE,
+                        stop_dist_check = 300) {
   travel_time <- journey_arrival_time <- journey_departure_time <- NULL
+  stop_names = stop_name; rm(stop_name)
   if("tidygtfs" %in% class(filtered_stop_times)) {
     gtfs_obj = filtered_stop_times
     if(is.null(attributes(gtfs_obj$stop_times)$extract_date)) {
@@ -387,11 +405,18 @@ travel_times = function(filtered_stop_times,
   }
   
   # get stop_ids of names
-  stop_ids = NULL
-  if(!is.null(stop_name)) {
-    stop_ids = stops$stop_id[which(stops$stop_name %in% stop_name)]
-    if(length(stop_ids) == 0) {
-      stop(paste0("Stop name '", stop_name, "' not found in stops table"))
+  stop_ids = stops$stop_id[which(stops$stop_name %in% stop_names)]
+  if(length(stop_ids) == 0) {
+    stop(paste0("Stop name '", stop_names, "' not found in stops table"))
+  }
+  
+  # Check stop_name integrity
+  if(length(stop_ids) > 1 & !is.null(stop_dist_check) & !isFALSE(stop_dist_check)) {
+    stop_dists = stop_group_distances(stops, "stop_name")
+    
+    if(max(stop_dists$dist_max) > stop_dist_check) {
+      stop("Some stops with the same name are more than ", stop_dist_check, " meters apart, see stop_group_distances().\n",
+           "Using travel_times() might lead to unexpected results. Set stop_dist_check=FALSE to ignore this error.")
     }
   }
   
