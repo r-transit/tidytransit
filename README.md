@@ -22,7 +22,7 @@ Tidytransit can be used to:
 
 Have a look at the following vignettes to see how tidytransit can be used to analyse a feed:
 
-- [the tutorial](http://tidytransit.r-transit.org/articles/introduction.html) 
+- [introduction](http://tidytransit.r-transit.org/articles/introduction.html) 
 - [calendar and service patterns](http://tidytransit.r-transit.org/articles/servicepatterns.html)
 - [create time tables for stops](http://tidytransit.r-transit.org/articles/timetable.html)
 - [frequency and headway calculations](http://tidytransit.r-transit.org/articles/frequency.html)  
