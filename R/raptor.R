@@ -509,14 +509,13 @@ filter_stop_times = function(gtfs_obj,
   if(nrow(service_ids) == 0) {
     stop(paste0("No stop_times on ", extract_date))
   }
-  trip_ids = inner_join(gtfs_obj$trips, service_ids, by = "service_id")
-  trip_ids <- unique(trip_ids$trip_id)
+  trips = inner_join(gtfs_obj$trips, service_ids, by = "service_id")
+  trips = as.data.table(unique(trips[,c("trip_id")]))
   
   # prepare stop_times
   stop_times_dt <- as.data.table(gtfs_obj$stop_times)
-  setkey(stop_times_dt, trip_id)
   set_num_times(stop_times_dt)
-  stop_times_dt <- stop_times_dt[trip_id %in% trip_ids,]
+  stop_times_dt <- stop_times_dt[trips, on = "trip_id"]
   stop_times_dt <- stop_times_dt[departure_time_num >= min_departure_time &
                                    arrival_time_num <= max_arrival_time,]
   setindex(stop_times_dt, "stop_id")
