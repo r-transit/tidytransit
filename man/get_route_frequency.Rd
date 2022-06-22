@@ -12,7 +12,7 @@ get_route_frequency(
 )
 }
 \arguments{
-\item{gtfs_obj}{a list of gtfs dataframes as read by the trread package.}
+\item{gtfs_obj}{tidygtfs object}
 
 \item{start_time}{analysis start time, can be given as "HH:MM:SS",
 hms object or numeric value in seconds.}
