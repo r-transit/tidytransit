@@ -7,7 +7,7 @@
 filter_feed_by_trips(gtfs_obj, trip_ids)
 }
 \arguments{
-\item{gtfs_obj}{tidygtfs object}
+\item{gtfs_obj}{gtfs feed (tidygtfs object)}
 
 \item{trip_ids}{vector with trip_ids}
 }

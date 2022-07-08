@@ -463,7 +463,7 @@ travel_times = function(filtered_stop_times,
 
 #' Filter a `stop_times` table for a given date and timespan. 
 #' 
-#' @param gtfs_obj a gtfs feed
+#' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @param extract_date date to extract trips from this day (Date or "YYYY-MM-DD" string)
 #' @param min_departure_time (optional) The earliest departure time. Can be given as "HH:MM:SS", 
 #'                           hms object or numeric value in seconds.

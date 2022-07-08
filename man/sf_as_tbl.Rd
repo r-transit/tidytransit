@@ -7,7 +7,7 @@
 sf_as_tbl(gtfs_obj)
 }
 \arguments{
-\item{gtfs_obj}{tidygtfs object}
+\item{gtfs_obj}{gtfs feed (tidygtfs object)}
 }
 \value{
 tidygtfs object with stops and shapes converted to tibbles

@@ -5,7 +5,7 @@
 #' dates. In general, \code{service_id} can work this way but it is not enforced by the
 #' GTFS standard.
 #' 
-#' @param gtfs_obj tidytransit gtfs feed
+#' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @param id_prefix all servicepattern id will start with this string
 #' @param hash_algo hashing algorithm used by digest
 #' @param hash_length length the hash should be cut to with substr(). Use -1 if the full hash should be used

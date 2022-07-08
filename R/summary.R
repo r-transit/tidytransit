@@ -85,7 +85,7 @@ summary.tidygtfs <- function(object, ...) {
 }
 
 #' Create a text listing the first `max_agencies` agencies of the feed
-#' @param gtfs_obj tidygtfs object
+#' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @param max_agencies max number of agencies to list before using "..."
 #' @keywords internal
 #' @return called for side effects

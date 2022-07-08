@@ -7,7 +7,7 @@
 filter_feed_by_area(gtfs_obj, area)
 }
 \arguments{
-\item{gtfs_obj}{tidygtfs object}
+\item{gtfs_obj}{gtfs feed (tidygtfs object)}
 
 \item{area}{all trips passing through this area are kept. Either a bounding box
 (numeric vector with xmin, ymin, xmax, ymax) or a sf object.}

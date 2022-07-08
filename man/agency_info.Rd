@@ -7,7 +7,7 @@
 agency_info(gtfs_obj, max_agencies = 3)
 }
 \arguments{
-\item{gtfs_obj}{tidygtfs object}
+\item{gtfs_obj}{gtfs feed (tidygtfs object)}
 
 \item{max_agencies}{max number of agencies to list before using "..."}
 }

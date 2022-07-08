@@ -18,3 +18,6 @@ an sf dataframe for gtfs shapes
 \description{
 Convert shapes into Simple Features Linestrings
 }
+\seealso{
+code{\link{gtfs_as_sf}}
+}

@@ -7,7 +7,7 @@
 validate_gtfs(gtfs_obj, files = NULL, quiet = TRUE, warnings = TRUE)
 }
 \arguments{
-\item{gtfs_obj}{A GTFS object}
+\item{gtfs_obj}{gtfs feed (tidygtfs object, created by \code{\link[=read_gtfs]{read_gtfs()}})}
 
 \item{files}{A character vector containing the text files to be validated
 against the GTFS specification (without the \code{.txt} extension). If

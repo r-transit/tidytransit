@@ -7,7 +7,7 @@
 na_to_empty_strings(gtfs_obj)
 }
 \arguments{
-\item{gtfs_obj}{tidygtfs object}
+\item{gtfs_obj}{gtfs feed (tidygtfs object)}
 }
 \description{
 Convert NA values to empty strings ("")

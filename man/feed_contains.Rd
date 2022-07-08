@@ -8,7 +8,7 @@ tidytransit's calculated tables in sublist}
 feed_contains(gtfs_obj, table_name)
 }
 \arguments{
-\item{gtfs_obj}{gtfs object}
+\item{gtfs_obj}{gtfs feed (tidygtfs object)}
 
 \item{table_name}{name as string of the table to look for}
 }

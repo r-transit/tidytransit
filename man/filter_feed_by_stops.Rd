@@ -7,7 +7,7 @@
 filter_feed_by_stops(gtfs_obj, stop_ids = NULL, stop_names = NULL)
 }
 \arguments{
-\item{gtfs_obj}{tidygtfs object}
+\item{gtfs_obj}{gtfs feed (tidygtfs object)}
 
 \item{stop_ids}{vector with stop_ids. You can either provide stop_ids or stop_names}
 

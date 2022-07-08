@@ -7,7 +7,7 @@
 empty_strings_to_na(gtfs_obj)
 }
 \arguments{
-\item{gtfs_obj}{tidygtfs object}
+\item{gtfs_obj}{gtfs feed (tidygtfs object)}
 }
 \value{
 a gtfs_obj where all empty strings in tables have been replaced with NA

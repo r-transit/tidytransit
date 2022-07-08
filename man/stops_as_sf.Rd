@@ -24,3 +24,6 @@ some_stops <- gtfs_duke$stops[sample(nrow(gtfs_duke$stops), 40),]
 some_stops_sf <- stops_as_sf(some_stops)
 plot(some_stops_sf)
 }
+\seealso{
+code{\link{gtfs_as_sf}}
+}

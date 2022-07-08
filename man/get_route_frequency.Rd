@@ -12,7 +12,7 @@ get_route_frequency(
 )
 }
 \arguments{
-\item{gtfs_obj}{tidygtfs object}
+\item{gtfs_obj}{gtfs feed (tidygtfs object)}
 
 \item{start_time}{analysis start time, can be given as "HH:MM:SS",
 hms object or numeric value in seconds.}
