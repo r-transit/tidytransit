@@ -3,7 +3,7 @@
 #' Validates the GTFS object against GTFS specifications and raises warnings if
 #' required files/fields are not found. This function is called in \code{\link{read_gtfs}}.
 #'
-#' @param gtfs_obj A GTFS object
+#' @param gtfs_obj gtfs feed (tidygtfs object, created by [read_gtfs()])
 #' @param files A character vector containing the text files to be validated
 #'   against the GTFS specification (without the \code{.txt} extension). If
 #'   \code{NULL} (the default) the provided GTFS is validated against all

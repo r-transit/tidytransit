@@ -21,12 +21,13 @@ library(dplyr)
 
 Use tidytransit to:
 
-- [Read a GTFS Feed into R Data Types](https://tidytransit.r-transit.org/articles/introduction.html#read-gtfs-data)
+- [Read a GTFS Feed into R Data Types](https://tidytransit.r-transit.org/articles/introduction.html#read-a-gtfs-feed)
 - [Validate transit feeds](https://tidytransit.r-transit.org/articles/introduction.html#feed-validation-results)
-- Coerce [stops and routes to 'simple features'](https://tidytransit.r-transit.org/reference/stops_as_sf.html) and [plot them](https://tidytransit.r-transit.org/reference/plot.tidygtfs.html)
-- [Create graphics about transit service](https://tidytransit.r-transit.org/articles/servicepatterns.html)
-- [Calculate travel time between transit stops](https://tidytransit.r-transit.org/reference/raptor.html)
-- [Look up GTFS feeds from around the world within R](https://tidytransit.r-transit.org/articles/introduction.html#finding-more-gtfs-feeds)
+- [Convert stops and routes to 'simple features'](https://tidytransit.r-transit.org/reference/gtfs_as_sf.html) and [plot them](https://tidytransit.r-transit.org/reference/plot.tidygtfs.html)
+- [Calculate travel times between transit stops](https://tidytransit.r-transit.org/reference/travel_times.html)
+- [Analyse route frequency and headways](https://tidytransit.r-transit.org/articles/servicepatterns.html)
+- [Analyse calendar data](https://tidytransit.r-transit.org/articles/servicepatterns.html)
+- [Create time tables for stops](https://tidytransit.r-transit.org/articles/timetable.html)
 
 # Installation & Dependencies
 
@@ -41,28 +42,32 @@ install.packages('tidytransit')
 devtools::install_github("r-transit/tidytransit")
 ```
 
-For some users, `sf` is impractical to install due to system level dependencies. For these users, [`trread`](https://github.com/r-transit/trread) may work better. Its tidytransit without geospatial tools. 
-
 # The General Transit Feed Specification
 
-The [summary page for the GTFS standard](https://developers.google.com/transit/gtfs/#overview-of-a-gtfs-feed) is a good resource for more information on the standard.  
+The [summary page for the GTFS standard](https://developers.google.com/transit/gtfs/#overview-of-a-gtfs-feed) 
+is a good resource for more information on the standard.  
 
-GTFS feeds contain many linked tables about published transit schedules about service schedules, trips, stops, and routes. 
-
-Below is a diagram of these relationships and tables:
+GTFS feeds contain many linked tables about published transit schedules about service 
+schedules, trips, stops, and routes. Below is a diagram of these relationships and tables:
 
 ![gtfs-relationship-diagram](figures/GTFS_class_diagram.svg.png)
 Source: Wikimedia, user -stk. 
 
 # Read a GTFS Feed
 
-GTFS data come packaged as a zip file of tables in text form. The first thing tidytransit does is consolidate the reading of all those tables into a single R object, which contains a list of the tables in each feed. 
+GTFS data come packaged as a zip file of tables in text form. The first thing tidytransit 
+does is consolidate the reading of all those tables into a single R object, which contains 
+a list of the tables in each feed. 
 
-Below we use the tidytransit `read_gtfs` function in order to read a feed from the NYC MTA into R. 
+Below we use the tidytransit `read_gtfs` function in order to read a feed from the NYC MTA 
+into R. 
 
-We use a feed included in the package in the example below. But note that you can read directly from the New York City Metropolitan Transit Authority, as shown in the commented code below. 
+We use a feed included in the package in the example below. But note that you can read 
+directly from the New York City Metropolitan Transit Authority, as shown in the commented code below. 
 
-You can also read from any other URL. This is useful because there are many sources for GTFS data, and often the best source is transit service providers themselves. See the next section on "Finding More GTFS Feeds" for more sources of feeds. 
+You can also read from any other URL. This is useful because there are many sources for 
+GTFS data, and often the best source is transit service providers themselves. See the next 
+section on "Finding More GTFS Feeds" for more sources of feeds. 
 
 ```{r}
 # nyc <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
@@ -95,7 +100,9 @@ names(nyc)
 
 ## Feed Validation Results
 
-When reading a feed, it is checked against the GTFS specification, and an attribute is added to the resultant object called `validation_result`, which is a tibble about the files and fields in the GTFS feed and how they compare to the specification. 
+When reading a feed, it is checked against the GTFS specification, and an attribute is 
+added to the resultant object called `validation_result`, which is a tibble about the files 
+and fields in the GTFS feed and how they compare to the specification. 
 
 You can get this tibble from the metadata about the feed. 
 
@@ -106,35 +113,87 @@ head(validation_result)
 
 ## Finding More GTFS Feeds
 
-Included in the tidytransit package is a dataframe with a list of urls, city names, and locations. 
+### Feed registries
 
-You can browse it as a data frame:
+You can find more feeds on the following sites
+
+- https://database.mobilitydata.org/
+- https://www.transit.land/
+
+There might be other feed registries available, depending on your area of interest. 
+Transit agencies might also provide their feeds on their on website.
+
+### Using MobilityData
+
+MobilityData.org provide a csv file with all their feed sources on their
+[GitHub page](https://github.com/MobilityData/mobility-database-catalogs).
+
+You can load it in R and browse it as a data frame. Tidytransit cannot handle GTFS realtime 
+data, so we can remove those entries.
 
 ```{r}
-head(feedlist)
+MobilityData.csv = read.csv("https://bit.ly/catalogs-csv")
+
+MobilityData_feedlist = MobilityData.csv %>% 
+  as_tibble() %>% 
+  filter(data_type == "gtfs")
+
+str(MobilityData_feedlist)
 ```
 
-Note that there is a url (`url_d`) for each feed, which can be used to read the feed for a given city into R. 
-
-For example:
+There is a URL (column `urls.direct_download`) for each feed, which 
+can be used to read the feed for a given area directly into R. For example:
 
 ```{r, eval=FALSE}
-nyc_ferries_gtfs <- feedlist %>% 
-  filter(t=="NYC Ferry GTFS") %>%
-  pull(url_d) %>%
-  read_gtfs()
+gtfs_path_goldengate <- MobilityData_feedlist %>% 
+  filter(provider == "Golden Gate Transit") %>%
+  pull(urls.direct_download)
+
+gtfs_goldengate = read_gtfs(gtfs_path_goldengate)
 ```
 
-Included in the transitfeeds table is a set of coordinates for each feed. This means you can filter feed sources by location. Or map all of them, as below:
+The MobilityData feedlist contains bounding box coordinates for a feed which can be used to 
+give a basic impression of the location of feeds. Note that some bounding boxes might be 
+wrong.
+
+First, let's create bounding box polygons.
 
 ```{r}
-library(sf)
+# create a bounding box polygon from min/max corner coordinates
+suppressPackageStartupMessages(library(sf))
+bbox_polygon = function(lon_min, lon_max, lat_min, lat_max) {
+  corner_coords = matrix(
+    c(lon_min, lat_min,
+      lon_min, lat_max,
+      lon_max, lat_max,
+      lon_max, lat_min,
+      lon_min, lat_min),
+    ncol = 2, byrow = T
+  )
+  polyg = st_polygon(list(corner_coords))
+  return(st_sfc(polyg, crs = 4326))
+}
 
-feedlist_sf <- st_as_sf(feedlist,
-                        coords=c("loc_lng","loc_lat"),
-                        crs=4326)
-
-plot(feedlist_sf, max.plot = 1)
+# create bounding box polygon (only for reasonable values)
+MobilityData_sf = MobilityData_feedlist %>% 
+  filter(!is.na(location.bounding_box.minimum_longitude)) %>% 
+  filter(location.bounding_box.minimum_latitude > -89) %>% 
+  group_by(mdb_source_id) %>% 
+  mutate(geometry = bbox_polygon(location.bounding_box.minimum_longitude,
+                                 location.bounding_box.maximum_longitude,
+                                 location.bounding_box.minimum_latitude,
+                                 location.bounding_box.maximum_latitude)) %>% 
+  ungroup() %>% st_as_sf()
 ```
 
-See the package reference for the `transitfeeds` data frame for more information on the transitfeeds metadata.
+Now show the feeds on a map:
+
+```{r, fig.width=7}
+library(leaflet)
+leaflet() %>% 
+  addProviderTiles(provider = providers$CartoDB.Positron) %>% 
+  addPolygons(data = MobilityData_sf, weight = 2, 
+              fillOpacity = 0.1, label = substr(MobilityData_sf$provider, 0, 60))
+
+```
+

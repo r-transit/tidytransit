@@ -7,7 +7,7 @@
 set_dates_services(gtfs_obj)
 }
 \arguments{
-\item{gtfs_obj}{a gtfs_object as read by \code{\link[=read_gtfs]{read_gtfs()}}}
+\item{gtfs_obj}{gtfs feed (tidygtfs object)}
 }
 \value{
 a date_service data frame

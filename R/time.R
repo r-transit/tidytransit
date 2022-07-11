@@ -3,8 +3,7 @@
 #' Overwirtes character columns in stop_times (arrival_time, departure_time) and 
 #' frequencies (start_time, end_time) with times converted with [hms::hms()].
 #' 
-#' @param gtfs_obj a gtfs object in which hms times should be set, 
-#'                the modified gtfs_obj is returned
+#' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @return gtfs_obj with added hms times columns for stop_times and frequencies
 #' @importFrom hms new_hms
 convert_times_to_hms <- function(gtfs_obj) {
@@ -119,8 +118,9 @@ convert_dates <- function(gtfs_obj, parse_function = parse_gtfsio_date) {
 #' Use it to summarise service. For example, get a count of the number of 
 #' services for a date. See example. 
 #' 
-#' @param gtfs_obj a gtfs_object as read by [read_gtfs()]
+#' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @return a date_service data frame
+#' 
 #' @keywords internal
 #' @importFrom stats reshape
 #' @examples 

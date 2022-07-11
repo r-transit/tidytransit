@@ -7,7 +7,7 @@
 gtfs_transform(gtfs_obj, crs)
 }
 \arguments{
-\item{gtfs_obj}{tidygtfs object}
+\item{gtfs_obj}{gtfs feed (tidygtfs object)}
 
 \item{crs}{target coordinate reference system, used by sf::st_transform}
 }

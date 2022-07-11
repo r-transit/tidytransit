@@ -12,7 +12,7 @@ filter_feed_by_date(
 )
 }
 \arguments{
-\item{gtfs_obj}{a gtfs feed}
+\item{gtfs_obj}{gtfs feed (tidygtfs object)}
 
 \item{extract_date}{date to extract trips from this day (Date or "YYYY-MM-DD" string)}
 

@@ -13,7 +13,7 @@ get_stop_frequency(
 )
 }
 \arguments{
-\item{gtfs_obj}{a list of gtfs dataframes as read by \code{\link[=read_gtfs]{read_gtfs()}}.}
+\item{gtfs_obj}{gtfs feed (tidygtfs object)}
 
 \item{start_time}{analysis start time, can be given as "HH:MM:SS",
 hms object or numeric value in seconds.}

@@ -12,7 +12,7 @@ set_servicepattern(
 )
 }
 \arguments{
-\item{gtfs_obj}{tidytransit gtfs feed}
+\item{gtfs_obj}{gtfs feed (tidygtfs object)}
 
 \item{id_prefix}{all servicepattern id will start with this string}
 

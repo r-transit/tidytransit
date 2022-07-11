@@ -7,7 +7,7 @@
 gtfs_as_sf(gtfs_obj, skip_shapes = FALSE, crs = NULL, quiet = TRUE)
 }
 \arguments{
-\item{gtfs_obj}{a standard tidytransit gtfs object}
+\item{gtfs_obj}{gtfs feed (tidygtfs object, created by \code{\link[=read_gtfs]{read_gtfs()}})}
 
 \item{skip_shapes}{if TRUE, shapes are not converted. Default FALSE.}
 
@@ -25,5 +25,5 @@ LINESTRING data frame. Note that this function replaces stops and shapes
 tables in gtfs_obj.
 }
 \seealso{
-\code{\link{sf_as_tbl}}
+\code{\link{sf_as_tbl}}, \code{\link{stops_as_sf}}, \code{\link{shapes_as_sf}}
 }

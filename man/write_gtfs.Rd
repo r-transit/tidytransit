@@ -7,7 +7,7 @@
 write_gtfs(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE)
 }
 \arguments{
-\item{gtfs_obj}{a tidygtfs object}
+\item{gtfs_obj}{gtfs feed (tidygtfs object)}
 
 \item{zipfile}{path to the zip file the feed should be written to}
 

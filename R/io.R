@@ -47,7 +47,8 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE) {
 #' Write a tidygtfs object to a zip file
 #' 
 #' @note Auxilliary tidytransit tables (e.g. \code{dates_services}) are not exported.
-#' @param gtfs_obj a tidygtfs object
+#' 
+#' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @param zipfile path to the zip file the feed should be written to
 #' @param compression_level a number between 1 and 9.9, passed to zip::zip
 #' @param as_dir if TRUE, the feed is not zipped and zipfile is used as a directory path. 

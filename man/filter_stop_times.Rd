@@ -7,7 +7,7 @@
 filter_stop_times(gtfs_obj, extract_date, min_departure_time, max_arrival_time)
 }
 \arguments{
-\item{gtfs_obj}{a gtfs feed}
+\item{gtfs_obj}{gtfs feed (tidygtfs object)}
 
 \item{extract_date}{date to extract trips from this day (Date or "YYYY-MM-DD" string)}
 

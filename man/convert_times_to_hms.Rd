@@ -7,8 +7,7 @@
 convert_times_to_hms(gtfs_obj)
 }
 \arguments{
-\item{gtfs_obj}{a gtfs object in which hms times should be set,
-the modified gtfs_obj is returned}
+\item{gtfs_obj}{gtfs feed (tidygtfs object)}
 }
 \value{
 gtfs_obj with added hms times columns for stop_times and frequencies

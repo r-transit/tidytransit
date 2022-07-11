@@ -1,22 +1,3 @@
-#' Filter a gtfs calendar dataframe to service ids for specific days of the week
-#' 
-#' @param gtfs_object object made by join_all_gtfs_tables
-#' @param dow default to "weekday" (1,1,1,1,1,0,0)
-#' @return service ids that match the schedule specified
-#' @keywords internal
-service_by_dow <- function(calendar,
-                           dow=c(1,1,1,1,1,0,0)){
-  calendar <- subset(calendar, 
-                        calendar$monday == dow[1] & 
-                        calendar$tuesday == dow[2] & 
-                        calendar$wednesday == dow[3] & 
-                        calendar$thursday == dow[4] & 
-                        calendar$friday == dow[5] &
-                        calendar$saturday == dow[6] &
-                        calendar$sunday == dow[7])
-  return(calendar$service_id)
-}
-
 #' Calculate servicepattern ids for a gtfs feed
 #' 
 #' Each trip has a defined number of dates it runs on. This set of dates is called a 
@@ -24,7 +5,7 @@ service_by_dow <- function(calendar,
 #' dates. In general, \code{service_id} can work this way but it is not enforced by the
 #' GTFS standard.
 #' 
-#' @param gtfs_obj tidytransit gtfs feed
+#' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @param id_prefix all servicepattern id will start with this string
 #' @param hash_algo hashing algorithm used by digest
 #' @param hash_length length the hash should be cut to with substr(). Use -1 if the full hash should be used

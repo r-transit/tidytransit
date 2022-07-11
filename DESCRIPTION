@@ -42,7 +42,8 @@ Suggests:
     rmarkdown,
     ggplot2,
     scales,
-    lubridate
+    lubridate,
+    leaflet
 RoxygenNote: 7.1.2
 URL: https://github.com/r-transit/tidytransit
 BugReports: https://github.com/r-transit/tidytransit

@@ -7,7 +7,7 @@
 #' Consider using this instead, as it will be more accurate than what 
 #' tidytransit calculates.
 #' 
-#' @param gtfs_obj a list of gtfs dataframes as read by [read_gtfs()].
+#' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @param start_time analysis start time, can be given as "HH:MM:SS", 
 #'                   hms object or numeric value in seconds.
 #' @param end_time analysis perdiod end time, can be given as "HH:MM:SS", 
@@ -86,7 +86,7 @@ get_stop_frequency <- function(gtfs_obj,
 #' Consider using this instead, as it will be more accurate than what 
 #' tidytransit calculates. 
 #' 
-#' @param gtfs_obj a list of gtfs dataframes as read by the trread package.
+#' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @param start_time analysis start time, can be given as "HH:MM:SS", 
 #'                   hms object or numeric value in seconds.
 #' @param end_time analysis perdiod end time, can be given as "HH:MM:SS", 
