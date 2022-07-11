@@ -71,21 +71,28 @@ frequencies and transfers belonging to one of those trips are kept.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">filter_feed_by_stops</span><span class="op">(</span><span class="va">gtfs_obj</span>, stop_ids <span class="op">=</span> <span class="cn">NULL</span>, stop_names <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">filter_feed_by_stops</span><span class="op">(</span><span class="va">gtfs_obj</span>, stop_ids <span class="op">=</span> <span class="cn">NULL</span>, stop_names <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>gtfs_obj</dt>
-<dd><p>tidygtfs object</p></dd>
+<dd><p>gtfs feed (tidygtfs object)</p></dd>
+
+
 <dt>stop_ids</dt>
 <dd><p>vector with stop_ids. You can either provide stop_ids or stop_names</p></dd>
+
+
 <dt>stop_names</dt>
 <dd><p>vector with stop_names (will be converted to stop_ids)</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>tidygtfs object with filtered tables</p>
+    
+
+<p>tidygtfs object with filtered tables</p>
     </div>
     <div id="note">
     <h2>Note</h2>
@@ -109,7 +116,7 @@ that belong to a trip passing the initial stop).</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

@@ -34,9 +34,6 @@
     <loc>/reference/agency_info.html</loc>
   </url>
   <url>
-    <loc>/reference/clear_api_key.html</loc>
-  </url>
-  <url>
     <loc>/reference/cluster_stops.html</loc>
   </url>
   <url>
@@ -47,9 +44,6 @@
   </url>
   <url>
     <loc>/reference/feed_contains.html</loc>
-  </url>
-  <url>
-    <loc>/reference/feedlist.html</loc>
   </url>
   <url>
     <loc>/reference/filter_feed_by_area.html</loc>
@@ -68,12 +62,6 @@
   </url>
   <url>
     <loc>/reference/filter_stops.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_api_key.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_feedlist.html</loc>
   </url>
   <url>
     <loc>/reference/get_route_frequency.html</loc>
@@ -97,9 +85,6 @@
     <loc>/reference/gtfs_transform.html</loc>
   </url>
   <url>
-    <loc>/reference/has_api_key.html</loc>
-  </url>
-  <url>
     <loc>/reference/index.html</loc>
   </url>
   <url>
@@ -119,12 +104,6 @@
   </url>
   <url>
     <loc>/reference/route_type_names.html</loc>
-  </url>
-  <url>
-    <loc>/reference/service_by_dow.html</loc>
-  </url>
-  <url>
-    <loc>/reference/set_api_key.html</loc>
   </url>
   <url>
     <loc>/reference/set_dates_services.html</loc>

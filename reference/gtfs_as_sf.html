@@ -73,28 +73,37 @@ tables in gtfs_obj.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">gtfs_as_sf</span><span class="op">(</span><span class="va">gtfs_obj</span>, skip_shapes <span class="op">=</span> <span class="cn">FALSE</span>, crs <span class="op">=</span> <span class="cn">NULL</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">gtfs_as_sf</span><span class="op">(</span><span class="va">gtfs_obj</span>, skip_shapes <span class="op">=</span> <span class="cn">FALSE</span>, crs <span class="op">=</span> <span class="cn">NULL</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>gtfs_obj</dt>
-<dd><p>a standard tidytransit gtfs object</p></dd>
+<dd><p>gtfs feed (tidygtfs object, created by <code><a href="read_gtfs.html">read_gtfs()</a></code>)</p></dd>
+
+
 <dt>skip_shapes</dt>
 <dd><p>if TRUE, shapes are not converted. Default FALSE.</p></dd>
+
+
 <dt>crs</dt>
 <dd><p>optional coordinate reference system (used by sf::st_transform) to transform
 lon/lat coordinates of stops and shapes</p></dd>
+
+
 <dt>quiet</dt>
 <dd><p>boolean whether to print status messages</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>tidygtfs object with stops and shapes as sf dataframes</p>
+    
+
+<p>tidygtfs object with stops and shapes as sf dataframes</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="sf_as_tbl.html">sf_as_tbl</a></code></p></div>
+    <div class="dont-index"><p><code><a href="sf_as_tbl.html">sf_as_tbl</a></code>, <code><a href="stops_as_sf.html">stops_as_sf</a></code>, <code><a href="shapes_as_sf.html">shapes_as_sf</a></code></p></div>
     </div>
 
   </div>
@@ -109,7 +118,7 @@ lon/lat coordinates of stops and shapes</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

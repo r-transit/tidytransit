@@ -69,7 +69,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">stop_distances</span><span class="op">(</span><span class="va">gtfs_stops</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">stop_distances</span><span class="op">(</span><span class="va">gtfs_stops</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -77,10 +77,13 @@
     <dl><dt>gtfs_stops</dt>
 <dd><p>gtfs stops table either as data frame (with at least <code>stop_id</code>,
 <code>stop_lon</code> and <code>stop_lat</code> columns) or as <code>sf</code> object.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Returns a data.frame with each row containing a pair of stop_ids (columns
+    
+
+<p>Returns a data.frame with each row containing a pair of stop_ids (columns
 <code>from_stop_id</code> and <code>to_stop_id</code>) and the <code>distance</code> between them (in meters)</p>
     </div>
     <div id="note">
@@ -91,15 +94,15 @@ among all stops for large feeds should be avoided</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">nyc_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"google_transit_nyc_subway.zip"</span>, package <span class="op">=</span> <span class="st">"tidytransit"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">nyc</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_gtfs.html">read_gtfs</a></span><span class="op">(</span><span class="va">nyc_path</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">nyc</span><span class="op">$</span><span class="va">stops</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">stop_name</span> <span class="op">==</span> <span class="st">"Borough Hall"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">stop_distances</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">distance</span><span class="op">)</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">nyc_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"google_transit_nyc_subway.zip"</span>, package <span class="op">=</span> <span class="st">"tidytransit"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">nyc</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_gtfs.html">read_gtfs</a></span><span class="op">(</span><span class="va">nyc_path</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">nyc</span><span class="op">$</span><span class="va">stops</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">stop_name</span> <span class="op">==</span> <span class="st">"Borough Hall"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">stop_distances</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">distance</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 36 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    from_stop_id to_stop_id distance</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -114,22 +117,22 @@ among all stops for large feeds should be avoided</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 423S         232S           91.5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 232          423            91.5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 26 more rows</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">#&gt; # A tibble: 36 × 3</span></span>
-<span class="r-in"><span class="co">#&gt;    from_stop_id to_stop_id  distance</span></span>
-<span class="r-in"><span class="co">#&gt;    &lt;chr&gt;        &lt;chr&gt;          &lt;dbl&gt;</span></span>
-<span class="r-in"><span class="co">#&gt;  1 423          232             91.5</span></span>
-<span class="r-in"><span class="co">#&gt;  2 423N         232             91.5</span></span>
-<span class="r-in"><span class="co">#&gt;  3 423S         232             91.5</span></span>
-<span class="r-in"><span class="co">#&gt;  4 423          232N            91.5</span></span>
-<span class="r-in"><span class="co">#&gt;  5 423N         232N            91.5</span></span>
-<span class="r-in"><span class="co">#&gt;  6 423S         232N            91.5</span></span>
-<span class="r-in"><span class="co">#&gt;  7 423          232S            91.5</span></span>
-<span class="r-in"><span class="co">#&gt;  8 423N         232S            91.5</span></span>
-<span class="r-in"><span class="co">#&gt;  9 423S         232S            91.5</span></span>
-<span class="r-in"><span class="co">#&gt; 10 232          423             91.5</span></span>
-<span class="r-in"><span class="co">#&gt; # … with 26 more rows</span></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">#&gt; # A tibble: 36 × 3</span></span></span>
+<span class="r-in"><span><span class="co">#&gt;    from_stop_id to_stop_id  distance</span></span></span>
+<span class="r-in"><span><span class="co">#&gt;    &lt;chr&gt;        &lt;chr&gt;          &lt;dbl&gt;</span></span></span>
+<span class="r-in"><span><span class="co">#&gt;  1 423          232             91.5</span></span></span>
+<span class="r-in"><span><span class="co">#&gt;  2 423N         232             91.5</span></span></span>
+<span class="r-in"><span><span class="co">#&gt;  3 423S         232             91.5</span></span></span>
+<span class="r-in"><span><span class="co">#&gt;  4 423          232N            91.5</span></span></span>
+<span class="r-in"><span><span class="co">#&gt;  5 423N         232N            91.5</span></span></span>
+<span class="r-in"><span><span class="co">#&gt;  6 423S         232N            91.5</span></span></span>
+<span class="r-in"><span><span class="co">#&gt;  7 423          232S            91.5</span></span></span>
+<span class="r-in"><span><span class="co">#&gt;  8 423N         232S            91.5</span></span></span>
+<span class="r-in"><span><span class="co">#&gt;  9 423S         232S            91.5</span></span></span>
+<span class="r-in"><span><span class="co">#&gt; 10 232          423             91.5</span></span></span>
+<span class="r-in"><span><span class="co">#&gt; # … with 26 more rows</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -144,7 +147,7 @@ among all stops for large feeds should be avoided</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

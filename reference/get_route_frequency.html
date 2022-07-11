@@ -71,32 +71,41 @@ and for given service_ids.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">get_route_frequency</span><span class="op">(</span>
-  <span class="va">gtfs_obj</span>,
-  start_time <span class="op">=</span> <span class="st">"06:00:00"</span>,
-  end_time <span class="op">=</span> <span class="st">"22:00:00"</span>,
-  service_ids <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_route_frequency</span><span class="op">(</span></span>
+<span>  <span class="va">gtfs_obj</span>,</span>
+<span>  start_time <span class="op">=</span> <span class="st">"06:00:00"</span>,</span>
+<span>  end_time <span class="op">=</span> <span class="st">"22:00:00"</span>,</span>
+<span>  service_ids <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>gtfs_obj</dt>
-<dd><p>a list of gtfs dataframes as read by the trread package.</p></dd>
+<dd><p>gtfs feed (tidygtfs object)</p></dd>
+
+
 <dt>start_time</dt>
 <dd><p>analysis start time, can be given as "HH:MM:SS",
 hms object or numeric value in seconds.</p></dd>
+
+
 <dt>end_time</dt>
 <dd><p>analysis perdiod end time, can be given as "HH:MM:SS",
 hms object or numeric value in seconds.</p></dd>
+
+
 <dt>service_ids</dt>
 <dd><p>A set of service_ids from the calendar dataframe
 identifying a particular service id. If not provided, the service_id
 with the most departures is used.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a dataframe of routes with variables or headway/frequency in seconds for a route
+    
+
+<p>a dataframe of routes with variables or headway/frequency in seconds for a route
 within a given time frame</p>
     </div>
     <div id="note">
@@ -108,10 +117,10 @@ tidytransit calculates.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">gtfs_duke</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">routes_frequency</span> <span class="op">&lt;-</span> <span class="fu">get_route_frequency</span><span class="op">(</span><span class="va">gtfs_duke</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">routes_frequency</span><span class="op">$</span><span class="va">median_headways</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">routes_frequency</span><span class="op">[</span><span class="va">x</span>,<span class="op">]</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">gtfs_duke</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">routes_frequency</span> <span class="op">&lt;-</span> <span class="fu">get_route_frequency</span><span class="op">(</span><span class="va">gtfs_duke</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">routes_frequency</span><span class="op">$</span><span class="va">median_headways</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">routes_frequency</span><span class="op">[</span><span class="va">x</span>,<span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 6</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   route_id total_departures median_headways mean_headways st_dev_headways</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -133,7 +142,7 @@ tidytransit calculates.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

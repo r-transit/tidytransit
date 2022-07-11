@@ -71,26 +71,35 @@ required files/fields are not found. This function is called in <code><a href="r
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">validate_gtfs</span><span class="op">(</span><span class="va">gtfs_obj</span>, files <span class="op">=</span> <span class="cn">NULL</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span>, warnings <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">validate_gtfs</span><span class="op">(</span><span class="va">gtfs_obj</span>, files <span class="op">=</span> <span class="cn">NULL</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span>, warnings <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>gtfs_obj</dt>
-<dd><p>A GTFS object</p></dd>
+<dd><p>gtfs feed (tidygtfs object, created by <code><a href="read_gtfs.html">read_gtfs()</a></code>)</p></dd>
+
+
 <dt>files</dt>
 <dd><p>A character vector containing the text files to be validated
 against the GTFS specification (without the <code>.txt</code> extension). If
 <code>NULL</code> (the default) the provided GTFS is validated against all
 possible GTFS text files.</p></dd>
+
+
 <dt>quiet</dt>
 <dd><p>Whether to hide log messages (defaults to TRUE).</p></dd>
+
+
 <dt>warnings</dt>
 <dd><p>Whether to display warning messages (defaults to TRUE).</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A tidygtfs with a <code>validation_result</code> attribute. This
+    
+
+<p>A tidygtfs with a <code>validation_result</code> attribute. This
 attribute is a <code>tibble</code> containing the validation summary of all
 possible fields from the specified files.</p>
     </div>
@@ -118,9 +127,9 @@ present, however, it becomes optional and <code>calendar_dates.txt</code>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">local_gtfs_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"google_transit_nyc_subway.zip"</span>, package <span class="op">=</span> <span class="st">"tidytransit"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">gtfs</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_gtfs.html">read_gtfs</a></span><span class="op">(</span><span class="va">local_gtfs_path</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">gtfs</span>, <span class="st">"validation_result"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">local_gtfs_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"google_transit_nyc_subway.zip"</span>, package <span class="op">=</span> <span class="st">"tidytransit"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">gtfs</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_gtfs.html">read_gtfs</a></span><span class="op">(</span><span class="va">local_gtfs_path</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">gtfs</span>, <span class="st">"validation_result"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 136 × 8</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    file   file_spec file_provided_status field       field_spec field_provided_…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>           </span>
@@ -136,15 +145,15 @@ present, however, it becomes optional and <code>calendar_dates.txt</code>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> stops  req       TRUE                 stop_code   opt        TRUE            </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 126 more rows, and 2 more variables: validation_status &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   validation_details &lt;chr&gt;</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">gtfs</span><span class="op">$</span><span class="va">shapes</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
-<span class="r-in"><span class="va">validation_result</span> <span class="op">&lt;-</span> <span class="fu">validate_gtfs</span><span class="op">(</span><span class="va">gtfs</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># should raise a warning</span></span>
-<span class="r-in"><span class="va">gtfs</span><span class="op">$</span><span class="va">stop_times</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
-<span class="r-in"><span class="va">validation_result</span> <span class="op">&lt;-</span> <span class="fu">validate_gtfs</span><span class="op">(</span><span class="va">gtfs</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">gtfs</span><span class="op">$</span><span class="va">shapes</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span></span>
+<span class="r-in"><span><span class="va">validation_result</span> <span class="op">&lt;-</span> <span class="fu">validate_gtfs</span><span class="op">(</span><span class="va">gtfs</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># should raise a warning</span></span></span>
+<span class="r-in"><span><span class="va">gtfs</span><span class="op">$</span><span class="va">stop_times</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span></span>
+<span class="r-in"><span><span class="va">validation_result</span> <span class="op">&lt;-</span> <span class="fu">validate_gtfs</span><span class="op">(</span><span class="va">gtfs</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Invalid feed. Missing required file(s): stop_times.txt</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -159,7 +168,7 @@ present, however, it becomes optional and <code>calendar_dates.txt</code>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>
