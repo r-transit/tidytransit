@@ -21,13 +21,13 @@ library(dplyr)
 
 Use tidytransit to:
 
-- [Read a GTFS Feed into R Data Types](https://tidytransit.r-transit.org/articles/introduction.html#read-a-gtfs-feed)
-- [Validate transit feeds](https://tidytransit.r-transit.org/articles/introduction.html#feed-validation-results)
-- [Convert stops and routes to 'simple features'](https://tidytransit.r-transit.org/reference/gtfs_as_sf.html) and [plot them](https://tidytransit.r-transit.org/reference/plot.tidygtfs.html)
-- [Calculate travel times between transit stops](https://tidytransit.r-transit.org/reference/travel_times.html)
-- [Analyse route frequency and headways](https://tidytransit.r-transit.org/articles/servicepatterns.html)
-- [Analyse calendar data](https://tidytransit.r-transit.org/articles/servicepatterns.html)
-- [Create time tables for stops](https://tidytransit.r-transit.org/articles/timetable.html)
+- [Read a GTFS Feed into R Data Types](https://r-transit.github.io/tidytransit/articles/introduction.html#read-a-gtfs-feed)
+- [Validate transit feeds](https://r-transit.github.io/tidytransit/articles/introduction.html#feed-validation-results)
+- [Convert stops and routes to 'simple features'](https://r-transit.github.io/tidytransit/reference/gtfs_as_sf.html) and [plot them](https://r-transit.github.io/tidytransit/reference/plot.tidygtfs.html)
+- [Calculate travel times between transit stops](https://r-transit.github.io/tidytransit/reference/travel_times.html)
+- [Analyse route frequency and headways](https://r-transit.github.io/tidytransit/articles/servicepatterns.html)
+- [Analyse calendar data](https://r-transit.github.io/tidytransit/articles/servicepatterns.html)
+- [Create time tables for stops](https://r-transit.github.io/tidytransit/articles/timetable.html)
 
 # Installation & Dependencies
 
