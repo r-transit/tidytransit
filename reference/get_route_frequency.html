@@ -122,12 +122,12 @@ tidytransit calculates.</p>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">routes_frequency</span><span class="op">$</span><span class="va">median_headways</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">routes_frequency</span><span class="op">[</span><span class="va">x</span>,<span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   route_id total_departures median_headways mean_headways st_dev_headways</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 1679                  513            <span style="text-decoration: underline;">1</span>440          <span style="text-decoration: underline;">2</span>771           <span style="text-decoration: underline;">4</span>940.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 1690                 <span style="text-decoration: underline;">1</span>242            <span style="text-decoration: underline;">1</span>477          <span style="text-decoration: underline;">1</span>403            223.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 1683                  644            <span style="text-decoration: underline;">2</span>590          <span style="text-decoration: underline;">4</span>515           <span style="text-decoration: underline;">4</span>390.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 1 more variable: stop_count &lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   route_id total_departures median_headways mean_headways st_dev_headw…¹ stop_…²</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 1679                  513            <span style="text-decoration: underline;">1</span>440          <span style="text-decoration: underline;">2</span>771          <span style="text-decoration: underline;">4</span>940.      13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 1690                 <span style="text-decoration: underline;">1</span>242            <span style="text-decoration: underline;">1</span>477          <span style="text-decoration: underline;">1</span>403           223.      29</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 1683                  644            <span style="text-decoration: underline;">2</span>590          <span style="text-decoration: underline;">4</span>515          <span style="text-decoration: underline;">4</span>390.      14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with abbreviated variable names ¹​st_dev_headways, ²​stop_count</span></span>
 </code></pre></div>
     </div>
   </div>
@@ -142,7 +142,7 @@ tidytransit calculates.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
