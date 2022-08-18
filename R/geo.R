@@ -82,7 +82,6 @@ geodist_list_sf = function(pts) {
 
 prep_dist_mtrx = function(dist_list) {
   mtrx = dist_list[[1]]
-  if(nrow(mtrx) == 1) return(0)
   diag(mtrx) <- NA
   v = c(mtrx)
   v[!is.na(v)]
