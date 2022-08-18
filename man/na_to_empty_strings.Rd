@@ -9,6 +9,12 @@ na_to_empty_strings(gtfs_obj)
 \arguments{
 \item{gtfs_obj}{gtfs feed (tidygtfs object)}
 }
+\value{
+a gtfs_obj where all NA strings in tables have been replaced with ""
+}
 \description{
 Convert NA values to empty strings ("")
+}
+\seealso{
+\code{\link[=empty_strings_to_na]{empty_strings_to_na()}}
 }

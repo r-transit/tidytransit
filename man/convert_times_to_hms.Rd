@@ -2,7 +2,7 @@
 % Please edit documentation in R/time.R
 \name{convert_times_to_hms}
 \alias{convert_times_to_hms}
-\title{Use hms::hms columns in feed}
+\title{Convert time columns to hms::hms in feed}
 \usage{
 convert_times_to_hms(gtfs_obj)
 }
@@ -10,9 +10,9 @@ convert_times_to_hms(gtfs_obj)
 \item{gtfs_obj}{gtfs feed (tidygtfs object)}
 }
 \value{
-gtfs_obj with added hms times columns for stop_times and frequencies
+gtfs_obj with hms times columns for stop_times and frequencies
 }
 \description{
-Overwirtes character columns in stop_times (arrival_time, departure_time) and
+Overwrites character columns in stop_times (arrival_time, departure_time) and
 frequencies (start_time, end_time) with times converted with \code{\link[hms:hms]{hms::hms()}}.
 }

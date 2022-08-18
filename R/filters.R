@@ -3,7 +3,7 @@
 #' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @param service_ids the service for which to get stops 
 #' @param route_ids the route_ids for which to get stops 
-#' @return stops table for a given service
+#' @return stops table for a given service or route
 #' 
 #' @export
 #' @examples \donttest{

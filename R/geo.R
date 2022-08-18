@@ -73,11 +73,10 @@ geodist_list = function(lon, lat, names = NULL) {
   list(dists)
 }
 
-geodist_list_sf = function(pts, names = NULL) {
-  dists = as.numeric(sf::st_distance(pts))
-  if(!is.null(names)) {
-    colnames(dists) <- rownames(dists) <- names
-  }
+geodist_list_sf = function(pts) {
+  dists = sf::st_distance(pts)
+  dists <- matrix(as.numeric(dists), nrow = nrow(dists), ncol = ncol(dists))
+  colnames(dists) <- rownames(dists) <- NULL
   list(dists)
 }
 
@@ -136,22 +135,24 @@ stop_group_distances = function(gtfs_stops, by = "stop_name") {
   gtfs_single_stops = gtfs_stops %>% filter(stop_name %in% names(n_stops)[n_stops == 1])
   gtfs_multip_stops = gtfs_stops %>% filter(stop_name %in% names(n_stops)[n_stops != 1])
 
-  gtfs_multip_stops <- gtfs_multip_stops %>%
-    dplyr::group_by_at(by) %>%
-    dplyr::summarise(distances = geodist_list(stop_lon, stop_lat, stop_id), .groups = "keep") %>%
-    dplyr::mutate(n_stop_ids = nrow(distances[[1]]),
-                  dist_mean = median(prep_dist_mtrx(distances)),
-                  dist_median = median(prep_dist_mtrx(distances)),
-                  dist_max = max(prep_dist_mtrx(distances))) %>% ungroup()
+  if(nrow(gtfs_multip_stops) > 0) {
+    gtfs_multip_stops <- gtfs_multip_stops %>%
+      dplyr::group_by_at(by) %>%
+      dplyr::summarise(distances = geodist_list(stop_lon, stop_lat, stop_id), .groups = "keep") %>%
+      dplyr::mutate(n_stop_ids = nrow(distances[[1]]),
+                    dist_mean = median(prep_dist_mtrx(distances)),
+                    dist_median = median(prep_dist_mtrx(distances)),
+                    dist_max = max(prep_dist_mtrx(distances))) %>% ungroup()
+    
+    # tidytable version
+    # gtfs_multip_stops <- gtfs_multip_stops %>%
+    #   tidytable::summarise.(distances = geodist_list(stop_lon, stop_lat, stop_id), .by = by) %>%
+    #   tidytable::mutate.(n_stop_ids = nrow(distances[[1]]),
+    #                      dist_mean = median(prep_dist_mtrx(distances)),
+    #                      dist_median = median(prep_dist_mtrx(distances)),
+    #                      dist_max = max(prep_dist_mtrx(distances)), .by = "stop_name")
+  }
   
-  # tidytable version
-  # gtfs_multip_stops <- gtfs_multip_stops %>%
-  #   tidytable::summarise.(distances = geodist_list(stop_lon, stop_lat, stop_id), .by = by) %>%
-  #   tidytable::mutate.(n_stop_ids = nrow(distances[[1]]),
-  #                      dist_mean = median(prep_dist_mtrx(distances)),
-  #                      dist_median = median(prep_dist_mtrx(distances)),
-  #                      dist_max = max(prep_dist_mtrx(distances)), .by = "stop_name")
-
   gtfs_single_stops <- gtfs_single_stops %>% 
     select(stop_name) %>% 
     dplyr::mutate(distances = list(matrix(0)), n_stop_ids = 1, dist_mean = 0, dist_median = 0, dist_max = 0)

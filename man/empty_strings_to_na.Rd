@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{empty_strings_to_na}
 \alias{empty_strings_to_na}
-\title{Convert empty strings ("") to NA values in gtfs tables}
+\title{Convert empty strings ("") to NA values in all gtfs tables}
 \usage{
 empty_strings_to_na(gtfs_obj)
 }
@@ -13,5 +13,8 @@ empty_strings_to_na(gtfs_obj)
 a gtfs_obj where all empty strings in tables have been replaced with NA
 }
 \description{
-Convert empty strings ("") to NA values in gtfs tables
+Convert empty strings ("") to NA values in all gtfs tables
+}
+\seealso{
+\code{\link[=na_to_empty_strings]{na_to_empty_strings()}}
 }

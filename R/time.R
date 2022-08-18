@@ -1,10 +1,11 @@
-#' Use hms::hms columns in feed
+#' Convert time columns to hms::hms in feed
 #' 
-#' Overwirtes character columns in stop_times (arrival_time, departure_time) and 
+#' Overwrites character columns in stop_times (arrival_time, departure_time) and 
 #' frequencies (start_time, end_time) with times converted with [hms::hms()].
 #' 
 #' @param gtfs_obj gtfs feed (tidygtfs object)
-#' @return gtfs_obj with added hms times columns for stop_times and frequencies
+#' @return gtfs_obj with hms times columns for stop_times and frequencies
+#' 
 #' @importFrom hms new_hms
 convert_times_to_hms <- function(gtfs_obj) {
   arrival_time_hms <- departure_time_hms <- start_time_hms <- end_time_hms <-  NULL

@@ -1,8 +1,8 @@
 #' Convert stops and shapes to Simple Features
 #' 
-#' Stops are converted to POINT sf data frames. Shapes are created as
+#' Stops are converted to POINT sf data frames. Shapes are converted to a
 #' LINESTRING data frame. Note that this function replaces stops and shapes
-#' tables in gtfs_obj.
+#' tables in \code{gtfs_obj}.
 #'
 #' @param gtfs_obj gtfs feed (tidygtfs object, created by [read_gtfs()])
 #' @param skip_shapes if TRUE, shapes are not converted. Default FALSE.
@@ -26,7 +26,7 @@ gtfs_as_sf <- function(gtfs_obj, skip_shapes = FALSE, crs = NULL, quiet = TRUE) 
     gtfs_obj$shapes <- try(shapes_as_sf(gtfs_obj$shapes, crs))
   }
   
-  gtfs_obj
+  return(gtfs_obj)
 }
 
 #' Convert stops into Simple Features Points
@@ -62,7 +62,7 @@ stops_as_sf <- function(stops, crs = NULL) {
 #'            
 #' @return an sf dataframe for gtfs shapes
 #' 
-#' @seealso code{\link{gtfs_as_sf}}
+#' @seealso \code{\link{gtfs_as_sf}}
 #' @export
 shapes_as_sf <- function(gtfs_shapes, crs = NULL) {
   list_of_line_tibbles <- split(gtfs_shapes, gtfs_shapes$shape_id)
