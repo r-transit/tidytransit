@@ -87,6 +87,12 @@ test_that("validation", {
   g_invalid_path = system.file("extdata","sample-feed-invalid.zip", package = "tidytransit")
   expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required file(s): stop_times.txt", fixed = T)
   expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required field(s) in stops: stop_id", fixed = T)
+  
+  # extra table
+  g = read_gtfs(system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit"))
+  g$extra <- "not_a_dataframe"
+  vd = validate_gtfs(g)
+  expect_true(is.na(vd[vd$file == "extra","field"]))
 })
 
 test_that("files parameter", {
@@ -101,7 +107,9 @@ test_that("files parameter", {
                c("calendar_dates", "fare_attributes", "fare_rules", "frequencies", 
                  "shapes"))
   
-  for(f in names(g1)[names(g1) != "."]) {
-      expect_warning(read_gtfs(path, files = f))
+  fns = names(g1)[names(g1) != "." & names(g1) != "calendar_dates"]
+  
+  for(f in fns) {
+    expect_warning(read_gtfs(path, files = f), regexp = NA) # no warning expected
   }
 })

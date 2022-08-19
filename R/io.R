@@ -27,7 +27,7 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE) {
   g = gtfsio::import_gtfs(path, files = files, quiet = quiet)
   
   # validate
-  validation_result <- validate_gtfs(g)
+  validation_result <- validate_gtfs(g, files = files, quiet = quiet)
   
   # prep tidygtfs columns
   g$. <- list()
