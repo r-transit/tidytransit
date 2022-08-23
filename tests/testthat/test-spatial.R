@@ -112,6 +112,7 @@ stopdist_df = dplyr::tibble(
   fake_lon = 1:5)
 
 test_that("stop_distances", {
+  expect_error(stop_distances(list()))
   dist_df = stop_distances(stopdist_df)
   stopdist_sf = stops_as_sf(stopdist_df)
   dist_sf = stop_distances(stopdist_sf)
@@ -120,6 +121,20 @@ test_that("stop_distances", {
   expect_equal(dist_df[,c("from_stop_id", "to_stop_id")], dist_sf[,c("from_stop_id", "to_stop_id")])
   diff = dist_df$distance - dist_sf$distance
   expect_lt(max(abs(diff)), 1)
+})
+
+test_that("geodist", {
+  xlon = c(8.4590, 8.4714)
+  xlat = c(47.1812, 47.1824)
+  dist1 = geodist_list(xlon, xlat)
+  expect_is(dist1, "list")
+  expect_equal(length(dist1), 1)
+  
+  x_sf = sf::st_as_sf(data.frame(lon = xlon, lat = xlat), coords = c("lon", "lat"), crs = 4326)
+  dist2 = geodist_list_sf(x_sf)
+  diff = dist1[[1]]-dist2[[1]]
+
+  expect_lt(max(abs(diff)), 1.5)
 })
 
 test_that("stop_group_distances", {
@@ -141,6 +156,10 @@ test_that("stop_group_distances real feed", {
   expect_equal(x1$stop_name, x2$stop_name)
   expect_equal(x1[,c("n_stop_ids", "dist_mean", "dist_median", "dist_max")], 
                x2[,c("n_stop_ids", "dist_mean", "dist_median", "dist_max")])
+  expect_error(stop_group_distances(g_nyc_sf, "unknown"), "column unknown does not exist in g_nyc_sf")
+  
+  x3 = stop_group_distances(g_nyc$stops[c(1,4),], "stop_id")
+  expect_equal(nrow(x3), 2)  
 })
 
 test_that("stops cluster", {

@@ -79,9 +79,10 @@ validate_gtfs <- function(gtfs_obj, files = NULL, quiet = TRUE, warnings = TRUE)
     if(is.null(file_metadata)) {
       file_provided_status  <- TRUE
       file_spec             <- "ext"
-      field                 <- names(gtfs_obj[[file]]); if(is.null(field)) field <- NA
       field_spec            <- "ext"
       field_provided_status <- TRUE
+      field                 <- names(gtfs_obj[[file]])
+      if(is.null(field)) field <- NA # file is not a dataframe
     } else {
 
       # undocumented fields are labeled as "extra" fields

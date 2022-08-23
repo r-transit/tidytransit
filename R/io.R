@@ -16,7 +16,7 @@
 #' @examples
 #' local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
 #' gtfs <- read_gtfs(local_gtfs_path)
-#' names(gtfs)
+#' summary(gtfs)
 #'
 #' gtfs <- read_gtfs(local_gtfs_path, files = c("trips", "stop_times"))
 #' names(gtfs)
@@ -27,7 +27,7 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE) {
   g = gtfsio::import_gtfs(path, files = files, quiet = quiet)
   
   # validate
-  validation_result <- validate_gtfs(g)
+  validation_result <- validate_gtfs(g, files = files, quiet = quiet)
   
   # prep tidygtfs columns
   g$. <- list()
