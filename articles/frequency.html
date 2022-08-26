@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4</span>
       </span>
     </div>
 
@@ -87,7 +87,7 @@
       <h1 data-toc-skip>Transit (GTFS) Service &amp; Headway Mapping with R</h1>
                         <h4 data-toc-skip class="author">Tom Buckley</h4>
             
-            <h4 data-toc-skip class="date">2022-08-23</h4>
+            <h4 data-toc-skip class="date">2022-08-26</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r-transit/tidytransit/blob/HEAD/vignettes/frequency.Rmd" class="external-link"><code>vignettes/frequency.Rmd</code></a></small>
       <div class="hidden name"><code>frequency.Rmd</code></div>
@@ -131,7 +131,7 @@
 <div class="section level3">
 <h3 id="identify-weekday-schedules-of-service">2) Identify Weekday Schedules of Service<a class="anchor" aria-label="anchor" href="#identify-weekday-schedules-of-service"></a>
 </h3>
-<p>GTFS feeds typically contain a schedule of all the schedules of service for a given system. Selecting a schedule of service in NYC allows us to focus on, for example, non-holiday weekday service, in the Fall of 2019. In some feeds, service selection can be more or less complicated than NYC. In any case, you’ll want to read the <a href="http://r-transit.github.io/tidytransit/articles/servicepatterns.html" class="external-link">service patterns</a> vignette included in this package in order to see how you can select the right service for your needs.</p>
+<p>GTFS feeds typically contain a schedule of all the schedules of service for a given system. Selecting a schedule of service in NYC allows us to focus on, for example, non-holiday weekday service, in the Fall of 2019. In some feeds, service selection can be more or less complicated than NYC. In any case, you’ll want to read the <a href="https://r-transit.github.io/tidytransit/articles/servicepatterns.html" class="external-link">service patterns</a> vignette included in this package in order to see how you can select the right service for your needs.</p>
 <p>We use one of the functions described in that vignette to create a table on the gtfs feed that lets us filter by weekday/weekend service.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gtfs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_servicepattern.html">set_servicepattern</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">)</span></span></code></pre></div>
