@@ -1,6 +1,6 @@
 [![CRAN
-status](http://www.r-pkg.org/badges/version-ago/tidytransit?)](https://cran.r-project.org/package=tidytransit)
-[![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active) 
+status](https://www.r-pkg.org/badges/version-ago/tidytransit?)](https://cran.r-project.org/package=tidytransit)
+[![Project Status: Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active) 
 [![](https://cranlogs.r-pkg.org/badges/tidytransit)](https://cran.r-project.org/package=tidytransit)
 [![](https://cranlogs.r-pkg.org/badges/grand-total/tidytransit?color=lightgrey)](https://cran.r-project.org/package=tidytransit)
 [![R build
@@ -15,17 +15,17 @@ frequencies, and validate transit feeds. Tidytransit reads the
 [tidyverse](https://tibble.tidyverse.org/) and 
 [simple features](https://en.wikipedia.org/wiki/Simple_Features) data frames. 
 Tidytransit can be used to:
-- [read GTFS feeds into R](http://r-transit.github.io/tidytransit/reference/read_gtfs.html)
-- [calculate travel times between transit stops](http://r-transit.github.io/tidytransit/reference/travel_times.html)
-- [convert stops and routes to sf data frames](http://r-transit.github.io/tidytransit/reference/gtfs_as_sf.html)
-- [validate transit feeds and more](http://r-transit.github.io/tidytransit/reference/index.html)
+- [read GTFS feeds into R](https://r-transit.github.io/tidytransit/reference/read_gtfs.html)
+- [calculate travel times between transit stops](https://r-transit.github.io/tidytransit/reference/travel_times.html)
+- [convert stops and routes to sf data frames](https://r-transit.github.io/tidytransit/reference/gtfs_as_sf.html)
+- [validate transit feeds and more](https://r-transit.github.io/tidytransit/reference/index.html)
 
 Have a look at the following vignettes to see how tidytransit can be used to analyse a feed:
 
-- [introduction](http://r-transit.github.io/tidytransit/articles/introduction.html) 
-- [calendar and service patterns](http://r-transit.github.io/tidytransit/articles/servicepatterns.html)
-- [create time tables for stops](http://r-transit.github.io/tidytransit/articles/timetable.html)
-- [frequency and headway calculations](http://r-transit.github.io/tidytransit/articles/frequency.html)  
+- [introduction](https://r-transit.github.io/tidytransit/articles/introduction.html) 
+- [calendar and service patterns](https://r-transit.github.io/tidytransit/articles/servicepatterns.html)
+- [create time tables for stops](https://r-transit.github.io/tidytransit/articles/timetable.html)
+- [frequency and headway calculations](https://r-transit.github.io/tidytransit/articles/frequency.html)  
 
 ## Installation
 

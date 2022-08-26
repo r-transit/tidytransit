@@ -66,7 +66,7 @@ MTA's URL directly.
 GTFS feeds typically contain a schedule of all the schedules of service for a given system. 
 Selecting a schedule of service in NYC allows us to focus on, for example, non-holiday 
 weekday service, in the Fall of 2019. In some feeds, service selection can be more or less 
-complicated than NYC. In any case, you'll want to read the [service patterns](http://r-transit.github.io/tidytransit/articles/servicepatterns.html) 
+complicated than NYC. In any case, you'll want to read the [service patterns](https://r-transit.github.io/tidytransit/articles/servicepatterns.html) 
 vignette included in this package in order to see how you can select the right service for 
 your needs. 
 
