@@ -358,6 +358,19 @@ test_that("filter feed without min/max time", {
   expect_true(all(st.1 == st.2))
 })
 
+test_that("feed without transfers", {
+  g_no_transfers = g
+  g_no_transfers$transfers <- NULL
+
+  expect_warning(fst <- filter_stop_times(g_no_transfers, "2018-10-01", 0, 24*3600),
+                 "No transfers found in feed")
+  
+  tts = travel_times(filtered_stop_times = fst, 
+                    stop_name = "Two", time_range = 3600)
+  expect_equal(tts$to_stop_name, c("Two", "Three", "Four"))
+  expect_equal(tts$to_stop_id, c("stop2", "stop3a", "stop4"))  
+})
+
 test_that("nyc feed", {
   nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
   nyc <- read_gtfs(nyc_path)
