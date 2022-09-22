@@ -504,6 +504,14 @@ filter_stop_times = function(gtfs_obj,
     stop("max_arrival_time is before min_departure_time")
   }
   
+  # check transfers
+  if(feed_contains(gtfs_obj, "transfers")) {
+    transfers <- gtfs_obj[["transfers"]]
+  } else {
+    warning("No transfers found in feed, travel_times() or raptor() might produce unexpected results")
+    transfers <- data.frame()
+  }
+  
   # trips running on day
   service_ids = filter(gtfs_obj$.$dates_services, date == extract_date)
   if(nrow(service_ids) == 0) {
@@ -525,7 +533,7 @@ filter_stop_times = function(gtfs_obj,
   
   # store stops and transfers in attributes
   attributes(stop_times_dt)$stops <- stops_as_dt(gtfs_obj$stops)
-  attributes(stop_times_dt)$transfers <- gtfs_obj$transfers
+  attributes(stop_times_dt)$transfers <- transfers
   attributes(stop_times_dt)$extract_date <- extract_date
   attributes(stop_times_dt)$min_departure_time <- min_departure_time
   attributes(stop_times_dt)$max_arrival_time <- max_arrival_time
