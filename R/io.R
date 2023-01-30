@@ -25,23 +25,10 @@
 #' @export
 read_gtfs <- function(path, files = NULL, quiet = TRUE) {
   g = gtfsio::import_gtfs(path, files = files, quiet = quiet)
-  
-  # validate
-  validation_result <- validate_gtfs(g, files = files, quiet = quiet)
-  
-  # prep tidygtfs columns
-  g$. <- list()
-  g <- convert_times_to_hms(g)
-  g <- convert_dates(g)
-  g <- set_dates_services(g)
-  
-  # convert to tibble
-  g[names(g) != "."] <- lapply(g[names(g) != "."], dplyr::as_tibble)
-  g <- gtfsio::new_gtfs(g)
-  class(g) <- c("tidygtfs", "gtfs")
-  attributes(g)$validation_result <- validation_result
+
+  tidygtfs = gtfsio_to_tidygtfs(g, files = files)
     
-  g
+  return(tidygtfs)
 }
 
 #' Write a tidygtfs object to a zip file
