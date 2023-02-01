@@ -28,7 +28,6 @@ Imports:
     gtfsio (>= 0.1.0),
     dplyr,
     data.table (>= 1.12.8),
-    httr,
     rlang,
     sf,
     hms,
@@ -36,7 +35,7 @@ Imports:
     checkmate,
     geodist
 Suggests:
-    testthat,
+    testthat (>= 3.1.5),
     knitr,
     markdown,
     rmarkdown,
@@ -44,7 +43,7 @@ Suggests:
     scales,
     lubridate,
     leaflet
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.2
 URL: https://github.com/r-transit/tidytransit
 BugReports: https://github.com/r-transit/tidytransit
 Roxygen: list(markdown = TRUE)

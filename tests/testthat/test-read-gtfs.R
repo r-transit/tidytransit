@@ -6,16 +6,6 @@ local_gtfs_path <- system.file("extdata",
                                "google_transit_nyc_subway.zip", 
                                package = "tidytransit")
 
-
-working <- function() {
-  connecting <- function(gtfs_url) {
-    r <- tryCatch(httr::GET(gtfs_url, httr::timeout(5)), 
-             error = function(e) NA)
-    if(!is.na(r[1])) r$status_code == 200 else FALSE
-  }
-  connecting(gtfs_example_url)
-}
-
 test_that("read_gtfs() imports a local file to a 
           list of dataframes and doesnt 
           delete the source file", {
@@ -31,41 +21,23 @@ test_that("loud read_gtfs", {
     "gtfs")
 })
 
-test_that("import-bad paths throw good errors", {
+test_that("the read_gtfs function works with urls", {
   skip_on_cran()
-  not_a_url <- "#!:D"
-  expect_error(read_gtfs(path)) # invalid path
-})
-
-test_that("the read_gtfs function works", {
-  skip_on_cran()
-  if(!working()){
-      skip("no internet, skipping")
-  } else {
-    # non-specified path
-    x <- read_gtfs(gtfs_example_url, quiet=TRUE)
-    expect_is(x, "gtfs") # should return 'list' object
-  }
-  
+  x <- read_gtfs(gtfs_example_url, quiet=TRUE)
+  expect_is(x, "gtfs") # should return 'list' object
 })
 
 test_that("the read_gtfs function fails gracefully on bad urls", {
   skip_on_cran()
-  if(!working()){
-      skip("no internet, skipping")
-  } else {
-    not_zip <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zippy"
-    bad_url <- "https://developers.google.com/transit/gtfs/examples/sample-feed-bad.zip"
   
-    # non-specified path
-    expect_error(read_gtfs(not_zip, quiet=TRUE))
-  }
+  not_zip <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zippy"
+  bad_file <- "/Users/wrong.zip"
+  bad_url <- "https://developers.google.com/transit/gtfs/examples/sample-feed-bad.zip"
   
-})
-
-test_that("unknown local file throws meaningful error", {
-  read_gtfs(local_gtfs_path)
-  expect_error(read_gtfs("/Users/wrong.zip"))
+  expect_error(read_gtfs(not_zip, quiet=TRUE), "'path' must have '.zip' extension")
+  expect_error(read_gtfs(bad_file), "'path' points to non-existent file: '/Users/wrong.zip'")
+  expect_error(suppressWarnings(read_gtfs(bad_url)),
+               "cannot open URL 'https://developers.google.com/transit/gtfs/examples/sample-feed-bad.zip'")
 })
 
 test_that("Files with BOM can be read", {
@@ -110,6 +82,6 @@ test_that("files parameter", {
   fns = names(g1)[names(g1) != "." & names(g1) != "calendar_dates"]
   
   for(f in fns) {
-    expect_warning(read_gtfs(path, files = f), regexp = NA) # no warning expected
+    expect_no_warning(read_gtfs(path, files = f)) # no warning expected
   }
 })
