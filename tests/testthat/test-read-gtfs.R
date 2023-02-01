@@ -110,6 +110,6 @@ test_that("files parameter", {
   fns = names(g1)[names(g1) != "." & names(g1) != "calendar_dates"]
   
   for(f in fns) {
-    expect_warning(read_gtfs(path, files = f), regexp = NA) # no warning expected
+    expect_no_warning(read_gtfs(path, files = f)) # no warning expected
   }
 })

@@ -36,7 +36,7 @@ Imports:
     checkmate,
     geodist
 Suggests:
-    testthat,
+    testthat (>= 3.1.5),
     knitr,
     markdown,
     rmarkdown,
