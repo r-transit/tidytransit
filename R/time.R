@@ -13,56 +13,18 @@ convert_times_to_hms <- function(gtfs_obj) {
   # stop_times ####
   if(feed_contains(gtfs_obj, "stop_times")) {
     stopifnot(inherits(gtfs_obj$stop_times, "data.table"))
-    
-    # arrival_time ####
-    suppressWarnings(
-      gtfs_obj$stop_times[, arrival_time_hms := hms::new_hms(hhmmss_to_seconds(arrival_time))]
-    )
-    if(any(is.na(gtfs_obj$stop_times$arrival_time_hms))) {
-      # warning("malformed arrival_time strings in stop_times")
-      gtfs_obj$stop_times[, arrival_time_hms := hms::new_hms(hhmmss_to_sec_split(arrival_time))]
-    }
-    gtfs_obj$stop_times[, arrival_time := arrival_time_hms]
-    gtfs_obj$stop_times[, arrival_time_hms := NULL]
-    
-    # departure_time ####
-    suppressWarnings(
-      gtfs_obj$stop_times[, departure_time_hms := hms::new_hms(hhmmss_to_seconds(departure_time))]
-    )
-    if(any(is.na(gtfs_obj$stop_times$departure_time_hms))) {
-      # warning("malformed departure_time strings in stop_times")
-      gtfs_obj$stop_times[, departure_time_hms := hms::new_hms(hhmmss_to_sec_split(departure_time))]
-    }
-    gtfs_obj$stop_times[, departure_time := departure_time_hms]
-    gtfs_obj$stop_times[, departure_time_hms := NULL]
+    gtfs_obj$stop_times[, arrival_time := parse_hms_strings(arrival_time)]
+    gtfs_obj$stop_times[, departure_time := parse_hms_strings(departure_time)]
   }
   
   # frequencies ####
   if(feed_contains(gtfs_obj, "frequencies") && nrow(gtfs_obj$frequencies) > 0) {
     stopifnot(inherits(gtfs_obj$frequencies, "data.table"))
-    
-    suppressWarnings(
-      gtfs_obj$frequencies[, start_time_hms := hms::new_hms(hhmmss_to_seconds(start_time))]
-    )
-    if(any(is.na(gtfs_obj$frequencies$start_time_hms))) {
-      # warning("malformed start_time strings in frequencies")
-      gtfs_obj$frequencies[, start_time_hms := hms::new_hms(hhmmss_to_sec_split(start_time))]
-    }
-    gtfs_obj$frequencies[, start_time := start_time_hms]
-    gtfs_obj$frequencies[, start_time_hms := NULL]
-    
-    suppressWarnings(
-      gtfs_obj$frequencies[, end_time_hms := hms::new_hms(hhmmss_to_seconds(end_time))]
-    )
-    if(any(is.na(gtfs_obj$frequencies$end_time_hms))) {
-      # warning("malformed end_time strings in frequencies")
-      gtfs_obj$frequencies[, end_time_hms := hms::new_hms(hhmmss_to_sec_split(end_time))]
-    }
-    gtfs_obj$frequencies[, end_time := end_time_hms]
-    gtfs_obj$frequencies[, end_time_hms := NULL]
+    gtfs_obj$frequencies[, start_time := parse_hms_strings(start_time)]
+    gtfs_obj$frequencies[, end_time := parse_hms_strings(end_time)]
   }
   
-  gtfs_obj
+  return(gtfs_obj)
 }
 
 hms_to_hhmmss = function(vec) {
@@ -84,7 +46,6 @@ convert_hms_to_char <- function(gtfs_obj) {
   
   gtfs_obj
 }
-
 
 # Dates ####
 parse_gtfsio_date = function(gtfsio_date) {
@@ -137,7 +98,7 @@ convert_dates <- function(gtfs_obj, parse_function = parse_gtfsio_date) {
 set_dates_services <- function(gtfs_obj) {
   has_calendar = feed_contains(gtfs_obj, "calendar") && nrow(gtfs_obj[["calendar"]]) > 0
   has_calendar_dates = feed_contains(gtfs_obj, "calendar_dates") && nrow(gtfs_obj[["calendar_dates"]]) > 0
-   
+  
   # check date validity 
   if(!has_calendar && !has_calendar_dates) {
     return(gtfs_obj)
@@ -218,6 +179,23 @@ set_dates_services <- function(gtfs_obj) {
   gtfs_obj$.$dates_services <- date_service_df
   
   return(gtfs_obj)
+}
+
+#' convert a vector of time strings
+#' empty strings are converted to NA
+#' @param time_strings char vector ("HH:MM:SS")
+parse_hms_strings = function(time_strings) {
+  empty_strings = nchar(time_strings) == 0
+  
+  time_seconds = suppressWarnings(hhmmss_to_seconds(time_strings))
+  
+  if(any(is.na(time_seconds) & !empty_strings)) {
+    # strings are not in HH:MM:SS format
+    time_seconds = hhmmss_to_sec_split(time_strings)
+  }
+  time_seconds[empty_strings] <- NA
+  
+  return(hms::new_hms(time_seconds))
 }
 
 #' Function to convert "HH:MM:SS" time strings to seconds.
