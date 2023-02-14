@@ -85,3 +85,15 @@ test_that("files parameter", {
     expect_no_warning(read_gtfs(path, files = f)) # no warning expected
   }
 })
+
+test_that("NA times", {
+  g = read_gtfs(system.file("extdata", "routing-NA-times.zip", package = "tidytransit"))
+  
+  expect_equal(g$stop_times$arrival_time[1], hms::hms(NA))
+  first_stops = g$stop_times[g$stop_times$stop_sequence == 1,]
+  last_stops = g$stop_times |> group_by(trip_id) |> 
+    dplyr::mutate(max_stop_seq = max(stop_sequence)) |> 
+    filter(stop_sequence == max_stop_seq)
+  
+  expect_equal(first_stops$arrival_time, rep(hms::hms(NA), nrow(first_stops)))
+})

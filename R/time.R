@@ -10,9 +10,11 @@
 convert_times_to_hms <- function(gtfs_obj) {
   arrival_time_hms <- departure_time_hms <- start_time_hms <- end_time_hms <-  NULL
   
+  # stop_times ####
   if(feed_contains(gtfs_obj, "stop_times")) {
     stopifnot(inherits(gtfs_obj$stop_times, "data.table"))
-    # arrival_time
+    
+    # arrival_time ####
     suppressWarnings(
       gtfs_obj$stop_times[, arrival_time_hms := hms::new_hms(hhmmss_to_seconds(arrival_time))]
     )
@@ -22,8 +24,8 @@ convert_times_to_hms <- function(gtfs_obj) {
     }
     gtfs_obj$stop_times[, arrival_time := arrival_time_hms]
     gtfs_obj$stop_times[, arrival_time_hms := NULL]
-
-    # departure_time
+    
+    # departure_time ####
     suppressWarnings(
       gtfs_obj$stop_times[, departure_time_hms := hms::new_hms(hhmmss_to_seconds(departure_time))]
     )
@@ -35,6 +37,7 @@ convert_times_to_hms <- function(gtfs_obj) {
     gtfs_obj$stop_times[, departure_time_hms := NULL]
   }
   
+  # frequencies ####
   if(feed_contains(gtfs_obj, "frequencies") && nrow(gtfs_obj$frequencies) > 0) {
     stopifnot(inherits(gtfs_obj$frequencies, "data.table"))
     
@@ -217,15 +220,21 @@ set_dates_services <- function(gtfs_obj) {
   return(gtfs_obj)
 }
 
-# Function to convert "HH:MM:SS" time strings to seconds.
+#' Function to convert "HH:MM:SS" time strings to seconds.
+#' @param hhmmss_str string
 hhmmss_to_seconds <- function(hhmmss_str) {
   as.numeric(substr(hhmmss_str, 0, 2)) * 3600 +
     as.numeric(substr(hhmmss_str, 4, 5)) * 60 +
     as.numeric(substr(hhmmss_str, 7, 8))
 }
 
+#' Fallback function to convert strings like 5:02:11
+#' 10x slower than [hhmmss_to_seconds()], empty strings are converted to NA
+#' @param hhmmss_str string
 hhmmss_to_sec_split <- function(hhmmss_str) {
-  sapply(strsplit(hhmmss_str, ":"), function(Y) {
+  seconds = sapply(strsplit(hhmmss_str, ":"), function(Y) {
     sum(as.numeric(Y) * c(3600, 60, 1))
   })
+  seconds[nchar(hhmmss_str) == 0] <- NA_real_
+  return(seconds)  
 }
