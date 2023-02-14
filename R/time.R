@@ -13,22 +13,18 @@ convert_times_to_hms <- function(gtfs_obj) {
   # stop_times ####
   if(feed_contains(gtfs_obj, "stop_times")) {
     stopifnot(inherits(gtfs_obj$stop_times, "data.table"))
-    gtfs_obj$stop_times[, arrival_time := parse_hms_strings(arrival_time)]
-    gtfs_obj$stop_times[, departure_time := parse_hms_strings(departure_time)]
+    gtfs_obj$stop_times[, arrival_time := hhmmss_to_hms(arrival_time)]
+    gtfs_obj$stop_times[, departure_time := hhmmss_to_hms(departure_time)]
   }
   
   # frequencies ####
   if(feed_contains(gtfs_obj, "frequencies") && nrow(gtfs_obj$frequencies) > 0) {
     stopifnot(inherits(gtfs_obj$frequencies, "data.table"))
-    gtfs_obj$frequencies[, start_time := parse_hms_strings(start_time)]
-    gtfs_obj$frequencies[, end_time := parse_hms_strings(end_time)]
+    gtfs_obj$frequencies[, start_time := hhmmss_to_hms(start_time)]
+    gtfs_obj$frequencies[, end_time := hhmmss_to_hms(end_time)]
   }
   
   return(gtfs_obj)
-}
-
-hms_to_hhmmss = function(vec) {
-  format(vec, format = "%H:%M:%S")
 }
 
 convert_hms_to_char <- function(gtfs_obj) {
@@ -83,4 +79,10 @@ hhmmss_to_sec_split <- function(hhmmss_str) {
   })
   seconds[nchar(hhmmss_str) == 0] <- NA_real_
   return(seconds)  
+}
+
+hms_to_hhmmss = function(vec) {
+  hhmmss = format(vec, format = "%H:%M:%S")
+  hhmmss[is.na(vec)] <- ""
+  return(hhmmss)
 }
