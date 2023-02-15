@@ -136,6 +136,20 @@ tidytransit's calculated tables in sublist (<code>gtfs_obj$.</code>)</p></td>
         </td>
         <td><p>Transform or convert coordinates of a gtfs feed</p></td>
       </tr><tr><td>
+          <p><code><a href="hhmmss_to_hms.html">hhmmss_to_hms()</a></code> </p>
+        </td>
+        <td><p>convert a vector of time strings
+empty strings are converted to NA</p></td>
+      </tr><tr><td>
+          <p><code><a href="hhmmss_to_sec_split.html">hhmmss_to_sec_split()</a></code> </p>
+        </td>
+        <td><p>Fallback function to convert strings like 5:02:11
+10x slower than <code><a href="../reference/hhmmss_to_seconds.html">hhmmss_to_seconds()</a></code>, empty strings are converted to NA</p></td>
+      </tr><tr><td>
+          <p><code><a href="hhmmss_to_seconds.html">hhmmss_to_seconds()</a></code> </p>
+        </td>
+        <td><p>Function to convert "HH:MM:SS" time strings to seconds.</p></td>
+      </tr><tr><td>
           <p><code><a href="na_to_empty_strings.html">na_to_empty_strings()</a></code> </p>
         </td>
         <td><p>Convert NA values to empty strings ("")</p></td>

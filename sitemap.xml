@@ -85,6 +85,15 @@
     <loc>/reference/gtfs_transform.html</loc>
   </url>
   <url>
+    <loc>/reference/hhmmss_to_hms.html</loc>
+  </url>
+  <url>
+    <loc>/reference/hhmmss_to_sec_split.html</loc>
+  </url>
+  <url>
+    <loc>/reference/hhmmss_to_seconds.html</loc>
+  </url>
+  <url>
     <loc>/reference/index.html</loc>
   </url>
   <url>
