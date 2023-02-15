@@ -92,3 +92,19 @@ test_that("NA times", {
   expect_equal(g$stop_times$arrival_time[c(15,16,18)], rep(hms::hms(NA), 3))
   expect_equal(g$stop_times$departure_time[c(23,19,4)], rep(hms::hms(NA), 3))
 })
+
+test_that("non-unique stop_ids", {
+  g1 = read_gtfs(system.file("extdata", "routing.zip", package = "tidytransit"))
+  g1$stops$stop_id[1] <- "stop1a"
+  g1$trips$trip_id[2] <- "routeA1"
+  
+  tmppath = tempfile(fileext = ".zip")
+  write_gtfs(g1, tmppath)
+  
+  expect_warning(read_gtfs(tmppath), "Duplicated ids found in: stops, trips")
+  
+  g2 = suppressWarnings(read_gtfs(tmppath))
+  
+  expect_is(g2, "gtfs")
+  expect_false(inherits(g2, "tidygtfs"))
+})

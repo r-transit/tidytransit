@@ -13,6 +13,7 @@ get_gtfs_meta <- function() {
   names(agency$field_spec) <- agency$field
   agency$coltype <- rep("character", 8)
   agency$file_spec <- "req"
+  agency$required_unique_id <- NA
   
   # stops
   assign("stops", list())
@@ -33,6 +34,7 @@ get_gtfs_meta <- function() {
                         c("location_type",
                           "wheelchair_boarding"))] <- "integer" # integers
   stops$file_spec <- "req"
+  stops$required_unique_id <- "stop_id"
   
   # routes
   assign("routes", list())
@@ -51,6 +53,7 @@ get_gtfs_meta <- function() {
                                      "continuous_pickup", 
                                      "continuous_drop_off")] <- "integer"
   routes$file_spec <- "req"
+  routes$required_unique_id <- "route_id"
   
   # trips
   assign("trips", list())
@@ -67,6 +70,7 @@ get_gtfs_meta <- function() {
                                    "wheelchair_accessible", 
                                    "bikes_allowed")] <- "integer"
   trips$file_spec <- "req"
+  trips$required_unique_id <- "trip_id"
   
   # stop_times
   assign("stop_times", list())
@@ -90,6 +94,7 @@ get_gtfs_meta <- function() {
   stop_times$coltype[stop_times$field %in% 
                        c("shape_dist_traveled")] <- "numeric"
   stop_times$file_spec <- "req"
+  stop_times$required_unique_id <- NA
   
   # calendar
   assign("calendar", list())
@@ -103,7 +108,8 @@ get_gtfs_meta <- function() {
   calendar$coltype[calendar$field %in% c("service_id")] <- "character"
   calendar$coltype[calendar$field %in% c("start_date", "end_date")] <- "character" # Date
   calendar$file_spec <- "req"
-
+  calendar$required_unique_id <- "service_id"
+  
   # optional files ----------------------------------------------------------
 
   # calendar_dates
@@ -115,6 +121,7 @@ get_gtfs_meta <- function() {
   calendar_dates$coltype[calendar_dates$field %in% c("exception_type")] <- "integer"
   calendar_dates$coltype[calendar_dates$field %in% c("date")] <- "character" # Date
   calendar_dates$file_spec <- "opt"
+  calendar_dates$required_unique_id <- NA
   
   # fare_attributes
   assign("fare_attributes", list())
@@ -130,6 +137,7 @@ get_gtfs_meta <- function() {
   fare_attributes$coltype[fare_attributes$field %in% 
                             c("transfer_duration")] <- "numeric"
   fare_attributes$file_spec <- "opt"
+  fare_attributes$required_unique_id <- "fare_id"
   
   # fare_rules
   assign("fare_rules", list())
@@ -143,7 +151,8 @@ get_gtfs_meta <- function() {
                             "wheelchair_accessible", 
                             "bikes_allowed")] <- "integer"
   fare_rules$file_spec <- "opt"
-    
+  fare_rules$required_unique_id <- NA
+  
   # shapes
   assign("shapes", list())
   shapes$field <- c("shape_id", "shape_pt_lat", 
@@ -155,6 +164,7 @@ get_gtfs_meta <- function() {
   shapes$coltype[shapes$field %in% c("shape_id")] <- "character"
   shapes$coltype[shapes$field %in% c("shape_pt_sequence")] <- "integer"
   shapes$file_spec <- "opt"
+  shapes$required_unique_id <- NA
   
   # frequencies
   assign("frequencies", list())
@@ -167,6 +177,7 @@ get_gtfs_meta <- function() {
   frequencies$coltype[frequencies$field %in% c("headway_secs")] <- "numeric"
   frequencies$coltype[frequencies$field %in% c("exact_times")] <- "integer"
   frequencies$file_spec <- "opt"
+  frequencies$required_unique_id <- NA
   
   # transfers
   assign("transfers", list())
@@ -177,6 +188,7 @@ get_gtfs_meta <- function() {
   transfers$coltype <- rep("character", length(transfers$field))
   transfers$coltype[transfers$field %in% c("min_transfer_time")] <- "integer"
   transfers$file_spec <- "opt"
+  transfers$required_unique_id <- NA
   
   # pathways
   assign("pathways", list())
@@ -189,6 +201,7 @@ get_gtfs_meta <- function() {
   pathways$coltype[pathways$field %in% c("traversal_time", "stair_count")] <- "integer"
   pathways$coltype[pathways$field %in% c("length", "max_slope", "min_width")] <- "numeric"
   pathways$file_spec <- "opt"
+  pathways$required_unique_id <- "pathway_id"
   
   # levels
   assign("levels", list())
@@ -197,6 +210,7 @@ get_gtfs_meta <- function() {
   names(levels$field_spec) <- levels$field
   levels$coltype <- c("character", "numeric", "character")
   levels$file_spec <- "opt"
+  levels$required_unique_id <- "level_id"
   
   # feed_info 
   assign("feed_info", list())
@@ -211,6 +225,7 @@ get_gtfs_meta <- function() {
   feed_info$coltype[transfers$field %in% 
                       c("feed_start_date", "feed_end_date")] <- "character" # Date
   feed_info$file_spec <- "opt"
+  feed_info$required_unique_id <- NA
   
   # translations
   assign("translations", list())
@@ -221,6 +236,7 @@ get_gtfs_meta <- function() {
   names(translations$field_spec) <- translations$field
   translations$coltype <- rep("character", length(translations$field))
   translations$file_spec <- "opt"
+  translations$required_unique_id <- NA
   
   # attributions
   assign("attributions", list())
@@ -232,7 +248,7 @@ get_gtfs_meta <- function() {
   names(attributions$field_spec) <- attributions$field
   attributions$coltype <- rep("character", length(attributions$field))
   attributions$file_spec <- "opt"
-  
+  attributions$required_unique_id <- NA
   
   # create meta object ####
   meta <- list(agency, stops, routes, trips, 
