@@ -86,3 +86,11 @@ hms_to_hhmmss = function(vec) {
   hhmmss[is.na(vec)] <- ""
   return(hhmmss)
 }
+
+# fix function ####
+replace_NA_times = function(stop_times) {
+  stopifnot(!inherits(stop_times, "gtfs"))
+  stop_times$arrival_time[is.na(stop_times$arrival_time)] <- stop_times$departure_time[is.na(stop_times$arrival_time)]
+  stop_times$departure_time[is.na(stop_times$departure_time)] <- stop_times$arrival_time[is.na(stop_times$departure_time)]
+  return(stop_times)
+}

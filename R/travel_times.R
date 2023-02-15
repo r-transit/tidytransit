@@ -186,6 +186,8 @@ filter_stop_times = function(gtfs_obj,
                              extract_date,
                              min_departure_time,
                              max_arrival_time) {
+  gtfs_obj$stop_times <- replace_NA_times(gtfs_obj$stop_times)
+  
   departure_time_num <- arrival_time_num <- NULL
   if(is.character(extract_date)) {
     extract_date <- as.Date(extract_date)
