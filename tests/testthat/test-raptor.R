@@ -1,22 +1,22 @@
 context("raptor travel time routing")
 
 local_gtfs_path <- system.file("extdata", "routing.zip", package = "tidytransit")
-g <- read_gtfs(local_gtfs_path)
+gtfs_routing <- read_gtfs(local_gtfs_path)
 test_from_stop_ids <- c("stop1a", "stop1b")
 
-stop_times = g$stop_times
-stop_times_0709 = dplyr::filter(g$stop_times, departure_time >= 7*3600+10*60)
-stop_times_0711 = dplyr::filter(g$stop_times, departure_time >= 7*3600+11*60)
-stop_times_0715 = dplyr::filter(g$stop_times, departure_time >= 7*3600+15*60)
-transfers = g$transfers
+stop_times = gtfs_routing$stop_times
+stop_times_0709 = dplyr::filter(gtfs_routing$stop_times, departure_time >= 7*3600+10*60)
+stop_times_0711 = dplyr::filter(gtfs_routing$stop_times, departure_time >= 7*3600+11*60)
+stop_times_0715 = dplyr::filter(gtfs_routing$stop_times, departure_time >= 7*3600+15*60)
+transfers = gtfs_routing$transfers
 
 test_that("travel times wrapper function", {
-  fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
+  fst = filter_stop_times(gtfs_routing, "2018-10-01", 0, 24*3600)
   tt = travel_times(
     filtered_stop_times = fst, 
     stop_name = "One", 
     time_range = 3600)
-  expect_equal(nrow(tt), length(unique(g$stops$stop_name)))
+  expect_equal(nrow(tt), length(unique(gtfs_routing$stops$stop_name)))
   expect_equal(tt %>% dplyr::filter(to_stop_name == "One") %>% dplyr::pull(travel_time), 0)
   expect_equal(tt$travel_time[which(tt$to_stop_name == "One")], 0)
   expect_equal(tt$travel_time[which(tt$to_stop_name == "Two")], 4*60)
@@ -35,13 +35,13 @@ test_that("travel times wrapper function", {
 })
 
 test_that("stop_dist warning", {
-  fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
+  fst = filter_stop_times(gtfs_routing, "2018-10-01", 0, 24*3600)
   expect_error(travel_times(filtered_stop_times = fst, stop_name = "One", 
                             time_range = 3600, stop_dist_check = 30))
 })
 
 test_that("travel_time works with different params", {
-  fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
+  fst = filter_stop_times(gtfs_routing, "2018-10-01", 0, 24*3600)
   travel_times(fst, "One", max_departure_time = 7*3600+5*60)
   travel_times(fst, "One", max_departure_time = "07:05:00")
   expect_error(travel_times(fst, "One", time_range = 1800,  max_departure_time = "07:45:00"))
@@ -50,13 +50,13 @@ test_that("travel_time works with different params", {
 })
 
 test_that("stop times are filtered correctly", {
-  expect_error(filter_stop_times(g, "2018-09-28", "07:00:00", "08:00:00"))
-  expect_error(filter_stop_times(g, "2018-10-01", "07:00:00", "06:00:00"))
-  expect_error(filter_stop_times(g, "2018-10-01", "08:00:00", "09:00:00"))
+  expect_error(filter_stop_times(gtfs_routing, "2018-09-28", "07:00:00", "08:00:00"))
+  expect_error(filter_stop_times(gtfs_routing, "2018-10-01", "07:00:00", "06:00:00"))
+  expect_error(filter_stop_times(gtfs_routing, "2018-10-01", "08:00:00", "09:00:00"))
   
-  fst = filter_stop_times(g, "2018-10-01", "07:00:00", "08:00:00")
+  fst = filter_stop_times(gtfs_routing, "2018-10-01", "07:00:00", "08:00:00")
   expect_true(all(c("transfers", "stops") %in% names(attributes(fst))))
-  expect_error(travel_times(g$stop_times, "One"))
+  expect_error(travel_times(gtfs_routing$stop_times, "One"))
 })
 
 test_that("raptor travel times", {
@@ -184,7 +184,7 @@ test_that("transfers are returned", {
 })
 
 test_that("transfers for travel_times", {
-  fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
+  fst = filter_stop_times(gtfs_routing, "2018-10-01", 0, 24*3600)
   tt = travel_times(
     filtered_stop_times = fst, 
     stop_name = "One", 
@@ -202,7 +202,7 @@ test_that("only max_transfers are used", {
 })
 
 test_that("travel_times return type", {
-  fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
+  fst = filter_stop_times(gtfs_routing, "2018-10-01", 0, 24*3600)
   expect_s3_class(travel_times(fst, "One", return_DT = TRUE), "data.frame")
   expect_s3_class(travel_times(fst, "One", return_DT = FALSE), "data.frame")
   expect_s3_class(travel_times(fst, "One"), "tbl_df")
@@ -211,7 +211,7 @@ test_that("travel_times return type", {
 })
 
 test_that("travel_times from stop with departures from transfer stops", {
-  g2 = g
+  g2 = gtfs_routing
   g2$stops[nrow(g2$stops)+1,] <- list("stop0", "Zero", 46.9596, 7.39071, NA, 0)
   g2$transfers[nrow(g2$transfers)+1,] <- list("stop0", "stop1a", 2, 1)
   g2$transfers$min_transfer_time <- as.numeric(g2$transfers$min_transfer_time)
@@ -320,7 +320,7 @@ test_that("latest arrivals are correct", {
 })
 
 test_that("travel_times with arrival=TRUE stop_name", {
-  fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
+  fst = filter_stop_times(gtfs_routing, "2018-10-01", 0, 24*3600)
   tt_to = travel_times(fst, stop_name = "Four", arrival = TRUE)
   tt_to <- tt_to[order(tt_to$from_stop_id),]
   expect_equal(tt_to$journey_arrival_time, hms::hms(c(37,37,37,45,37,37,41,41)*60+7*3600))
@@ -335,15 +335,15 @@ test_that("set_num_times w/o hms or num", {
 })
 
 test_that("catch invalid params", {
-  expect_error(travel_times(g, stop_name = "One"), "Travel times cannot be calculated on an unfiltered tidygtfs object. Use filter_feed_by_date().")
-  fst = filter_stop_times(g, "2018-10-01", 0, 24*3600)
+  expect_error(travel_times(gtfs_routing, stop_name = "One"), "Travel times cannot be calculated on an unfiltered tidygtfs object. Use filter_feed_by_date().")
+  fst = filter_stop_times(gtfs_routing, "2018-10-01", 0, 24*3600)
   expect_error(raptor(fst, attributes(fst)$transfers, stop_id = "stop1a", max_transfers = -1), "max_transfers is less than 0")
   expect_error(travel_times(fst, stop_name = "One", max_transfers = -1), "max_transfers is less than 0")
 })
 
 test_that("raptor with filtered feed", {
-  x1 = filter_stop_times(g, "2018-10-01", 0, 24*3600)
-  g2 = filter_feed_by_date(g, "2018-10-01", 0, 24*3600)
+  x1 = filter_stop_times(gtfs_routing, "2018-10-01", 0, 24*3600)
+  g2 = filter_feed_by_date(gtfs_routing, "2018-10-01", 0, 24*3600)
 
   tt1 = travel_times(filtered_stop_times = x1, 
                     stop_name = "One", time_range = 3600)
@@ -353,13 +353,13 @@ test_that("raptor with filtered feed", {
 })
 
 test_that("filter feed without min/max time", {
-  st.1 = filter_stop_times(g, "2018-10-01")
-  st.2 = filter_stop_times(g, "2018-10-01", "00:00:00", 999*3600)
+  st.1 = filter_stop_times(gtfs_routing, "2018-10-01")
+  st.2 = filter_stop_times(gtfs_routing, "2018-10-01", "00:00:00", 999*3600)
   expect_true(all(st.1 == st.2))
 })
 
 test_that("feed without transfers", {
-  g_no_transfers = g
+  g_no_transfers = gtfs_routing
   g_no_transfers$transfers <- NULL
 
   expect_warning(fst <- filter_stop_times(g_no_transfers, "2018-10-01", 0, 24*3600),
@@ -388,4 +388,17 @@ test_that("nyc feed", {
   
   tts <- travel_times(nyc_st, "34 St - Herald Sq (D17)", return_coords = TRUE, stop_dist_check = FALSE)
   expect_is(tts, "data.frame")
+})
+
+test_that("routing with missing NA", {
+  gtfs_routing2 = read_gtfs(system.file("extdata", "routing-NA-times.zip", package = "tidytransit"))
+  fst1 = filter_stop_times(gtfs_routing, "2018-10-01", 0, 24*3600)
+  fst2 = filter_stop_times(gtfs_routing2, "2018-10-01", 0, 24*3600)
+  
+  tts1a = raptor(gtfs_routing$stop_times, gtfs_routing$transfers, "stop1b")
+  tts1b = raptor(fst1, attributes(fst1)$transfers, "stop1b")
+  tts2 = raptor(fst2, attributes(fst2)$transfers, "stop1b")
+  
+  expect_equal(tts1a, tts2)
+  expect_equal(tts1b, tts2)
 })

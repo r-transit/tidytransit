@@ -91,11 +91,10 @@ raptor = function(stop_times,
   # stop ids need to be a character vector
   # use data.table for faster manipulation
   # copy necessary as we change/rename columns by reference
-  stop_times_dt <- as.data.table(stop_times)
+  stop_times_dt <- as.data.table(replace_NA_times(stop_times))
   stop_times_dt <- setup_stop_times(stop_times_dt, reverse = arrival)
   transfers_dt <- as.data.table(transfers)
   transfers_dt <- setup_transfers(transfers_dt)
-  
   
   from_stop_ids = stop_ids
   nonexistent_stop_ids = setdiff(from_stop_ids, c(stop_times_dt$to_stop_id, 

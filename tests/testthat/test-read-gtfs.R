@@ -85,3 +85,10 @@ test_that("files parameter", {
     expect_no_warning(read_gtfs(path, files = f)) # no warning expected
   }
 })
+
+test_that("NA times", {
+  g = read_gtfs(system.file("extdata", "routing-NA-times.zip", package = "tidytransit"))
+  
+  expect_equal(g$stop_times$arrival_time[c(15,16,18)], rep(hms::hms(NA), 3))
+  expect_equal(g$stop_times$departure_time[c(23,19,4)], rep(hms::hms(NA), 3))
+})
