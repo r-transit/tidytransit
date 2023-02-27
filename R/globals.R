@@ -50,7 +50,8 @@ if (getRversion() >= "3.1.0") {
       "start_time",
       "end_time",
       "feed_start_date",
-      "feed_end_date"
+      "feed_end_date",
+      "between"
     )
   )
 }
