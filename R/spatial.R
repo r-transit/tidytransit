@@ -146,9 +146,14 @@ get_trip_geometry <- function(gtfs_sf_obj, trip_ids) {
   }
 
   trips = gtfs_sf_obj$trips %>% filter(trip_id %in% trip_ids)
-  trips_shapes = suppress_matches_multiple_warning(
-    dplyr::inner_join(gtfs_sf_obj$shapes, trips, by = "shape_id")
-  )
+  
+  if (utils::packageVersion("dplyr") >= "1.1.0.9000") {
+    trips_shapes = dplyr::inner_join(gtfs_sf_obj$shapes, trips, by = "shape_id")
+  } else {
+    # TODO: Remove after dplyr 1.1.1 is released
+    trips_shapes = dplyr::inner_join(gtfs_sf_obj$shapes, trips, by = "shape_id", multiple = "all")
+  }
+  
   return(trips_shapes)
 }
 
