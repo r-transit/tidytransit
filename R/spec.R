@@ -2,276 +2,264 @@
 #' @return Environment with gtfs data.
 #' @noRd
 get_gtfs_meta <- function() {
-
+  
+  spec_setup_fields = function(field_names, presence, coltypes, file_presence, required_unique_id = NA) {
+    stopifnot(length(field_names) == length(presence))
+    stopifnot(length(field_names) == length(coltypes))
+    stopifnot(file_presence %in% c("req", "opt"))
+    stopifnot(all(presence %in% c("req", "opt")))
+    stopifnot(length(file_presence) == 1)
+    
+    file.txt = list()
+    file.txt$field <- field_names
+    file.txt$field_spec <- presence
+    names(file.txt$field_spec) <- field_names
+    file.txt$coltype <- coltypes
+    file.txt$file_spec <- file_presence
+    file.txt$required_unique_id <- required_unique_id
+    
+    return(file.txt)
+  }
+  
+  m = list()
+  
   # required files ----------------------------------------------------------
-
+  
   # agency
-  assign("agency", list())
-  agency$field <- c("agency_id", "agency_name", "agency_url", "agency_timezone", 
-                    "agency_lang", "agency_phone", "agency_fare_url", "agency_email")
-  agency$field_spec <- c("opt", "req", "req", "req", "opt", "opt", "opt", "opt")
-  names(agency$field_spec) <- agency$field
-  agency$coltype <- rep("character", 8)
-  agency$file_spec <- "req"
-  agency$required_unique_id <- NA
+  m$agency <- spec_setup_fields(
+    c("agency_id", "agency_name", "agency_url",
+      "agency_timezone", "agency_lang", "agency_phone",
+      "agency_fare_url", "agency_email"),
+    c("opt", "req", "req",
+      "req", "opt", "opt",
+      "opt", "opt"),
+    rep("character", 8),
+    "req",
+    NA)
   
   # stops
-  assign("stops", list())
-  stops$field <- c("stop_id", "stop_code", "stop_name", 
-                   "stop_desc", "stop_lat", "stop_lon", 
-                   "zone_id", "stop_url", 
-                   "location_type", "parent_station", 
-                   "stop_timezone", "wheelchair_boarding",
-                   "level_id", "platform_code")
-  stops$field_spec <- c("req", "opt", "req", "opt",
-                        "req", "req", 
-                        rep("opt", 8))
-  names(stops$field_spec) <- stops$field
-  stops$coltype <- rep("character", length(stops$field))
-  stops$coltype[which(stops$field %in% 
-                        c("stop_lat", "stop_lon"))] <- "numeric" # double
-  stops$coltype[which(stops$field %in% 
-                        c("location_type",
-                          "wheelchair_boarding"))] <- "integer" # integers
-  stops$file_spec <- "req"
-  stops$required_unique_id <- "stop_id"
+  m$stops <- spec_setup_fields(
+    c("stop_id", "stop_code", "stop_name", 
+      "stop_desc", "stop_lat", "stop_lon", 
+      "zone_id", "stop_url", "location_type",
+      "parent_station", "stop_timezone", "wheelchair_boarding",
+      "level_id", "platform_code"),
+    c("req", "opt", "req",
+      "opt", "req", "req",
+      rep("opt", 8)),
+    c("character", "character", "character",
+      "character", "numeric", "numeric",
+      "character", "character", "integer",
+      "character", "character", "integer",
+      "character", "character"),
+    "req",
+    "stop_id"
+  )
   
   # routes
-  assign("routes", list())
-  routes$field <- c("route_id", "agency_id", "route_short_name", 
-                    "route_long_name", "route_desc", "route_type", 
-                    "route_url", "route_color", 
-                    "route_text_color", "route_sort_order",
-                    "continuous_pickup", "continuous_drop_off")
-  routes$field_spec <- c("req", "opt", "req", 
-                         "req", "opt", "req", 
-                         "opt", "opt", "opt", 
-                         "opt", "opt", "opt")
-  names(routes$field_spec) <- routes$field
-  routes$coltype <- rep("character", length(routes$field))
-  routes$coltype[routes$field %in% c("route_type", "route_sort_order",
-                                     "continuous_pickup", 
-                                     "continuous_drop_off")] <- "integer"
-  routes$file_spec <- "req"
-  routes$required_unique_id <- "route_id"
+  m$routes <- spec_setup_fields(
+    c("route_id", "agency_id", "route_short_name", 
+      "route_long_name", "route_desc", "route_type", 
+      "route_url", "route_color", "route_text_color",
+      "route_sort_order", "continuous_pickup", "continuous_drop_off"),
+    c("req", "opt", "req", 
+      "req", "opt", "req", 
+      "opt", "opt", "opt", 
+      "opt", "opt", "opt"),
+    c("character", "character", "character",
+      "character", "character", "integer",
+      "character", "character", "character",
+      "integer", "integer", "integer"),
+    "req",
+    "route_id"
+  )
   
   # trips
-  assign("trips", list())
-  trips$field <- c("route_id", "service_id", "trip_id", 
-                   "trip_headsign", "trip_short_name", 
-                   "direction_id", "block_id", "shape_id", 
-                   "wheelchair_accessible", "bikes_allowed")
-  trips$field_spec <- c("req", "req", "req", "opt", 
-                        "opt", "opt", "opt", "opt", 
-                        "opt", "opt")
-  names(trips$field_spec) <- trips$field
-  trips$coltype <- rep("character", length(trips$field))
-  trips$coltype[trips$field %in% c("direction_id",
-                                   "wheelchair_accessible", 
-                                   "bikes_allowed")] <- "integer"
-  trips$file_spec <- "req"
-  trips$required_unique_id <- "trip_id"
+  m$trips <- spec_setup_fields(
+    c("route_id", "service_id", "trip_id", 
+      "trip_headsign", "trip_short_name", "direction_id",
+      "block_id", "shape_id", "wheelchair_accessible",
+      "bikes_allowed"),
+    c("req", "req", "req",
+      "opt", "opt", "opt",
+      "opt", "opt", "opt",
+      "opt"),
+    c("character", "character", "character",
+      "character", "character", "integer",
+      "character", "character", "integer",
+      "integer"),
+    "req",
+    "trip_id")
   
   # stop_times
-  assign("stop_times", list())
-  stop_times$field <- c("trip_id", "arrival_time", 
-                        "departure_time", 
-                        "stop_id", "stop_sequence", 
-                        "stop_headsign", "pickup_type", 
-                        "drop_off_type", "continuous_pickup", 
-                        "continuous_drop_off", "shape_dist_traveled", 
-                        "timepoint")
-  stop_times$field_spec <- c("req", "req", "req", 
-                             "req", "req", "opt", 
-                             "opt", "opt", "opt", 
-                             "opt", "opt", "opt")
-  names(stop_times$field_spec) <- stop_times$field
-  stop_times$coltype <- rep("character", length(stop_times$field))
-  stop_times$coltype[stop_times$field 
-                     %in% c("stop_sequence", "pickup_type", 
-                            "drop_off_type", "continuous_pickup", 
-                            "continuous_drop_off","timepoint")] <- "integer"
-  stop_times$coltype[stop_times$field %in% 
-                       c("shape_dist_traveled")] <- "numeric"
-  stop_times$file_spec <- "req"
-  stop_times$required_unique_id <- NA
+  m$stop_times <- spec_setup_fields(
+    c("trip_id", "arrival_time", "departure_time", 
+      "stop_id", "stop_sequence", "stop_headsign",
+      "pickup_type", "drop_off_type", "continuous_pickup", 
+      "continuous_drop_off", "shape_dist_traveled", "timepoint"),
+    c("req", "req", "req", 
+      "req", "req", "opt", 
+      "opt", "opt", "opt", 
+      "opt", "opt", "opt"),
+    c("character", "character", "character",
+      "character", "integer", "character",
+      "integer", "integer", "integer",
+      "integer", "numeric", "integer"),
+    "req",
+    NA)
+  
+  # conditionally required --------------------------------------------------
   
   # calendar
-  assign("calendar", list())
-  calendar$field <- c("service_id", "monday", "tuesday", 
-                      "wednesday", "thursday", "friday", 
-                      "saturday", "sunday", "start_date", 
-                      "end_date")
-  calendar$field_spec <- rep("req", times = length(calendar$field))
-  names(calendar$field_spec) <- calendar$field
-  calendar$coltype <- rep("integer", length(calendar$field))
-  calendar$coltype[calendar$field %in% c("service_id")] <- "character"
-  calendar$coltype[calendar$field %in% c("start_date", "end_date")] <- "character" # Date
-  calendar$file_spec <- "req"
-  calendar$required_unique_id <- "service_id"
+  m$calendar <- spec_setup_fields(
+    c("service_id", "monday", "tuesday", 
+      "wednesday", "thursday", "friday", 
+      "saturday", "sunday", "start_date", 
+      "end_date"),
+    rep("req", times = 10),
+    c("character", "integer", "integer",
+      "integer", "integer", "integer", 
+      "integer", "integer", "character",
+      "character"),
+    "req",
+    "service_id")
+  
+  
+  # calendar_dates
+  m$calendar_dates <- spec_setup_fields(
+    c("service_id", "date", "exception_type"),
+    c("req", "req", "req"),
+    c("character", "character", "integer"),
+    "opt",
+    NA)
   
   # optional files ----------------------------------------------------------
-
-  # calendar_dates
-  assign("calendar_dates", list())
-  calendar_dates$field <- c("service_id", "date", "exception_type")
-  calendar_dates$field_spec <- c("req", "req", "req")
-  names(calendar_dates$field_spec) <- calendar_dates$field
-  calendar_dates$coltype <- rep("character", length(calendar_dates$field))
-  calendar_dates$coltype[calendar_dates$field %in% c("exception_type")] <- "integer"
-  calendar_dates$coltype[calendar_dates$field %in% c("date")] <- "character" # Date
-  calendar_dates$file_spec <- "opt"
-  calendar_dates$required_unique_id <- NA
   
   # fare_attributes
-  assign("fare_attributes", list())
-  fare_attributes$field <- c("agency_id", "fare_id", "price", 
-                             "currency_type", "payment_method", 
-                             "transfers", "transfer_duration")
-  fare_attributes$field_spec <- c("opt", "req", "req", 
-                                  "req", "req", "req", "opt")
-  names(fare_attributes$field_spec) <- fare_attributes$field
-  fare_attributes$coltype <- rep("character", length(fare_attributes$field))
-  fare_attributes$coltype[fare_attributes$field %in% 
-                            c("payment_method", "transfers")] <- "integer"
-  fare_attributes$coltype[fare_attributes$field %in% 
-                            c("transfer_duration")] <- "numeric"
-  fare_attributes$file_spec <- "opt"
-  fare_attributes$required_unique_id <- "fare_id"
+  m$fare_attributes <- spec_setup_fields(
+    c("agency_id", "fare_id", "price", 
+      "currency_type", "payment_method", "transfers",
+      "transfer_duration"),
+    c("opt", "req", "req", 
+      "req", "req", "req",
+      "opt"),
+    c("character", "character", "character",
+      "character", "integer", "integer",
+      "numeric"),
+    "opt",
+    "fare_id")
   
   # fare_rules
-  assign("fare_rules", list())
-  fare_rules$field <- c("fare_id", "route_id", "origin_id", 
-                        "destination_id", "contains_id")
-  fare_rules$field_spec <- c("req", "opt", "opt", "opt", "opt")
-  names(fare_rules$field_spec) <- fare_rules$field
-  fare_rules$coltype <- rep("character", length(fare_rules$field))
-  fare_rules$coltype[fare_rules$field
-                     %in% c("direction_id", 
-                            "wheelchair_accessible", 
-                            "bikes_allowed")] <- "integer"
-  fare_rules$file_spec <- "opt"
-  fare_rules$required_unique_id <- NA
+  m$fare_rules <- spec_setup_fields(
+    c("fare_id", "route_id", "origin_id", 
+      "destination_id", "contains_id"),
+    c("req", "opt", "opt",
+      "opt", "opt"),
+    c("character", "character", "character",
+      "character", "character"),
+    "opt",
+    NA)
+  
+  # TODO fare_products
+  # TODO fare_leg_rules
+  # TODO fare_transfer_rules
+  # TODO areas 
+  # TODO stop_areas
   
   # shapes
-  assign("shapes", list())
-  shapes$field <- c("shape_id", "shape_pt_lat", 
-                    "shape_pt_lon", "shape_pt_sequence", 
-                    "shape_dist_traveled")
-  shapes$field_spec <- c("req", "req", "req", "req", "opt")
-  names(shapes$field_spec) <- shapes$field
-  shapes$coltype <- rep("numeric", length(shapes$field))
-  shapes$coltype[shapes$field %in% c("shape_id")] <- "character"
-  shapes$coltype[shapes$field %in% c("shape_pt_sequence")] <- "integer"
-  shapes$file_spec <- "opt"
-  shapes$required_unique_id <- NA
+  m$shapes <- spec_setup_fields(
+    c("shape_id", "shape_pt_lat", "shape_pt_lon",
+      "shape_pt_sequence", "shape_dist_traveled"),
+    c("req", "req", "req", 
+      "req", "opt"),
+    c("character", "numeric", "numeric",
+      "integer", "numeric"),
+    "opt",
+    NA)
   
   # frequencies
-  assign("frequencies", list())
-  frequencies$field <- c("trip_id", "start_time", 
-                         "end_time", "headway_secs", 
-                         "exact_times")
-  frequencies$field_spec <- c("req", "req", "req", "req", "opt")
-  names(frequencies$field_spec) <- frequencies$field
-  frequencies$coltype <- rep("character", length(frequencies$field))
-  frequencies$coltype[frequencies$field %in% c("headway_secs")] <- "numeric"
-  frequencies$coltype[frequencies$field %in% c("exact_times")] <- "integer"
-  frequencies$file_spec <- "opt"
-  frequencies$required_unique_id <- NA
+  m$frequencies <- spec_setup_fields(
+    c("trip_id", "start_time", "end_time",
+      "headway_secs", "exact_times"),
+    c("req", "req", "req",
+      "req", "opt"),
+    c("character", "character", "character",
+      "numeric", "integer"),
+    "opt",
+    NA)
   
   # transfers
-  assign("transfers", list())
-  transfers$field <- c("from_stop_id", "to_stop_id", 
-                       "transfer_type", "min_transfer_time")
-  transfers$field_spec <- c("req", "req", "req", "opt")
-  names(transfers$field_spec) <- transfers$field
-  transfers$coltype <- rep("character", length(transfers$field))
-  transfers$coltype[transfers$field %in% c("min_transfer_time")] <- "integer"
-  transfers$file_spec <- "opt"
-  transfers$required_unique_id <- NA
+  m$transfers <- spec_setup_fields(
+    c("from_stop_id", "to_stop_id", "transfer_type",
+      "min_transfer_time"),
+    c("req", "req", "req",
+      "opt"),
+    c("character", "character", "character",
+      "integer"),
+    "opt",
+    NA)
   
   # pathways
-  assign("pathways", list())
-  pathways$field <- c("pathway_id", "from_stop_id", "to_stop_id",
-    "pathway_mode", "is_bidirectional", "length", "traversal_time",
-    "stair_count", "max_slope", "min_width", "signposted_as", "reversed_signposted_as")
-  pathways$field_spec <- c(rep("req", 5), rep("opt", 7))
-  names(pathways$field_spec) <- pathways$field
-  pathways$coltype <- rep("character", length(pathways$field))
-  pathways$coltype[pathways$field %in% c("traversal_time", "stair_count")] <- "integer"
-  pathways$coltype[pathways$field %in% c("length", "max_slope", "min_width")] <- "numeric"
-  pathways$file_spec <- "opt"
-  pathways$required_unique_id <- "pathway_id"
+  m$pathways <- spec_setup_fields(
+    c("pathway_id", "from_stop_id", "to_stop_id",
+      "pathway_mode", "is_bidirectional", "length",
+      "traversal_time", "stair_count", "max_slope",
+      "min_width", "signposted_as", "reversed_signposted_as"),
+    c(rep("req", 5), rep("opt", 7)),
+    c("character", "character", "character",
+      "character", "character", "numeric",
+      "integer", "integer", "numeric",
+      "numeric", "character", "character"),
+    "opt",
+    "pathway_id")
   
   # levels
-  assign("levels", list())
-  levels$field <- c("level_id", "level_index", "level_name")
-  levels$field_spec <- c("req", "req", "opt")
-  names(levels$field_spec) <- levels$field
-  levels$coltype <- c("character", "numeric", "character")
-  levels$file_spec <- "opt"
-  levels$required_unique_id <- "level_id"
-  
-  # feed_info 
-  assign("feed_info", list())
-  feed_info$field <- c("feed_publisher_name", "feed_publisher_url", 
-                       "feed_lang", "feed_start_date", "feed_end_date", 
-                       "feed_version", "feed_contact_email", "feed_contact_url")
-  feed_info$field_spec <- c("req", "req", "req", 
-                            "opt", "opt", "opt", 
-                            "opt", "opt")
-  names(feed_info$field_spec) <- feed_info$field
-  feed_info$coltype <- rep("character", length(feed_info$field))
-  feed_info$coltype[transfers$field %in% 
-                      c("feed_start_date", "feed_end_date")] <- "character" # Date
-  feed_info$file_spec <- "opt"
-  feed_info$required_unique_id <- NA
+  m$levels <- spec_setup_fields(
+    c("level_id", "level_index", "level_name"),
+    c("req", "req", "opt"),
+    c("character", "numeric", "character"),
+    "opt",
+    "level_id"
+  )
   
   # translations
-  assign("translations", list())
-  translations$field <- c("table_name", "field_name", "language", "translation", 
-                       "record_id", "record_sub_id", "field_value")
-  translations$field_spec <- c("req", "req", "req", "req",
-                            "opt", "opt", "opt")
-  names(translations$field_spec) <- translations$field
-  translations$coltype <- rep("character", length(translations$field))
-  translations$file_spec <- "opt"
-  translations$required_unique_id <- NA
+  m$translations <- spec_setup_fields(
+    c("table_name", "field_name", "language",
+      "translation", "record_id", "record_sub_id",
+      "field_value"),
+    c("req", "req", "req",
+      "req", "opt", "opt",
+      "opt"),
+    rep("character", 7),
+    "opt",
+    NA)
+  
+  # feed_info 
+  m$feed_info <- spec_setup_fields(
+    c("feed_publisher_name", "feed_publisher_url", "feed_lang",
+      "feed_start_date", "feed_end_date", "feed_version",
+      "feed_contact_email", "feed_contact_url"),
+    c("req", "req", "req", 
+      "opt", "opt", "opt", 
+      "opt", "opt"),
+    rep("character", 8),
+    "opt",
+    NA
+  )
   
   # attributions
-  assign("attributions", list())
-  attributions$field <- c("attribution_id", "agency_id", "route_id", 
-                          "trip_id", "organization_name", "is_producer", 
-                          "is_operator", "is_authority", "attribution_url", 
-                          "attribution_email", "attribution_phone")
-  attributions$field_spec <- c(rep("opt", 4), "req", rep("opt", 6))
-  names(attributions$field_spec) <- attributions$field
-  attributions$coltype <- rep("character", length(attributions$field))
-  attributions$file_spec <- "opt"
-  attributions$required_unique_id <- NA
+  m$attributions <- spec_setup_fields(
+    c("attribution_id", "agency_id", "route_id", 
+      "trip_id", "organization_name", "is_producer", 
+      "is_operator", "is_authority", "attribution_url", 
+      "attribution_email", "attribution_phone"),
+    c(rep("opt", 4), "req", rep("opt", 6)),
+    rep("character", 11),
+    "opt",
+    NA)
   
   # create meta object ####
-  meta <- list(agency, stops, routes, trips, 
-               stop_times, calendar, calendar_dates,
-               fare_attributes, fare_rules,
-               shapes, frequencies, transfers,
-               pathways, levels, feed_info,
-               translations, attributions)
-  attributes(meta) <- list(
-    names = c("agency", "stops", "routes",
-              "trips", "stop_times", "calendar",
-              "calendar_dates", "fare_attributes",
-              "fare_rules", "shapes", "frequencies",
-              "transfers", "pathways", "levels", 
-              "feed_info", "translations", "attributions"),
-    file_spec = c("req", "req", "req", 
-                  "req", "req", "req", 
-                  "opt", "opt",
-                  "opt", "opt", "opt", 
-                  "opt", "opt", "opt", 
-                  "opt", "opt",  "opt"))
-  return(meta)
+  return(m)
 }
 
 gtfs_meta = get_gtfs_meta()
-gtfs_reference = lapply(gtfs_meta, dplyr::as_tibble)
