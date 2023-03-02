@@ -23,6 +23,8 @@ get_gtfs_meta <- function() {
   
   m = list()
   
+  # TODO use primary keys
+  
   # required files ----------------------------------------------------------
   
   # agency
@@ -160,11 +162,59 @@ get_gtfs_meta <- function() {
     "opt",
     NA)
   
-  # TODO fare_products
+  # fare_products
+  m$fare_products <- spec_setup_fields(
+    c("fare_product_id", "fare_product_name", "amount",
+      "currency"),
+    c("req", "opt", "req", "req"),
+    c("character", "character", "numeric", "numeric"), # TODO currency should be handled with integers
+    "opt",
+    "fare_product_id"
+  )
+  
   # TODO fare_leg_rules
+  m$fare_leg_rules <- spec_setup_fields(
+    c("leg_group_id", "network_id", "from_area_id",
+      "to_area_id", "fare_product_id"),
+    c("opt", "opt", "opt", "opt", "req"),
+    c(rep("character", 5)),
+    "opt",
+    NA #    c("network_id", "from_area_id", "to_area_id", "fare_product_id")
+  )
+  
   # TODO fare_transfer_rules
-  # TODO areas 
-  # TODO stop_areas
+  m$fare_transfer_rules <- spec_setup_fields(
+    c("from_leg_group_id", "to_leg_group_id", "transfer_count",
+      "duration_limit", "duration_limit_type", "fare_transfer_type",
+      "fare_product_id"),
+    c("opt", "opt", "opt",
+      "opt", "opt", "req",
+      "opt"),
+    c(
+      "character", "character", "integer",
+      "integer", "integer", "integer",
+      "character"),
+    "opt",
+    NA # c("from_leg_group_id", "to_leg_group_id", "fare_product_id", "transfer_count", "duration_limit")
+  )
+  
+  # areas 
+  m$areas <- spec_setup_fields(
+    c("area_id", "area_name"),
+    c("req", "opt"),
+    c("character", "character"),
+    "opt",
+    "area_id"
+  )
+  
+  # stop_areas
+  m$stop_areas <- spec_setup_fields(
+    c("area_id", "stop_id"),
+    c("req", "req"),
+    c("character", "character"),
+    "opt",
+    NA # "*"
+  )
   
   # shapes
   m$shapes <- spec_setup_fields(
