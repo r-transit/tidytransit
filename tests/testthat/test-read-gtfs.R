@@ -65,6 +65,8 @@ test_that("validation", {
   g$extra <- "not_a_dataframe"
   vd = validate_gtfs(g)
   expect_true(is.na(vd[vd$file == "extra","field"]))
+  
+  expect_error(validate_gtfs(g, files = c("unknown", "other")), "File names not found in gtfs_obj: unknown, other")
 })
 
 test_that("files parameter", {

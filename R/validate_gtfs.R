@@ -58,18 +58,19 @@
 validate_gtfs <- function(gtfs_obj, files = NULL, quiet = TRUE, warnings = TRUE) {
 
   # input checking
-  checkmate::assert_class(gtfs_obj, "gtfs")
-  checkmate::assert_logical(quiet)
-  checkmate::assert_logical(warnings)
-  checkmate::assert_character(files, null.ok = TRUE)
-
+  if(!inherits(gtfs_obj, "gtfs")) {
+    stop("gtfs_obj must be a gtfs object")
+  }
+  
   # if any files have been specified in read_gtfs, only validate those
-  # uses internal data gtfs_metadata - check data-raw/gtfs_metadata.R
+  # uses internal spec.R
 
   if(is.null(files)) {
     files_to_validate <- unique(c(names(gtfs_meta), names(gtfs_obj)))
   } else {
-    checkmate::assert_names(files, subset.of = names(gtfs_obj))
+    if(length(setdiff(files, names(gtfs_obj))) > 0) {
+      stop("File names not found in gtfs_obj: ", paste(setdiff(files, names(gtfs_obj)), collapse = ", "))
+    }
     files_to_validate <- paste0(files, ".txt")
   }
 
