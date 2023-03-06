@@ -93,11 +93,11 @@ set_dates_services <- function(gtfs_obj) {
       dplyr::filter(bool == 1) %>% dplyr::select(service_id, weekday, start_date, end_date)
     
     # set services to dates according to weekdays and start/end date
-    date_service_df <- 
-      suppress_matches_multiple_warning(
-        dplyr::full_join(dates, service_ids_weekdays, by="weekday")
+    date_service_df <- dates %>%
+      dplyr::inner_join(
+        service_ids_weekdays, 
+        by = dplyr::join_by(weekday, between(date, start_date, end_date))
       ) %>% 
-      dplyr::filter(date >= start_date & date <= end_date) %>% 
       dplyr::select(-weekday, -start_date, -end_date)
     
     # addtions and exceptions
