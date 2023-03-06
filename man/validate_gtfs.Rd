@@ -7,7 +7,7 @@
 validate_gtfs(gtfs_obj, files = NULL, quiet = TRUE, warnings = TRUE)
 }
 \arguments{
-\item{gtfs_obj}{gtfs feed (tidygtfs object, created by \code{\link[=read_gtfs]{read_gtfs()}})}
+\item{gtfs_obj}{gtfs object (i.e. a list of tables, not necessary a tidygtfs object)}
 
 \item{files}{A character vector containing the text files to be validated
 against the GTFS specification (without the \code{.txt} extension). If
@@ -19,19 +19,23 @@ possible GTFS text files.}
 \item{warnings}{Whether to display warning messages (defaults to TRUE).}
 }
 \value{
-A tidygtfs with a \code{validation_result} attribute. This
-attribute is a \code{tibble} containing the validation summary of all
+A \code{validation_result} tibble containing the validation summary of all
 possible fields from the specified files.
 }
 \description{
 Validates the GTFS object against GTFS specifications and raises warnings if
 required files/fields are not found. This function is called in \code{\link{read_gtfs}}.
 }
+\details{
+Note that this function just checks if required files or fields are missing. There's no
+validation for internal consistency (e.g. no departure times before arrival times or
+calendar covering a reasonable period).
+}
 \section{Details}{
 
 GTFS object's files and fields are validated against the GTFS specifications
-as documented in \href{https://developers.google.com/transit/gtfs/reference}{
-Google's Static GTFS Reference}:
+as documented in \href{https://gtfs.org/schedule/reference}{
+GTFS Schedule Reference}:
 \itemize{
 \item GTFS feeds are considered valid if they include all required files
 and fields. If a required file/field is missing the function (optionally)
