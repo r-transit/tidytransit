@@ -26,7 +26,7 @@
 read_gtfs <- function(path, files = NULL, quiet = TRUE) {
   g = gtfsio::import_gtfs(path, files = files, quiet = quiet)
 
-  tidygtfs = gtfsio_to_tidygtfs(g, files = files)
+  tidygtfs = gtfs_to_tidygtfs(g, files = files)
     
   return(tidygtfs)
 }

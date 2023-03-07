@@ -4,10 +4,12 @@
 \alias{gtfs_to_tidygtfs}
 \title{Convert an object created by gtfsio::import_gtfs to a tidygtfs object}
 \usage{
-gtfs_to_tidygtfs(gtfs_list)
+gtfs_to_tidygtfs(gtfs_list, files = NULL)
 }
 \arguments{
 \item{gtfs_list}{list of tables}
+
+\item{files}{subset of files to validate}
 }
 \description{
 Some basic validation is done to ensure the feed works in tidytransit

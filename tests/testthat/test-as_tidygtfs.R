@@ -1,5 +1,6 @@
-test_that("as_tidygtfs works w/ gtfstools", {
-  routing.zip = system.file("extdata", "routing.zip", package = "tidytransit")
+routing.zip = system.file("extdata", "routing.zip", package = "tidytransit")
+
+test_that("as_tidygtfs w/ gtfstools", {
   y = read_gtfs(routing.zip)
   gtfstools_gtfs = readRDS(system.file("extdata", "gtfstools_example.rds", package = "tidytransit"))
   
@@ -12,3 +13,18 @@ test_that("as_tidygtfs works w/ gtfstools", {
   }
 })
 
+test_that("as_tidygtfs w/ list", {
+  x1 = read_gtfs(routing.zip)
+  
+  gtfs_list <- lapply(x1, function(y) {
+    dplyr::as_tibble(y)
+  })
+  gtfs_list$. <- NULL
+  gtfs_list$stop_times$departure_time <- as.character(gtfs_list$stop_times$departure_time)
+  
+  expect_equal(class(gtfs_list), "list")
+  
+  x2 = as_tidygtfs(gtfs_list)
+  
+  expect_equal(x2, x1)
+})

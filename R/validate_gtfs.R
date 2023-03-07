@@ -58,8 +58,8 @@
 validate_gtfs <- function(gtfs_obj, files = NULL, quiet = TRUE, warnings = TRUE) {
 
   # input checking
-  if(!inherits(gtfs_obj, "gtfs")) {
-    stop("gtfs_obj must be a gtfs object")
+  if(!inherits(gtfs_obj, "gtfs") & !inherits(gtfs_obj, "list")) {
+    stop("gtfs_obj must be a gtfs or list object")
   }
   
   # if any files have been specified in read_gtfs, only validate those

@@ -1,6 +1,7 @@
 #' Convert another gtfs like object to a tidygtfs object
 #' @param x gtfs object
 #' @param ... ignored
+#' @return a tidygtfs object
 #' @export
 as_tidygtfs = function(x, ...) {
   UseMethod("as_tidygtfs")
@@ -8,17 +9,19 @@ as_tidygtfs = function(x, ...) {
 
 #' @export
 as_tidygtfs.list = function(x, ...) {
-  gtfsio_to_tidygtfs(x, ...)
+  x$. <- NULL
+  x <- lapply(x, data.table::as.data.table)
+  gtfs_to_tidygtfs(x, ...)
 }
 
 #' @export
 as_tidygtfs.gtfs = function(x, ...) {
-  gtfsio_to_tidygtfs(x, ...)
+  gtfs_to_tidygtfs(x, ...)
 }
 
 #' @export
 as_tidygtfs.dt_gtfs = function(x, ...) {
-  x <- prepare_tidygtfs_fields(x, convert_dates = FALSE)
+  x <- prepare_tidygtfs_fields(x)
   x <- prepare_tidygtfs_tables(x)
   x <- convert_list_tables_to_tibbles(x)
   return(x)
@@ -32,8 +35,14 @@ as_tidygtfs.tidygtfs = function(x, ...) {
   return(x)
 }
 
-gtfsio_to_tidygtfs = function(gtfs_list, files = NULL) {
-  # validate
+#' Convert an object created by gtfsio::import_gtfs to a tidygtfs object
+#' 
+#' Some basic validation is done to ensure the feed works in tidytransit
+#' 
+#' @param gtfs_list list of tables
+#' @param files subset of files to validate
+gtfs_to_tidygtfs = function(gtfs_list, files = NULL) {
+  # validate files and fields
   validation_result <- validate_gtfs(gtfs_list, files = files)
   
   # check unique ids
@@ -53,6 +62,8 @@ gtfsio_to_tidygtfs = function(gtfs_list, files = NULL) {
   
   # convert to tibbles
   x <- convert_list_tables_to_tibbles(x)
+  
+  # gtfs class base structure
   x <- gtfsio::new_gtfs(x)
   class(x) <- c("tidygtfs", "gtfs")
   attributes(x)$validation_result <- validation_result
@@ -60,9 +71,9 @@ gtfsio_to_tidygtfs = function(gtfs_list, files = NULL) {
   return(x)
 }
 
-prepare_tidygtfs_fields = function(gtfs_obj, convert_times = TRUE, convert_dates = TRUE) {
-  if(convert_times) gtfs_obj <- convert_times_to_hms(gtfs_obj)
-  if(convert_dates) gtfs_obj <- convert_dates(gtfs_obj)
+prepare_tidygtfs_fields = function(gtfs_obj) {
+  gtfs_obj <- convert_times_to_hms(gtfs_obj)
+  gtfs_obj <- convert_dates(gtfs_obj)
   return(gtfs_obj)
 }
 
