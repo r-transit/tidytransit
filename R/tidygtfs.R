@@ -1,17 +1,35 @@
+#' Convert another gtfs like object to a tidygtfs object
+#' @param x gtfs object
+#' @param ... ignored
+#' @export
 as_tidygtfs = function(x, ...) {
   UseMethod("as_tidygtfs")
 }
 
+#' @export
+as_tidygtfs.list = function(x, ...) {
+  gtfsio_to_tidygtfs(x, ...)
+}
+
+#' @export
 as_tidygtfs.gtfs = function(x, ...) {
   gtfsio_to_tidygtfs(x, ...)
 }
 
-as_tidygtfs.gtfs_dt = function(x, ...) {
-  # convert from gtfs
+#' @export
+as_tidygtfs.dt_gtfs = function(x, ...) {
+  x <- prepare_tidygtfs_fields(x, convert_dates = FALSE)
+  x <- prepare_tidygtfs_tables(x)
+  x <- convert_list_tables_to_tibbles(x)
+  return(x)
 }
 
+#' @export
 as_tidygtfs.tidygtfs = function(x, ...) {
-  # convert from tidygtfs
+  x <- set_dates_services(x)
+  attributes(x)$validation_result <- validate_gtfs(x)
+  class(x) <- c("tidygtfs", "gtfs")
+  return(x)
 }
 
 gtfsio_to_tidygtfs = function(gtfs_list, files = NULL) {
@@ -28,19 +46,36 @@ gtfsio_to_tidygtfs = function(gtfs_list, files = NULL) {
   }
   
   # prep tidygtfs columns
-  x = gtfs_list
-  x$. <- list()
-  x <- convert_times_to_hms(x)
-  x <- convert_dates(x)
-  x <- set_dates_services(x)
+  x = prepare_tidygtfs_fields(gtfs_list)
   
-  # convert to tibble
-  x[names(x) != "."] <- lapply(x[names(x) != "."], dplyr::as_tibble)
+  # add tidygtfs tables
+  x <- prepare_tidygtfs_tables(x)
+  
+  # convert to tibbles
+  x <- convert_list_tables_to_tibbles(x)
   x <- gtfsio::new_gtfs(x)
   class(x) <- c("tidygtfs", "gtfs")
   attributes(x)$validation_result <- validation_result
   
   return(x)
+}
+
+prepare_tidygtfs_fields = function(gtfs_obj, convert_times = TRUE, convert_dates = TRUE) {
+  if(convert_times) gtfs_obj <- convert_times_to_hms(gtfs_obj)
+  if(convert_dates) gtfs_obj <- convert_dates(gtfs_obj)
+  return(gtfs_obj)
+}
+
+prepare_tidygtfs_tables = function(gtfs_obj) {
+  gtfs_obj$. <- list()
+  gtfs_obj <- set_dates_services(gtfs_obj)
+  return(gtfs_obj)
+}
+
+
+convert_list_tables_to_tibbles = function(gtfs_list) {
+  gtfs_list[names(gtfs_list) != "."] <- lapply(gtfs_list[names(gtfs_list) != "."], dplyr::as_tibble)
+  return(gtfs_list)
 }
 
 duplicated_unique_ids = function(gtfs_list) {
