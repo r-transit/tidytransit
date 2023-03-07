@@ -9,8 +9,7 @@ as_tidygtfs = function(x, ...) {
 
 #' @export
 as_tidygtfs.list = function(x, ...) {
-  x$. <- NULL
-  x <- lapply(x, data.table::as.data.table)
+  x <- convert_list_tables_to_data.tables(x, ...)
   gtfs_to_tidygtfs(x, ...)
 }
 
@@ -21,18 +20,13 @@ as_tidygtfs.gtfs = function(x, ...) {
 
 #' @export
 as_tidygtfs.dt_gtfs = function(x, ...) {
-  x <- prepare_tidygtfs_fields(x)
-  x <- prepare_tidygtfs_tables(x)
-  x <- convert_list_tables_to_tibbles(x)
-  return(x)
+  gtfs_to_tidygtfs(x)
 }
 
 #' @export
 as_tidygtfs.tidygtfs = function(x, ...) {
-  x <- set_dates_services(x)
-  attributes(x)$validation_result <- validate_gtfs(x)
-  class(x) <- c("tidygtfs", "gtfs")
-  return(x)
+  x <- convert_list_tables_to_data.tables(x, ...)
+  gtfs_to_tidygtfs(x, ...)
 }
 
 #' Convert an object created by gtfsio::import_gtfs to a tidygtfs object
@@ -43,7 +37,7 @@ as_tidygtfs.tidygtfs = function(x, ...) {
 #' @param files subset of files to validate
 gtfs_to_tidygtfs = function(gtfs_list, files = NULL) {
   # validate files and fields
-  validation_result <- validate_gtfs(gtfs_list, files = files)
+  validation_result = validate_gtfs(gtfs_list, files = files)
   
   # check unique ids
   tbl_with_duplicated_ids = duplicated_unique_ids(gtfs_list)
@@ -83,20 +77,13 @@ prepare_tidygtfs_tables = function(gtfs_obj) {
   return(gtfs_obj)
 }
 
-
 convert_list_tables_to_tibbles = function(gtfs_list) {
   gtfs_list[names(gtfs_list) != "."] <- lapply(gtfs_list[names(gtfs_list) != "."], dplyr::as_tibble)
   return(gtfs_list)
 }
 
-duplicated_unique_ids = function(gtfs_list) {
-  vapply(names(gtfs_list), function(tbl_name) {
-    if(tbl_name %in% names(gtfs_meta)) {
-      id_field = gtfs_meta[[tbl_name]]$required_unique_id
-      if(!is.na(id_field)) {
-        return(any(duplicated(gtfs_list[[tbl_name]][[id_field]])))
-      }
-    }
-    return(FALSE)
-  }, logical(1))
+convert_list_tables_to_data.tables = function(gtfs_list) {
+  gtfs_list$. <- NULL
+  gtfs_list <- lapply(gtfs_list, data.table::as.data.table)
+  return(gtfs_list)
 }

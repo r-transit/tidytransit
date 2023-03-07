@@ -11,6 +11,8 @@ test_that("as_tidygtfs w/ gtfstools", {
   for(table_name in names(x)) {
     expect_equal(x[[table_name]], y[[table_name]])
   }
+  
+  expect_is(x, "tidygtfs")
 })
 
 test_that("as_tidygtfs w/ list", {
@@ -27,4 +29,16 @@ test_that("as_tidygtfs w/ list", {
   x2 = as_tidygtfs(gtfs_list)
   
   expect_equal(x2, x1)
+  expect_is(x2, "tidygtfs")
+})
+
+test_that("as_tidygtfs w/ tidygtfs", {
+  x1 = read_gtfs(routing.zip)
+  x1$calendar <- x1$calendar[1,]
+  x1$calendar_dates <- x1$calendar_dates[1:2,]
+  
+  x2 = as_tidygtfs(x1)
+  
+  expect_true(all(x2$.$dates_services$service_id == "WEEK"))
+  expect_is(x2, "tidygtfs")
 })

@@ -216,3 +216,17 @@ validate_gtfs <- function(gtfs_obj, files = NULL, quiet = TRUE, warnings = TRUE)
   # attach validation_result as an attribute of the given gtfs
   dplyr::as_tibble(validation_result)
 }
+
+#' Check if primary keys are unique within tables
+#' @param gtfs_list list of tables
+duplicated_unique_ids = function(gtfs_list) {
+  vapply(names(gtfs_list), function(tbl_name) {
+    if(tbl_name %in% names(gtfs_meta)) {
+      id_field = gtfs_meta[[tbl_name]]$required_unique_id
+      if(!is.na(id_field)) {
+        return(any(duplicated(gtfs_list[[tbl_name]][[id_field]])))
+      }
+    }
+    return(FALSE)
+  }, logical(1))
+}
