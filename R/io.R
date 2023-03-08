@@ -8,6 +8,9 @@
 #'   GTFS (without the \code{.txt} extension). If \code{NULL} (the default) all
 #'   existing files are read.
 #' @param quiet Whether to hide log messages and progress bars (defaults to TRUE).
+#' @param ... Can be used to pass on arguments to [gtfsio::import_gtfs()]. The parameters
+#'            \code{files} and \code{quiet} are passed on by default.
+#'
 #' @return A tidygtfs object: a list of tibbles in which each entry represents a
 #'         GTFS text file. Additional tables are stored in the \code{.} sublist.
 #'
@@ -23,8 +26,8 @@
 #' 
 #' @importFrom gtfsio import_gtfs new_gtfs
 #' @export
-read_gtfs <- function(path, files = NULL, quiet = TRUE) {
-  g = gtfsio::import_gtfs(path, files = files, quiet = quiet)
+read_gtfs <- function(path, files = NULL, quiet = TRUE, ...) {
+  g = gtfsio::import_gtfs(path, files = files, quiet = quiet, ...)
   
   # validate
   validation_result <- validate_gtfs(g, files = files, quiet = quiet)
