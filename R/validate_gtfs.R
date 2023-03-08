@@ -219,12 +219,18 @@ validate_gtfs <- function(gtfs_obj, files = NULL, quiet = TRUE, warnings = TRUE)
 
 #' Check if primary keys are unique within tables
 #' @param gtfs_list list of tables
-duplicated_unique_ids = function(gtfs_list) {
+duplicated_primary_keys = function(gtfs_list) {
   vapply(names(gtfs_list), function(tbl_name) {
     if(tbl_name %in% names(gtfs_meta)) {
-      id_field = gtfs_meta[[tbl_name]]$required_unique_id
-      if(!is.na(id_field)) {
-        return(any(duplicated(gtfs_list[[tbl_name]][[id_field]])))
+      id_field = gtfs_meta[[tbl_name]]$primary_key
+      if(all(!is.na(id_field))) {
+        # required fields have already been checked in validate_gtfs
+        id_field = intersect(colnames(gtfs_list[[tbl_name]]), id_field)
+        if(length(id_field) == 0) {
+          return(FALSE)
+        }
+        primary_key_table = as.data.frame(gtfs_list[[tbl_name]])[,id_field]
+        return(any(duplicated(primary_key_table)))
       }
     }
     return(FALSE)

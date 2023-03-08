@@ -3,7 +3,7 @@
 #' @noRd
 get_gtfs_meta <- function() {
   
-  spec_setup_fields = function(field_names, presence, coltypes, file_presence, required_unique_id = NA) {
+  spec_setup_fields = function(field_names, presence, coltypes, file_presence, primary_key = NA) {
     stopifnot(length(field_names) == length(presence))
     stopifnot(length(field_names) == length(coltypes))
     stopifnot(file_presence %in% c("req", "opt"))
@@ -16,14 +16,12 @@ get_gtfs_meta <- function() {
     names(file.txt$field_spec) <- field_names
     file.txt$coltype <- coltypes
     file.txt$file_spec <- file_presence
-    file.txt$required_unique_id <- required_unique_id
+    file.txt$primary_key <- primary_key
     
     return(file.txt)
   }
   
   m = list()
-  
-  # TODO use primary keys
   
   # required files ----------------------------------------------------------
   
@@ -37,7 +35,7 @@ get_gtfs_meta <- function() {
       "opt", "opt"),
     rep("character", 8),
     "req",
-    NA)
+    "agency_id")
   
   # stops
   m$stops <- spec_setup_fields(
@@ -108,7 +106,7 @@ get_gtfs_meta <- function() {
       "integer", "integer", "integer",
       "integer", "numeric", "integer"),
     "req",
-    NA)
+    c("trip_id", "stop_sequence"))
   
   # conditionally required --------------------------------------------------
   
@@ -133,7 +131,7 @@ get_gtfs_meta <- function() {
     c("req", "req", "req"),
     c("character", "character", "integer"),
     "opt",
-    NA)
+    c("service_id", "date"))
   
   # optional files ----------------------------------------------------------
   
@@ -160,7 +158,7 @@ get_gtfs_meta <- function() {
     c("character", "character", "character",
       "character", "character"),
     "opt",
-    NA)
+    NA) # TODO implement *
   
   # fare_products
   m$fare_products <- spec_setup_fields(
@@ -169,20 +167,18 @@ get_gtfs_meta <- function() {
     c("req", "opt", "req", "req"),
     c("character", "character", "numeric", "numeric"), # TODO currency should be handled with integers
     "opt",
-    "fare_product_id"
-  )
+    "fare_product_id")
   
-  # TODO fare_leg_rules
+  # fare_leg_rules
   m$fare_leg_rules <- spec_setup_fields(
     c("leg_group_id", "network_id", "from_area_id",
       "to_area_id", "fare_product_id"),
     c("opt", "opt", "opt", "opt", "req"),
     c(rep("character", 5)),
     "opt",
-    NA #    c("network_id", "from_area_id", "to_area_id", "fare_product_id")
-  )
+    c("network_id", "from_area_id", "to_area_id", "fare_product_id"))
   
-  # TODO fare_transfer_rules
+  # fare_transfer_rules
   m$fare_transfer_rules <- spec_setup_fields(
     c("from_leg_group_id", "to_leg_group_id", "transfer_count",
       "duration_limit", "duration_limit_type", "fare_transfer_type",
@@ -195,8 +191,7 @@ get_gtfs_meta <- function() {
       "integer", "integer", "integer",
       "character"),
     "opt",
-    NA # c("from_leg_group_id", "to_leg_group_id", "fare_product_id", "transfer_count", "duration_limit")
-  )
+    c("from_leg_group_id", "to_leg_group_id", "fare_product_id", "transfer_count", "duration_limit"))
   
   # areas 
   m$areas <- spec_setup_fields(
@@ -225,7 +220,7 @@ get_gtfs_meta <- function() {
     c("character", "numeric", "numeric",
       "integer", "numeric"),
     "opt",
-    NA)
+    c("shape_id", "shape_pt_sequence"))
   
   # frequencies
   m$frequencies <- spec_setup_fields(
@@ -236,7 +231,7 @@ get_gtfs_meta <- function() {
     c("character", "character", "character",
       "numeric", "integer"),
     "opt",
-    NA)
+    c("trip_id", "start_time"))
   
   # transfers
   m$transfers <- spec_setup_fields(
@@ -247,7 +242,7 @@ get_gtfs_meta <- function() {
     c("character", "character", "character",
       "integer"),
     "opt",
-    NA)
+    c("from_stop_id", "to_stop_id", "from_trip_id", "to_trip_id", "from_route_id", "to_route_id"))
   
   # pathways
   m$pathways <- spec_setup_fields(
@@ -282,7 +277,7 @@ get_gtfs_meta <- function() {
       "opt"),
     rep("character", 7),
     "opt",
-    NA)
+    c("table_name", "field_name", "language", "record_id", "record_sub_id", "field_value"))
   
   # feed_info 
   m$feed_info <- spec_setup_fields(
@@ -306,9 +301,8 @@ get_gtfs_meta <- function() {
     c(rep("opt", 4), "req", rep("opt", 6)),
     rep("character", 11),
     "opt",
-    NA)
+    "attribution_id")
   
-  # create meta object ####
   return(m)
 }
 

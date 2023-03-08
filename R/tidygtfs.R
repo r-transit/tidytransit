@@ -40,7 +40,7 @@ gtfs_to_tidygtfs = function(gtfs_list, files = NULL) {
   validation_result = validate_gtfs(gtfs_list, files = files)
   
   # check unique ids
-  tbl_with_duplicated_ids = duplicated_unique_ids(gtfs_list)
+  tbl_with_duplicated_ids = duplicated_primary_keys(gtfs_list)
   if(any(tbl_with_duplicated_ids)) {
     warning("Duplicated ids found in: ", 
             paste0(names(tbl_with_duplicated_ids[tbl_with_duplicated_ids]), collapse = ", "), "\n",
