@@ -25,7 +25,10 @@
 #'                   should be removed. The table should also only include departures 
 #'                   happening on one day. Use [filter_stop_times()] for easier preparation. 
 #' @param transfers Transfers table from a gtfs feed. In general no preparation is needed.
-#' @param stop_ids Character vector with stop_ids from where journeys should start (or end)
+#' @param stop_ids Character vector with stop_ids from where journeys should start (or end).
+#'                 It is recommended to only use stop_ids that are related to each other, 
+#'                 like different platforms in a train station or bus stops that are 
+#'                 reasonably close to each other.
 #' @param arrival If FALSE (default), all journeys _start_ from `stop_ids`. If
 #'                TRUE, all journeys _end_ at `stop_ids`.
 #' @param time_range Departure or arrival time range in seconds. All departures from the 
@@ -35,9 +38,13 @@
 #'                   stop_times are considered.
 #' @param max_transfers Maximum number of transfers allowed, no limit (NULL) as default.
 #' @param keep One of c("all", "shortest", "earliest", "latest"). By default, `all` journeys 
-#'             arriving at a stop are returned. With `shortest` the journey with shortest 
+#'             between stop_ids are returned. With `shortest` only the journey with shortest 
 #'             travel time is returned. With `earliest` the journey arriving at a stop the 
-#'             earliest is returned, `latest` works accordingly.
+#'             earliest is returned, `latest` works accordingly. Note that with `shortest`, 
+#'             `earliest` and `latest` only _one_ journey to every reachable stop_id is 
+#'             kept (journey possibly starting from different from_stop_ids), not just the 
+#'             shortest/earliest/latest journey between every pair of `from_stop_id` and
+#'             `to_stop_id`.
 #'
 #' @return A data.table with journeys (departure, arrival and travel time) to/from all 
 #'         stop_ids reachable by `stop_ids`.
