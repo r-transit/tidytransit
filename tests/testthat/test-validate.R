@@ -12,10 +12,11 @@ test_that("warning for duplicated primary key", {
   
   # function
   g1a = g1[3:6]
+  g1a$fare_rules <- data.frame(fare_id = c("1", "2", "2", "2"), route_id = c("B", "B", "A", "A"))
   g1b = convert_list_tables_to_data.tables(g1a)
   d1 = duplicated_primary_keys(g1a)
   d2 = duplicated_primary_keys(g1a)
-  expect_equal(unname(d1), c(F, T, F, T))
+  expect_equal(unname(d1), c(F, T, F, T, T))
   expect_equal(d1, d2)
   
   # within as_tidygtfs

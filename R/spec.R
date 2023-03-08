@@ -158,7 +158,7 @@ get_gtfs_meta <- function() {
     c("character", "character", "character",
       "character", "character"),
     "opt",
-    NA) # TODO implement *
+    "*")
   
   # fare_products
   m$fare_products <- spec_setup_fields(
@@ -208,7 +208,7 @@ get_gtfs_meta <- function() {
     c("req", "req"),
     c("character", "character"),
     "opt",
-    NA # "*"
+    "*"
   )
   
   # shapes
