@@ -22,7 +22,10 @@ happening on one day. Use \code{\link[=filter_stop_times]{filter_stop_times()}} 
 
 \item{transfers}{Transfers table from a gtfs feed. In general no preparation is needed.}
 
-\item{stop_ids}{Character vector with stop_ids from where journeys should start (or end)}
+\item{stop_ids}{Character vector with stop_ids from where journeys should start (or end).
+It is recommended to only use stop_ids that are related to each other,
+like different platforms in a train station or bus stops that are
+reasonably close to each other.}
 
 \item{arrival}{If FALSE (default), all journeys \emph{start} from \code{stop_ids}. If
 TRUE, all journeys \emph{end} at \code{stop_ids}.}
@@ -36,9 +39,13 @@ stop_times are considered.}
 \item{max_transfers}{Maximum number of transfers allowed, no limit (NULL) as default.}
 
 \item{keep}{One of c("all", "shortest", "earliest", "latest"). By default, \code{all} journeys
-arriving at a stop are returned. With \code{shortest} the journey with shortest
+between stop_ids are returned. With \code{shortest} only the journey with shortest
 travel time is returned. With \code{earliest} the journey arriving at a stop the
-earliest is returned, \code{latest} works accordingly.}
+earliest is returned, \code{latest} works accordingly. Note that with \code{shortest},
+\code{earliest} and \code{latest} only \emph{one} journey to every reachable stop_id is
+kept (journey possibly starting from different from_stop_ids), not just the
+shortest/earliest/latest journey between every pair of \code{from_stop_id} and
+\code{to_stop_id}.}
 }
 \value{
 A data.table with journeys (departure, arrival and travel time) to/from all
