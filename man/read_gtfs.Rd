@@ -27,13 +27,14 @@ Reads GTFS text files from either a local \code{.zip} file or an URL and
 validates them against GTFS specifications.
 }
 \examples{
+\dontrun{
 local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
 gtfs <- read_gtfs(local_gtfs_path)
 summary(gtfs)
 
 gtfs <- read_gtfs(local_gtfs_path, files = c("trips", "stop_times"))
 names(gtfs)
-
+}
 }
 \seealso{
 \code{\link{validate_gtfs}}
