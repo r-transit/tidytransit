@@ -1,7 +1,7 @@
 Package: tidytransit
 Type: Package
 Title: Read, Validate, Analyze, and Map GTFS Feeds
-Version: 1.4.1
+Version: 1.5.0
 Authors@R: c(
     person("Flavio", "Poletti", role = c("aut", "cre"), email = "flavio.poletti@hotmail.ch"),
     person(given = "Daniel",family = "Herszenhut",role = c("aut"),email = "dhersz@gmail.com",comment = c(ORCID = "0000-0001-8066-1105")),
