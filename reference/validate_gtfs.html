@@ -71,7 +71,7 @@ required files/fields are not found. This function is called in <code><a href="r
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">validate_gtfs</span><span class="op">(</span><span class="va">gtfs_obj</span>, files <span class="op">=</span> <span class="cn">NULL</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span>, warnings <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">validate_gtfs</span><span class="op">(</span><span class="va">gtfs_obj</span>, files <span class="op">=</span> <span class="cn">NULL</span>, warnings <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -85,10 +85,6 @@ required files/fields are not found. This function is called in <code><a href="r
 against the GTFS specification (without the <code>.txt</code> extension). If
 <code>NULL</code> (the default) the provided GTFS is validated against all
 possible GTFS text files.</p></dd>
-
-
-<dt>quiet</dt>
-<dd><p>Whether to hide log messages (defaults to TRUE).</p></dd>
 
 
 <dt>warnings</dt>
@@ -113,7 +109,7 @@ calendar covering a reasonable period).</p>
     
 
 <p>GTFS object's files and fields are validated against the GTFS specifications
-as documented in <a href="https://gtfs.org/schedule/reference" class="external-link">
+as documented in <a href="https://gtfs.org/schedule/reference/" class="external-link">
 GTFS Schedule Reference</a>:</p><ul><li><p>GTFS feeds are considered valid if they include all required files
 and fields. If a required file/field is missing the function (optionally)
 raises a warning.</p></li>
