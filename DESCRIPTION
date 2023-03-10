@@ -32,7 +32,6 @@ Imports:
     sf,
     hms,
     digest,
-    checkmate,
     geodist
 Suggests:
     testthat (>= 3.1.5),

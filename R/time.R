@@ -49,6 +49,7 @@ convert_hms_to_char <- function(gtfs_obj) {
 #' empty strings are converted to NA
 #' @param time_strings char vector ("HH:MM:SS")
 hhmmss_to_hms = function(time_strings) {
+  if(inherits(time_strings, "hms")) { return(time_strings) }
   empty_strings = nchar(time_strings) == 0
   
   time_seconds = suppressWarnings(hhmmss_to_seconds(time_strings))
