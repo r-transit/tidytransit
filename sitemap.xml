@@ -34,10 +34,16 @@
     <loc>/reference/agency_info.html</loc>
   </url>
   <url>
+    <loc>/reference/as_tidygtfs.html</loc>
+  </url>
+  <url>
     <loc>/reference/cluster_stops.html</loc>
   </url>
   <url>
     <loc>/reference/convert_times_to_hms.html</loc>
+  </url>
+  <url>
+    <loc>/reference/duplicated_primary_keys.html</loc>
   </url>
   <url>
     <loc>/reference/empty_strings_to_na.html</loc>
@@ -80,6 +86,9 @@
   </url>
   <url>
     <loc>/reference/gtfs_duke.html</loc>
+  </url>
+  <url>
+    <loc>/reference/gtfs_to_tidygtfs.html</loc>
   </url>
   <url>
     <loc>/reference/gtfs_transform.html</loc>
