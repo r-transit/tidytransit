@@ -71,7 +71,7 @@ validates them against GTFS specifications.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_gtfs</span><span class="op">(</span><span class="va">path</span>, files <span class="op">=</span> <span class="cn">NULL</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_gtfs</span><span class="op">(</span><span class="va">path</span>, files <span class="op">=</span> <span class="cn">NULL</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -88,6 +88,11 @@ existing files are read.</p></dd>
 
 <dt>quiet</dt>
 <dd><p>Whether to hide log messages and progress bars (defaults to TRUE).</p></dd>
+
+
+<dt>...</dt>
+<dd><p>Can be used to pass on arguments to <code><a href="https://r-transit.github.io/gtfsio/reference/import_gtfs.html" class="external-link">gtfsio::import_gtfs()</a></code>. The parameters
+<code>files</code> and <code>quiet</code> are passed on by default.</p></dd>
 
 </dl></div>
     <div id="value">

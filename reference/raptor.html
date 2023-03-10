@@ -98,7 +98,10 @@ happening on one day. Use <code><a href="filter_stop_times.html">filter_stop_tim
 
 
 <dt>stop_ids</dt>
-<dd><p>Character vector with stop_ids from where journeys should start (or end)</p></dd>
+<dd><p>Character vector with stop_ids from where journeys should start (or end).
+It is recommended to only use stop_ids that are related to each other,
+like different platforms in a train station or bus stops that are
+reasonably close to each other.</p></dd>
 
 
 <dt>arrival</dt>
@@ -120,9 +123,13 @@ stop_times are considered.</p></dd>
 
 <dt>keep</dt>
 <dd><p>One of c("all", "shortest", "earliest", "latest"). By default, <code>all</code> journeys
-arriving at a stop are returned. With <code>shortest</code> the journey with shortest
+between stop_ids are returned. With <code>shortest</code> only the journey with shortest
 travel time is returned. With <code>earliest</code> the journey arriving at a stop the
-earliest is returned, <code>latest</code> works accordingly.</p></dd>
+earliest is returned, <code>latest</code> works accordingly. Note that with <code>shortest</code>,
+<code>earliest</code> and <code>latest</code> only <em>one</em> journey to every reachable stop_id is
+kept (journey possibly starting from different from_stop_ids), not just the
+shortest/earliest/latest journey between every pair of <code>from_stop_id</code> and
+<code>to_stop_id</code>.</p></dd>
 
 </dl></div>
     <div id="value">
