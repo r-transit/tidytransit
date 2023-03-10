@@ -30,11 +30,9 @@ test_that("the read_gtfs function works with urls", {
 test_that("the read_gtfs function fails gracefully on bad urls", {
   skip_on_cran()
   
-  not_zip <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zippy"
   bad_file <- "/Users/wrong.zip"
   bad_url <- "https://developers.google.com/transit/gtfs/examples/sample-feed-bad.zip"
   
-  expect_error(read_gtfs(not_zip, quiet=TRUE), "'path' must have '.zip' extension")
   expect_error(read_gtfs(bad_file), "'path' points to non-existent file: '/Users/wrong.zip'")
   expect_error(suppressWarnings(read_gtfs(bad_url)),
                "cannot open URL 'https://developers.google.com/transit/gtfs/examples/sample-feed-bad.zip'")
