@@ -109,24 +109,14 @@ GTFS text file. Additional tables are stored in the <code>.</code> sublist.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">local_gtfs_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"google_transit_nyc_subway.zip"</span>, package <span class="op">=</span> <span class="st">"tidytransit"</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">local_gtfs_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"google_transit_nyc_subway.zip"</span>, package <span class="op">=</span> <span class="st">"tidytransit"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">gtfs</span> <span class="op">&lt;-</span> <span class="fu">read_gtfs</span><span class="op">(</span><span class="va">local_gtfs_path</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tidygtfs object</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> files        agency, stops, routes, trips, stop_times, calendar, calendar_dates, shapes, transfers</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> agency       MTA New York City Transit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> service      from 2018-06-24 to 2018-11-03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> uses         stop_times (no frequencies)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # routes        29</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # trips      19890</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # stop_ids    1503</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # stop_names   380</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # shapes       215</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">gtfs</span> <span class="op">&lt;-</span> <span class="fu">read_gtfs</span><span class="op">(</span><span class="va">local_gtfs_path</span>, files <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"trips"</span>, <span class="st">"stop_times"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "trips"      "stop_times" "."         </span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
