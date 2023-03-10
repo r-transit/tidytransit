@@ -18,7 +18,7 @@ get_stop_frequency(
 \item{start_time}{analysis start time, can be given as "HH:MM:SS",
 hms object or numeric value in seconds.}
 
-\item{end_time}{analysis perdiod end time, can be given as "HH:MM:SS",
+\item{end_time}{analysis period end time, can be given as "HH:MM:SS",
 hms object or numeric value in seconds.}
 
 \item{service_ids}{A set of service_ids from the calendar dataframe

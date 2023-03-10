@@ -40,7 +40,7 @@ TRUE, all journeys \emph{end} at \code{stop_name}.}
 before \code{max_departure_time} are used. Accepts "HH:MM:SS" or
 seconds as a numerical value. Unused if \code{arrival} is TRUE.}
 
-\item{return_coords}{Returns stop coordinates as columms. Default is FALSE.}
+\item{return_coords}{Returns stop coordinates as columns. Default is FALSE.}
 
 \item{return_DT}{travel_times() returns a data.table if TRUE. Default is FALSE which
 returns a tibble/tbl_df.}

@@ -10,7 +10,7 @@
 #' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @param start_time analysis start time, can be given as "HH:MM:SS", 
 #'                   hms object or numeric value in seconds.
-#' @param end_time analysis perdiod end time, can be given as "HH:MM:SS", 
+#' @param end_time analysis period end time, can be given as "HH:MM:SS", 
 #'                 hms object or numeric value in seconds.
 #' @param service_ids A set of service_ids from the calendar dataframe 
 #'                    identifying a particular service id. If not provided, the service_id 

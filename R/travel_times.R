@@ -29,7 +29,7 @@
 #' @param max_departure_time Either set this parameter or `time_range`. Only departures 
 #'                           before `max_departure_time` are used. Accepts "HH:MM:SS" or 
 #'                           seconds as a numerical value. Unused if `arrival` is TRUE.
-#' @param return_coords Returns stop coordinates as columms. Default is FALSE.                            
+#' @param return_coords Returns stop coordinates as columns. Default is FALSE.                            
 #' @param return_DT travel_times() returns a data.table if TRUE. Default is FALSE which 
 #'                  returns a tibble/tbl_df.
 #' @param stop_dist_check stop_names are not structured identifiers like 
