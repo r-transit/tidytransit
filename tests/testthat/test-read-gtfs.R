@@ -18,13 +18,22 @@ test_that("read_gtfs() imports a local file to a
 test_that("loud read_gtfs", {
   expect_is(
     read_gtfs(local_gtfs_path, quiet = FALSE),
-    "gtfs")
+    "tidygtfs")
+})
+
+test_that("gtfsio arguments", {
+  expect_is(
+    read_gtfs(local_gtfs_path, encoding = "UTF-8"),
+    "tidygtfs"
+  )
 })
 
 test_that("the read_gtfs function works with urls", {
   skip_on_cran()
   x <- read_gtfs(gtfs_example_url, quiet=TRUE)
   expect_is(x, "gtfs") # should return 'list' object
+  expect_is(x, "tidygtfs")
+
 })
 
 test_that("the read_gtfs function fails gracefully on bad urls", {
