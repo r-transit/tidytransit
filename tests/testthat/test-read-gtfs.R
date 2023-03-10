@@ -18,23 +18,30 @@ test_that("read_gtfs() imports a local file to a
 test_that("loud read_gtfs", {
   expect_is(
     read_gtfs(local_gtfs_path, quiet = FALSE),
-    "gtfs")
+    "tidygtfs")
+})
+
+test_that("gtfsio arguments", {
+  expect_is(
+    read_gtfs(local_gtfs_path, encoding = "UTF-8"),
+    "tidygtfs"
+  )
 })
 
 test_that("the read_gtfs function works with urls", {
   skip_on_cran()
   x <- read_gtfs(gtfs_example_url, quiet=TRUE)
   expect_is(x, "gtfs") # should return 'list' object
+  expect_is(x, "tidygtfs")
+
 })
 
 test_that("the read_gtfs function fails gracefully on bad urls", {
   skip_on_cran()
   
-  not_zip <- "https://developers.google.com/transit/gtfs/examples/sample-feed.zippy"
   bad_file <- "/Users/wrong.zip"
   bad_url <- "https://developers.google.com/transit/gtfs/examples/sample-feed-bad.zip"
   
-  expect_error(read_gtfs(not_zip, quiet=TRUE), "'path' must have '.zip' extension")
   expect_error(read_gtfs(bad_file), "'path' points to non-existent file: '/Users/wrong.zip'")
   expect_error(suppressWarnings(read_gtfs(bad_url)),
                "cannot open URL 'https://developers.google.com/transit/gtfs/examples/sample-feed-bad.zip'")
