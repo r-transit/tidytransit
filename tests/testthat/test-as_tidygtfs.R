@@ -1,24 +1,23 @@
 routing.zip = system.file("extdata", "routing.zip", package = "tidytransit")
+tidygtfs = read_gtfs(routing.zip)
 
 test_that("as_tidygtfs w/ gtfstools", {
-  y = read_gtfs(routing.zip)
-  gtfstools_gtfs = readRDS(system.file("extdata", "gtfstools_example.rds", package = "tidytransit"))
+  dt_gtfs = readRDS(system.file("extdata", "routing.zip_gtfstools.rds", package = "tidytransit"))
+  expect_equal(class(dt_gtfs), c("dt_gtfs", "gtfs", "list"))
   
-  x = as_tidygtfs(gtfstools_gtfs)
-  expect_equal(names(x), names(y))
-  expect_equal(names(x$.), names(y$.))
+  dt_gtfs.tidygtfs = as_tidygtfs(dt_gtfs)
+  expect_equal(names(dt_gtfs.tidygtfs), names(tidygtfs))
+  expect_equal(names(dt_gtfs.tidygtfs$.), names(tidygtfs$.))
   
-  for(table_name in names(x)) {
-    expect_equal(x[[table_name]], y[[table_name]])
+  for(table_name in names(dt_gtfs.tidygtfs)) {
+    expect_equal(dt_gtfs.tidygtfs[[table_name]], tidygtfs[[table_name]])
   }
   
-  expect_is(x, "tidygtfs")
+  expect_is(dt_gtfs.tidygtfs, "tidygtfs")
 })
 
 test_that("as_tidygtfs w/ list", {
-  x1 = read_gtfs(routing.zip)
-  
-  gtfs_list <- lapply(x1, function(y) {
+  gtfs_list <- lapply(tidygtfs, function(y) {
     dplyr::as_tibble(y)
   })
   gtfs_list$. <- NULL
@@ -26,10 +25,20 @@ test_that("as_tidygtfs w/ list", {
   
   expect_equal(class(gtfs_list), "list")
   
-  x2 = as_tidygtfs(gtfs_list)
+  gtfs_list.tidygtfs = as_tidygtfs(gtfs_list)
   
-  expect_equal(x2, x1)
-  expect_is(x2, "tidygtfs")
+  expect_equal(gtfs_list.tidygtfs, tidygtfs)
+  expect_is(gtfs_list.tidygtfs, "tidygtfs")
+})
+
+test_that("as_tidygtfs w/ gtfs", {
+  gtfs = gtfsio::import_gtfs(routing.zip)
+  expect_equal(class(gtfs), c("gtfs", "list"))
+  
+  gtfs.tidygtfs = as_tidygtfs(gtfs)
+  
+  expect_equal(gtfs.tidygtfs, tidygtfs)
+  expect_is(gtfs.tidygtfs, "tidygtfs")
 })
 
 test_that("as_tidygtfs w/ tidygtfs", {

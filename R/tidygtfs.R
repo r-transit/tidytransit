@@ -59,7 +59,7 @@ gtfs_to_tidygtfs = function(gtfs_list, files = NULL) {
   
   # gtfs class base structure
   x <- gtfsio::new_gtfs(x)
-  class(x) <- c("tidygtfs", "gtfs")
+  class(x) <- c("tidygtfs", "gtfs", "list")
   attributes(x)$validation_result <- validation_result
   
   return(x)

@@ -4,7 +4,7 @@
 \alias{validate_gtfs}
 \title{Validate GTFS file}
 \usage{
-validate_gtfs(gtfs_obj, files = NULL, quiet = TRUE, warnings = TRUE)
+validate_gtfs(gtfs_obj, files = NULL, warnings = TRUE)
 }
 \arguments{
 \item{gtfs_obj}{gtfs object (i.e. a list of tables, not necessary a tidygtfs object)}
@@ -13,8 +13,6 @@ validate_gtfs(gtfs_obj, files = NULL, quiet = TRUE, warnings = TRUE)
 against the GTFS specification (without the \code{.txt} extension). If
 \code{NULL} (the default) the provided GTFS is validated against all
 possible GTFS text files.}
-
-\item{quiet}{Whether to hide log messages (defaults to TRUE).}
 
 \item{warnings}{Whether to display warning messages (defaults to TRUE).}
 }
@@ -34,7 +32,7 @@ calendar covering a reasonable period).
 \section{Details}{
 
 GTFS object's files and fields are validated against the GTFS specifications
-as documented in \href{https://gtfs.org/schedule/reference}{
+as documented in \href{https://gtfs.org/schedule/reference/}{
 GTFS Schedule Reference}:
 \itemize{
 \item GTFS feeds are considered valid if they include all required files

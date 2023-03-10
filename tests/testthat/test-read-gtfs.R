@@ -28,12 +28,19 @@ test_that("gtfsio arguments", {
   )
 })
 
+
+test_that("tidygtfs class inheritance list", {
+  expect_equal(
+    class(read_gtfs(local_gtfs_path)),
+    c("tidygtfs", "gtfs", "list")
+  )
+})
+
 test_that("the read_gtfs function works with urls", {
   skip_on_cran()
   x <- read_gtfs(gtfs_example_url, quiet=TRUE)
   expect_is(x, "gtfs") # should return 'list' object
   expect_is(x, "tidygtfs")
-
 })
 
 test_that("the read_gtfs function fails gracefully on bad urls", {

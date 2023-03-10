@@ -26,8 +26,11 @@ test_that("warning for duplicated primary key", {
   g3 = g2
   g3$stops$stop_id[1] <- "stop1"
   g3$routes$route_id[1] <- "lineA"
-
+  
   g4 = as_tidygtfs(g3)  
   expect_is(g4, "tidygtfs")  
 })
-  
+
+test_that("validate non gtfs object", {
+  expect_error(validate_gtfs(data.frame(stop_id = "1")), "gtfs_obj must be a gtfs or list object")
+})
