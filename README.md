@@ -5,7 +5,7 @@ status](https://www.r-pkg.org/badges/version-ago/tidytransit?)](https://cran.r-p
 [![](https://cranlogs.r-pkg.org/badges/grand-total/tidytransit?color=lightgrey)](https://cran.r-project.org/package=tidytransit)
 [![R build
 status](https://github.com/r-transit/tidytransit/workflows/R-CMD-check/badge.svg)](https://github.com/r-transit/tidytransit/actions?query=workflow%3AR-CMD-check)
-[![codecov](https://codecov.io/gh/r-transit/tidytransit/branch/master/graph/badge.svg)](https://codecov.io/gh/r-transit/tidytransit)
+[![codecov](https://codecov.io/gh/r-transit/tidytransit/branch/master/graph/badge.svg)](https://app.codecov.io/gh/r-transit/tidytransit/)
 
 # tidytransit
 

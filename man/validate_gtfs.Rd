@@ -34,7 +34,7 @@ calendar covering a reasonable period).
 \section{Details}{
 
 GTFS object's files and fields are validated against the GTFS specifications
-as documented in \href{https://gtfs.org/schedule/reference}{
+as documented in \href{https://gtfs.org/schedule/reference/}{
 GTFS Schedule Reference}:
 \itemize{
 \item GTFS feeds are considered valid if they include all required files
