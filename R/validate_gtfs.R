@@ -12,7 +12,6 @@
 #'   against the GTFS specification (without the \code{.txt} extension). If
 #'   \code{NULL} (the default) the provided GTFS is validated against all
 #'   possible GTFS text files.
-#' @param quiet Whether to hide log messages (defaults to TRUE).
 #' @param warnings Whether to display warning messages (defaults to TRUE).
 #'
 #' @return A \code{validation_result} tibble containing the validation summary of all
@@ -55,7 +54,7 @@
 #' validation_result <- validate_gtfs(gtfs)
 #'
 #' @export
-validate_gtfs <- function(gtfs_obj, files = NULL, quiet = TRUE, warnings = TRUE) {
+validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
   
   # input checking
   if(!inherits(gtfs_obj, "gtfs") & !inherits(gtfs_obj, "list")) {
@@ -208,11 +207,7 @@ validate_gtfs <- function(gtfs_obj, files = NULL, quiet = TRUE, warnings = TRUE)
     )
     
   }
-  
-  if(nrow(files_problems) == 0 & nrow(fields_problems) == 0 & !quiet) {
-    message("Valid gtfs data structure.")
-  }
-  
+
   # attach validation_result as an attribute of the given gtfs
   dplyr::as_tibble(validation_result)
 }
