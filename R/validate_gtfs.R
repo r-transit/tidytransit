@@ -215,24 +215,26 @@ validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
 #' Check if primary keys are unique within tables
 #' @param gtfs_list list of tables
 duplicated_primary_keys = function(gtfs_list) {
-  vapply(names(gtfs_list), function(tbl_name) {
-    if(tbl_name %in% names(gtfs_meta)) {
-      id_fields = gtfs_meta[[tbl_name]]$primary_key
+  stopifnot(inherits(gtfs_list, "list"))
+  tbl_has_dupl_keys = rep(FALSE, length(gtfs_list))
+  names(tbl_has_dupl_keys) <- names(gtfs_list)
+  
+  for(tbl_name in intersect(names(gtfs_list), names(gtfs_meta))) {
+    id_fields = gtfs_meta[[tbl_name]]$primary_key
+    
+    if(all(!is.na(id_fields))) {
+      if(length(id_fields) == 1 && id_fields == "*") {
+        id_fields <- colnames(gtfs_list[[tbl_name]])
+      }
       
-      if(all(!is.na(id_fields))) {
-        if(length(id_fields) == 1 && id_fields == "*") {
-          id_fields <- colnames(gtfs_list[[tbl_name]])
-        }
-        
-        # required fields have already been checked in validate_gtfs
-        id_fields = intersect(colnames(gtfs_list[[tbl_name]]), id_fields)
-        if(length(id_fields) == 0) {
-          return(FALSE)
-        }
-        primary_key_table = as.data.frame(gtfs_list[[tbl_name]])[,id_fields]
-        return(any(duplicated(primary_key_table)))
+      # required fields have already been checked in validate_gtfs
+      id_fields = intersect(colnames(gtfs_list[[tbl_name]]), id_fields)
+      if(length(id_fields) > 0) {
+        primary_key_table = as.data.table(gtfs_list[[tbl_name]])[,id_fields, with = FALSE]
+        primary_key_table_dupl.index = anyDuplicated(primary_key_table)
+        tbl_has_dupl_keys[tbl_name] <- any(primary_key_table_dupl.index != 0)
       }
     }
-    return(FALSE)
-  }, logical(1))
+  }
+  return(tbl_has_dupl_keys)
 }
