@@ -41,11 +41,7 @@ stop_times are considered.}
 \item{keep}{One of c("all", "shortest", "earliest", "latest"). By default, \code{all} journeys
 between stop_ids are returned. With \code{shortest} only the journey with shortest
 travel time is returned. With \code{earliest} the journey arriving at a stop the
-earliest is returned, \code{latest} works accordingly. Note that with \code{shortest},
-\code{earliest} and \code{latest} only \emph{one} journey to every reachable stop_id is
-kept (journey possibly starting from different from_stop_ids), not just the
-shortest/earliest/latest journey between every pair of \code{from_stop_id} and
-\code{to_stop_id}.}
+earliest is returned, \code{latest} works accordingly.}
 }
 \value{
 A data.table with journeys (departure, arrival and travel time) to/from all
@@ -81,7 +77,7 @@ nyc <- read_gtfs(nyc_path)
 # you can use initial walk times to different stops in walking distance (arbitrary example values)
 stop_ids_harlem_st <- c("301", "301N", "301S")
 stop_ids_155_st <- c("A11", "A11N", "A11S", "D12", "D12N", "D12S")
-walk_times <- data.frame(stop_id = c(stop_ids_harlem_st, stop_ids_155_st), 
+walk_times <- data.frame(stop_id = c(stop_ids_harlem_st, stop_ids_155_st),
                          walk_time = c(rep(600, 3), rep(410, 6)), stringsAsFactors = FALSE)
 
 # Use journeys departing after 7 AM with arrival time before 11 AM on 26th of June
