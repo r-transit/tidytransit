@@ -19,28 +19,25 @@ travel_times(
 \arguments{
 \item{filtered_stop_times}{stop_times data.table (with transfers and stops tables as
 attributes) created with \code{\link[=filter_stop_times]{filter_stop_times()}} where the
-departure or arrival time has been set. Alternatively,
-a filtered feed created by \code{\link[=filter_feed_by_date]{filter_feed_by_date()}} can be
-used.}
+departure or arrival time has been set.}
 
 \item{stop_name}{Stop name for which travel times should be calculated. A vector with
-multiple names is accepted.}
+multiple names can be used.}
 
-\item{time_range}{All departures within this range in seconds after the first departure
-of \code{filtered_stop_times} are considered for journeys. If arrival is
-TRUE, all journeys arriving within time range before the latest arrival
-of \code{filtered_stop_times} are considered.}
+\item{time_range}{Either a range in seconds or a vector containing the
+minimal and maximal departure time (i.e. earliest and
+latest possible journey departure time) as seconds or
+"HH:MM:SS" character.}
 
 \item{arrival}{If FALSE (default), all journeys \emph{start} from \code{stop_name}. If
 TRUE, all journeys \emph{end} at \code{stop_name}.}
 
 \item{max_transfers}{The maximimum number of transfers}
 
-\item{max_departure_time}{Either set this parameter or \code{time_range}. Only departures
-before \code{max_departure_time} are used. Accepts "HH:MM:SS" or
-seconds as a numerical value. Unused if \code{arrival} is TRUE.}
+\item{max_departure_time}{Deprecated. Use \code{time_range} to set the latest
+possible departure time.}
 
-\item{return_coords}{Returns stop coordinates as columns. Default is FALSE.}
+\item{return_coords}{Returns stop coordinates (lon/lat) as columns. Default is FALSE.}
 
 \item{return_DT}{travel_times() returns a data.table if TRUE. Default is FALSE which
 returns a tibble/tbl_df.}
@@ -51,7 +48,8 @@ stops with the same name are far apart. travel_times()
 errors if the distance among stop_ids with the same name is
 above this threshold (in meters).
 Use FALSE to turn check off. However, it is recommended to
-either use \code{\link[=raptor]{raptor()}} or fix the feed (see \code{\link[=cluster_stops]{cluster_stops()}}).}
+either use \code{\link[=raptor]{raptor()}} or fix the feed (see \code{\link[=cluster_stops]{cluster_stops()}})
+in case of warnings.}
 }
 \value{
 A table with travel times to/from all stops reachable by \code{stop_name} and their

@@ -180,7 +180,7 @@ test_that("raptor travel times with arrival=TRUE", {
     37*60, # stop2
     37*60, # stop3a
     37*60, # stop3b
-    00*60, # stop4
+    -15*60, # stop4
     37*60, # stop5
     37*60, # stop6
     41*60, # stop7
@@ -193,7 +193,7 @@ test_that("raptor travel times with arrival=TRUE", {
     10*60 - 00, # stop2
     29*60 - 00, # stop3a
     29*60 - 10, # stop3b
-    00*60 - 00, # stop4
+    -15*60 - 00, # stop4
     15*60 - 00, # stop5
     21*60 - 00, # stop6
     26*60 - 00, # stop7
@@ -219,7 +219,7 @@ test_that("raptor with arrival=TRUE and reduced time_range", {
     41*60, # stop2
     41*60, # stop3a
     41*60, # stop3b
-    00*60, # stop4
+    39*60, # stop4
     41*60, # stop5
     41*60, # stop6
     41*60, # stop7
@@ -232,7 +232,7 @@ test_that("raptor with arrival=TRUE and reduced time_range", {
     10*60 - 00, # stop2
     23*60 - 10, # stop3a
     23*60 - 00, # stop3b
-    00*60 - 00, # stop4
+    39*60 - 00, # stop4
     15*60 - 00, # stop5
     22*60 - 00, # stop6
     26*60 - 00, # stop7
@@ -250,6 +250,27 @@ test_that("raptor with arrival=TRUE and reduced time_range", {
   expect_equal(rptr_2$travel_time, tt_expected_2)
 })
 
+test_that("raptor with with time_range vector", {
+  r1.1 = raptor(stop_times, transfers, "stop1a", time_range = c("07:00:00", "07:05:00"))
+  expect_equal(length(unique(r1.1$journey_departure_time)), 2)
+  r1.2 = raptor(stop_times, transfers, "stop1b", time_range = c("07:11:00", "07:17:00"))
+  expect_equal(length(unique(r1.2$journey_departure_time)), 3)
+
+  r2.1 = raptor(stop_times, transfers, "stop2", time_range = c("07:00:00", "07:05:00"))
+  expect_equal(r2.1$journey_arrival_time[r2.1$to_stop_id == "stop8b"], 24*60+7*3600)
+  r2.2 = raptor(stop_times, transfers, "stop2", time_range = c("07:05:00", "07:10:00"))
+  expect_equal(nrow(r2.2[r2.2$to_stop_id == "stop8b"]), 2)
+  r2.3 = raptor(stop_times, transfers, "stop2", time_range = c("07:05:01", "07:10:00"))
+  expect_equal(r2.3$journey_arrival_time[r2.3$to_stop_id == "stop8b"], 24*60+7*3600)
+
+  r8.1 = raptor(stop_times, transfers, "stop8b", time_range = c("07:00:00", "07:30:00"), arrival = T)
+  expect_equal(
+    sort(unique(r8.1$journey_arrival_time)-7*3600),
+    c(0, 10, 24*60, 29*60))
+  r8.2 = raptor(stop_times, transfers, "stop8b", time_range = c("07:32:00", "07:32:00"), arrival = T)
+  expect_equal(sort(unique(r8.2$from_stop_id)), c("stop1a", "stop1b", "stop5", "stop6", "stop7", "stop8a", "stop8b"))
+})
+
 test_that("latest arrivals are correct", {
   r0 = raptor(stop_times, transfers, stop_ids = "stop1b", arrival = FALSE, keep = "all")
   r1 = raptor(stop_times, transfers, stop_ids = "stop1b", arrival = FALSE, keep = "latest")
@@ -258,7 +279,7 @@ test_that("latest arrivals are correct", {
 
   r2 = raptor(stop_times, transfers, stop_ids = "stop4", arrival = TRUE, keep = "latest")
   expect_equal(r2[which(r2$from_stop_id == "stop1a")]$journey_arrival_time, 45*60+7*3600)
-  expect_equal(r2[which(r2$from_stop_id == "stop4")]$journey_arrival_time, 8*3600)
+  expect_equal(r2[which(r2$from_stop_id == "stop4")]$journey_arrival_time, 7.75*3600)
 })
 
 test_that("set_num_times w/o hms or num", {
@@ -277,8 +298,8 @@ test_that("filter feed without min/max time", {
 
 test_that("routing with missing NA", {
   gtfs_routing2 = read_gtfs(system.file("extdata", "routing-NA-times.zip", package = "tidytransit"))
-  fst1 = filter_stop_times(gtfs_routing, "2018-10-01", 0, 24*3600)
-  fst2 = filter_stop_times(gtfs_routing2, "2018-10-01", 0, 24*3600)
+  fst1 = filter_stop_times(gtfs_routing, "2018-10-01", 7*3600, 24*3600)
+  fst2 = filter_stop_times(gtfs_routing2, "2018-10-01", 7*3600, 24*3600)
 
   tts1a = raptor(gtfs_routing$stop_times, gtfs_routing$transfers, "stop1b")
   tts1b = raptor(fst1, attributes(fst1)$transfers, "stop1b")

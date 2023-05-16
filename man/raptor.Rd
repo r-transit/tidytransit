@@ -30,18 +30,23 @@ reasonably close to each other.}
 \item{arrival}{If FALSE (default), all journeys \emph{start} from \code{stop_ids}. If
 TRUE, all journeys \emph{end} at \code{stop_ids}.}
 
-\item{time_range}{Departure or arrival time range in seconds. All departures from the
-first departure of stop_times (not necessarily from stop_id in
-\code{stop_ids}) within \code{time_range} are considered. If \code{arrival} is TRUE,
-all arrivals within \code{time_range} before the latest arrival time of
-stop_times are considered.}
+\item{time_range}{Either a range in seconds or a vector containing the
+minimal and maximal departure time (i.e. earliest and
+latest possible journey departure time) as seconds or
+"HH:MM:SS" character.}
 
 \item{max_transfers}{Maximum number of transfers allowed, no limit (NULL) as default.}
 
 \item{keep}{One of c("all", "shortest", "earliest", "latest"). By default, \code{all} journeys
 between stop_ids are returned. With \code{shortest} only the journey with shortest
 travel time is returned. With \code{earliest} the journey arriving at a stop the
-earliest is returned, \code{latest} works accordingly.}
+earliest is returned, \code{latest} works accordingly.
+
+All departures from \code{stop_ids} within
+the time range stop_id in
+\code{stop_ids}) within \code{time_range} are considered. If \code{arrival} is TRUE,
+all arrivals within \code{time_range} before the latest arrival time of
+stop_times are considered.}
 }
 \value{
 A data.table with journeys (departure, arrival and travel time) to/from all

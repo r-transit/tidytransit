@@ -14,31 +14,29 @@
 #'
 #' @param filtered_stop_times stop_times data.table (with transfers and stops tables as
 #'                            attributes) created with [filter_stop_times()] where the
-#'                            departure or arrival time has been set. Alternatively,
-#'                            a filtered feed created by [filter_feed_by_date()] can be
-#'                            used.
+#'                            departure or arrival time has been set.
 #' @param stop_name Stop name for which travel times should be calculated. A vector with
-#'                  multiple names is accepted.
-#' @param time_range All departures within this range in seconds after the first departure
-#'                   of `filtered_stop_times` are considered for journeys. If arrival is
-#'                   TRUE, all journeys arriving within time range before the latest arrival
-#'                   of `filtered_stop_times` are considered.
+#'                  multiple names can be used.
+#' @param time_range Either a range in seconds or a vector containing the 
+#'                   minimal and maximal departure time (i.e. earliest and 
+#'                   latest possible journey departure time) as seconds or 
+#'                   "HH:MM:SS" character.
 #' @param arrival If FALSE (default), all journeys _start_ from `stop_name`. If
 #'                TRUE, all journeys _end_ at `stop_name`.
 #' @param max_transfers The maximimum number of transfers
-#' @param max_departure_time Either set this parameter or `time_range`. Only departures
-#'                           before `max_departure_time` are used. Accepts "HH:MM:SS" or
-#'                           seconds as a numerical value. Unused if `arrival` is TRUE.
-#' @param return_coords Returns stop coordinates as columns. Default is FALSE.
+#' @param max_departure_time Deprecated. Use `time_range` to set the latest 
+#'                           possible departure time.
+#' @param return_coords Returns stop coordinates (lon/lat) as columns. Default is FALSE.
 #' @param return_DT travel_times() returns a data.table if TRUE. Default is FALSE which
 #'                  returns a tibble/tbl_df.
 #' @param stop_dist_check stop_names are not structured identifiers like
-#'                            stop_ids or parent_stations, so it's possible that
-#'                            stops with the same name are far apart. travel_times()
-#'                            errors if the distance among stop_ids with the same name is
-#'                            above this threshold (in meters).
-#'                            Use FALSE to turn check off. However, it is recommended to
-#'                            either use [raptor()] or fix the feed (see [cluster_stops()]).
+#'                        stop_ids or parent_stations, so it's possible that
+#'                        stops with the same name are far apart. travel_times()
+#'                        errors if the distance among stop_ids with the same name is
+#'                        above this threshold (in meters).
+#'                        Use FALSE to turn check off. However, it is recommended to
+#'                        either use [raptor()] or fix the feed (see [cluster_stops()]) 
+#'                        in case of warnings.
 #'
 #' @return A table with travel times to/from all stops reachable by `stop_name` and their
 #'         corresponding journey departure and arrival times.
@@ -97,7 +95,7 @@ travel_times = function(filtered_stop_times,
   }
   if(!is.null(max_departure_time) && !arrival) {
     if(!missing(time_range)) {
-      stop("time_range and max_departure_time are set. Only one of them is allowed.")
+      stop("max_departure_time is deprecated, use time_range")
     }
     if(is.character(max_departure_time)) {
       max_departure_time <- hhmmss_to_seconds(max_departure_time)
@@ -105,6 +103,10 @@ travel_times = function(filtered_stop_times,
     min_departure_time = min(filtered_stop_times$departure_time_num)
     stopifnot(max_departure_time > min_departure_time)
     time_range <- max_departure_time - min_departure_time
+  }
+  if(!is.null(max_departure_time)) {
+    # TODO param description
+    warning("max_departure_time is deprecated, use time_range")
   }
 
   # get stop_ids of names
