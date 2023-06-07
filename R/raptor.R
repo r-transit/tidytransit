@@ -31,9 +31,9 @@
 #'                 reasonably close to each other.
 #' @param arrival If FALSE (default), all journeys _start_ from `stop_ids`. If
 #'                TRUE, all journeys _end_ at `stop_ids`.
-#' @param time_range Either a range in seconds or a vector containing the 
-#'                   minimal and maximal departure time (i.e. earliest and 
-#'                   latest possible journey departure time) as seconds or 
+#' @param time_range Either a range in seconds or a vector containing the
+#'                   minimal and maximal departure time (i.e. earliest and
+#'                   latest possible journey departure time) as seconds or
 #'                   "HH:MM:SS" character.
 #' @param max_transfers Maximum number of transfers allowed, no limit (NULL) as default.
 #' @param keep One of c("all", "shortest", "earliest", "latest"). By default, `all` journeys
@@ -143,19 +143,20 @@ raptor = function(stop_times,
   rptr = raptor_core(initial_stops, initial_transfers, stop_times_dt, transfers_dt,
                      max_transfers, timeparams$min_departure_time, timeparams$max_departure_time)
 
-  # flip arrival/departure times for arrival=T
-  if(arrival) {
-    # rptr <- reverse_journey_from_to(rptr)
-  }
-
   # reverse-engineer initial transfers ####
   if(nrow(initial_transfers) > 0) {
     rptr <- rbindlist(list(rptr, initial_transfers[,colnames(rptr), with = F])) # in case no departures happened on transferrable stops
-    rptr_no_transfers = rptr[initial_stops, on = "journey_departure_stop_id"] # [!is.na(to_stop_id)]
+    rptr_no_transfers = rptr[initial_stops, on = "journey_departure_stop_id"]
     rptr_no_transfers[,`:=`(from_stop_id = journey_departure_stop_id, to_stop_id = journey_arrival_stop_id)]
-    rptr_with_initial_transfers = rptr[initial_transfers, on = c("journey_departure_stop_id" = "journey_arrival_stop_id"), allow.cartesian = TRUE]
-    rptr_with_initial_transfers[, `:=`(from_stop_id = i.journey_departure_stop_id, to_stop_id = journey_arrival_stop_id,
-                                       journey_departure_time = journey_departure_time-i.travel_time, travel_time = travel_time+i.travel_time)]
+
+    transfer_from_id <- transfer_time <- NULL
+    .initial_transfers = as.data.table(initial_transfers)[,c(4,1,6)]
+    colnames(.initial_transfers) <- c("transfer_from_id", "transfer_to_id", "transfer_time")
+    rptr_with_initial_transfers = .initial_transfers[rptr, on = c("transfer_to_id" = "journey_departure_stop_id"), allow.cartesian = TRUE]
+    rptr_with_initial_transfers <- rptr_with_initial_transfers[!is.na(transfer_from_id)]
+    rptr_with_initial_transfers[, `:=`(from_stop_id = transfer_from_id, to_stop_id = journey_arrival_stop_id,
+                                       journey_departure_time = journey_departure_time-transfer_time, travel_time = travel_time+transfer_time)]
+
     initial_stops[,`:=`(from_stop_id = journey_departure_stop_id, to_stop_id = journey_arrival_stop_id)]
   } else {
     initial_stops[,`:=`(from_stop_id = journey_departure_stop_id, to_stop_id = journey_arrival_stop_id)]
@@ -167,11 +168,21 @@ raptor = function(stop_times,
   raptor_result = rbindlist(list(initial_stops[,final_cns, with = F],
                                  rptr_no_transfers[,final_cns, with = F],
                                  rptr_with_initial_transfers[,final_cns, with = F]))
+  raptor_result[, transfers := as.integer(transfers)]
+
+  # revert times and switch from<->to
   if(arrival) {
     setnames(raptor_result, c("from_stop_id", "to_stop_id"), c("to_stop_id", "from_stop_id"))
     arrival_tmp = raptor_result$journey_arrival_time
     raptor_result[,journey_arrival_time := -journey_departure_time]
     raptor_result[,journey_departure_time := -arrival_tmp]
+  }
+
+  # remove journeys departing or arriving outside time window (mostly for initial transfers)
+  if(!arrival) {
+    raptor_result <- raptor_result[journey_departure_time >= timeparams$time_window[1] & journey_departure_time <= timeparams$time_window[2]]
+  } else {
+    raptor_result <- raptor_result[journey_arrival_time >= timeparams$time_window[1] & journey_arrival_time <= timeparams$time_window[2]]
   }
 
   # 5) optimize, only keep the "best" journeys ####
@@ -211,11 +222,7 @@ find_initial_transfers = function(initial_stops, transfers_dt, max_transfers, ar
     )
     initial_transfers[,journey_arrival_stop_id := NULL]
     setnames(initial_transfers, "trnsfrs_to_stop_id", "journey_arrival_stop_id")
-    if(!arrival) {
-      initial_transfers[,journey_arrival_time := journey_arrival_time+min_transfer_time]
-    } else {
-      initial_transfers[,journey_departure_time := journey_departure_time-min_transfer_time]
-    }
+    initial_transfers[,journey_arrival_time := journey_arrival_time+min_transfer_time]
     initial_transfers[, travel_time := journey_arrival_time-journey_departure_time]
   }
 
@@ -234,7 +241,7 @@ raptor_core = function(initial_stops, initial_transfers, stop_times_dt, transfer
   .init_stops = rbindlist(list(initial_stops, initial_transfers))
   departures_marked = stop_times_dt[.init_stops[,"journey_arrival_stop_id"], on = c("to_stop_id" = "journey_arrival_stop_id"), allow.cartesian = TRUE]
 
-  departures_marked <- departures_marked[departure_time_num >= min_departure_time & departure_time_num <= max_departure_time,]
+  # departures_marked <- departures_marked[departure_time_num >= min_departure_time & departure_time_num <= max_departure_time,]
   # setup tables
   departures_marked[, `:=`(journey_departure_time = departure_time_num, journey_arrival_time = departure_time_num, journey_departure_stop_id = to_stop_id, marked_departure_time_num = departure_time_num, transfers = 0, marked = TRUE)]
   rptr = as.data.table(departures_marked[,rptr_colnames, with = F])
@@ -328,16 +335,6 @@ raptor_core = function(initial_stops, initial_transfers, stop_times_dt, transfer
   setnames(rptr, "to_stop_id", "journey_arrival_stop_id")
 
   return(rptr)
-}
-
-reverse_journey_from_to = function(rptr) {
-  journey_arrival_time <- journey_departure_time <- NULL
-  .cns = colnames(rptr)
-  arrival_tmp = rptr$journey_arrival_time
-  rptr[,journey_arrival_time := -journey_departure_time]
-  rptr[,journey_departure_time := -arrival_tmp]
-
-  return(rptr[,.cns,with=F])
 }
 
 setup_stop_times = function(stop_times, reverse = FALSE) {

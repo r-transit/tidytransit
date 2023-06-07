@@ -263,12 +263,24 @@ test_that("raptor with with time_range vector", {
   r2.3 = raptor(stop_times, transfers, "stop2", time_range = c("07:05:01", "07:10:00"))
   expect_equal(r2.3$journey_arrival_time[r2.3$to_stop_id == "stop8b"], 24*60+7*3600)
 
+  # with arrival
   r8.1 = raptor(stop_times, transfers, "stop8b", time_range = c("07:00:00", "07:30:00"), arrival = T)
   expect_equal(
     sort(unique(r8.1$journey_arrival_time)-7*3600),
-    c(0, 10, 24*60, 29*60))
-  r8.2 = raptor(stop_times, transfers, "stop8b", time_range = c("07:32:00", "07:32:00"), arrival = T)
+    c(0, 24*60, 29*60))
+  r8.2 = raptor(stop_times, transfers, "stop8b", time_range = c("07:32:10", "07:32:10"), arrival = T)
   expect_equal(sort(unique(r8.2$from_stop_id)), c("stop1a", "stop1b", "stop5", "stop6", "stop7", "stop8a", "stop8b"))
+
+  # short time_ranges
+  no_connections = raptor(stop_times, transfers, "stop1a", time_range = c("07:09:00", "07:09:00")) |> filter(to_stop_id == "stop4")
+  expect_equal(nrow(no_connections), 0)
+  one_connection = raptor(stop_times, transfers, "stop1a", time_range = c("07:10:00", "07:10:00")) |> filter(to_stop_id == "stop4")
+  expect_equal(nrow(one_connection), 1)
+  one_connection_with_transfer = raptor(stop_times, transfers, "stop1a", time_range = c("07:11:50", "07:12:00")) |> filter(to_stop_id == "stop4")
+  expect_equal(nrow(one_connection_with_transfer), 1)
+  expect_equal(one_connection_with_transfer$transfers, 1)
+  three_connections = raptor(stop_times, transfers, "stop1a", time_range = c("07:10:00", "07:20:00")) |> filter(to_stop_id == "stop4")
+  expect_equal(nrow(three_connections), 3)
 })
 
 test_that("latest arrivals are correct", {

@@ -17,14 +17,14 @@
 #'                            departure or arrival time has been set.
 #' @param stop_name Stop name for which travel times should be calculated. A vector with
 #'                  multiple names can be used.
-#' @param time_range Either a range in seconds or a vector containing the 
-#'                   minimal and maximal departure time (i.e. earliest and 
-#'                   latest possible journey departure time) as seconds or 
+#' @param time_range Either a range in seconds or a vector containing the
+#'                   minimal and maximal departure time (i.e. earliest and
+#'                   latest possible journey departure time) as seconds or
 #'                   "HH:MM:SS" character.
 #' @param arrival If FALSE (default), all journeys _start_ from `stop_name`. If
 #'                TRUE, all journeys _end_ at `stop_name`.
 #' @param max_transfers The maximimum number of transfers
-#' @param max_departure_time Deprecated. Use `time_range` to set the latest 
+#' @param max_departure_time Deprecated. Use `time_range` to set the latest
 #'                           possible departure time.
 #' @param return_coords Returns stop coordinates (lon/lat) as columns. Default is FALSE.
 #' @param return_DT travel_times() returns a data.table if TRUE. Default is FALSE which
@@ -35,7 +35,7 @@
 #'                        errors if the distance among stop_ids with the same name is
 #'                        above this threshold (in meters).
 #'                        Use FALSE to turn check off. However, it is recommended to
-#'                        either use [raptor()] or fix the feed (see [cluster_stops()]) 
+#'                        either use [raptor()] or fix the feed (see [cluster_stops()])
 #'                        in case of warnings.
 #'
 #' @return A table with travel times to/from all stops reachable by `stop_name` and their
@@ -116,7 +116,7 @@ travel_times = function(filtered_stop_times,
   }
 
   # Check stop_name integrity
-  if(length(stop_ids) > 1 & !is.null(stop_dist_check) & !isFALSE(stop_dist_check)) {
+  if(length(stop_ids) > 1 && !is.null(stop_dist_check) && !isFALSE(stop_dist_check)) {
     stop_dists = stop_group_distances(stops, "stop_name")
 
     if(max(stop_dists$dist_max) > stop_dist_check) {
