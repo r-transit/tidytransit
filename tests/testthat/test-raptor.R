@@ -241,8 +241,8 @@ test_that("raptor with arrival=TRUE and reduced time_range", {
   )+7*3600
   tt_expected_2 = arr_expected_2 - dep_expected_2
 
-  rptr_2$arr_expected_2_time <- arr_expected_2
   rptr_2$dep_expected_2_time <- dep_expected_2
+  rptr_2$arr_expected_2_time <- arr_expected_2
   rptr_2 |> filter(arr_expected_2_time != journey_arrival_time | dep_expected_2_time != journey_departure_time)
 
   expect_equal(rptr_2$journey_arrival_time, arr_expected_2)
@@ -271,6 +271,8 @@ test_that("raptor with with time_range vector", {
   r8.2 = raptor(stop_times, transfers, "stop8b", time_range = c("07:32:10", "07:32:10"), arrival = T)
   expect_equal(sort(unique(r8.2$from_stop_id)), c("stop1a", "stop1b", "stop5", "stop6", "stop7", "stop8a", "stop8b"))
 
+  raptor(stop_times, transfers, c("stop1a", "stop1b"), time_range = c("07:11:50", "07:12:00")) |> filter(to_stop_id == "stop4")
+
   # short time_ranges
   no_connections = raptor(stop_times, transfers, "stop1a", time_range = c("07:09:00", "07:09:00")) |> filter(to_stop_id == "stop4")
   expect_equal(nrow(no_connections), 0)
@@ -284,14 +286,18 @@ test_that("raptor with with time_range vector", {
 })
 
 test_that("latest arrivals are correct", {
-  r0 = raptor(stop_times, transfers, stop_ids = "stop1b", arrival = FALSE, keep = "all")
-  r1 = raptor(stop_times, transfers, stop_ids = "stop1b", arrival = FALSE, keep = "latest")
+  r0 = raptor(stop_times, transfers, time_range = 7200, stop_ids = "stop1b", arrival = FALSE, keep = "all")
+  r1 = raptor(stop_times, transfers, time_range = 7200, stop_ids = "stop1b", arrival = FALSE, keep = "latest")
   expect_equal(r1[which(r1$to_stop_id == "stop4")]$journey_arrival_time, 37*60+7*3600)
   expect_equal(r1[which(r1$to_stop_id == "stop3a")]$journey_arrival_time, 28*60+7*3600)
 
   r2 = raptor(stop_times, transfers, stop_ids = "stop4", arrival = TRUE, keep = "latest")
   expect_equal(r2[which(r2$from_stop_id == "stop1a")]$journey_arrival_time, 45*60+7*3600)
   expect_equal(r2[which(r2$from_stop_id == "stop4")]$journey_arrival_time, 7.75*3600)
+
+  r6 = raptor(stop_times, transfers, time_range = 7200, stop_ids = "stop6", keep = "latest")
+  expect_equal(r6[which(r6$to_stop_id == "stop4")]$journey_arrival_time, 41*60+7*3600)
+  r6 = raptor(stop_times, transfers, time_range = 7200, stop_ids = "stop6", keep = "all")
 })
 
 test_that("set_num_times w/o hms or num", {

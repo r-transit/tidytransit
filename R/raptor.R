@@ -93,7 +93,7 @@ raptor = function(stop_times,
   i.journey_departure_stop_id <- i.travel_time <- NULL
 
   # Prepare departure timespans
-  timeparams = setup_time_params(time_range, arrival, stop_times)
+  time_window = setup_time_window(time_range, arrival, stop_times)
 
   # 1) check and params ####
   # stop ids need to be a character vector
@@ -131,17 +131,14 @@ raptor = function(stop_times,
   .arrival_sign = ifelse(arrival, -1, 1)
   # 2) set up when/where journeys begin ####
   initial_stops = data.table(journey_arrival_stop_id = from_stop_ids,
-                             journey_arrival_time = timeparams$time_window[.i]*.arrival_sign,
-                             journey_departure_time = timeparams$time_window[.i]*.arrival_sign,
+                             journey_arrival_time = time_window[.i]*.arrival_sign,
+                             journey_departure_time = time_window[.i]*.arrival_sign,
                              journey_departure_stop_id = from_stop_ids,
                              transfers = 0, travel_time = 0)
   initial_transfers = find_initial_transfers(initial_stops, transfers_dt, max_transfers, arrival)
-
+# browser()
   # 3) run raptor ####
-  .raptor_stops = unique(c(initial_stops$from_stop_id, initial_transfers$to_stop_id))
-
-  rptr = raptor_core(initial_stops, initial_transfers, stop_times_dt, transfers_dt,
-                     max_transfers, timeparams$min_departure_time, timeparams$max_departure_time)
+  rptr = raptor_core(initial_stops, initial_transfers, stop_times_dt, transfers_dt, max_transfers)
 
   # reverse-engineer initial transfers ####
   if(nrow(initial_transfers) > 0) {
@@ -180,9 +177,9 @@ raptor = function(stop_times,
 
   # remove journeys departing or arriving outside time window (mostly for initial transfers)
   if(!arrival) {
-    raptor_result <- raptor_result[journey_departure_time >= timeparams$time_window[1] & journey_departure_time <= timeparams$time_window[2]]
+    raptor_result <- raptor_result[journey_departure_time >= time_window[1] & journey_departure_time <= time_window[2]]
   } else {
-    raptor_result <- raptor_result[journey_arrival_time >= timeparams$time_window[1] & journey_arrival_time <= timeparams$time_window[2]]
+    raptor_result <- raptor_result[journey_arrival_time >= time_window[1] & journey_arrival_time <= time_window[2]]
   }
 
   # 5) optimize, only keep the "best" journeys ####
@@ -230,7 +227,7 @@ find_initial_transfers = function(initial_stops, transfers_dt, max_transfers, ar
 }
 
 raptor_core = function(initial_stops, initial_transfers, stop_times_dt, transfers_dt,
-                       max_transfers, min_departure_time, max_departure_time) {
+                       max_transfers) {
   arrival_time_num <- departure_time_num  <- travel_time <- NULL
   journey_departure_stop_id <- journey_departure_time <- to_stop_id <- journey_arrival_time <- NULL
   marked <- marked_departure_time_num <- transfers <- min_transfer_time <- NULL
@@ -241,7 +238,6 @@ raptor_core = function(initial_stops, initial_transfers, stop_times_dt, transfer
   .init_stops = rbindlist(list(initial_stops, initial_transfers))
   departures_marked = stop_times_dt[.init_stops[,"journey_arrival_stop_id"], on = c("to_stop_id" = "journey_arrival_stop_id"), allow.cartesian = TRUE]
 
-  # departures_marked <- departures_marked[departure_time_num >= min_departure_time & departure_time_num <= max_departure_time,]
   # setup tables
   departures_marked[, `:=`(journey_departure_time = departure_time_num, journey_arrival_time = departure_time_num, journey_departure_stop_id = to_stop_id, marked_departure_time_num = departure_time_num, transfers = 0, marked = TRUE)]
   rptr = as.data.table(departures_marked[,rptr_colnames, with = F])
@@ -258,13 +254,11 @@ raptor_core = function(initial_stops, initial_transfers, stop_times_dt, transfer
 
       # remove initial transfers with anti join
       if(!is.null(transfers_dt)) {
-
         rptr_marked <- rptr_marked[!initial_transfers, on = c("journey_departure_stop_id", "to_stop_id" = "journey_arrival_stop_id")]
         rptr_marked <- rptr_marked[to_stop_id != journey_departure_stop_id,]
       }
 
       # Get departures that happen on marked stops
-
       departures_marked = stop_times_dt[rptr_marked, on = "to_stop_id", allow.cartesian = TRUE]
       # only use trips/departures that happen after the stop's journey_arrival_time
       departures_marked <- departures_marked[departure_time_num > journey_arrival_time,]
@@ -374,7 +368,7 @@ setup_transfers = function(transfers) {
   return(transfers)
 }
 
-setup_time_params = function(time_range, arrival, stop_times) {
+setup_time_window = function(time_range, arrival, stop_times) {
   if(length(time_range) == 1) {
     if(!is.numeric(time_range)) {
       stop("time_range is not numeric")
@@ -405,18 +399,11 @@ setup_time_params = function(time_range, arrival, stop_times) {
       time_range <- hhmmss_to_seconds(time_range)
     }
     time_window = sort(time_range)
-    min_departure_time = time_range[1]
-    max_departure_time = time_range[2]
-    if(arrival) {
-      min_departure_time = -time_range[2]
-      max_departure_time = -time_range[1]
-    }
   } else {
     stop("Cannot handle time_range with length != 1 or 2")
   }
 
-  timeparams = list(time_window = time_window, min_departure_time = min_departure_time, max_departure_time = max_departure_time)
-  return(timeparams)
+  return(time_window)
 }
 
 #' @import data.table
