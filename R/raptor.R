@@ -398,6 +398,7 @@ setup_time_window = function(time_range, arrival, stop_times) {
     if(is.character(time_range)) {
       time_range <- hhmmss_to_seconds(time_range)
     }
+    time_range <- as.numeric(time_range)
     time_window = sort(time_range)
   } else {
     stop("Cannot handle time_range with length != 1 or 2")
