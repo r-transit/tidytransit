@@ -45,12 +45,24 @@
 #' @export
 #' @examples \donttest{
 #' # 1) Calculate travel times from two closely related stops
-#' tts1 = gtfs_duke |>
-#'   interpolate_stop_times() |> 
+#' # The example dataset gtfs_duke has missing times (allowed in gtfs) which is 
+#' # why we run interpolate_stop_times beforehand
+#' gtfs = interpolate_stop_times(gtfs_duke)
+#' 
+#' tts1 = gtfs |>
 #'   filter_feed_by_date("2019-08-26") |>
 #'   travel_times(c("Campus Dr at Arts Annex (WB)", "Campus Dr at Arts Annex (EB)"), 
 #'                time_range = c("14:00:00", "15:30:00"))
-#' print(tts1)
+#'
+#' # you can use either filter_feed_by_date or filter_stop_times to prepare the feed
+#' # the result is the same
+#' tts2 = gtfs |>
+#'  filter_stop_times("2019-08-26", "14:00:00") |>
+#'  travel_times(c("Campus Dr at Arts Annex (WB)", "Campus Dr at Arts Annex (EB)"), 
+#'               time_range = 1.5*3600) # 1.5h after 14:00
+#' 
+#' all(tts1 == tts2)
+#' 
 #' # It's recommended to store the filtered feed, since it can be time consuming to
 #' # run it for every travel time calculation, see the next example steps
 #' # 2) separate filtering and travel time calculation for a more granular analysis
@@ -91,10 +103,9 @@ travel_times = function(filtered_stop_times,
       stop("Travel times cannot be calculated on an unfiltered tidygtfs object. Use filter_feed_by_date().")
     }
 
-    filtered_stop_times <- gtfs_obj$stop_times
+    filtered_stop_times <- gtfs_obj$stop_times  
     transfers = gtfs_obj$transfers
     stops = stops_as_dt(gtfs_obj$stops)
-
   } else {
     if(!all(c("stops", "transfers") %in% names(attributes(filtered_stop_times)))) {
       stop("Stops and transfers not found in filtered_stop_times attributes. Use filter_stop_times() to prepare data or use raptor() for lower level access.")
@@ -102,6 +113,8 @@ travel_times = function(filtered_stop_times,
     transfers = attributes(filtered_stop_times)$transfers
     stops = attributes(filtered_stop_times)$stops
   }
+  
+  # prepare times
   if(!is.null(max_departure_time) && !arrival) {
     if(!missing(time_range)) {
       stop("max_departure_time is deprecated, use time_range")
@@ -114,7 +127,6 @@ travel_times = function(filtered_stop_times,
     time_range <- max_departure_time - min_departure_time
   }
   if(!is.null(max_departure_time)) {
-    # TODO param description
     warning("max_departure_time is deprecated, use time_range")
   }
 
@@ -237,9 +249,9 @@ filter_stop_times = function(gtfs_obj,
   trips = as.data.table(unique(trips[,c("trip_id")]))
 
   # prepare stop_times
-  stop_times_dt <- as.data.table(gtfs_obj$stop_times)
-  set_num_times(stop_times_dt)
+  stop_times_dt = as.data.table(gtfs_obj$stop_times)
   stop_times_dt <- stop_times_dt[trips, on = "trip_id"]
+  set_num_times(stop_times_dt)
   stop_times_dt <- stop_times_dt[departure_time_num >= min_departure_time &
                                    arrival_time_num <= max_arrival_time,]
   setindex(stop_times_dt, "stop_id")

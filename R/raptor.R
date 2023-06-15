@@ -109,8 +109,8 @@ raptor = function(stop_times,
   # stop ids need to be a character vector
   # use data.table for faster manipulation
   # copy necessary as we change/rename columns by reference
-  stop_times_dt = as.data.table(replace_NA_times(stop_times)) # TODO switch
-  stop_times_dt <- setup_stop_times(stop_times_dt, reverse = arrival)
+  stop_times_dt = as.data.table(replace_NA_times(stop_times))
+  stop_times_dt <- setup_stop_times(stop_times_dt, arrival, time_window)
   transfers_dt = as.data.table(transfers)
   transfers_dt <- setup_transfers(transfers_dt)
   if(!is.character(stop_ids)) {
@@ -341,12 +341,12 @@ raptor_core = function(initial_stops, initial_transfers, stop_times_dt, transfer
   return(rptr)
 }
 
-setup_stop_times = function(stop_times, reverse = FALSE) {
+setup_stop_times = function(stop_times, arrival, time_window) {
   arrival_time_num <- departure_time_num <- NULL
   stopifnot(is.data.table(stop_times))
   set_num_times(stop_times)
   setnames(x = stop_times, new = "to_stop_id", old = "stop_id")
-  if(reverse) {
+  if(arrival) {
     arrival_tmp = stop_times$arrival_time_num
     stop_times[,arrival_time_num := -departure_time_num]
     stop_times[,departure_time_num := -arrival_tmp]
@@ -357,6 +357,14 @@ setup_stop_times = function(stop_times, reverse = FALSE) {
   if(is.null(indices(stop_times)) || !("stop_id" %in% indices(stop_times))) {
     setindex(stop_times, "to_stop_id")
   }
+  
+  # trim times
+  if(arrival) {
+    stop_times <- stop_times[arrival_time_num <= time_window[2],]
+  } else {
+    stop_times <- stop_times[departure_time_num >= time_window[1],]
+  }
+  
   return(stop_times)
 }
 
