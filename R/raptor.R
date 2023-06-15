@@ -16,15 +16,16 @@
 #' _not_ returned.
 #'
 #' For most cases, `stop_times` needs to be filtered, as it should only contain trips
-#' happening on a single day and departures later than a given journey start time, see
-#' [filter_stop_times()]. The algorithm scans all trips until it exceeds `max_transfers`
-#' or all trips in `stop_times` have been visited.
+#' happening on a single day, see [filter_stop_times()]. The algorithm scans all trips 
+#' until it exceeds `max_transfers` or all trips in `stop_times` have been visited.
 #'
 #' @param stop_times A (prepared) stop_times table from a gtfs feed. Prepared means
 #'                   that all stop time rows before the desired journey departure time
 #'                   should be removed. The table should also only include departures
 #'                   happening on one day. Use [filter_stop_times()] for easier preparation.
-#' @param transfers Transfers table from a gtfs feed. In general no preparation is needed.
+#' @param transfers Transfers table from a gtfs feed. In general no preparation
+#'                  is needed. Can be omitted if stop_times has been prepared with 
+#'                  [filter_stop_times()].
 #' @param stop_ids Character vector with stop_ids from where journeys should start (or end).
 #'                 It is recommended to only use stop_ids that are related to each other,
 #'                 like different platforms in a train station or bus stops that are
@@ -92,6 +93,15 @@ raptor = function(stop_times,
   journey_departure_time <- journey_arrival_time <- travel_time <- min_transfer_time <- NULL
   i.journey_departure_stop_id <- i.travel_time <- NULL
 
+  # filter_stop_times stores transfers in attributes
+  if(missing(transfers)) {
+    if(!is.null(attributes(stop_times)$transfers)) {
+      transfers <- attributes(stop_times)$transfers
+    } else {
+      stop('argument "transfers" is missing, with no default')
+    }
+  }
+
   # Prepare departure timespans
   time_window = setup_time_window(time_range, arrival, stop_times)
 
@@ -136,7 +146,7 @@ raptor = function(stop_times,
                              journey_departure_stop_id = from_stop_ids,
                              transfers = 0, travel_time = 0)
   initial_transfers = find_initial_transfers(initial_stops, transfers_dt, max_transfers, arrival)
-# browser()
+  # browser()
   # 3) run raptor ####
   rptr = raptor_core(initial_stops, initial_transfers, stop_times_dt, transfers_dt, max_transfers)
 
@@ -376,7 +386,6 @@ setup_time_window = function(time_range, arrival, stop_times) {
     if(time_range < 1) {
       stop("time_range is less than 1")
     }
-    # deprecated?
     if(!arrival) {
       if(!is.null(attributes(stop_times)$min_departure_time)) {
         min_departure_time = attributes(stop_times)$min_departure_time

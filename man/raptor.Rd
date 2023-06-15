@@ -20,7 +20,9 @@ that all stop time rows before the desired journey departure time
 should be removed. The table should also only include departures
 happening on one day. Use \code{\link[=filter_stop_times]{filter_stop_times()}} for easier preparation.}
 
-\item{transfers}{Transfers table from a gtfs feed. In general no preparation is needed.}
+\item{transfers}{Transfers table from a gtfs feed. In general no preparation
+is needed. Can be omitted if stop_times has been prepared with
+\code{\link[=filter_stop_times]{filter_stop_times()}}.}
 
 \item{stop_ids}{Character vector with stop_ids from where journeys should start (or end).
 It is recommended to only use stop_ids that are related to each other,
@@ -70,9 +72,8 @@ Note that the exact journeys (with each intermediate stop and route ids for exam
 \emph{not} returned.
 
 For most cases, \code{stop_times} needs to be filtered, as it should only contain trips
-happening on a single day and departures later than a given journey start time, see
-\code{\link[=filter_stop_times]{filter_stop_times()}}. The algorithm scans all trips until it exceeds \code{max_transfers}
-or all trips in \code{stop_times} have been visited.
+happening on a single day, see \code{\link[=filter_stop_times]{filter_stop_times()}}. The algorithm scans all trips
+until it exceeds \code{max_transfers} or all trips in \code{stop_times} have been visited.
 }
 \examples{
 \donttest{
