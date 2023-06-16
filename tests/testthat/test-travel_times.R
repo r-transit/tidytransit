@@ -54,9 +54,13 @@ test_that("travel_time works with different params", {
   fst = filter_stop_times(gtfs_routing, "2018-10-01", 7*3600, 24*3600)
   expect_warning(travel_times(fst, "One", max_departure_time = 7*3600+5*60), "max_departure_time is deprecated, use time_range")
   expect_warning(travel_times(fst, "One", max_departure_time = "07:05:00"), "max_departure_time is deprecated, use time_range")
-  expect_error(travel_times(fst, "One", time_range = 1800,  max_departure_time = "07:45:00"))
+  expect_warning(
+    expect_error(travel_times(fst, "One", time_range = 1800, max_departure_time = "07:45:00")),
+    "max_departure_time is deprecated, use time_range")
   expect_error(travel_times(fst, "unknown stop"))
-  expect_error(travel_times(fst, "One", max_departure_time = "06:45:00"))
+  expect_warning(
+    expect_error(travel_times(fst, "One", max_departure_time = "06:45:00")),
+    "max_departure_time is deprecated, use time_range")
 })
 
 test_that("transfers for travel_times", {
@@ -98,7 +102,7 @@ test_that("travel_times with arrival=TRUE stop_name", {
 })
 
 test_that("catch invalid params", {
-  expect_error(travel_times(gtfs_routing, stop_name = "One"), "Travel times cannot be calculated on an unfiltered tidygtfs object. Use filter_feed_by_date().")
+  expect_error(travel_times(gtfs_routing, stop_name = "One"), "Travel times cannot be calculated with an unfiltered tidygtfs object. Use filter_feed_by_date().")
   fst = filter_stop_times(gtfs_routing, "2018-10-01", 7*3600, 24*3600)
   expect_error(raptor(fst, attributes(fst)$transfers, stop_id = "stop1a", max_transfers = -1), "max_transfers is less than 0")
   expect_error(travel_times(fst, stop_name = "One", max_transfers = -1), "max_transfers is less than 0")

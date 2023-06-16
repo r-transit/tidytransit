@@ -100,7 +100,7 @@ rptr$travel_time_incl_walk <- rptr$travel_time + rptr$walk_time
 # get minimal travel times (with walk times) for all stop_ids
 library(data.table)
 shortest_travel_times <- setDT(rptr)[order(travel_time_incl_walk)][, .SD[1], by = "to_stop_id"]
-hist(shortest_travel_times$travel_time, breaks = 360)
+hist(shortest_travel_times$travel_time, breaks = seq(0,2*60)*60)
 }
 }
 \seealso{

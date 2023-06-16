@@ -79,7 +79,7 @@
 #' # get minimal travel times (with walk times) for all stop_ids
 #' library(data.table)
 #' shortest_travel_times <- setDT(rptr)[order(travel_time_incl_walk)][, .SD[1], by = "to_stop_id"]
-#' hist(shortest_travel_times$travel_time, breaks = 360)
+#' hist(shortest_travel_times$travel_time, breaks = seq(0,2*60)*60)
 #' }
 raptor = function(stop_times,
                   transfers,
@@ -92,6 +92,9 @@ raptor = function(stop_times,
   to_stop_id <- journey_arrival_stop_id <- NULL
   journey_departure_time <- journey_arrival_time <- travel_time <- min_transfer_time <- NULL
   i.journey_departure_stop_id <- i.travel_time <- NULL
+  if(inherits(stop_times, "tidygtfs")) {
+    stop("Travel times cannot be calculated with a tidygtfs object")
+  }
 
   # filter_stop_times stores transfers in attributes
   if(missing(transfers)) {
