@@ -134,12 +134,12 @@ test_that("time_range param", {
 })
 
 test_that("example pipe", {
-  pipe1 = gtfs_routing |>
-    filter_feed_by_date("2018-10-01") |>
+  pipe1 = gtfs_routing %>%
+    filter_feed_by_date("2018-10-01") %>%
     travel_times("One", time_range = c("07:09:00", "07:19:00"))
 
-  pipe2 = gtfs_routing |>
-    filter_stop_times("2018-10-01", "07:09:00") |>
+  pipe2 = gtfs_routing %>%
+    filter_stop_times("2018-10-01", "07:09:00") %>%
     travel_times("One", time_range = 600)
 
   expect_equal(pipe1, pipe2)

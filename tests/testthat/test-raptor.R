@@ -30,7 +30,6 @@ test_that("raptor travel times", {
   )
 
   check = dplyr::inner_join(actual_tbl, expected_tbl, c("from_stop_id", "to_stop_id"))
-  check |> filter(travel_time != travel_time_expected)
   expect_equal(check$travel_time, check$travel_time_expected)
 })
 
@@ -50,10 +49,8 @@ test_that("ea and tt return the same result for one departure", {
                             keep = "earliest")[order(to_stop_id)]
   earliest_arrival_tt <- earliest_arrival$journey_arrival_time - 7*3600
 
-  check = inner_join(shortest[,1:3], earliest_arrival[,1:3], c("from_stop_id", "to_stop_id")) |>
+  check = inner_join(shortest[,1:3], earliest_arrival[,1:3], c("from_stop_id", "to_stop_id")) %>%
     filter(!to_stop_id %in% test_from_stop_ids)
-  check |> filter(travel_time.x != travel_time.y)
-
   expect_equal(check$travel_time.x, check$travel_time.y)
 })
 
@@ -76,8 +73,6 @@ test_that("raptor with one stop and reduced time_range", {
                       keep = "shortest")[order(to_stop_id)]
 
   check = dplyr::full_join(actual_tbl, expected_tbl, "to_stop_id")
-  check |> filter(travel_time != expected_travel_time)
-
   expect_equal(check$travel_time, check$expected_travel_time)
 })
 
@@ -252,7 +247,7 @@ test_that("raptor with arrival=TRUE and reduced time_range", {
 
   rptr_2$dep_expected_2_time <- dep_expected_2
   rptr_2$arr_expected_2_time <- arr_expected_2
-  rptr_2 |> filter(arr_expected_2_time != journey_arrival_time | dep_expected_2_time != journey_departure_time)
+  rptr_2 %>% filter(arr_expected_2_time != journey_arrival_time | dep_expected_2_time != journey_departure_time)
 
   expect_equal(rptr_2$journey_arrival_time, arr_expected_2)
   expect_equal(rptr_2$journey_departure_time, dep_expected_2)
@@ -280,17 +275,17 @@ test_that("raptor with with time_range vector", {
   r8.2 = raptor(stop_times, transfers, "stop8b", time_range = c("07:32:10", "07:32:10"), arrival = T)
   expect_equal(sort(unique(r8.2$from_stop_id)), c("stop1a", "stop1b", "stop5", "stop6", "stop7", "stop8a", "stop8b"))
 
-  raptor(stop_times, transfers, c("stop1a", "stop1b"), time_range = c("07:11:50", "07:12:00")) |> filter(to_stop_id == "stop4")
+  raptor(stop_times, transfers, c("stop1a", "stop1b"), time_range = c("07:11:50", "07:12:00")) %>% filter(to_stop_id == "stop4")
 
   # short time_ranges
-  no_connections = raptor(stop_times, transfers, "stop1a", time_range = c("07:09:00", "07:09:00")) |> filter(to_stop_id == "stop4")
+  no_connections = raptor(stop_times, transfers, "stop1a", time_range = c("07:09:00", "07:09:00")) %>% filter(to_stop_id == "stop4")
   expect_equal(nrow(no_connections), 0)
-  one_connection = raptor(stop_times, transfers, "stop1a", time_range = c("07:10:00", "07:10:00")) |> filter(to_stop_id == "stop4")
+  one_connection = raptor(stop_times, transfers, "stop1a", time_range = c("07:10:00", "07:10:00")) %>% filter(to_stop_id == "stop4")
   expect_equal(nrow(one_connection), 1)
-  one_connection_with_transfer = raptor(stop_times, transfers, "stop1a", time_range = c("07:11:50", "07:12:00")) |> filter(to_stop_id == "stop4")
+  one_connection_with_transfer = raptor(stop_times, transfers, "stop1a", time_range = c("07:11:50", "07:12:00")) %>% filter(to_stop_id == "stop4")
   expect_equal(nrow(one_connection_with_transfer), 1)
   expect_equal(one_connection_with_transfer$transfers, 1)
-  three_connections = raptor(stop_times, transfers, "stop1a", time_range = c("07:10:00", "07:20:00")) |> filter(to_stop_id == "stop4")
+  three_connections = raptor(stop_times, transfers, "stop1a", time_range = c("07:10:00", "07:20:00")) %>% filter(to_stop_id == "stop4")
   expect_equal(nrow(three_connections), 3)
 })
 
@@ -340,15 +335,15 @@ test_that("raptor considers each stop_id as a separate starting journey", {
   possible_routes = read.csv("possible_routes.csv", sep = ";")
   all_stop_ids = sort(unique(stop_times$stop_id))
 
-  rptr_all = raptor(stop_times, transfers, all_stop_ids, keep = "all") |>
-    arrange(from_stop_id, to_stop_id) |> dplyr::as_tibble()
+  rptr_all = raptor(stop_times, transfers, all_stop_ids, keep = "all") %>%
+    arrange(from_stop_id, to_stop_id) %>% dplyr::as_tibble()
 
   rptr_stop_pairs = unique(rptr_all[,c("from_stop_id", "to_stop_id")])
   rptr_stop_pairs$raptor_route <- TRUE
 
-  stop_pairs = dplyr::full_join(rptr_stop_pairs, possible_routes, c("from_stop_id", "to_stop_id")) |>
+  stop_pairs = dplyr::full_join(rptr_stop_pairs, possible_routes, c("from_stop_id", "to_stop_id")) %>%
     arrange(from_stop_id, to_stop_id)
 
-  missing_routes = stop_pairs |> filter(is.na(raptor_route) & possible == TRUE)
+  missing_routes = stop_pairs %>% filter(is.na(raptor_route) & possible == TRUE)
   expect_equal(nrow(missing_routes), 0)
 })
