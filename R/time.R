@@ -95,3 +95,75 @@ replace_NA_times = function(stop_times) {
   stop_times$departure_time[is.na(stop_times$departure_time)] <- stop_times$arrival_time[is.na(stop_times$departure_time)]
   return(stop_times)
 }
+
+# interpolate stop_times ####
+
+#' Interpolate missing stop_times linearly
+#' Uses shape_dist_traveled if available
+#' @param x tidygtfs object or stop_times table
+#' @param use_shape_dist if available, use shape_dist_traveled column for time
+#'                       interpolation. If shape_dist_traveled is missing, times
+#'                       are interpolated equally between stops. 
+#' @return tidygtfs or stop_times with interpolated arrival and departure times
+#' @examples
+#' data(gtfs_duke)
+#' print(gtfs_duke$stop_times[1:5, 1:5])
+#' 
+#' gtfs_duke_2 = interpolate_stop_times(gtfs_duke)
+#' print(gtfs_duke_2$stop_times[1:5, 1:5])
+#' 
+#' gtfs_duke_3 = interpolate_stop_times(gtfs_duke, FALSE)
+#' print(gtfs_duke_3$stop_times[1:5, 1:5])
+#' @export
+interpolate_stop_times = function(x, use_shape_dist = TRUE) {
+  ....event_time <- ....shape_dist_traveled <- NULL
+  if(inherits(x, "tidygtfs")) {
+    stoptimes = x$stop_times
+  } else {
+    stoptimes = x
+  }
+  
+  stoptimes$....rowindex <- 1:nrow(stoptimes)
+  if(!use_shape_dist || !("shape_dist_traveled" %in% colnames(stoptimes))) {
+    stoptimes$....shape_dist_traveled <- stoptimes$stop_sequence
+  } else {
+    stoptimes$....shape_dist_traveled <- stoptimes$shape_dist_traveled
+  }
+
+  # bring times in long format
+  times_interpolated = gather_dt(stoptimes, "....event_type", "....event_time", c("arrival_time", "departure_time"))
+  setorder(times_interpolated, "trip_id", "stop_sequence", "....event_type")
+  
+  # interpolate times
+  times_interpolated[, ....event_time := ceiling(approx_NA(as.numeric(....event_time), ....shape_dist_traveled)), 
+                     by = "trip_id"]
+
+  times_wide = times_interpolated |>
+    spread_dt("....event_type", "....event_time")
+  setorder(times_wide, "....rowindex")
+  
+  # return
+  stoptimes <- dplyr::as_tibble(times_wide)[,colnames(stoptimes)]
+  attributes(stoptimes)$sorted <- NULL
+  stoptimes$....shape_dist_traveled <- stoptimes$....rowindex <- NULL
+  if(inherits(x, "tidygtfs")) {
+    x$stop_times <- stoptimes
+    return(x)
+  } else {
+    return(stoptimes)
+  }
+}
+
+approx_NA = function(values, x = NULL) {
+  if(!any(is.na(values))) {
+    return(values)
+  }
+  if(is.null(x)) {
+    x <- 1:length(values) 
+  }
+  
+  values_approx = stats::approx(x, values, x[is.na(values)], ties = "ordered")$y
+  values[is.na(values)] <- values_approx
+  
+  return(values)
+}

@@ -20,7 +20,9 @@ that all stop time rows before the desired journey departure time
 should be removed. The table should also only include departures
 happening on one day. Use \code{\link[=filter_stop_times]{filter_stop_times()}} for easier preparation.}
 
-\item{transfers}{Transfers table from a gtfs feed. In general no preparation is needed.}
+\item{transfers}{Transfers table from a gtfs feed. In general no preparation
+is needed. Can be omitted if stop_times has been prepared with
+\code{\link[=filter_stop_times]{filter_stop_times()}}.}
 
 \item{stop_ids}{Character vector with stop_ids from where journeys should start (or end).
 It is recommended to only use stop_ids that are related to each other,
@@ -30,22 +32,23 @@ reasonably close to each other.}
 \item{arrival}{If FALSE (default), all journeys \emph{start} from \code{stop_ids}. If
 TRUE, all journeys \emph{end} at \code{stop_ids}.}
 
-\item{time_range}{Departure or arrival time range in seconds. All departures from the
-first departure of stop_times (not necessarily from stop_id in
-\code{stop_ids}) within \code{time_range} are considered. If \code{arrival} is TRUE,
-all arrivals within \code{time_range} before the latest arrival time of
-stop_times are considered.}
+\item{time_range}{Either a range in seconds or a vector containing the
+minimal and maximal departure time (i.e. earliest and
+latest possible journey departure time) as seconds or
+"HH:MM:SS" character.}
 
 \item{max_transfers}{Maximum number of transfers allowed, no limit (NULL) as default.}
 
 \item{keep}{One of c("all", "shortest", "earliest", "latest"). By default, \code{all} journeys
 between stop_ids are returned. With \code{shortest} only the journey with shortest
 travel time is returned. With \code{earliest} the journey arriving at a stop the
-earliest is returned, \code{latest} works accordingly. Note that with \code{shortest},
-\code{earliest} and \code{latest} only \emph{one} journey to every reachable stop_id is
-kept (journey possibly starting from different from_stop_ids), not just the
-shortest/earliest/latest journey between every pair of \code{from_stop_id} and
-\code{to_stop_id}.}
+earliest is returned, \code{latest} works accordingly.
+
+All departures from \code{stop_ids} within
+the time range stop_id in
+\code{stop_ids}) within \code{time_range} are considered. If \code{arrival} is TRUE,
+all arrivals within \code{time_range} before the latest arrival time of
+stop_times are considered.}
 }
 \value{
 A data.table with journeys (departure, arrival and travel time) to/from all
@@ -69,9 +72,8 @@ Note that the exact journeys (with each intermediate stop and route ids for exam
 \emph{not} returned.
 
 For most cases, \code{stop_times} needs to be filtered, as it should only contain trips
-happening on a single day and departures later than a given journey start time, see
-\code{\link[=filter_stop_times]{filter_stop_times()}}. The algorithm scans all trips until it exceeds \code{max_transfers}
-or all trips in \code{stop_times} have been visited.
+happening on a single day, see \code{\link[=filter_stop_times]{filter_stop_times()}}. The algorithm scans all trips
+until it exceeds \code{max_transfers} or all trips in \code{stop_times} have been visited.
 }
 \examples{
 \donttest{
@@ -81,7 +83,7 @@ nyc <- read_gtfs(nyc_path)
 # you can use initial walk times to different stops in walking distance (arbitrary example values)
 stop_ids_harlem_st <- c("301", "301N", "301S")
 stop_ids_155_st <- c("A11", "A11N", "A11S", "D12", "D12N", "D12S")
-walk_times <- data.frame(stop_id = c(stop_ids_harlem_st, stop_ids_155_st), 
+walk_times <- data.frame(stop_id = c(stop_ids_harlem_st, stop_ids_155_st),
                          walk_time = c(rep(600, 3), rep(410, 6)), stringsAsFactors = FALSE)
 
 # Use journeys departing after 7 AM with arrival time before 11 AM on 26th of June
@@ -98,7 +100,7 @@ rptr$travel_time_incl_walk <- rptr$travel_time + rptr$walk_time
 # get minimal travel times (with walk times) for all stop_ids
 library(data.table)
 shortest_travel_times <- setDT(rptr)[order(travel_time_incl_walk)][, .SD[1], by = "to_stop_id"]
-hist(shortest_travel_times$travel_time, breaks = 360)
+hist(shortest_travel_times$travel_time, breaks = seq(0,2*60)*60)
 }
 }
 \seealso{

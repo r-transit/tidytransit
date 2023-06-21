@@ -120,3 +120,39 @@ test_that("set_dates_services w/o calendar", {
   gcal = read_gtfs(gpath)
   expect_equal(gcal$.$dates_services$date, as.Date(c("2007-01-01", "2007-06-06")))
 })
+
+test_that("interpolate stop_times", {
+  st_seq = dplyr::as_tibble(rbind(
+    data.frame(trip_id = "A", stop_sequence = 1:4, 
+               arrival_time = hms::hms(c(NA,2,NA,10)*60),
+               departure_time = hms::hms(c(0,2,NA,NA)*60)
+               ),
+    data.frame(trip_id = "B", stop_sequence = 1:3, 
+               arrival_time = hms::hms(c(10,NA,20)*60),
+               departure_time = hms::hms(c(10,NA,20)*60)
+    ),
+    data.frame(trip_id = "C", stop_sequence = 1:3, 
+               arrival_time = hms::hms(c(0,1,2)*60),
+               departure_time = hms::hms(c(0,1,2)*60)
+    )
+  ))
+  
+  st_shapes = st_seq
+  st_shapes$shape_dist_traveled <- c(0,2,9,10, 0,0.1,3, 0,1,2)
+  seq1 = interpolate_stop_times(st_seq)
+  expect_equal(nrow(st_seq), nrow(seq1))
+  expect_equal(as.numeric(seq1$departure_time[c(3,6)]), 60*c(6,15))
+  shapes1 = interpolate_stop_times(st_shapes)
+  expect_equal(as.numeric(shapes1$departure_time[c(3,6)]), 60*c(9, 10+0.1*((20-10)/3)))
+  noshapes1 = interpolate_stop_times(st_shapes, use_shape_dist = FALSE)
+  expect_equal(noshapes1$arrival_time, seq1$arrival_time)
+  
+  .index = !is.na(st_seq$arrival_time) & !is.na(st_seq$departure_time)
+  expect_true(all(as.data.frame(st_seq)[.index,] == as.data.frame(seq1)[.index,]))  
+  
+  gtfs_duke2 = interpolate_stop_times(gtfs_duke)
+  expect_equal(class(gtfs_duke2$stop_times), class(gtfs_duke$stop_times))
+  expect_false(any(is.na(gtfs_duke2$stop_times$arrival_time)))
+  expect_false(any(is.na(gtfs_duke2$stop_times$departure_time)))
+})
+
