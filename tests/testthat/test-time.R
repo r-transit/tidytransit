@@ -156,3 +156,8 @@ test_that("interpolate stop_times", {
   expect_false(any(is.na(gtfs_duke2$stop_times$departure_time)))
 })
 
+test_that("approx_NA", {
+  y = c(6,NA,10)
+  expect_equal(approx_NA(y), c(6,8,10))
+  expect_equal(approx_NA(y, c(6,9.5,10)), c(6,9.5,10))
+})
