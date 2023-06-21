@@ -61,6 +61,8 @@ test_that("travel_time works with different params", {
   expect_warning(
     expect_error(travel_times(fst, "One", max_departure_time = "06:45:00")),
     "max_departure_time is deprecated, use time_range")
+  expect_warning(
+    expect_error(travel_times(fst, "One", max_departure_time = "07:50:00", arrival = TRUE), "cannot set max_departure_time and arrival=TRUE"))
 })
 
 test_that("transfers for travel_times", {
