@@ -138,7 +138,7 @@ interpolate_stop_times = function(x, use_shape_dist = TRUE) {
   times_interpolated[, ....event_time := ceiling(approx_NA(as.numeric(....event_time), ....shape_dist_traveled)), 
                      by = "trip_id"]
 
-  times_wide = times_interpolated |>
+  times_wide = times_interpolated %>%
     spread_dt("....event_type", "....event_time")
   setorder(times_wide, "....rowindex")
   

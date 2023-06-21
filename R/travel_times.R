@@ -44,20 +44,22 @@
 #' @importFrom data.table fifelse
 #' @export
 #' @examples \donttest{
+#' library(dplyr)
+#' 
 #' # 1) Calculate travel times from two closely related stops
 #' # The example dataset gtfs_duke has missing times (allowed in gtfs) which is
 #' # why we run interpolate_stop_times beforehand
 #' gtfs = interpolate_stop_times(gtfs_duke)
 #'
-#' tts1 = gtfs |>
-#'   filter_feed_by_date("2019-08-26") |>
+#' tts1 = gtfs %>%
+#'   filter_feed_by_date("2019-08-26") %>%
 #'   travel_times(c("Campus Dr at Arts Annex (WB)", "Campus Dr at Arts Annex (EB)"),
 #'                time_range = c("14:00:00", "15:30:00"))
 #'
 #' # you can use either filter_feed_by_date or filter_stop_times to prepare the feed
 #' # the result is the same
-#' tts2 = gtfs |>
-#'  filter_stop_times("2019-08-26", "14:00:00") |>
+#' tts2 = gtfs %>%
+#'  filter_stop_times("2019-08-26", "14:00:00") %>%
 #'  travel_times(c("Campus Dr at Arts Annex (WB)", "Campus Dr at Arts Annex (EB)"),
 #'               time_range = 1.5*3600) # 1.5h after 14:00
 #'
@@ -78,12 +80,11 @@
 #' tts <- travel_times(stop_times, "34 St - Herald Sq", return_coords = TRUE)
 #' 
 #' # only keep journeys under one hour for plotting
-#' library(dplyr)
-#' tts <- tts |> filter(travel_time <= 3600)
+#' tts <- tts %>% filter(travel_time <= 3600)
 #' 
 #' # travel time to Queensboro Plaza is 810 seconds, 13:30 minutes
-#' tts |>
-#'   filter(to_stop_name == "Queensboro Plaza") |>
+#' tts %>%
+#'   filter(to_stop_name == "Queensboro Plaza") %>%
 #'   mutate(travel_time = hms::hms(travel_time))
 #' 
 #' # plot a simple map showing travel times to all reachable stops
