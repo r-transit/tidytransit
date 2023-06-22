@@ -44,10 +44,10 @@ devtools::install_github("r-transit/tidytransit")
 
 # The General Transit Feed Specification
 
-The [summary page for the GTFS standard](https://developers.google.com/transit/gtfs/#overview-of-a-gtfs-feed) 
-is a good resource for more information on the standard.  
+The [summary page for the GTFS standard](https://gtfs.org/schedule/) 
+is a good resource for more information on the standard.
 
-GTFS feeds contain many linked tables about published transit schedules about service 
+GTFS feeds contain many linked tables about published transit schedules, service 
 schedules, trips, stops, and routes. Below is a diagram of these relationships and tables:
 
 ![gtfs-relationship-diagram](figures/GTFS_class_diagram.svg.png)
@@ -55,15 +55,16 @@ Source: Wikimedia, user -stk.
 
 # Read a GTFS Feed
 
-GTFS data come packaged as a zip file of tables in text form. The first thing tidytransit 
-does is consolidate the reading of all those tables into a single R object, which contains 
+GTFS data come packaged as a zip file of comma separated tables in text form. The first thing 
+tidytransit does is consolidate the reading of all those tables into a single R object, which contains 
 a list of the tables in each feed. 
 
 Below we use the tidytransit `read_gtfs` function in order to read a feed from the NYC MTA 
-into R. 
+into R.
 
 We use a feed included in the package in the example below. But note that you can read 
-directly from the New York City Metropolitan Transit Authority, as shown in the commented code below. 
+directly from the New York City Metropolitan Transit Authority, as shown in the commented 
+code below. 
 
 You can also read from any other URL. This is useful because there are many sources for 
 GTFS data, and often the best source is transit service providers themselves. See the next 

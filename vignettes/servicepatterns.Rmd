@@ -19,13 +19,13 @@ knitr::opts_chunk$set(echo = TRUE)
   
 ## Overview
 
-Each trip in a GTFS feed is referenced to a service_id (in trips.txt). The [GTFS reference](https://developers.google.com/transit/gtfs/reference/#calendartxt) 
+Each trip in a GTFS feed is referenced to a service_id (in trips.txt). The [GTFS reference](https://gtfs.org/schedule/reference/#calendartxt) 
 specifies that a "service_id contains an ID that uniquely identifies a set of dates when 
 service is available for one or more routes". A service could run on every weekday or only 
 on Saturdays for example. Other possible services run only on holidays during a year, 
 independent of weekdays. However, feeds are not required to indicate anything with 
 service_ids and some feeds even use a unique service_id for each trip and day. In 
-this vignette we'll look at a general way to gather information on when trips run by 
+this vignette, we'll look at a general way to gather information on when trips run by 
 using "service patterns".
 
 Service patterns can be used to find a typical day for further analysis like routing or
@@ -51,8 +51,8 @@ head(gtfs$.$dates_services)
 ```
 
 To understand service patterns better we need information on weekdays and holidays. With 
-a calendar table we know the weekday and possible holidays for each date. We'll use a minimal example 
-with two holidays.
+a calendar table we know the weekday and possible holidays for each date. We'll use a 
+minimal example with two holidays.
 
 ```{r}
 holidays = tribble(~date, ~holiday,
@@ -75,7 +75,7 @@ head(calendar)
 To analyse on which dates trips run and to group similar services we use service patterns. 
 Such a pattern simply lists all dates a trip runs on. For example, a trip with a pattern 
 like _2019-03-07, 2019-03-14, 2019-03-21, 2019-03-28_ runs every Thursday in March 2019. 
-To handle these patterns we create a `servicepattern_id` using a hash function. Ideally 
+To handle these patterns, we create a `servicepattern_id` using a hash function. Ideally 
 there are the same number of servicepattern_ids and service_ids. However, in real life feeds 
 this is rarely the case. In addition, the usability of service patterns depends largely on 
 the feed and its complexity.
@@ -95,15 +95,17 @@ In addition, `gtfs$.$dates_servicepatterns` has been created which connects date
 patterns (like `dates_services`). We can compare the number of service patterns to the number of services.
 
 ```{r}
+head(gtfs$.$dates_servicepatterns)
+
 # service ids used
-n_services <-  length(unique(gtfs$trips$service_id)) # 70
+n_services <- length(unique(gtfs$trips$service_id)) # 70
 
 # unique date patterns 
 n_servicepatterns <- length(unique(gtfs$.$servicepatterns$servicepattern_id)) # 7
 ```
 
-The feed uses 70 service_ids but there are actually only 7 different date patterns. Other feeds 
-might not have such low numbers, for example the [Swiss GTFS feed](https://opentransportdata.swiss/dataset/timetable-2019-gtfs) 
+The feed uses 70 service_ids but there are actually only 7 different date patterns. Other 
+feeds might not have such low numbers, for example the [Swiss GTFS feed](https://opentransportdata.swiss/dataset/timetable-2019-gtfs) 
 uses around 15'600 service_ids which all identify unique date patterns.
 
 ## Analyse Data
