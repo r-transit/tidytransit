@@ -26,7 +26,7 @@ LazyData: TRUE
 Depends: R (>= 3.6.0)
 Imports:
     gtfsio (>= 1.1.0),
-    dplyr (>= 1.1.0),
+    dplyr (>= 1.1.1),
     data.table (>= 1.12.8),
     rlang,
     sf,
