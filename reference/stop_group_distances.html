@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.6.0</span>
       </span>
     </div>
 
@@ -94,26 +94,13 @@ number of stop ids within that group (n_stop_ids) and distance summary values
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">nyc_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"google_transit_nyc_subway.zip"</span>, package <span class="op">=</span> <span class="st">"tidytransit"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">nyc</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_gtfs.html">read_gtfs</a></span><span class="op">(</span><span class="va">nyc_path</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">stop_group_distances</span><span class="op">(</span><span class="va">nyc</span><span class="op">$</span><span class="va">stops</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 380 × 6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    stop_name   distances       n_stop_ids dist_mean dist_median dist_max</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 86 St       <span style="color: #949494;">&lt;dbl [18 × 18]&gt;</span>         18     <span style="text-decoration: underline;">5</span>395.       <span style="text-decoration: underline;">5</span>395.   <span style="text-decoration: underline;">21</span>811.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 79 St       <span style="color: #949494;">&lt;dbl [6 × 6]&gt;</span>            6    <span style="text-decoration: underline;">19</span>053.      <span style="text-decoration: underline;">19</span>053.   <span style="text-decoration: underline;">19</span>053.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Prospect Av <span style="color: #949494;">&lt;dbl [6 × 6]&gt;</span>            6    <span style="text-decoration: underline;">18</span>804.      <span style="text-decoration: underline;">18</span>804.   <span style="text-decoration: underline;">18</span>804.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 77 St       <span style="color: #949494;">&lt;dbl [6 × 6]&gt;</span>            6    <span style="text-decoration: underline;">16</span>947.      <span style="text-decoration: underline;">16</span>947.   <span style="text-decoration: underline;">16</span>947.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 59 St       <span style="color: #949494;">&lt;dbl [6 × 6]&gt;</span>            6    <span style="text-decoration: underline;">14</span>130.      <span style="text-decoration: underline;">14</span>130.   <span style="text-decoration: underline;">14</span>130.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 50 St       <span style="color: #949494;">&lt;dbl [9 × 9]&gt;</span>            9     <span style="text-decoration: underline;">7</span>097.       <span style="text-decoration: underline;">7</span>097.   <span style="text-decoration: underline;">14</span>068.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 36 St       <span style="color: #949494;">&lt;dbl [6 × 6]&gt;</span>            6    <span style="text-decoration: underline;">12</span>496.      <span style="text-decoration: underline;">12</span>496.   <span style="text-decoration: underline;">12</span>496.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 8 Av        <span style="color: #949494;">&lt;dbl [6 × 6]&gt;</span>            6    <span style="text-decoration: underline;">11</span>682.      <span style="text-decoration: underline;">11</span>682.   <span style="text-decoration: underline;">11</span>682.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 7 Av        <span style="color: #949494;">&lt;dbl [9 × 9]&gt;</span>            9     <span style="text-decoration: underline;">5</span>479.       <span style="text-decoration: underline;">5</span>479.   <span style="text-decoration: underline;">10</span>753.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 111 St      <span style="color: #949494;">&lt;dbl [9 × 9]&gt;</span>            9     <span style="text-decoration: underline;">3</span>877.       <span style="text-decoration: underline;">3</span>877.    <span style="text-decoration: underline;">7</span>753.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 370 more rows</span></span>
 <span class="r-in"><span><span class="co">#&gt; # A tibble: 380 × 6</span></span></span>
 <span class="r-in"><span><span class="co">#&gt;    stop_name   distances       n_stop_ids dist_mean dist_median dist_max</span></span></span>
 <span class="r-in"><span><span class="co">#&gt;    &lt;chr&gt;       &lt;list&gt;               &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;    &lt;dbl&gt;</span></span></span>
@@ -128,7 +115,7 @@ number of stop ids within that group (n_stop_ids) and distance summary values
 <span class="r-in"><span><span class="co">#&gt;  9 7 Av        &lt;dbl [9 × 9]&gt;            9     5479.       5479.   10753.</span></span></span>
 <span class="r-in"><span><span class="co">#&gt; 10 111 St      &lt;dbl [9 × 9]&gt;            9     3877.       3877.    7753.</span></span></span>
 <span class="r-in"><span><span class="co">#&gt; # … with 370 more rows</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>

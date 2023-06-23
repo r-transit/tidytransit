@@ -18,7 +18,7 @@ required files/fields are not found. This function is called in read_gtfs."><!--
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.6.0</span>
       </span>
     </div>
 
@@ -128,10 +128,8 @@ present, however, it becomes optional and <code>calendar_dates.txt</code>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">local_gtfs_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"google_transit_nyc_subway.zip"</span>, package <span class="op">=</span> <span class="st">"tidytransit"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">gtfs</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_gtfs.html">read_gtfs</a></span><span class="op">(</span><span class="va">local_gtfs_path</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">gtfs</span>, <span class="st">"validation_result"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 156 × 8</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">validate_gtfs</span><span class="op">(</span><span class="va">gtfs_duke</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 233 × 8</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    file   file_spec file_provided_status field  field_spec field_provided_status</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>                </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> agency req       TRUE                 agenc… opt        TRUE                 </span>
@@ -140,12 +138,32 @@ present, however, it becomes optional and <code>calendar_dates.txt</code>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> agency req       TRUE                 agenc… req        TRUE                 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> agency req       TRUE                 agenc… opt        TRUE                 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> agency req       TRUE                 agenc… opt        TRUE                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> agency req       TRUE                 agenc… opt        FALSE                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> agency req       TRUE                 agenc… opt        TRUE                 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> agency req       TRUE                 agenc… opt        FALSE                </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> stops  req       TRUE                 stop_… req        TRUE                 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> stops  req       TRUE                 stop_… opt        TRUE                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 146 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 223 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: validation_status &lt;chr&gt;, validation_details &lt;chr&gt;</span></span>
+<span class="r-in"><span><span class="co">#&gt; # A tibble: 233 × 8</span></span></span>
+<span class="r-in"><span><span class="co">#&gt;    file   file_spec file_provided_status field  field_spec field_provided_status</span></span></span>
+<span class="r-in"><span><span class="co">#&gt;    &lt;chr&gt;  &lt;chr&gt;     &lt;lgl&gt;                &lt;chr&gt;  &lt;chr&gt;      &lt;lgl&gt;                </span></span></span>
+<span class="r-in"><span><span class="co">#&gt;  1 agency req       TRUE                 agenc… opt        TRUE                 </span></span></span>
+<span class="r-in"><span><span class="co">#&gt;  2 agency req       TRUE                 agenc… req        TRUE                 </span></span></span>
+<span class="r-in"><span><span class="co">#&gt;  3 agency req       TRUE                 agenc… req        TRUE                 </span></span></span>
+<span class="r-in"><span><span class="co">#&gt;  4 agency req       TRUE                 agenc… req        TRUE                 </span></span></span>
+<span class="r-in"><span><span class="co">#&gt;  5 agency req       TRUE                 agenc… opt        TRUE                 </span></span></span>
+<span class="r-in"><span><span class="co">#&gt;  6 agency req       TRUE                 agenc… opt        TRUE                 </span></span></span>
+<span class="r-in"><span><span class="co">#&gt;  7 agency req       TRUE                 agenc… opt        TRUE                 </span></span></span>
+<span class="r-in"><span><span class="co">#&gt;  8 agency req       TRUE                 agenc… opt        FALSE                </span></span></span>
+<span class="r-in"><span><span class="co">#&gt;  9 stops  req       TRUE                 stop_… req        TRUE                 </span></span></span>
+<span class="r-in"><span><span class="co">#&gt; 10 stops  req       TRUE                 stop_… opt        TRUE                 </span></span></span>
+<span class="r-in"><span><span class="co">#&gt; # 223 more rows</span></span></span>
+<span class="r-in"><span><span class="co">#&gt; # 2 more variables: validation_status &lt;chr&gt;, validation_details &lt;chr&gt;</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">local_gtfs_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"google_transit_nyc_subway.zip"</span>, package <span class="op">=</span> <span class="st">"tidytransit"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">gtfs</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_gtfs.html">read_gtfs</a></span><span class="op">(</span><span class="va">local_gtfs_path</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">gtfs</span>, <span class="st">"validation_result"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">gtfs</span><span class="op">$</span><span class="va">shapes</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span></span>
 <span class="r-in"><span><span class="va">validation_result</span> <span class="op">&lt;-</span> <span class="fu">validate_gtfs</span><span class="op">(</span><span class="va">gtfs</span><span class="op">)</span></span></span>
@@ -153,8 +171,7 @@ present, however, it becomes optional and <code>calendar_dates.txt</code>
 <span class="r-in"><span><span class="co"># should raise a warning</span></span></span>
 <span class="r-in"><span><span class="va">gtfs</span><span class="op">$</span><span class="va">stop_times</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span></span>
 <span class="r-in"><span><span class="va">validation_result</span> <span class="op">&lt;-</span> <span class="fu">validate_gtfs</span><span class="op">(</span><span class="va">gtfs</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Invalid feed. Missing required file(s): stop_times.txt</span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
