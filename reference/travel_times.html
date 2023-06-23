@@ -19,7 +19,7 @@ filter_stop_times() or filter_feed_by_date()."><!-- mathjax --><script src="http
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
       </span>
     </div>
 
@@ -91,21 +91,19 @@ to all other stop_names of a feed. <code>filtered_stop_times</code> needs to be 
     <dl><dt>filtered_stop_times</dt>
 <dd><p>stop_times data.table (with transfers and stops tables as
 attributes) created with <code><a href="filter_stop_times.html">filter_stop_times()</a></code> where the
-departure or arrival time has been set. Alternatively,
-a filtered feed created by <code><a href="filter_feed_by_date.html">filter_feed_by_date()</a></code> can be
-used.</p></dd>
+departure or arrival time has been set.</p></dd>
 
 
 <dt>stop_name</dt>
 <dd><p>Stop name for which travel times should be calculated. A vector with
-multiple names is accepted.</p></dd>
+multiple names can be used.</p></dd>
 
 
 <dt>time_range</dt>
-<dd><p>All departures within this range in seconds after the first departure
-of <code>filtered_stop_times</code> are considered for journeys. If arrival is
-TRUE, all journeys arriving within time range before the latest arrival
-of <code>filtered_stop_times</code> are considered.</p></dd>
+<dd><p>Either a range in seconds or a vector containing the
+minimal and maximal departure time (i.e. earliest and
+latest possible journey departure time) as seconds or
+"HH:MM:SS" character.</p></dd>
 
 
 <dt>arrival</dt>
@@ -118,13 +116,12 @@ TRUE, all journeys <em>end</em> at <code>stop_name</code>.</p></dd>
 
 
 <dt>max_departure_time</dt>
-<dd><p>Either set this parameter or <code>time_range</code>. Only departures
-before <code>max_departure_time</code> are used. Accepts "HH:MM:SS" or
-seconds as a numerical value. Unused if <code>arrival</code> is TRUE.</p></dd>
+<dd><p>Deprecated. Use <code>time_range</code> to set the latest
+possible departure time.</p></dd>
 
 
 <dt>return_coords</dt>
-<dd><p>Returns stop coordinates as columns. Default is FALSE.</p></dd>
+<dd><p>Returns stop coordinates (lon/lat) as columns. Default is FALSE.</p></dd>
 
 
 <dt>return_DT</dt>
@@ -139,7 +136,8 @@ stops with the same name are far apart. travel_times()
 errors if the distance among stop_ids with the same name is
 above this threshold (in meters).
 Use FALSE to turn check off. However, it is recommended to
-either use <code><a href="raptor.html">raptor()</a></code> or fix the feed (see <code><a href="cluster_stops.html">cluster_stops()</a></code>).</p></dd>
+either use <code><a href="raptor.html">raptor()</a></code> or fix the feed (see <code><a href="cluster_stops.html">cluster_stops()</a></code>)
+in case of warnings.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -162,22 +160,55 @@ issues with stop_names.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># 1) Calculate travel times from two closely related stops</span></span></span>
+<span class="r-in"><span><span class="co"># The example dataset gtfs_duke has missing times (allowed in gtfs) which is</span></span></span>
+<span class="r-in"><span><span class="co"># why we run interpolate_stop_times beforehand</span></span></span>
+<span class="r-in"><span><span class="va">gtfs</span> <span class="op">=</span> <span class="fu"><a href="interpolate_stop_times.html">interpolate_stop_times</a></span><span class="op">(</span><span class="va">gtfs_duke</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">tts1</span> <span class="op">=</span> <span class="va">gtfs</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="filter_feed_by_date.html">filter_feed_by_date</a></span><span class="op">(</span><span class="st">"2019-08-26"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">travel_times</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Campus Dr at Arts Annex (WB)"</span>, <span class="st">"Campus Dr at Arts Annex (EB)"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>               time_range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"14:00:00"</span>, <span class="st">"15:30:00"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># you can use either filter_feed_by_date or filter_stop_times to prepare the feed</span></span></span>
+<span class="r-in"><span><span class="co"># the result is the same</span></span></span>
+<span class="r-in"><span><span class="va">tts2</span> <span class="op">=</span> <span class="va">gtfs</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span> <span class="fu"><a href="filter_stop_times.html">filter_stop_times</a></span><span class="op">(</span><span class="st">"2019-08-26"</span>, <span class="st">"14:00:00"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span> <span class="fu">travel_times</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Campus Dr at Arts Annex (WB)"</span>, <span class="st">"Campus Dr at Arts Annex (EB)"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              time_range <span class="op">=</span> <span class="fl">1.5</span><span class="op">*</span><span class="fl">3600</span><span class="op">)</span> <span class="co"># 1.5h after 14:00</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">tts1</span> <span class="op">==</span> <span class="va">tts2</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-in"><span><span class="co"># It's recommended to store the filtered feed, since it can be time consuming to</span></span></span>
+<span class="r-in"><span><span class="co"># run it for every travel time calculation, see the next example steps</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># 2) separate filtering and travel time calculation for a more granular analysis</span></span></span>
+<span class="r-in"><span><span class="co"># stop_names in this feed are not restricted to an area, create clusters of stops to fix</span></span></span>
 <span class="r-in"><span><span class="va">nyc_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"google_transit_nyc_subway.zip"</span>, package <span class="op">=</span> <span class="st">"tidytransit"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">nyc</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_gtfs.html">read_gtfs</a></span><span class="op">(</span><span class="va">nyc_path</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># stop_names in this feed are not restricted to an area, create clusters of stops to fix</span></span></span>
 <span class="r-in"><span><span class="va">nyc</span> <span class="op">&lt;-</span> <span class="fu"><a href="cluster_stops.html">cluster_stops</a></span><span class="op">(</span><span class="va">nyc</span>, group_col <span class="op">=</span> <span class="st">"stop_name"</span>, cluster_colname <span class="op">=</span> <span class="st">"stop_name"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Use journeys departing after 7 AM with arrival time before 9 AM on 26th June</span></span></span>
 <span class="r-in"><span><span class="va">stop_times</span> <span class="op">&lt;-</span> <span class="fu"><a href="filter_stop_times.html">filter_stop_times</a></span><span class="op">(</span><span class="va">nyc</span>, <span class="st">"2018-06-26"</span>, <span class="fl">7</span><span class="op">*</span><span class="fl">3600</span>, <span class="fl">9</span><span class="op">*</span><span class="fl">3600</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Calculate travel times from "34 St - Herald Sq"</span></span></span>
 <span class="r-in"><span><span class="va">tts</span> <span class="op">&lt;-</span> <span class="fu">travel_times</span><span class="op">(</span><span class="va">stop_times</span>, <span class="st">"34 St - Herald Sq"</span>, return_coords <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># only keep journeys under one hour for plotting</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tts</span> <span class="op">&lt;-</span> <span class="va">tts</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">travel_time</span> <span class="op">&lt;=</span> <span class="fl">3600</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tts</span> <span class="op">&lt;-</span> <span class="va">tts</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">travel_time</span> <span class="op">&lt;=</span> <span class="fl">3600</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># travel time to Queensboro Plaza is 810 seconds, 13:30 minutes</span></span></span>
-<span class="r-in"><span><span class="va">tts</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">to_stop_name</span> <span class="op">==</span> <span class="st">"Queensboro Plaza"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">travel_time</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">hms</span><span class="fu">::</span><span class="fu"><a href="https://hms.tidyverse.org/reference/hms.html" class="external-link">hms</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 00:13:30</span>
+<span class="r-in"><span><span class="va">tts</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">to_stop_name</span> <span class="op">==</span> <span class="st">"Queensboro Plaza"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>travel_time <span class="op">=</span> <span class="fu">hms</span><span class="fu">::</span><span class="fu"><a href="https://hms.tidyverse.org/reference/hms.html" class="external-link">hms</a></span><span class="op">(</span><span class="va">travel_time</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 12</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   from_stop_name    to_stop_name     travel_time journey_departure_time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;time&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;time&gt;</span>                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 34 St - Herald Sq Queensboro Plaza 13<span style="color: #949494;">'</span>30<span style="color: #949494;">"</span>      07<span style="color: #949494;">:</span>42<span style="color: #949494;">:</span>30              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 8 more variables: journey_arrival_time &lt;time&gt;, transfers &lt;int&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   from_stop_id &lt;chr&gt;, to_stop_id &lt;chr&gt;, from_stop_lon &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   from_stop_lat &lt;dbl&gt;, to_stop_lon &lt;dbl&gt;, to_stop_lat &lt;dbl&gt;</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plot a simple map showing travel times to all reachable stops</span></span></span>
 <span class="r-in"><span><span class="co"># this can be expanded to isochron maps</span></span></span>

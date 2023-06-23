@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
       </span>
     </div>
 
@@ -187,13 +187,9 @@ stop_times data frame and then to the trips data frame.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">stop_times</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>               <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">trip_id</span>, <span class="va">arrival_time</span>, </span>
 <span>                      <span class="va">departure_time</span>, <span class="va">stop_id</span><span class="op">)</span>, </span>
-<span>             by <span class="op">=</span> <span class="st">"stop_id"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning in inner_join(., gtfs$stop_times %&gt;% select(trip_id, arrival_time, : Each row in `x` is expected to match at most 1 row in `y`.</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Row 2 of `x` matches multiple rows.</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> If multiple matches are expected, set `multiple = "all"` to silence this</span></span>
-<span><span class="co">##   warning.</span></span></code></pre>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">departures</span> <span class="op">&lt;-</span> <span class="va">departures</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>             by <span class="op">=</span> <span class="st">"stop_id"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">departures</span> <span class="op">&lt;-</span> <span class="va">departures</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">trip_id</span>, <span class="va">route_id</span>, </span>
 <span>                     <span class="va">service_id</span>, <span class="va">trip_headsign</span>, </span>
@@ -206,7 +202,7 @@ stop_times data frame and then to the trips data frame.</p>
 <p>Each trip belongs to a route, and the route short name can be added
 to the departures by joining the trips data frame with
 <code>gtfs$routes</code>.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">departures</span> <span class="op">&lt;-</span> <span class="va">departures</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">routes</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">route_id</span>, </span>
@@ -215,7 +211,7 @@ to the departures by joining the trips data frame with
 <p>Now we have a data frame that tells us about the origin, destination,
 and time at which each train depart from Times Square for every possible
 schedule of service.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">departures</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">arrival_time</span>,</span>
 <span>         <span class="va">departure_time</span>,</span>
@@ -287,7 +283,7 @@ schedule of service.</p>
 service_id column on our calculated departures, and tidytransit’s
 calculated <code>dates_services</code> data frame, we can filter trips
 to a given date of interest.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">dates_services</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 2</span></span></span>
 <span><span class="co">##   date       service_id             </span></span>
@@ -308,7 +304,7 @@ examples on how to use this table.</p>
 of the year.</p>
 <p>For example, for August 23rd 2018, a typical weekday, we can filter
 as follows:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">services_on_180823</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">dates_services</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">date</span> <span class="op">==</span> <span class="st">"2018-08-23"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">service_id</span><span class="op">)</span></span>
 <span></span>
@@ -317,7 +313,7 @@ as follows:</p>
 <p>How services and trips are set up depends largely on the feed. For an
 idea how to handle other dates and questions about schedules have a look
 at the <code>servicepatterns</code> vignette.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">departures_180823</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">departure_time</span>, <span class="va">stop_id</span>, <span class="va">route_short_name</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">departure_time</span>, <span class="va">stop_id</span>, <span class="va">route_short_name</span>, <span class="va">trip_headsign</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -515,7 +511,7 @@ at the <code>servicepatterns</code> vignette.</p>
 <p>We’ll now plot all departures from Times Square depending on
 trip_headsign and route. We can use the route colors provided in the
 feed.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">route_colors</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">routes</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">route_id</span>, <span class="va">route_short_name</span>, <span class="va">route_color</span><span class="op">)</span></span>
 <span><span class="va">route_colors</span><span class="op">$</span><span class="va">route_color</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">route_colors</span><span class="op">$</span><span class="va">route_color</span> <span class="op">==</span> <span class="st">""</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"454545"</span></span>
 <span><span class="va">route_colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"#"</span>, <span class="va">route_colors</span><span class="op">$</span><span class="va">route_color</span><span class="op">)</span>, <span class="va">route_colors</span><span class="op">$</span><span class="va">route_short_name</span><span class="op">)</span></span>
@@ -532,7 +528,7 @@ feed.</p>
 <p>Now we plot departures for all stop_ids with the same name, we can
 separate for different stop_id. The following plot shows all departures
 for stop_ids 127N and 127S from 7 to 8 AM.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">departures_180823_sub_7to8</span> <span class="op">&lt;-</span> <span class="va">departures_180823</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">stop_id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"127N"</span>, <span class="st">"127S"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">departure_time</span> <span class="op">&gt;=</span> <span class="fu">hms</span><span class="fu">::</span><span class="fu"><a href="https://hms.tidyverse.org/reference/hms.html" class="external-link">hms</a></span><span class="op">(</span>hours <span class="op">=</span> <span class="fl">7</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">departure_time</span> <span class="op">&lt;=</span> <span class="fu">hms</span><span class="fu">::</span><span class="fu"><a href="https://hms.tidyverse.org/reference/hms.html" class="external-link">hms</a></span><span class="op">(</span>hour <span class="op">=</span> <span class="fl">8</span><span class="op">)</span><span class="op">)</span></span>

@@ -19,7 +19,7 @@ time_range."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
       </span>
     </div>
 
@@ -94,7 +94,9 @@ happening on one day. Use <code><a href="filter_stop_times.html">filter_stop_tim
 
 
 <dt>transfers</dt>
-<dd><p>Transfers table from a gtfs feed. In general no preparation is needed.</p></dd>
+<dd><p>Transfers table from a gtfs feed. In general no preparation
+is needed. Can be omitted if stop_times has been prepared with
+<code><a href="filter_stop_times.html">filter_stop_times()</a></code>.</p></dd>
 
 
 <dt>stop_ids</dt>
@@ -110,11 +112,10 @@ TRUE, all journeys <em>end</em> at <code>stop_ids</code>.</p></dd>
 
 
 <dt>time_range</dt>
-<dd><p>Departure or arrival time range in seconds. All departures from the
-first departure of stop_times (not necessarily from stop_id in
-<code>stop_ids</code>) within <code>time_range</code> are considered. If <code>arrival</code> is TRUE,
-all arrivals within <code>time_range</code> before the latest arrival time of
-stop_times are considered.</p></dd>
+<dd><p>Either a range in seconds or a vector containing the
+minimal and maximal departure time (i.e. earliest and
+latest possible journey departure time) as seconds or
+"HH:MM:SS" character.</p></dd>
 
 
 <dt>max_transfers</dt>
@@ -125,11 +126,12 @@ stop_times are considered.</p></dd>
 <dd><p>One of c("all", "shortest", "earliest", "latest"). By default, <code>all</code> journeys
 between stop_ids are returned. With <code>shortest</code> only the journey with shortest
 travel time is returned. With <code>earliest</code> the journey arriving at a stop the
-earliest is returned, <code>latest</code> works accordingly. Note that with <code>shortest</code>,
-<code>earliest</code> and <code>latest</code> only <em>one</em> journey to every reachable stop_id is
-kept (journey possibly starting from different from_stop_ids), not just the
-shortest/earliest/latest journey between every pair of <code>from_stop_id</code> and
-<code>to_stop_id</code>.</p></dd>
+earliest is returned, <code>latest</code> works accordingly.</p>
+<p>All departures from <code>stop_ids</code> within
+the time range stop_id in
+<code>stop_ids</code>) within <code>time_range</code> are considered. If <code>arrival</code> is TRUE,
+all arrivals within <code>time_range</code> before the latest arrival time of
+stop_times are considered.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -151,9 +153,8 @@ the specified time range, set <code>arrival</code> to TRUE.</p>
 Note that the exact journeys (with each intermediate stop and route ids for example) is
 <em>not</em> returned.</p>
 <p>For most cases, <code>stop_times</code> needs to be filtered, as it should only contain trips
-happening on a single day and departures later than a given journey start time, see
-<code><a href="filter_stop_times.html">filter_stop_times()</a></code>. The algorithm scans all trips until it exceeds <code>max_transfers</code>
-or all trips in <code>stop_times</code> have been visited.</p>
+happening on a single day, see <code><a href="filter_stop_times.html">filter_stop_times()</a></code>. The algorithm scans all trips
+until it exceeds <code>max_transfers</code> or all trips in <code>stop_times</code> have been visited.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -169,7 +170,7 @@ or all trips in <code>stop_times</code> have been visited.</p>
 <span class="r-in"><span><span class="co"># you can use initial walk times to different stops in walking distance (arbitrary example values)</span></span></span>
 <span class="r-in"><span><span class="va">stop_ids_harlem_st</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"301"</span>, <span class="st">"301N"</span>, <span class="st">"301S"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">stop_ids_155_st</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A11"</span>, <span class="st">"A11N"</span>, <span class="st">"A11S"</span>, <span class="st">"D12"</span>, <span class="st">"D12N"</span>, <span class="st">"D12S"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">walk_times</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>stop_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">stop_ids_harlem_st</span>, <span class="va">stop_ids_155_st</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span><span class="va">walk_times</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>stop_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">stop_ids_harlem_st</span>, <span class="va">stop_ids_155_st</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                         walk_time <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">600</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">410</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Use journeys departing after 7 AM with arrival time before 11 AM on 26th of June</span></span></span>
@@ -191,7 +192,7 @@ or all trips in <code>stop_times</code> have been visited.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     between, first, last</span>
 <span class="r-in"><span><span class="va">shortest_travel_times</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/setDT.html" class="external-link">setDT</a></span><span class="op">(</span><span class="va">rptr</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">travel_time_incl_walk</span><span class="op">)</span><span class="op">]</span><span class="op">[</span>, <span class="va">.SD</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, by <span class="op">=</span> <span class="st">"to_stop_id"</span><span class="op">]</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">shortest_travel_times</span><span class="op">$</span><span class="va">travel_time</span>, breaks <span class="op">=</span> <span class="fl">360</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">shortest_travel_times</span><span class="op">$</span><span class="va">travel_time</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">2</span><span class="op">*</span><span class="fl">60</span><span class="op">)</span><span class="op">*</span><span class="fl">60</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="raptor-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
