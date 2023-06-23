@@ -100,14 +100,14 @@ Poletti</h4>
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p>Each trip in a GTFS feed is referenced to a service_id (in
-trips.txt). The <a href="https://developers.google.com/transit/gtfs/reference/#calendartxt" class="external-link">GTFS
+trips.txt). The <a href="https://gtfs.org/schedule/reference/#calendartxt" class="external-link">GTFS
 reference</a> specifies that a “service_id contains an ID that uniquely
 identifies a set of dates when service is available for one or more
 routes”. A service could run on every weekday or only on Saturdays for
 example. Other possible services run only on holidays during a year,
 independent of weekdays. However, feeds are not required to indicate
 anything with service_ids and some feeds even use a unique service_id
-for each trip and day. In this vignette we’ll look at a general way to
+for each trip and day. In this vignette, we’ll look at a general way to
 gather information on when trips run by using “service patterns”.</p>
 <p>Service patterns can be used to find a typical day for further
 analysis like routing or trip frequencies for different days.</p>
@@ -170,7 +170,7 @@ holidays.</p>
 use service patterns. Such a pattern simply lists all dates a trip runs
 on. For example, a trip with a pattern like <em>2019-03-07, 2019-03-14,
 2019-03-21, 2019-03-28</em> runs every Thursday in March 2019. To handle
-these patterns we create a <code>servicepattern_id</code> using a hash
+these patterns, we create a <code>servicepattern_id</code> using a hash
 function. Ideally there are the same number of servicepattern_ids and
 service_ids. However, in real life feeds this is rarely the case. In
 addition, the usability of service patterns depends largely on the feed
@@ -197,8 +197,19 @@ created which connects dates and service patterns (like
 <code>dates_services</code>). We can compare the number of service
 patterns to the number of services.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">dates_servicepatterns</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 2</span></span></span>
+<span><span class="co">##   date       servicepattern_id</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> 2018-06-24 s_128de43        </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> 2018-06-24 s_a4c6b26        </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> 2018-06-25 s_d7d9701        </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> 2018-06-25 s_e25d6ca        </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> 2018-06-26 s_498c8ac        </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span> 2018-06-26 s_d7d9701</span></span></code></pre>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># service ids used</span></span>
-<span><span class="va">n_services</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span><span class="op">$</span><span class="va">service_id</span><span class="op">)</span><span class="op">)</span> <span class="co"># 70</span></span>
+<span><span class="va">n_services</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span><span class="op">$</span><span class="va">service_id</span><span class="op">)</span><span class="op">)</span> <span class="co"># 70</span></span>
 <span></span>
 <span><span class="co"># unique date patterns </span></span>
 <span><span class="va">n_servicepatterns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">servicepatterns</span><span class="op">$</span><span class="va">servicepattern_id</span><span class="op">)</span><span class="op">)</span> <span class="co"># 7</span></span></code></pre></div>
@@ -216,7 +227,7 @@ date patterns.</p>
 </h3>
 <p>We’ll now try to figure out usable names for those patterns. A good
 way to start is visualising the data.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">date_servicepattern_table</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">dates_servicepatterns</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">calendar</span>, by <span class="op">=</span> <span class="st">"date"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">date_servicepattern_table</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -239,7 +250,7 @@ service patterns. Below you see a semi automated approach with some
 heuristics. However, the workflow depends largely on the feed and its
 structure. You might also consider setting names completely
 manually.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">suggest_servicepattern_name</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">dates</span>, <span class="va">calendar</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">servicepattern_calendar</span> <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>date <span class="op">=</span> <span class="va">dates</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">calendar</span>, by <span class="op">=</span> <span class="st">"date"</span><span class="op">)</span></span>
 <span>  </span>
@@ -301,7 +312,7 @@ manually.</p>
 <span><span class="op">}</span></span></code></pre></div>
 <p>We’ll apply this function to our service patterns and create a table
 with ids and names.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">servicepattern_names</span> <span class="op">=</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">dates_servicepatterns</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">servicepattern_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
 <span>    servicepattern_name <span class="op">=</span> <span class="fu">suggest_servicepattern_name</span><span class="op">(</span><span class="va">date</span>, <span class="va">calendar</span><span class="op">)</span></span>
@@ -330,7 +341,7 @@ with ids and names.</p>
 different patterns. The original services can be plotted similarly
 (given it’s not too many) by using <code>dates_services</code> and
 <code>service_id</code>.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dates</span> <span class="op">=</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">dates_servicepatterns</span></span>
 <span><span class="va">dates</span><span class="op">$</span><span class="va">wday</span> <span class="op">&lt;-</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/day.html" class="external-link">wday</a></span><span class="op">(</span><span class="va">dates</span><span class="op">$</span><span class="va">date</span>, label <span class="op">=</span> <span class="cn">T</span>, abbr <span class="op">=</span> <span class="cn">T</span>, week_start <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></span>
 <span><span class="va">dates</span><span class="op">$</span><span class="va">week_nr</span> <span class="op">&lt;-</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/week.html" class="external-link">week</a></span><span class="op">(</span><span class="va">dates</span><span class="op">$</span><span class="va">date</span><span class="op">)</span></span>
@@ -353,7 +364,7 @@ different patterns. The original services can be plotted similarly
 </h3>
 <p>We can plot the number of trips for each day as a calendar heat
 map.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">trips_servicepattern</span> <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span>, <span class="va">trip_id</span>, <span class="va">service_id</span><span class="op">)</span>, <span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">servicepatterns</span>, by <span class="op">=</span> <span class="st">"service_id"</span><span class="op">)</span></span>
 <span><span class="va">trip_dates</span> <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">dates_servicepatterns</span>, <span class="va">trips_servicepattern</span>, by <span class="op">=</span> <span class="st">"servicepattern_id"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Warning in left_join(gtfs$.$dates_servicepatterns, trips_servicepattern, : Detected an unexpected many-to-many relationship between `x` and `y`.</span></span>
@@ -361,7 +372,7 @@ map.</p>
 <span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Row 19550 of `y` matches multiple rows in `x`.</span></span>
 <span><span class="co">## <span style="color: #00BBBB;">ℹ</span> If a many-to-many relationship is expected, set `relationship =</span></span>
 <span><span class="co">##   "many-to-many"` to silence this warning.</span></span></code></pre>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">trip_dates_count</span> <span class="op">=</span> <span class="va">trip_dates</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>count <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> </span>
 <span><span class="va">trip_dates_count</span><span class="op">$</span><span class="va">weekday</span> <span class="op">&lt;-</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/day.html" class="external-link">wday</a></span><span class="op">(</span><span class="va">trip_dates_count</span><span class="op">$</span><span class="va">date</span>, label <span class="op">=</span> <span class="cn">T</span>, abbr <span class="op">=</span> <span class="cn">T</span>, week_start <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></span>
 <span><span class="va">trip_dates_count</span><span class="op">$</span><span class="va">day_of_month</span> <span class="op">&lt;-</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/day.html" class="external-link">day</a></span><span class="op">(</span><span class="va">trip_dates_count</span><span class="op">$</span><span class="va">date</span><span class="op">)</span></span>

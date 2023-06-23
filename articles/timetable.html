@@ -155,7 +155,8 @@ be generated similarly to <code>trip_origin</code>:</p>
 <span>  <span class="va">trip_headsigns</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">stop_times</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">trip_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>stop_id <span class="op">=</span> <span class="va">stop_id</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">stop_sequence</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">stops</span>, by<span class="op">=</span><span class="st">"stop_id"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">trip_id</span>, trip_headsign.computed <span class="op">=</span> <span class="va">stop_name</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">stops</span>, by<span class="op">=</span><span class="st">"stop_id"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">trip_id</span>, trip_headsign.computed <span class="op">=</span> <span class="va">stop_name</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># assign the headsign to the gtfs object </span></span>
 <span>  <span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span>, <span class="va">trip_headsigns</span>, by <span class="op">=</span> <span class="st">"trip_id"</span><span class="op">)</span></span>
@@ -164,7 +165,7 @@ be generated similarly to <code>trip_origin</code>:</p>
 <div class="section level2">
 <h2 id="create-a-departure-time-table">Create A Departure Time Table<a class="anchor" aria-label="anchor" href="#create-a-departure-time-table"></a>
 </h2>
-<p>To create a departure timetable we first need to find the ids of all
+<p>To create a departure timetable, we first need to find the ids of all
 stops in the stops table with the same same name, as
 <code>stop_name</code> might cover different platforms and thus have
 multiple stop_ids in the stops table.</p>
@@ -172,6 +173,9 @@ multiple stop_ids in the stops table.</p>
 <code class="sourceCode R"><span><span class="va">stop_ids</span> <span class="op">&lt;-</span> <span class="va">gtfs</span><span class="op">$</span><span class="va">stops</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">stop_name</span> <span class="op">==</span> <span class="st">"Times Sq - 42 St"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">stop_id</span><span class="op">)</span></span></code></pre></div>
+<p>Note that multiple unrelated stops can have the same
+<code>stop_name</code>, see <code><a href="../reference/cluster_stops.html">cluster_stops()</a></code> for examples
+how to find these cases.</p>
 </div>
 <div class="section level2">
 <h2 id="trips-departing-from-stop">Trips departing from stop<a class="anchor" aria-label="anchor" href="#trips-departing-from-stop"></a>
@@ -209,8 +213,8 @@ to the departures by joining the trips data frame with
 <span>                     <span class="va">route_short_name</span><span class="op">)</span>, </span>
 <span>            by <span class="op">=</span> <span class="st">"route_id"</span><span class="op">)</span></span></code></pre></div>
 <p>Now we have a data frame that tells us about the origin, destination,
-and time at which each train depart from Times Square for every possible
-schedule of service.</p>
+and time at which each train departs from Times Square for every
+possible schedule of service.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">departures</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">arrival_time</span>,</span>
@@ -280,7 +284,7 @@ schedule of service.</p>
 </tbody>
 </table>
 <p>However, we don’t know days on which these trips run. Using the
-service_id column on our calculated departures, and tidytransit’s
+service_id column on our calculated departures and tidytransit’s
 calculated <code>dates_services</code> data frame, we can filter trips
 to a given date of interest.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -525,8 +529,8 @@ feed.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_color_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">route_colors</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Departures from Times Square on 08/23/18"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="timetable_files/figure-html/unnamed-chunk-12-1.png" width="768"></p>
-<p>Now we plot departures for all stop_ids with the same name, we can
-separate for different stop_id. The following plot shows all departures
+<p>Now we plot departures for all stop_ids with the same name, so we can
+separate for different stop_ids. The following plot shows all departures
 for stop_ids 127N and 127S from 7 to 8 AM.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">departures_180823_sub_7to8</span> <span class="op">&lt;-</span> <span class="va">departures_180823</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -543,10 +547,10 @@ for stop_ids 127N and 127S from 7 to 8 AM.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">stop_id</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p><img src="timetable_files/figure-html/unnamed-chunk-13-1.png" width="576"></p>
 <p>Of course this plot idea can be expanded further. You could also
-differentiate each route by direction (using headsign, origin or
-next/previous stops). Another approach is to calculate frequencies and
-show different levels of service during the day, all depending on the
-goal of your analysis.</p>
+differentiate each route by direction (using direction_id, headsign,
+origin or next/previous stops). Another approach is to calculate
+frequencies and show different levels of service during the day, all
+depending on the goal of your analysis.</p>
 </div>
   </div>
 
