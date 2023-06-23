@@ -42,13 +42,6 @@ convert_dates <- function(gtfs_obj, parse_function = parse_gtfsio_date) {
 #' 
 #' @keywords internal
 #' @importFrom stats reshape
-#' @examples 
-#' library(dplyr)
-#' local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
-#' nyc <- read_gtfs(local_gtfs_path)
-#' nyc_services_by_date <- nyc$.$dates_services
-#' # count the number of services running on each date
-#' nyc_services_by_date %>% group_by(date) %>% count()
 set_dates_services <- function(gtfs_obj) {
   has_calendar = feed_contains(gtfs_obj, "calendar") && nrow(gtfs_obj[["calendar"]]) > 0
   has_calendar_dates = feed_contains(gtfs_obj, "calendar_dates") && nrow(gtfs_obj[["calendar_dates"]]) > 0

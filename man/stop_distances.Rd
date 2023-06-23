@@ -22,6 +22,7 @@ The resulting data.frame has nrow(gtfs_stops)^2 rows, distances calculations
 among all stops for large feeds should be avoided
 }
 \examples{
+\dontrun{
 library(dplyr)
 
 nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
@@ -46,5 +47,5 @@ nyc$stops \%>\%
 #>  9 423S         232S            91.5
 #> 10 232          423             91.5
 #> # … with 26 more rows
-
+}
 }

@@ -10,6 +10,7 @@
 #'       among all stops for large feeds should be avoided
 #'       
 #' @examples
+#' \dontrun{
 #' library(dplyr)
 #' 
 #' nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
@@ -34,7 +35,7 @@
 #' #>  9 423S         232S            91.5
 #' #> 10 232          423             91.5
 #' #> # … with 26 more rows
-#' 
+#' }
 #' @export
 stop_distances = function(gtfs_stops) {
   stopifnot(nrow(gtfs_stops) > 1)
@@ -98,7 +99,8 @@ prep_dist_mtrx = function(dist_list) {
 #'          number of stop ids within that group (n_stop_ids) and distance summary values 
 #'          (dist_mean, dist_median and dist_max).
 #'          
-#' @examples
+#' @examples 
+#' \dontrun{
 #' library(dplyr)
 #' 
 #' nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
@@ -119,7 +121,7 @@ prep_dist_mtrx = function(dist_list) {
 #' #>  9 7 Av        <dbl [9 × 9]>            9     5479.       5479.   10753.
 #' #> 10 111 St      <dbl [9 × 9]>            9     3877.       3877.    7753.
 #' #> # … with 370 more rows
-#' 
+#' }
 #' @export
 stop_group_distances = function(gtfs_stops, by = "stop_name") {
   distances <- n_stop_ids <- dist_mean <- dist_median <- dist_max <- NULL

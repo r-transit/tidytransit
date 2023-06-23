@@ -22,6 +22,7 @@ Interpolate missing stop_times linearly
 Uses shape_dist_traveled if available
 }
 \examples{
+\dontrun{
 data(gtfs_duke)
 print(gtfs_duke$stop_times[1:5, 1:5])
 
@@ -30,4 +31,5 @@ print(gtfs_duke_2$stop_times[1:5, 1:5])
 
 gtfs_duke_3 = interpolate_stop_times(gtfs_duke, FALSE)
 print(gtfs_duke_3$stop_times[1:5, 1:5])
+}
 }

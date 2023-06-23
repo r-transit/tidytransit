@@ -21,6 +21,7 @@ number of stop ids within that group (n_stop_ids) and distance summary values
 By default calculates distances among stop_ids with the same stop_name.
 }
 \examples{
+\dontrun{
 library(dplyr)
 
 nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
@@ -41,5 +42,5 @@ stop_group_distances(nyc$stops)
 #>  9 7 Av        <dbl [9 × 9]>            9     5479.       5479.   10753.
 #> 10 111 St      <dbl [9 × 9]>            9     3877.       3877.    7753.
 #> # … with 370 more rows
-
+}
 }

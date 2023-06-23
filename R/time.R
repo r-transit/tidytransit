@@ -106,6 +106,7 @@ replace_NA_times = function(stop_times) {
 #'                       are interpolated equally between stops. 
 #' @return tidygtfs or stop_times with interpolated arrival and departure times
 #' @examples
+#' \dontrun{
 #' data(gtfs_duke)
 #' print(gtfs_duke$stop_times[1:5, 1:5])
 #' 
@@ -114,6 +115,7 @@ replace_NA_times = function(stop_times) {
 #' 
 #' gtfs_duke_3 = interpolate_stop_times(gtfs_duke, FALSE)
 #' print(gtfs_duke_3$stop_times[1:5, 1:5])
+#' }
 #' @export
 interpolate_stop_times = function(x, use_shape_dist = TRUE) {
   ....event_time <- ....shape_dist_traveled <- NULL

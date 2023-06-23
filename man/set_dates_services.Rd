@@ -16,12 +16,4 @@ a date_service data frame
 Use it to summarise service. For example, get a count of the number of
 services for a date. See example.
 }
-\examples{
-library(dplyr)
-local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
-nyc <- read_gtfs(local_gtfs_path)
-nyc_services_by_date <- nyc$.$dates_services
-# count the number of services running on each date
-nyc_services_by_date \%>\% group_by(date) \%>\% count()
-}
 \keyword{internal}
