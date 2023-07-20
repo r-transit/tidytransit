@@ -162,12 +162,12 @@ get_gtfs_meta <- function() {
   
   # fare_products
   m$fare_products <- spec_setup_fields(
-    c("fare_product_id", "fare_product_name", "amount",
-      "currency"),
-    c("req", "opt", "req", "req"),
-    c("character", "character", "numeric", "numeric"), # TODO currency should be handled with integers
+    c("fare_product_id", "fare_product_name", "fare_media_id",
+     "amount", "currency"),
+    c("req", "opt", "opt", "req", "req"),
+    c("character", "character", "character", "numeric", "numeric"), # TODO currency should be handled with integers
     "opt",
-    "fare_product_id")
+    c("fare_product_id", "fare_media_id"))
   
   # fare_leg_rules
   m$fare_leg_rules <- spec_setup_fields(
