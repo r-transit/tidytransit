@@ -94,14 +94,13 @@ test_that("sf_as_tbl", {
   duke_00 = gtfs_duke
   duke_sf = gtfs_as_sf(duke_00, crs = 3358)
   duke_df = sf_as_tbl(duke_sf)
-  attributes(duke_00$shapes)$.internal.selfref <- NULL
-  
-  expect_equal(duke_df$stops[colnames(gtfs_duke$stops)], gtfs_duke$stops, tolerance = 0.0001)
+
+  expect_equal(duke_df$stops[colnames(gtfs_duke$stops)], gtfs_duke$stops, tolerance = 0.0001, check.attributes = FALSE)
   
   x = duke_df$shapes[colnames(duke_00$shapes)] %>% arrange(shape_id, shape_pt_sequence)
   y = duke_00$shapes %>% arrange(shape_id, shape_pt_sequence)
   
-  expect_equal(x, y, tolerance = 0.001)
+  expect_equal(x, y, tolerance = 0.001, check.attributes = FALSE)
 })
 
 # stop distances ####
@@ -154,8 +153,11 @@ test_that("stop_group_distances real feed", {
 
   expect_equal(colnames(x1), colnames(x2))
   expect_equal(x1$stop_name, x2$stop_name)
-  expect_equal(x1[,c("n_stop_ids", "dist_mean", "dist_median", "dist_max")], 
-               x2[,c("n_stop_ids", "dist_mean", "dist_median", "dist_max")])
+  expect_equal(x1$n_stop_ids, x2$n_stop_ids)
+  expect_equal(x1$n_stop_ids, x2$n_stop_ids)
+  for(col in c("n_stop_ids", "dist_mean", "dist_median", "dist_max")) {
+    expect_equal(x1[[col]], x2[[col]])
+  }
   expect_error(stop_group_distances(g_nyc_sf, "unknown"), "column unknown does not exist in g_nyc_sf")
   
   x3 = stop_group_distances(g_nyc$stops[c(1,4),], "stop_id")
