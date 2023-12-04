@@ -153,8 +153,6 @@ test_that("stop_group_distances real feed", {
 
   expect_equal(colnames(x1), colnames(x2))
   expect_equal(x1$stop_name, x2$stop_name)
-  expect_equal(x1$n_stop_ids, x2$n_stop_ids)
-  expect_equal(x1$n_stop_ids, x2$n_stop_ids)
   for(col in c("n_stop_ids", "dist_mean", "dist_median", "dist_max")) {
     expect_equal(x1[[col]], x2[[col]])
   }
