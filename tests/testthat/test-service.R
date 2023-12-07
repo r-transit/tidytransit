@@ -1,5 +1,3 @@
-context("Servicepattern")
-
 gpath <- system.file("extdata", "routing.zip", package = "tidytransit")
 
 test_that("set_servicepattern", {

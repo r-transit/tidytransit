@@ -1,5 +1,3 @@
-context("Export")
-
 test_that("write_gtfs creates the same feed as read by read_gtfs", {
   skip_on_cran()
   path1 <- system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")

@@ -1,46 +1,58 @@
-context("Import and Validation")
+g_routing_path <- system.file("extdata", "routing.zip", 
+                              package = "tidytransit")
 
-gtfs_example_url <- 
-  "https://github.com/r-transit/tidytransit/raw/master/inst/extdata/sample-feed-fixed.zip"
-local_gtfs_path <- system.file("extdata", 
-                               "google_transit_nyc_subway.zip", 
-                               package = "tidytransit")
+test_that("read_gtfs() imports a local file to a list of 
+          dataframes and doesnt delete the source file", {
 
-test_that("read_gtfs() imports a local file to a 
-          list of dataframes and doesnt 
-          delete the source file", {
-  gtfs_obj <- read_gtfs(local_gtfs_path)
+  gtfs_obj = read_gtfs(g_routing_path)
   
-  expect_is(gtfs_obj, "gtfs")
-  file.exists(local_gtfs_path)
+  expect_type(gtfs_obj, "list")
+  expect_s3_class(gtfs_obj, "tidygtfs")
+  expect_s3_class(gtfs_obj, "gtfs")
+  expect_true(file.exists(g_routing_path))
+})
+
+test_that("reading a real feed", {
+  skip_on_cran()
+  g_nyc_path = system.file("extdata", "google_transit_nyc_subway.zip", 
+                           package = "tidytransit")
+  gtfs_obj = read_gtfs(g_nyc_path)
+  
+  expect_type(gtfs_obj, "list")
+  expect_s3_class(gtfs_obj, "tidygtfs")
+  expect_s3_class(gtfs_obj, "gtfs")
 })
 
 test_that("loud read_gtfs", {
-  expect_is(
-    read_gtfs(local_gtfs_path, quiet = FALSE),
+  expect_s3_class(
+    read_gtfs(g_routing_path, quiet = FALSE),
     "tidygtfs")
 })
 
 test_that("gtfsio arguments", {
-  expect_is(
-    read_gtfs(local_gtfs_path, encoding = "UTF-8"),
+  skip_on_cran()
+  expect_s3_class(
+    read_gtfs(g_routing_path, encoding = "UTF-8"),
     "tidygtfs"
   )
 })
 
-
 test_that("tidygtfs class inheritance list", {
   expect_equal(
-    class(read_gtfs(local_gtfs_path)),
+    class(read_gtfs(g_routing_path)),
     c("tidygtfs", "gtfs", "list")
   )
 })
 
 test_that("the read_gtfs function works with urls", {
   skip_on_cran()
+  gtfs_example_url <- 
+    "https://github.com/r-transit/tidytransit/raw/master/inst/extdata/sample-feed-fixed.zip"
+  
   x <- read_gtfs(gtfs_example_url, quiet=TRUE)
-  expect_is(x, "gtfs") # should return 'list' object
-  expect_is(x, "tidygtfs")
+  expect_type(x, "list")
+  expect_s3_class(x, "gtfs")
+  expect_s3_class(x, "tidygtfs")
 })
 
 test_that("the read_gtfs function fails gracefully on bad urls", {
@@ -60,7 +72,7 @@ test_that("Files with BOM can be read", {
               "sample-feed-bom.zip", 
               package = "tidytransit")
   g <- read_gtfs(bom_path)
-  expect_is(g, "tidygtfs")
+  expect_s3_class(g, "tidygtfs")
 })
 
 test_that("Feed with additional data can be read", {
@@ -121,6 +133,6 @@ test_that("non-unique stop_ids", {
   
   g2 = suppressWarnings(read_gtfs(tmppath))
   
-  expect_is(g2, "gtfs")
+  expect_s3_class(g2, "gtfs")
   expect_false(inherits(g2, "tidygtfs"))
 })

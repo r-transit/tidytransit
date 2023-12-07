@@ -13,7 +13,7 @@ test_that("as_tidygtfs w/ gtfstools", {
     expect_equal(dt_gtfs.tidygtfs[[table_name]], tidygtfs[[table_name]])
   }
   
-  expect_is(dt_gtfs.tidygtfs, "tidygtfs")
+  expect_s3_class(dt_gtfs.tidygtfs, "tidygtfs")
 })
 
 test_that("as_tidygtfs w/ list", {
@@ -28,7 +28,7 @@ test_that("as_tidygtfs w/ list", {
   gtfs_list.tidygtfs = as_tidygtfs(gtfs_list)
   
   expect_equal(gtfs_list.tidygtfs, tidygtfs)
-  expect_is(gtfs_list.tidygtfs, "tidygtfs")
+  expect_s3_class(gtfs_list.tidygtfs, "tidygtfs")
 })
 
 test_that("as_tidygtfs w/ gtfs", {
@@ -38,7 +38,7 @@ test_that("as_tidygtfs w/ gtfs", {
   gtfs.tidygtfs = as_tidygtfs(gtfs)
   
   expect_equal(gtfs.tidygtfs, tidygtfs)
-  expect_is(gtfs.tidygtfs, "tidygtfs")
+  expect_s3_class(gtfs.tidygtfs, "tidygtfs")
 })
 
 test_that("as_tidygtfs w/ tidygtfs", {
@@ -49,5 +49,5 @@ test_that("as_tidygtfs w/ tidygtfs", {
   x2 = as_tidygtfs(x1)
   
   expect_true(all(x2$.$dates_services$service_id == "WEEK"))
-  expect_is(x2, "tidygtfs")
+  expect_s3_class(x2, "tidygtfs")
 })

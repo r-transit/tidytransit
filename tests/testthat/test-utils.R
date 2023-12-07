@@ -1,5 +1,3 @@
-context("Utils")
-
 test_that("summary.tidygtfs", {
   gpath <- system.file("extdata", "routing.zip", package = "tidytransit")
   g1 = read_gtfs(gpath)
@@ -81,8 +79,8 @@ test_that("filter_feed with shapes", {
 })
 
 test_that("filter_feed_by_date", {
-  g0 = read_gtfs(system.file("extdata",
-                             "google_transit_nyc_subway.zip",
+  skip_on_cran()
+  g0 = read_gtfs(system.file("extdata", "google_transit_nyc_subway.zip",
                              package = "tidytransit"))
   g1 = filter_feed_by_date(g0, "2018-06-28")
   g2 = filter_feed_by_date(g0, "2018-10-30")
@@ -91,12 +89,11 @@ test_that("filter_feed_by_date", {
   expect_lt(nrow(g1$stops), nrow(g0$stops))
   expect_lt(nrow(g2$stops), nrow(g0$stops))
   
-  expect_is(g1$stop_times, "tbl_df")
-  expect_is(g2$stop_times, "tbl_df")
+  expect_s3_class(g1$stop_times, "tbl_df")
+  expect_s3_class(g2$stop_times, "tbl_df")
 })
 
-
-test_that("gtfs_meta", { # empty test
+test_that("gtfs_meta", {
   expect_equal(gtfs_meta, get_gtfs_meta())
 })
 

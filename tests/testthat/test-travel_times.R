@@ -1,5 +1,3 @@
-context("travel_times routing")
-
 local_gtfs_path <- system.file("extdata", "routing.zip", package = "tidytransit")
 gtfs_routing <- read_gtfs(local_gtfs_path)
 test_from_stop_ids <- c("stop1a", "stop1b")
@@ -159,6 +157,7 @@ test_that("feed without transfers", {
 })
 
 test_that("nyc feed", {
+  skip_on_cran()
   nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
   nyc <- read_gtfs(nyc_path)
 
@@ -175,5 +174,5 @@ test_that("nyc feed", {
 
   tts <- travel_times(nyc_st, "34 St - Herald Sq (D17)", return_coords = TRUE, stop_dist_check = FALSE)
 
-  expect_is(tts, "data.frame")
+  expect_s3_class(tts, "data.frame")
 })

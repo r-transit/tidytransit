@@ -36,7 +36,7 @@ gtfs_as_sf <- function(gtfs_obj, skip_shapes = FALSE, crs = NULL, quiet = TRUE) 
 #'            lon/lat coordinates
 #' @return an sf dataframe for gtfs routes with a point column
 #' 
-#' @seealso code{\link{gtfs_as_sf}}
+#' @seealso \code{\link{gtfs_as_sf}}
 #' @export
 #' @examples
 #' data(gtfs_duke)

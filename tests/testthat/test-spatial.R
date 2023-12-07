@@ -1,14 +1,13 @@
-context("Converting to sf objects")
 library(sf)
 
 test_that("convert gtfs stops and shapes to sf data frames", {
-  expect_is(stops_as_sf(gtfs_duke$stops), "sf")
+  expect_s3_class(stops_as_sf(gtfs_duke$stops), "sf")
   shapes_sf = shapes_as_sf(gtfs_duke$shapes)
-  expect_is(shapes_sf, "sf")
+  expect_s3_class(shapes_sf, "sf")
   expect_equal(nrow(shapes_sf), length(unique(gtfs_duke$shapes$shape_id)))
   duke_sf <- gtfs_as_sf(gtfs_duke)
-  expect_is(duke_sf$shapes, "sf")
-  expect_is(duke_sf$stops, "sf")
+  expect_s3_class(duke_sf$shapes, "sf")
+  expect_s3_class(duke_sf$stops, "sf")
   duke_sf2 = gtfs_as_sf(duke_sf)
   expect_equal(duke_sf2, duke_sf)
 })
@@ -126,7 +125,7 @@ test_that("geodist", {
   xlon = c(8.4590, 8.4714)
   xlat = c(47.1812, 47.1824)
   dist1 = geodist_list(xlon, xlat)
-  expect_is(dist1, "list")
+  expect_type(dist1, "list")
   expect_equal(length(dist1), 1)
   
   x_sf = sf::st_as_sf(data.frame(lon = xlon, lat = xlat), coords = c("lon", "lat"), crs = 4326)
@@ -139,13 +138,14 @@ test_that("geodist", {
 test_that("stop_group_distances", {
   x = stop_group_distances(stopdist_df)
   expect_equal(colnames(x), c("stop_name", "distances", "n_stop_ids", "dist_mean", "dist_median", "dist_max"))
-  expect_is(x$distances[1][[1]], "matrix")
+  expect_true(is.matrix(x$distances[1][[1]]))
   expect_equal(x$n_stop_ids, c(3,2))
 })
 
-g_nyc = read_gtfs(system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit"))
-
 test_that("stop_group_distances real feed", {
+  skip_on_cran()
+  g_nyc = read_gtfs(system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit"))
+  
   x1 = stop_group_distances(g_nyc$stops)
 
   g_nyc_sf = gtfs_as_sf(g_nyc)
@@ -163,6 +163,9 @@ test_that("stop_group_distances real feed", {
 })
 
 test_that("stops cluster", {
+  skip_on_cran()
+  
+  g_nyc = read_gtfs(system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit"))
   g_nyc2 <- filter_feed_by_area(g_nyc, c(-74.0144, 40.7402, -73.9581, 40.7696))
 
   x1 = cluster_stops(g_nyc2$stops)
@@ -179,5 +182,5 @@ test_that("stops cluster", {
   
   # piping gtfs_obj
   g_nyc2 = cluster_stops(g_nyc2)
-  expect_is(g_nyc2, "tidygtfs")
+  expect_s3_class(g_nyc2, "tidygtfs")
 })
