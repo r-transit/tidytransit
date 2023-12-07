@@ -21,14 +21,14 @@ test_that("warning for duplicated primary key", {
   
   # within as_tidygtfs
   g2 = expect_warning(as_tidygtfs(g1), "Duplicated ids found in: routes, stops")
-  expect_is(g2, "list")
+  expect_type(g2, "list")
   
   g3 = g2
   g3$stops$stop_id[1] <- "stop1"
   g3$routes$route_id[1] <- "lineA"
   
   g4 = as_tidygtfs(g3)  
-  expect_is(g4, "tidygtfs")  
+  expect_s3_class(g4, "tidygtfs")  
 })
 
 test_that("validate non gtfs object", {

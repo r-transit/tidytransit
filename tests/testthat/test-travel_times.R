@@ -176,5 +176,5 @@ test_that("nyc feed", {
 
   tts <- travel_times(nyc_st, "34 St - Herald Sq (D17)", return_coords = TRUE, stop_dist_check = FALSE)
 
-  expect_is(tts, "data.frame")
+  expect_s3_class(tts, "data.frame")
 })

@@ -91,12 +91,11 @@ test_that("filter_feed_by_date", {
   expect_lt(nrow(g1$stops), nrow(g0$stops))
   expect_lt(nrow(g2$stops), nrow(g0$stops))
   
-  expect_is(g1$stop_times, "tbl_df")
-  expect_is(g2$stop_times, "tbl_df")
+  expect_s3_class(g1$stop_times, "tbl_df")
+  expect_s3_class(g2$stop_times, "tbl_df")
 })
 
-
-test_that("gtfs_meta", { # empty test
+test_that("gtfs_meta", {
   expect_equal(gtfs_meta, get_gtfs_meta())
 })
 

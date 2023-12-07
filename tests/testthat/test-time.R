@@ -17,14 +17,14 @@ test_that("convert_times_to_hms() works with valid data", {
 
   gtest <- convert_times_to_hms(gtest)
   
-  expect_is(gtest$stop_times$arrival_time, "hms")
-  expect_is(gtest$stop_times$departure_time, "hms")
+  expect_s3_class(gtest$stop_times$arrival_time, "hms")
+  expect_s3_class(gtest$stop_times$departure_time, "hms")
   expect_false(is.na(gtest$stop_times$arrival_time[3]))
   expect_equal(gtest$stop_times$departure_time[3], 
                hms::hms(26 * 3600 + 10 * 60 + 30))
   
-  expect_is(gtest$frequencies$start_time, "hms")
-  expect_is(gtest$frequencies$end_time, "hms")
+  expect_s3_class(gtest$frequencies$start_time, "hms")
+  expect_s3_class(gtest$frequencies$end_time, "hms")
 })
 
 test_that("set_dates_services() uses the right dates", {
@@ -110,7 +110,7 @@ test_that("set_dates_services() works with additions and exceptions", {
 test_that("parse dates", {
   x = "20180429"
   y = parse_gtfsio_date(x)
-  expect_is(y, "Date")
+  expect_s3_class(y, "Date")
   z = date_as_gtfsio_char(y)
   expect_equal(x, z)
 })
