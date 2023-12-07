@@ -1,5 +1,3 @@
-context("Utils")
-
 test_that("summary.tidygtfs", {
   gpath <- system.file("extdata", "routing.zip", package = "tidytransit")
   g1 = read_gtfs(gpath)

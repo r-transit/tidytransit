@@ -1,5 +1,3 @@
-context("Frequencies are calculated correctly")
-
 # TODO rewrite with synthesized sample data
 test_that("Stop frequencies (headways) for included data are as expected", {
   expect_equal(nrow(get_stop_frequency(gtfs_duke, by_route = FALSE)), 47)

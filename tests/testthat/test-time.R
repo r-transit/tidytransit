@@ -1,5 +1,3 @@
-context("Time manipulation")
-
 create_empty_gtfs_obj <- function() {
   g <- list(agency = data.frame())
   gtfsio::new_gtfs(g)

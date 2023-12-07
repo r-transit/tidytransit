@@ -1,5 +1,3 @@
-context("Import and Validation")
-
 g_routing_path <- system.file("extdata", "routing.zip", 
                               package = "tidytransit")
 

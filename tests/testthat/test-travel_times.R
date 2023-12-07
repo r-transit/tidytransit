@@ -1,5 +1,3 @@
-context("travel_times routing")
-
 local_gtfs_path <- system.file("extdata", "routing.zip", package = "tidytransit")
 gtfs_routing <- read_gtfs(local_gtfs_path)
 test_from_stop_ids <- c("stop1a", "stop1b")

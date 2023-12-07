@@ -1,4 +1,3 @@
-context("Converting to sf objects")
 library(sf)
 
 test_that("convert gtfs stops and shapes to sf data frames", {
