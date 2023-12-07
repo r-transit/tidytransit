@@ -18,7 +18,10 @@ Authors@R: c(
     person("Alexandra", "Kapp", role = c("ctb")),
     person("Kearey", "Smith", role = c("ctb")),
     person("Dave", "Vautin", role = c("ctb")),
-    person("Kyle", "Walker", role = c("ctb"))
+    person("Kyle", "Walker", role = c("ctb")),
+    person("Davis", "Vaughan", role = c("ctb")),
+    person("Ryan", "Rymarczyk", role = c("ctb")),
+    person("Kirill", "Müller", role = c("ctb"))
   )
 Description: Read General Transit Feed Specification (GTFS) zipfiles into a list of R dataframes. Perform validation of the data structure against the specification. Analyze the headways and frequencies at routes and stops. Create maps and perform spatial analysis on the routes and stops. Please see the GTFS documentation here for more detail: <https://gtfs.org/>.
 License: GPL
