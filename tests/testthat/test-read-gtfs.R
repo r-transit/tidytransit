@@ -1,43 +1,44 @@
 context("Import and Validation")
 
-gtfs_example_url <- 
-  "https://github.com/r-transit/tidytransit/raw/master/inst/extdata/sample-feed-fixed.zip"
-local_gtfs_path <- system.file("extdata", 
-                               "google_transit_nyc_subway.zip", 
-                               package = "tidytransit")
+test_that("read_gtfs() imports a local file to a list of 
+          dataframes and doesnt delete the source file", {
+  skip_on_cran()
 
-test_that("read_gtfs() imports a local file to a 
-          list of dataframes and doesnt 
-          delete the source file", {
-  gtfs_obj <- read_gtfs(local_gtfs_path)
+  gtfs_obj <- read_gtfs(system.file("extdata", "google_transit_nyc_subway.zip", 
+                                    package = "tidytransit"))
   
   expect_is(gtfs_obj, "gtfs")
-  file.exists(local_gtfs_path)
 })
+
+g_routing_path <- system.file("extdata", "routing.zip", 
+                              package = "tidytransit")
 
 test_that("loud read_gtfs", {
   expect_is(
-    read_gtfs(local_gtfs_path, quiet = FALSE),
+    read_gtfs(g_routing_path, quiet = FALSE),
     "tidygtfs")
 })
 
 test_that("gtfsio arguments", {
+  skip_on_cran()
   expect_is(
-    read_gtfs(local_gtfs_path, encoding = "UTF-8"),
+    read_gtfs(g_routing_path, encoding = "UTF-8"),
     "tidygtfs"
   )
 })
 
-
 test_that("tidygtfs class inheritance list", {
   expect_equal(
-    class(read_gtfs(local_gtfs_path)),
+    class(read_gtfs(g_routing_path)),
     c("tidygtfs", "gtfs", "list")
   )
 })
 
 test_that("the read_gtfs function works with urls", {
   skip_on_cran()
+  gtfs_example_url <- 
+    "https://github.com/r-transit/tidytransit/raw/master/inst/extdata/sample-feed-fixed.zip"
+  
   x <- read_gtfs(gtfs_example_url, quiet=TRUE)
   expect_is(x, "gtfs") # should return 'list' object
   expect_is(x, "tidygtfs")

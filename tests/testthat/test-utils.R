@@ -81,8 +81,8 @@ test_that("filter_feed with shapes", {
 })
 
 test_that("filter_feed_by_date", {
-  g0 = read_gtfs(system.file("extdata",
-                             "google_transit_nyc_subway.zip",
+  skip_on_cran()
+  g0 = read_gtfs(system.file("extdata", "google_transit_nyc_subway.zip",
                              package = "tidytransit"))
   g1 = filter_feed_by_date(g0, "2018-06-28")
   g2 = filter_feed_by_date(g0, "2018-10-30")
