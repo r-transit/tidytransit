@@ -25,5 +25,5 @@ some_stops_sf <- stops_as_sf(some_stops)
 plot(some_stops_sf)
 }
 \seealso{
-code{\link{gtfs_as_sf}}
+\code{\link{gtfs_as_sf}}
 }
