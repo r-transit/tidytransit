@@ -1,0 +1,59 @@
+reference:
+- title: "Read and write GTFS feeds"
+  contents: 
+  - read_gtfs
+  - write_gtfs
+- title: "Travel time calculations"
+  contents:
+  - travel_times
+  - raptor
+  - filter_stop_times
+- title: "Filter GTFS objects"
+  contents: 
+  - filter_feed_by_date
+  - filter_feed_by_area
+  - filter_feed_by_stops
+  - filter_feed_by_trips
+  - filter_stops
+- title: "Analyse"
+  contents:
+  - validate_gtfs
+  - set_servicepattern
+  - get_route_frequency
+  - get_stop_frequency
+  - summary.tidygtfs
+- title: "Find and fix inconsistencies in feeds"
+  contents:
+  - interpolate_stop_times
+  - cluster_stops
+  - stop_group_distances
+  - stop_distances
+- title: "Geospatial functions (sf)"
+  contents:
+  - gtfs_as_sf
+  - gtfs_transform
+  - shapes_as_sf
+  - stops_as_sf
+  - get_trip_geometry
+  - get_route_geometry
+  - sf_as_tbl
+  - sf_lines_to_df
+  - sf_points_to_df
+- title: "Helpers"
+  contents:
+  - as_tidygtfs
+  - gtfs_to_tidygtfs
+  - convert_times_to_hms
+  - hhmmss_to_hms
+  - hhmmss_to_seconds
+  - hhmmss_to_sec_split
+  - na_to_empty_strings
+  - feed_contains
+  - duplicated_primary_keys
+  - empty_strings_to_na
+  - plot.tidygtfs
+  - print.tidygtfs
+- title: "Datasets"
+  contents:
+  - gtfs_duke
+  - route_type_names
