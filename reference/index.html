@@ -63,42 +63,45 @@
     </div>
 
     <table class="ref-index"><colgroup><col class="alias"><col class="title"></colgroup><tbody><tr><th colspan="2">
-          <h2 id="all-functions">All functions <a href="#all-functions" class="anchor" aria-hidden="true"></a></h2>
+          <h2 id="read-and-write-gtfs-feeds">Read and write GTFS feeds <a href="#read-and-write-gtfs-feeds" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="as_tidygtfs.html">as_tidygtfs()</a></code> </p>
+          <p><code><a href="read_gtfs.html">read_gtfs()</a></code> </p>
         </td>
-        <td><p>Convert another gtfs like object to a tidygtfs object</p></td>
+        <td><p>Read and validate GTFS files</p></td>
       </tr><tr><td>
-          <p><code><a href="cluster_stops.html">cluster_stops()</a></code> </p>
+          <p><code><a href="write_gtfs.html">write_gtfs()</a></code> </p>
         </td>
-        <td><p>Cluster nearby stops within a group</p></td>
+        <td><p>Write a tidygtfs object to a zip file</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="travel-time-calculations">Travel time calculations <a href="#travel-time-calculations" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="travel_times.html">travel_times()</a></code> </p>
+        </td>
+        <td><p>Calculate shortest travel times from a stop to all reachable stops</p></td>
       </tr><tr><td>
-          <p><code><a href="convert_times_to_hms.html">convert_times_to_hms()</a></code> </p>
+          <p><code><a href="raptor.html">raptor()</a></code> </p>
         </td>
-        <td><p>Convert time columns to hms::hms in feed</p></td>
+        <td><p>Calculate travel times from one stop to all reachable stops</p></td>
       </tr><tr><td>
-          <p><code><a href="duplicated_primary_keys.html">duplicated_primary_keys()</a></code> </p>
+          <p><code><a href="filter_stop_times.html">filter_stop_times()</a></code> </p>
         </td>
-        <td><p>Check if primary keys are unique within tables</p></td>
-      </tr><tr><td>
-          <p><code><a href="empty_strings_to_na.html">empty_strings_to_na()</a></code> </p>
+        <td><p>Filter a <code>stop_times</code> table for a given date and timespan.</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="filter-gtfs-objects">Filter GTFS objects <a href="#filter-gtfs-objects" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="filter_feed_by_date.html">filter_feed_by_date()</a></code> </p>
         </td>
-        <td><p>Convert empty strings ("") to NA values in all gtfs tables</p></td>
-      </tr><tr><td>
-          <p><code><a href="feed_contains.html">feed_contains()</a></code> </p>
-        </td>
-        <td><p>Returns TRUE if the given gtfs_obj contains the table. Used to check for
-tidytransit's calculated tables in sublist (<code>gtfs_obj$.</code>)</p></td>
+        <td><p>Filter a gtfs feed so that it only contains trips running on a given date</p></td>
       </tr><tr><td>
           <p><code><a href="filter_feed_by_area.html">filter_feed_by_area()</a></code> </p>
         </td>
         <td><p>Filter a gtfs feed so that it only contains trips that pass a given area</p></td>
-      </tr><tr><td>
-          <p><code><a href="filter_feed_by_date.html">filter_feed_by_date()</a></code> </p>
-        </td>
-        <td><p>Filter a gtfs feed so that it only contains trips running on a given date</p></td>
       </tr><tr><td>
           <p><code><a href="filter_feed_by_stops.html">filter_feed_by_stops()</a></code> </p>
         </td>
@@ -108,92 +111,82 @@ tidytransit's calculated tables in sublist (<code>gtfs_obj$.</code>)</p></td>
         </td>
         <td><p>Filter a gtfs feed so that it only contains a given set of trips</p></td>
       </tr><tr><td>
-          <p><code><a href="filter_stop_times.html">filter_stop_times()</a></code> </p>
-        </td>
-        <td><p>Filter a <code>stop_times</code> table for a given date and timespan.</p></td>
-      </tr><tr><td>
           <p><code><a href="filter_stops.html">filter_stops()</a></code> </p>
         </td>
         <td><p>Get a set of stops for a given set of service ids and route ids</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="analyse">Analyse <a href="#analyse" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="validate_gtfs.html">validate_gtfs()</a></code> </p>
+        </td>
+        <td><p>Validate GTFS file</p></td>
+      </tr><tr><td>
+          <p><code><a href="set_servicepattern.html">set_servicepattern()</a></code> </p>
+        </td>
+        <td><p>Calculate servicepattern ids for a gtfs feed</p></td>
       </tr><tr><td>
           <p><code><a href="get_route_frequency.html">get_route_frequency()</a></code> </p>
         </td>
         <td><p>Get Route Frequency</p></td>
       </tr><tr><td>
-          <p><code><a href="get_route_geometry.html">get_route_geometry()</a></code> </p>
-        </td>
-        <td><p>Get all trip shapes for a given route and service</p></td>
-      </tr><tr><td>
           <p><code><a href="get_stop_frequency.html">get_stop_frequency()</a></code> </p>
         </td>
         <td><p>Get Stop Frequency</p></td>
       </tr><tr><td>
-          <p><code><a href="get_trip_geometry.html">get_trip_geometry()</a></code> </p>
+          <p><code><a href="summary.tidygtfs.html">summary(<i>&lt;tidygtfs&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Get all trip shapes for given trip ids</p></td>
-      </tr><tr><td>
-          <p><code><a href="gtfs_as_sf.html">gtfs_as_sf()</a></code> </p>
-        </td>
-        <td><p>Convert stops and shapes to Simple Features</p></td>
-      </tr><tr><td>
-          <p><code><a href="gtfs_duke.html">gtfs_duke</a></code> </p>
-        </td>
-        <td><p>Example GTFS data</p></td>
-      </tr><tr><td>
-          <p><code><a href="gtfs_to_tidygtfs.html">gtfs_to_tidygtfs()</a></code> </p>
-        </td>
-        <td><p>Convert an object created by gtfsio::import_gtfs to a tidygtfs object</p></td>
-      </tr><tr><td>
-          <p><code><a href="gtfs_transform.html">gtfs_transform()</a></code> </p>
-        </td>
-        <td><p>Transform or convert coordinates of a gtfs feed</p></td>
-      </tr><tr><td>
-          <p><code><a href="hhmmss_to_hms.html">hhmmss_to_hms()</a></code> </p>
-        </td>
-        <td><p>convert a vector of time strings
-empty strings are converted to NA</p></td>
-      </tr><tr><td>
-          <p><code><a href="hhmmss_to_sec_split.html">hhmmss_to_sec_split()</a></code> </p>
-        </td>
-        <td><p>Fallback function to convert strings like 5:02:11
-10x slower than <code><a href="../reference/hhmmss_to_seconds.html">hhmmss_to_seconds()</a></code>, empty strings are converted to NA</p></td>
-      </tr><tr><td>
-          <p><code><a href="hhmmss_to_seconds.html">hhmmss_to_seconds()</a></code> </p>
-        </td>
-        <td><p>Function to convert "HH:MM:SS" time strings to seconds.</p></td>
-      </tr><tr><td>
+        <td><p>GTFS feed summary</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="find-and-fix-inconsistencies-in-feeds">Find and fix inconsistencies in feeds <a href="#find-and-fix-inconsistencies-in-feeds" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr></tbody><tbody><tr><td>
           <p><code><a href="interpolate_stop_times.html">interpolate_stop_times()</a></code> </p>
         </td>
         <td><p>Interpolate missing stop_times linearly
 Uses shape_dist_traveled if available</p></td>
       </tr><tr><td>
-          <p><code><a href="na_to_empty_strings.html">na_to_empty_strings()</a></code> </p>
+          <p><code><a href="cluster_stops.html">cluster_stops()</a></code> </p>
         </td>
-        <td><p>Convert NA values to empty strings ("")</p></td>
+        <td><p>Cluster nearby stops within a group</p></td>
       </tr><tr><td>
-          <p><code><a href="plot.tidygtfs.html">plot(<i>&lt;tidygtfs&gt;</i>)</a></code> </p>
+          <p><code><a href="stop_group_distances.html">stop_group_distances()</a></code> </p>
         </td>
-        <td><p>Plot GTFS stops and trips</p></td>
+        <td><p>Calculates distances among stop within the same group column</p></td>
       </tr><tr><td>
-          <p><code><a href="print.tidygtfs.html">print(<i>&lt;tidygtfs&gt;</i>)</a></code> </p>
+          <p><code><a href="stop_distances.html">stop_distances()</a></code> </p>
         </td>
-        <td><p>Print a GTFS object</p></td>
+        <td><p>Calculate distances between a given set of stops</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="geospatial-functions-sf-">Geospatial functions (sf) <a href="#geospatial-functions-sf-" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="gtfs_as_sf.html">gtfs_as_sf()</a></code> </p>
+        </td>
+        <td><p>Convert stops and shapes to Simple Features</p></td>
       </tr><tr><td>
-          <p><code><a href="raptor.html">raptor()</a></code> </p>
+          <p><code><a href="gtfs_transform.html">gtfs_transform()</a></code> </p>
         </td>
-        <td><p>Calculate travel times from one stop to all reachable stops</p></td>
+        <td><p>Transform or convert coordinates of a gtfs feed</p></td>
       </tr><tr><td>
-          <p><code><a href="read_gtfs.html">read_gtfs()</a></code> </p>
+          <p><code><a href="shapes_as_sf.html">shapes_as_sf()</a></code> </p>
         </td>
-        <td><p>Read and validate GTFS files</p></td>
+        <td><p>Convert shapes into Simple Features Linestrings</p></td>
       </tr><tr><td>
-          <p><code><a href="route_type_names.html">route_type_names</a></code> </p>
+          <p><code><a href="stops_as_sf.html">stops_as_sf()</a></code> </p>
         </td>
-        <td><p>Dataframe of route type id's and the names of the types (e.g. "Bus")</p></td>
+        <td><p>Convert stops into Simple Features Points</p></td>
       </tr><tr><td>
-          <p><code><a href="set_servicepattern.html">set_servicepattern()</a></code> </p>
+          <p><code><a href="get_trip_geometry.html">get_trip_geometry()</a></code> </p>
         </td>
-        <td><p>Calculate servicepattern ids for a gtfs feed</p></td>
+        <td><p>Get all trip shapes for given trip ids</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_route_geometry.html">get_route_geometry()</a></code> </p>
+        </td>
+        <td><p>Get all trip shapes for a given route and service</p></td>
       </tr><tr><td>
           <p><code><a href="sf_as_tbl.html">sf_as_tbl()</a></code> </p>
         </td>
@@ -206,38 +199,73 @@ Uses shape_dist_traveled if available</p></td>
           <p><code><a href="sf_points_to_df.html">sf_points_to_df()</a></code> </p>
         </td>
         <td><p>Adds the coordinates of an sf POINT object as columns</p></td>
-      </tr><tr><td>
-          <p><code><a href="shapes_as_sf.html">shapes_as_sf()</a></code> </p>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="helpers">Helpers <a href="#helpers" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="as_tidygtfs.html">as_tidygtfs()</a></code> </p>
         </td>
-        <td><p>Convert shapes into Simple Features Linestrings</p></td>
+        <td><p>Convert another gtfs like object to a tidygtfs object</p></td>
       </tr><tr><td>
-          <p><code><a href="stop_distances.html">stop_distances()</a></code> </p>
+          <p><code><a href="gtfs_to_tidygtfs.html">gtfs_to_tidygtfs()</a></code> </p>
         </td>
-        <td><p>Calculate distances between a given set of stops</p></td>
+        <td><p>Convert an object created by gtfsio::import_gtfs to a tidygtfs object</p></td>
       </tr><tr><td>
-          <p><code><a href="stop_group_distances.html">stop_group_distances()</a></code> </p>
+          <p><code><a href="convert_times_to_hms.html">convert_times_to_hms()</a></code> </p>
         </td>
-        <td><p>Calculates distances among stop within the same group column</p></td>
+        <td><p>Convert time columns to hms::hms in feed</p></td>
       </tr><tr><td>
-          <p><code><a href="stops_as_sf.html">stops_as_sf()</a></code> </p>
+          <p><code><a href="hhmmss_to_hms.html">hhmmss_to_hms()</a></code> </p>
         </td>
-        <td><p>Convert stops into Simple Features Points</p></td>
+        <td><p>convert a vector of time strings
+empty strings are converted to NA</p></td>
       </tr><tr><td>
-          <p><code><a href="summary.tidygtfs.html">summary(<i>&lt;tidygtfs&gt;</i>)</a></code> </p>
+          <p><code><a href="hhmmss_to_seconds.html">hhmmss_to_seconds()</a></code> </p>
         </td>
-        <td><p>GTFS feed summary</p></td>
+        <td><p>Function to convert "HH:MM:SS" time strings to seconds.</p></td>
       </tr><tr><td>
-          <p><code><a href="travel_times.html">travel_times()</a></code> </p>
+          <p><code><a href="hhmmss_to_sec_split.html">hhmmss_to_sec_split()</a></code> </p>
         </td>
-        <td><p>Calculate shortest travel times from a stop to all reachable stops</p></td>
+        <td><p>Fallback function to convert strings like 5:02:11
+10x slower than <code><a href="../reference/hhmmss_to_seconds.html">hhmmss_to_seconds()</a></code>, empty strings are converted to NA</p></td>
       </tr><tr><td>
-          <p><code><a href="validate_gtfs.html">validate_gtfs()</a></code> </p>
+          <p><code><a href="na_to_empty_strings.html">na_to_empty_strings()</a></code> </p>
         </td>
-        <td><p>Validate GTFS file</p></td>
+        <td><p>Convert NA values to empty strings ("")</p></td>
       </tr><tr><td>
-          <p><code><a href="write_gtfs.html">write_gtfs()</a></code> </p>
+          <p><code><a href="feed_contains.html">feed_contains()</a></code> </p>
         </td>
-        <td><p>Write a tidygtfs object to a zip file</p></td>
+        <td><p>Returns TRUE if the given gtfs_obj contains the table. Used to check for
+tidytransit's calculated tables in sublist (<code>gtfs_obj$.</code>)</p></td>
+      </tr><tr><td>
+          <p><code><a href="duplicated_primary_keys.html">duplicated_primary_keys()</a></code> </p>
+        </td>
+        <td><p>Check if primary keys are unique within tables</p></td>
+      </tr><tr><td>
+          <p><code><a href="empty_strings_to_na.html">empty_strings_to_na()</a></code> </p>
+        </td>
+        <td><p>Convert empty strings ("") to NA values in all gtfs tables</p></td>
+      </tr><tr><td>
+          <p><code><a href="plot.tidygtfs.html">plot(<i>&lt;tidygtfs&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Plot GTFS stops and trips</p></td>
+      </tr><tr><td>
+          <p><code><a href="print.tidygtfs.html">print(<i>&lt;tidygtfs&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Print a GTFS object</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="datasets">Datasets <a href="#datasets" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="gtfs_duke.html">gtfs_duke</a></code> </p>
+        </td>
+        <td><p>Example GTFS data</p></td>
+      </tr><tr><td>
+          <p><code><a href="route_type_names.html">route_type_names</a></code> </p>
+        </td>
+        <td><p>Dataframe of route type id's and the names of the types (e.g. "Bus")</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
