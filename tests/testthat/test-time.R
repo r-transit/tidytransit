@@ -107,9 +107,9 @@ test_that("set_dates_services() works with additions and exceptions", {
 
 test_that("parse dates", {
   x = "20180429"
-  y = parse_gtfsio_date(x)
+  y = .parse_gtfsio_date(x)
   expect_s3_class(y, "Date")
-  z = date_as_gtfsio_char(y)
+  z = .date_as_gtfsio_char(y)
   expect_equal(x, z)
 })
 

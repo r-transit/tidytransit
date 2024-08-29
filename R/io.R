@@ -64,7 +64,7 @@ write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE)
   class(gtfs_out) <- list("gtfs")
   
   # convert dates/times to strings
-  gtfs_out <- convert_dates(gtfs_out, date_as_gtfsio_char)
+  gtfs_out <- convert_date_to_char(gtfs_out)
   gtfs_out <- convert_hms_to_char(gtfs_out)
   
   # export with gtfsio

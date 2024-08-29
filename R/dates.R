@@ -1,37 +1,34 @@
-# Dates ####
-# convert date for import export
-parse_gtfsio_date = function(gtfsio_date) {
+convert_char_to_date <- function(gtfs_obj) {
+  convert_dates(gtfs_obj, .parse_gtfsio_date)
+}
+
+convert_date_to_char <- function(gtfs_obj) {
+  convert_dates(gtfs_obj, .date_as_gtfsio_char)
+}
+
+convert_dates <- function(gtfs_obj, parse_function) {
+  for(i in seq_len(nrow(reference_date_fields))) {
+    file = reference_date_fields$file[i]
+    date_field = reference_date_fields$Field_Name[i]
+    if(feed_contains(gtfs_obj, file)) {
+      if(!is.null(gtfs_obj[[file]][[date_field]])) {
+        stopifnot(inherits(gtfs_obj[[file]], "data.table"))
+        gtfs_obj[[file]][, c(date_field) := parse_function(get(date_field))]
+      }
+    }
+  }
+  return(gtfs_obj)
+}
+
+.parse_gtfsio_date <- function(gtfsio_date) {
   if(inherits(gtfsio_date, "Date")) {
     return(gtfsio_date)
   }
   as.Date(as.character(gtfsio_date), format = "%Y%m%d")
 }
 
-# convert date for export
-date_as_gtfsio_char = function(date) {
+.date_as_gtfsio_char <- function(date) {
   format(date, format = "%Y%m%d")
-}
-
-convert_dates <- function(gtfs_obj, parse_function = parse_gtfsio_date) {
-  if(!is.null(gtfs_obj[["calendar"]])) { # $calendar matches calendar_dates
-    stopifnot(inherits(gtfs_obj$calendar, "data.table"))
-    gtfs_obj$calendar[,start_date := parse_function(start_date)]
-    gtfs_obj$calendar[,end_date := parse_function(end_date)]
-  }
-  if(!is.null(gtfs_obj[["calendar_dates"]])) {
-    stopifnot(inherits(gtfs_obj$calendar_dates, "data.table"))
-    gtfs_obj$calendar_dates[,date := parse_function(date)]
-  }
-  if(!is.null(gtfs_obj[["feed_info"]])) {
-    stopifnot(inherits(gtfs_obj$feed_info, "data.table"))
-    if(!is.null(gtfs_obj$feed_info$feed_start_date)) {
-      gtfs_obj$feed_info[,feed_start_date := parse_function(feed_start_date)]
-    }
-    if(!is.null(gtfs_obj$feed_info$feed_end_date)) {
-      gtfs_obj$feed_info[,feed_end_date := parse_function(feed_end_date)]
-    }
-  }
-  return(gtfs_obj)
 }
 
 #' Returns all possible date/service_id combinations as a data frame
