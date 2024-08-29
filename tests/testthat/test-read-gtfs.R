@@ -98,14 +98,15 @@ test_that("validation", {
 test_that("files parameter", {
   path = system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
 
-  file_status = as.data.frame(lapply(gtfs_meta, function(x) { x$file_spec }))
-  req_files = names(file_status)[file_status == "req"]
+  file_status = unlist(lapply(gtfs_reference, `[[`, "File_Presence"))
+
+  req_files = names(file_status)[file_status %in% c("Required", "Conditionally Required")]
+  req_files <- req_files[!req_files %in% c("feed_info", "levels")]
   
   g1 = read_gtfs(path)
   g2 = read_gtfs(path, files = req_files)
   expect_equal(setdiff(names(g1), names(g2)),
-               c("calendar_dates", "fare_attributes", "fare_rules", "frequencies", 
-                 "shapes"))
+               c("fare_attributes", "fare_rules", "frequencies","shapes"))
   
   fns = names(g1)[names(g1) != "." & names(g1) != "calendar_dates"]
   
