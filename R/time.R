@@ -1,38 +1,3 @@
-#' Convert time columns to hms::hms in feed
-#' 
-#' Overwrites character columns in stop_times (arrival_time, departure_time) and 
-#' frequencies (start_time, end_time) with times converted with [hms::hms()].
-#' 
-#' @param gtfs_list gtfs object
-#' @return gtfs_obj with hms times columns for stop_times, frequencies and other 
-#'         fields with type "Time"
-#' 
-#' @importFrom hms new_hms
-#' @keywords internal
-convert_char_to_hms <- function(gtfs_list) {
-  convert_times(gtfs_list, hhmmss_to_hms)
-}
-
-convert_hms_to_char <- function(gtfs_obj) {
-  convert_times(gtfs_obj, hms_to_hhmmss)
-}
-
-convert_times <- function(gtfs_obj, parse_function) {
-  for(i in seq_len(nrow(reference_time_fields))) {
-    file = reference_time_fields$file[i]
-    time_field = reference_time_fields$Field_Name[i]
-    if(feed_contains(gtfs_obj, file)) {
-      if(!is.null(gtfs_obj[[file]][[time_field]])) {
-        stopifnot(inherits(gtfs_obj[[file]], "data.table"))
-        gtfs_obj[[file]][, c(time_field) := parse_function(get(time_field))]
-      }
-    }
-  }
-  return(gtfs_obj)
-}
-
-# string conversion functions ####
-
 #' convert a vector of time strings
 #' empty strings are converted to NA
 #' @param time_strings char vector ("HH:MM:SS")

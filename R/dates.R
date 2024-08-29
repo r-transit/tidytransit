@@ -1,25 +1,3 @@
-convert_char_to_date <- function(gtfs_obj) {
-  convert_dates(gtfs_obj, .parse_gtfsio_date)
-}
-
-convert_date_to_char <- function(gtfs_obj) {
-  convert_dates(gtfs_obj, .date_as_gtfsio_char)
-}
-
-convert_dates <- function(gtfs_obj, parse_function) {
-  for(i in seq_len(nrow(reference_date_fields))) {
-    file = reference_date_fields$file[i]
-    date_field = reference_date_fields$Field_Name[i]
-    if(feed_contains(gtfs_obj, file)) {
-      if(!is.null(gtfs_obj[[file]][[date_field]])) {
-        stopifnot(inherits(gtfs_obj[[file]], "data.table"))
-        gtfs_obj[[file]][, c(date_field) := parse_function(get(date_field))]
-      }
-    }
-  }
-  return(gtfs_obj)
-}
-
 .parse_gtfsio_date <- function(gtfsio_date) {
   if(inherits(gtfsio_date, "Date")) {
     return(gtfsio_date)
