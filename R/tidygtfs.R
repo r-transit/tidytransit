@@ -97,12 +97,15 @@ convert_list_tables_to_data.tables = function(gtfs_list) {
 }
 
 convert_list_json_to_sf = function(gtfs_list) {
-  json_index = .is_json(gtfs_list)
+  stopifnot(inherits(gtfs_list, "list"))
+  json_index = is_geojson(names(gtfs_list))
   gtfs_list[json_index] <- lapply(gtfs_list[json_index], json_to_sf)
   return(gtfs_list)
 }
 
-.is_json = function(gtfs_list) {
-  stopifnot(inherits(gtfs_list, "list"))
-  names(gtfs_list) == "locations"
+is_geojson = function(gtfs_table_name) {
+  stopifnot(is.character(gtfs_table_name))
+  isjson = (gtfs_reference_filetype[gtfs_table_name] == "geojson") %in% TRUE
+  names(isjson) <- gtfs_table_name
+  return(isjson)
 }

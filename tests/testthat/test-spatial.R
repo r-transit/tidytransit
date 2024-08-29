@@ -210,7 +210,13 @@ test_that("handle feeds with geojson",{
   
   tidygtfs2 = read_gtfs(locations_path, files = "locations")
   expect_equal(tidygtfs2$locations, tidygtfs1$locations)
-
+  
+  # transform
+  tidygtfs3 <- gtfs_transform(tidygtfs1, 2232)
+  expect_equal(sf::st_crs(tidygtfs3$stops)$input, "EPSG:2232")
+  expect_equal(sf::st_crs(tidygtfs3$shapes)$input, "EPSG:2232")
+  expect_equal(sf::st_crs(tidygtfs3$locations)$input, "EPSG:2232")
+  
   # write and re-read feed
   tidygtfs_zip1 = tempfile("tidygtfs", fileext = ".zip")
   write_gtfs(tidygtfs1, tidygtfs_zip1)

@@ -165,21 +165,23 @@ shape_as_sf_linestring <- function(df) {
   return(sf::st_linestring(m))
 }
 
-#' Transform or convert coordinates of a gtfs feed
+#' Transform coordinates of a gtfs feed
 #' 
 #' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @param crs target coordinate reference system, used by sf::st_transform
 #' @return tidygtfs object with transformed stops and shapes sf dataframes
 #' 
 #' @importFrom sf st_transform
+#' @return gtfs object with transformed sf tables
 #' @export
 gtfs_transform = function(gtfs_obj, crs) {
-  if(!inherits(gtfs_obj$stops, "sf")) {
-    gtfs_obj <- gtfs_as_sf(gtfs_obj)
+  gtfs_obj <- gtfs_as_sf(gtfs_obj)
+  for(tbl in names(gtfs_obj)) {
+    if(inherits(gtfs_obj[[tbl]], "sf")) {
+      gtfs_obj[[tbl]] <- st_transform(gtfs_obj[[tbl]], crs)
+    }
   }
-  gtfs_obj$stops <- st_transform(gtfs_obj$stops, crs)
-  if(feed_contains(gtfs_obj, "shapes")) gtfs_obj$shapes <- st_transform(gtfs_obj$shapes, crs)
-  gtfs_obj
+  return(gtfs_obj)
 }
 
 #' Convert stops and shapes from sf objects to tibbles
@@ -281,13 +283,12 @@ sf_to_json = function(sf_obj, layer_name) {
 }
 
 sf_as_json = function(gtfs_obj) {
-  # TODO use gtfs_reference for geojson-tables
-  if(feed_contains(gtfs_obj, "locations") && inherits(gtfs_obj[["locations"]], "sf")) {
-    locations.json = sf_to_json(gtfs_obj[["locations"]], "locations")
-    locations.json$name <- "locations"
-    # TODO check crs
-    locations.json$crs <- NULL # should be WGS84 anyways
-    gtfs_obj[["locations"]] <- locations.json
+  for(geojson_file in names(gtfs_reference_filetype[gtfs_reference_filetype == "geojson"])) {
+    if(feed_contains(gtfs_obj, geojson_file) && inherits(gtfs_obj[[geojson_file]], "sf")) {
+      json = sf_to_json(gtfs_obj[[geojson_file]], geojson_file)
+      json$name <- geojson_file
+      gtfs_obj[[geojson_file]] <- json
+    }
   }
-  gtfs_obj
+  return(gtfs_obj)
 }

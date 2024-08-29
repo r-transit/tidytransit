@@ -91,10 +91,7 @@ validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
   }
   
   # don't validate geojson files
-  is_geojson = gtfs_reference_filetype[files_to_validate] == "geojson"
-  names(is_geojson) <- files_to_validate
-  is_geojson[is.na(is_geojson)] <- FALSE
-  files_to_validate <- files_to_validate[!is_geojson]
+  files_to_validate <- files_to_validate[!is_geojson(files_to_validate)]
   
   if(length(files_to_validate) == 0) return(data.table::data.table(
     file = character(), file_spec = character(), file_provided_status = logical(),
