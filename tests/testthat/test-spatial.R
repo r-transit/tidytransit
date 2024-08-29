@@ -187,13 +187,38 @@ test_that("stops cluster", {
 
 test_that("handle feeds with geojson",{
   locations_path = system.file("extdata", "locations_feed.zip", package = "tidytransit")
+  gtfsio_tmpdir = tempfile("gtfsio")
+  gtfsio0 = gtfsio::import_gtfs(locations_path)
+  gtfsio::export_gtfs(gtfsio0, gtfsio_tmpdir, as_dir = TRUE)
+  
+  # convert json/sf
+  locations.geojson = file.path(gtfsio_tmpdir, "locations.geojson")
+  sf_expected = sf::read_sf(locations.geojson)
+  json_expected = jsonlite::read_json(locations.geojson)
+  
+  sf_actual = json_to_sf(json_expected)
+  expect_equal(sf_actual, sf_expected)
+  
+  json_actual = sf_to_json(sf_actual, "locations")
+  expect_equal(json_actual, json_expected)
+  expect_equal(gtfsio0$locations, json_expected)
   
   # read feed
-  g1 = read_gtfs(locations_path)
+  tidygtfs1 = read_gtfs(locations_path)
+  expect_is(tidygtfs1[["locations"]], "sf")
+  expect_equal(nrow(tidygtfs1[["locations"]]), 2)
   
-  expect_is(g1[["locations"]], "sf")
-  expect_equal(nrow(g1[["locations"]]), 2)
+  tidygtfs2 = read_gtfs(locations_path, files = "locations")
+  expect_equal(tidygtfs2$locations, tidygtfs1$locations)
+
+  # write and re-read feed
+  tidygtfs_zip1 = tempfile("tidygtfs", fileext = ".zip")
+  write_gtfs(tidygtfs1, tidygtfs_zip1)
+  tidygtfs_zip2 = tempfile("tidygtfs", fileext = ".zip")
+  write_gtfs(tidygtfs2, tidygtfs_zip2)
   
-  g2 = read_gtfs(locations_path, files = "locations")
-  expect_equal(g2$locations, g1$locations)
+  reread1 = read_gtfs(tidygtfs_zip1)
+  expect_equal(reread1$locations, tidygtfs1$locations)
+  reread2 = read_gtfs(tidygtfs_zip2, files = "locations")
+  expect_equal(reread2$locations, tidygtfs1$locations)
 })

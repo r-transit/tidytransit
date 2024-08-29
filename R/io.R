@@ -49,22 +49,25 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE, ...) {
 #' @export
 write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE) {
   stopifnot(inherits(gtfs_obj, "tidygtfs"))
+  gtfs_out = gtfs_obj
   
   # convert sf tables
-  gtfs_out = sf_as_tbl(gtfs_obj)
-  
+  gtfs_out <- sf_as_tbl(gtfs_out)
+  gtfs_out <- sf_as_json(gtfs_out)
+
   # convert NA to empty strings
   gtfs_out <- na_to_empty_strings(gtfs_out)
   
   # data.tables
   gtfs_out <- gtfs_out[names(gtfs_out) != "."]
-  gtfs_out <- lapply(gtfs_out, as.data.table)
+  gtfs_out <- convert_list_tables_to_data.tables(gtfs_out)
   class(gtfs_out) <- list("gtfs")
   
   # convert dates/times to strings
   gtfs_out <- convert_dates(gtfs_out, date_as_gtfsio_char)
   gtfs_out <- convert_hms_to_char(gtfs_out)
   
+  # export with gtfsio
   gtfsio::export_gtfs(gtfs_out, zipfile, 
                       standard_only = FALSE,
                       compression_level = compression_level, 

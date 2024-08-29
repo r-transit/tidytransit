@@ -250,18 +250,44 @@ sf_lines_to_df = function(lines_sf,
 
 #' Convert a json (read with jsonlite) to sf object
 #'
-#' The json object is written to a temporary file and re-read with sf::read.
+#' The json object is written to a temporary file and re-read with sf::read().
 #'
 #' @param json_list list as read by jsonlite::read_json (in gtfsio)
 #'
 #' @return sf object
 #' @importFrom jsonlite write_json
+#' @importFrom sf read_sf
 #' @keywords internal
 json_to_sf = function(json_list) {
   tmpfile = tempfile(fileext = ".geojson")
   write_json(json_list, tmpfile, digits = 8, auto_unbox = TRUE)
-  
-  reread_geojson = sf::read_sf(tmpfile)
-  
-  return(reread_geojson)
+  read_sf(tmpfile)
+}
+
+#' Convert an sf object to a json list
+#'
+#' The sf object is written to a temporary file and re-read with jsonlite::read_json().
+#'
+#' @param sf_obj sf table
+#'
+#' @return json list
+#' @importFrom jsonlite read_json
+#' @importFrom sf write_sf
+#' @keywords internal
+sf_to_json = function(sf_obj, layer_name) {
+  tmpfile = tempfile(fileext = ".geojson")
+  write_sf(sf_obj, tmpfile, driver = "GeoJSON", layer = layer_name)
+  read_json(tmpfile)
+}
+
+sf_as_json = function(gtfs_obj) {
+  # TODO use gtfs_reference for geojson-tables
+  if(feed_contains(gtfs_obj, "locations") && inherits(gtfs_obj[["locations"]], "sf")) {
+    locations.json = sf_to_json(gtfs_obj[["locations"]], "locations")
+    locations.json$name <- "locations"
+    # TODO check crs
+    locations.json$crs <- NULL # should be WGS84 anyways
+    gtfs_obj[["locations"]] <- locations.json
+  }
+  gtfs_obj
 }
