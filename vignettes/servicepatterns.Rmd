@@ -1,9 +1,10 @@
 ---
 title: "Service Patterns and Calendar Schedules"
+date: "2023-06-23"
 author: "Flavio Poletti"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{tidytransit-Service Patterns}
+  %\VignetteIndexEntry{Service Patterns and Calendar Schedules}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

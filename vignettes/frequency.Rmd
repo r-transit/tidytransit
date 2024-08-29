@@ -1,10 +1,10 @@
 ---
 title: "Transit (GTFS) Service & Headway Mapping with R"
+date: "2023-06-23"
 author: "Tom Buckley"
-date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{tidytransit-headways}
+  %\VignetteIndexEntry{Transit (GTFS) Service & Headway Mapping with R}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

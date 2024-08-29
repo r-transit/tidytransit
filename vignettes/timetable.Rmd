@@ -1,9 +1,10 @@
 ---
 title: "Generate a Departure Timetable"
+date: "2023-06-23"
 author: "Flavio Poletti"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{tidytransit-Timetable}
+  %\VignetteIndexEntry{Generate a Departure Timetable}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
