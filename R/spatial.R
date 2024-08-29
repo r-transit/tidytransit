@@ -247,3 +247,21 @@ sf_lines_to_df = function(lines_sf,
   names(shps_list) <- lines_sf$shape_id
   dplyr::bind_rows(shps_list, .id = "shape_id")
 }
+
+#' Convert a json (read with jsonlite) to sf object
+#'
+#' The json object is written to a temporary file and re-read with sf::read.
+#'
+#' @param json_list list as read by jsonlite::read_json (in gtfsio)
+#'
+#' @return sf object
+#' @importFrom jsonlite write_json
+#' @keywords internal
+json_to_sf = function(json_list) {
+  tmpfile = tempfile(fileext = ".geojson")
+  write_json(json_list, tmpfile, digits = 8, auto_unbox = TRUE)
+  
+  reread_geojson = sf::read_sf(tmpfile)
+  
+  return(reread_geojson)
+}

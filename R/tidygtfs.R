@@ -54,8 +54,9 @@ gtfs_to_tidygtfs = function(gtfs_list, files = NULL) {
   # add tidygtfs tables
   x <- prepare_tidygtfs_tables(x)
   
-  # convert to tibbles
+  # convert to tibbles/geojson
   x <- convert_list_tables_to_tibbles(x)
+  x <- convert_list_json_to_geojson(x)
   
   # gtfs class base structure
   x <- gtfsio::new_gtfs(x)
@@ -78,7 +79,15 @@ prepare_tidygtfs_tables = function(gtfs_obj) {
 }
 
 convert_list_tables_to_tibbles = function(gtfs_list) {
-  gtfs_list[names(gtfs_list) != "."] <- lapply(gtfs_list[names(gtfs_list) != "."], dplyr::as_tibble)
+  is_dataframe = unlist(lapply(gtfs_list, is.data.frame))
+  
+  gtfs_list[is_dataframe] <- lapply(gtfs_list[is_dataframe], dplyr::as_tibble)
+  return(gtfs_list)
+}
+
+convert_list_json_to_geojson = function(gtfs_list) {
+  is_probably_json = !unlist(lapply(gtfs_list, is.data.frame)) & names(gtfs_list) != "."
+  gtfs_list[is_probably_json] <- lapply(gtfs_list[is_probably_json], json_to_sf)
   return(gtfs_list)
 }
 

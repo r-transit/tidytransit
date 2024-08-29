@@ -184,3 +184,16 @@ test_that("stops cluster", {
   g_nyc2 = cluster_stops(g_nyc2)
   expect_s3_class(g_nyc2, "tidygtfs")
 })
+
+test_that("handle feeds with geojson",{
+  locations_path = system.file("extdata", "locations_feed.zip", package = "tidytransit")
+  
+  # read feed
+  g1 = read_gtfs(locations_path)
+  
+  expect_is(g1[["locations"]], "sf")
+  expect_equal(nrow(g1[["locations"]]), 2)
+  
+  g2 = read_gtfs(locations_path, files = "locations")
+  expect_equal(g2$locations, g1$locations)
+})

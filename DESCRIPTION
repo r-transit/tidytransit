@@ -33,6 +33,7 @@ Imports:
     data.table (>= 1.12.8),
     rlang,
     sf,
+    jsonlite,
     hms,
     digest,
     geodist
