@@ -1,4 +1,5 @@
 # Dates ####
+# convert date for import export
 parse_gtfsio_date = function(gtfsio_date) {
   if(inherits(gtfsio_date, "Date")) {
     return(gtfsio_date)
@@ -6,6 +7,7 @@ parse_gtfsio_date = function(gtfsio_date) {
   as.Date(as.character(gtfsio_date), format = "%Y%m%d")
 }
 
+# convert date for export
 date_as_gtfsio_char = function(date) {
   format(date, format = "%Y%m%d")
 }

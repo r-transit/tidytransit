@@ -3,7 +3,7 @@ create_empty_gtfs_obj <- function() {
   gtfsio::new_gtfs(g)
 }
 
-test_that("convert_times_to_hms() works with valid data", {
+test_that("convert_char_to_hms() works with valid data", {
   gtest <- create_empty_gtfs_obj()
   gtest$stop_times <- data.table::data.table(
     arrival_time = c("08:00:00", "14:00:00", "26:10:00"),
@@ -13,7 +13,7 @@ test_that("convert_times_to_hms() works with valid data", {
     end_time = c("12:00:00")
   )
 
-  gtest <- convert_times_to_hms(gtest)
+  gtest <- convert_char_to_hms(gtest)
   
   expect_s3_class(gtest$stop_times$arrival_time, "hms")
   expect_s3_class(gtest$stop_times$departure_time, "hms")

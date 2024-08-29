@@ -3,44 +3,32 @@
 #' Overwrites character columns in stop_times (arrival_time, departure_time) and 
 #' frequencies (start_time, end_time) with times converted with [hms::hms()].
 #' 
-#' @param gtfs_obj gtfs feed (tidygtfs object)
-#' @return gtfs_obj with hms times columns for stop_times and frequencies
+#' @param gtfs_list gtfs object
+#' @return gtfs_obj with hms times columns for stop_times, frequencies and other 
+#'         fields with type "Time"
 #' 
 #' @importFrom hms new_hms
-convert_times_to_hms <- function(gtfs_obj) {
-  arrival_time_hms <- departure_time_hms <- start_time_hms <- end_time_hms <-  NULL
-  
-  # stop_times ####
-  if(feed_contains(gtfs_obj, "stop_times")) {
-    stopifnot(inherits(gtfs_obj$stop_times, "data.table"))
-    gtfs_obj$stop_times[, arrival_time := hhmmss_to_hms(arrival_time)]
-    gtfs_obj$stop_times[, departure_time := hhmmss_to_hms(departure_time)]
-  }
-  
-  # frequencies ####
-  if(feed_contains(gtfs_obj, "frequencies") && nrow(gtfs_obj$frequencies) > 0) {
-    stopifnot(inherits(gtfs_obj$frequencies, "data.table"))
-    gtfs_obj$frequencies[, start_time := hhmmss_to_hms(start_time)]
-    gtfs_obj$frequencies[, end_time := hhmmss_to_hms(end_time)]
-  }
-  
-  return(gtfs_obj)
+#' @keywords internal
+convert_char_to_hms <- function(gtfs_list) {
+  convert_times(gtfs_list, hhmmss_to_hms)
 }
 
 convert_hms_to_char <- function(gtfs_obj) {
-  if(feed_contains(gtfs_obj, "stop_times")) {
-    stopifnot(inherits(gtfs_obj$stop_times, "data.table"))
-    gtfs_obj$stop_times[, arrival_time := hms_to_hhmmss(arrival_time)]
-    gtfs_obj$stop_times[, departure_time := hms_to_hhmmss(departure_time)]
+  convert_times(gtfs_obj, hms_to_hhmmss)
+}
+
+convert_times <- function(gtfs_obj, parse_function) {
+  for(i in seq_len(nrow(reference_time_fields))) {
+    file = reference_time_fields$file[i]
+    time_field = reference_time_fields$Field_Name[i]
+    if(feed_contains(gtfs_obj, file)) {
+      if(!is.null(gtfs_obj[[file]][[time_field]])) {
+        stopifnot(inherits(gtfs_obj[[file]], "data.table"))
+        gtfs_obj[[file]][, c(time_field) := parse_function(get(time_field))]
+      }
+    }
   }
-  
-  if(feed_contains(gtfs_obj, "frequencies") && nrow(gtfs_obj$frequencies) > 0) {
-    stopifnot(inherits(gtfs_obj$frequencies, "data.table"))
-    gtfs_obj$frequencies[, start_time := hms_to_hhmmss(start_time)]
-    gtfs_obj$frequencies[, end_time := hms_to_hhmmss(end_time)]
-  }
-  
-  gtfs_obj
+  return(gtfs_obj)
 }
 
 # string conversion functions ####
@@ -48,7 +36,7 @@ convert_hms_to_char <- function(gtfs_obj) {
 #' convert a vector of time strings
 #' empty strings are converted to NA
 #' @param time_strings char vector ("HH:MM:SS")
-hhmmss_to_hms = function(time_strings) {
+hhmmss_to_hms <- function(time_strings) {
   if(inherits(time_strings, "hms")) { return(time_strings) }
   empty_strings = nchar(time_strings) == 0
   
