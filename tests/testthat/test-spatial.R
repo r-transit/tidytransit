@@ -140,6 +140,12 @@ test_that("stop_group_distances", {
   expect_equal(colnames(x), c("stop_name", "distances", "n_stop_ids", "dist_mean", "dist_median", "dist_max"))
   expect_true(is.matrix(x$distances[1][[1]]))
   expect_equal(x$n_stop_ids, c(3,2))
+  
+  stopdist_sf = stops_as_sf(stopdist_df)
+  y = stop_group_distances(stopdist_sf)
+  expect_equal(x,y)
+  expect_error(stop_group_distances(stopdist_sf, "stop_group"), 
+               "column stop_group does not exist in stopdist_sf")
 })
 
 test_that("stop_group_distances real feed", {
