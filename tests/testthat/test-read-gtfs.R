@@ -81,31 +81,18 @@ test_that("Feed with additional data can be read", {
   expect_warning(read_gtfs(g_plus_path), "No valid dates defined in feed")
 })
 
-test_that("validation", {
-  g_invalid_path = system.file("extdata","sample-feed-invalid.zip", package = "tidytransit")
-  expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required file(s): stop_times.txt", fixed = T)
-  expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required field(s) in stops: stop_id", fixed = T)
-  
-  # extra table
-  g = read_gtfs(system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit"))
-  g$extra <- "not_a_dataframe"
-  vd = validate_gtfs(g)
-  expect_true(is.na(vd[vd$file == "extra","field"]))
-  
-  expect_error(validate_gtfs(g, files = c("unknown", "other")), "File names not found in gtfs_obj: unknown, other")
-})
-
 test_that("files parameter", {
   path = system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
 
-  file_status = as.data.frame(lapply(gtfs_meta, function(x) { x$file_spec }))
-  req_files = names(file_status)[file_status == "req"]
+  file_status = unlist(lapply(gtfs_reference, `[[`, "File_Presence"))
+
+  req_files = names(file_status)[file_status %in% c("Required", "Conditionally Required")]
+  req_files <- req_files[!req_files %in% c("feed_info", "levels")]
   
   g1 = read_gtfs(path)
   g2 = read_gtfs(path, files = req_files)
   expect_equal(setdiff(names(g1), names(g2)),
-               c("calendar_dates", "fare_attributes", "fare_rules", "frequencies", 
-                 "shapes"))
+               c("fare_attributes", "fare_rules", "frequencies","shapes"))
   
   fns = names(g1)[names(g1) != "." & names(g1) != "calendar_dates"]
   

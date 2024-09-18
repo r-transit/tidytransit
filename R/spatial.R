@@ -165,21 +165,23 @@ shape_as_sf_linestring <- function(df) {
   return(sf::st_linestring(m))
 }
 
-#' Transform or convert coordinates of a gtfs feed
+#' Transform coordinates of a gtfs feed
 #' 
 #' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @param crs target coordinate reference system, used by sf::st_transform
 #' @return tidygtfs object with transformed stops and shapes sf dataframes
 #' 
 #' @importFrom sf st_transform
+#' @return gtfs object with transformed sf tables
 #' @export
 gtfs_transform = function(gtfs_obj, crs) {
-  if(!inherits(gtfs_obj$stops, "sf")) {
-    gtfs_obj <- gtfs_as_sf(gtfs_obj)
+  gtfs_obj <- gtfs_as_sf(gtfs_obj)
+  for(tbl in names(gtfs_obj)) {
+    if(inherits(gtfs_obj[[tbl]], "sf")) {
+      gtfs_obj[[tbl]] <- st_transform(gtfs_obj[[tbl]], crs)
+    }
   }
-  gtfs_obj$stops <- st_transform(gtfs_obj$stops, crs)
-  if(feed_contains(gtfs_obj, "shapes")) gtfs_obj$shapes <- st_transform(gtfs_obj$shapes, crs)
-  gtfs_obj
+  return(gtfs_obj)
 }
 
 #' Convert stops and shapes from sf objects to tibbles
@@ -246,4 +248,47 @@ sf_lines_to_df = function(lines_sf,
   })
   names(shps_list) <- lines_sf$shape_id
   dplyr::bind_rows(shps_list, .id = "shape_id")
+}
+
+#' Convert a json (read with jsonlite) to sf object
+#'
+#' The json object is written to a temporary file and re-read with sf::read().
+#'
+#' @param json_list list as read by jsonlite::read_json (in gtfsio)
+#'
+#' @return sf object
+#' @importFrom jsonlite write_json
+#' @importFrom sf read_sf
+#' @keywords internal
+json_to_sf = function(json_list) {
+  tmpfile = tempfile(fileext = ".geojson")
+  write_json(json_list, tmpfile, digits = 8, auto_unbox = TRUE)
+  read_sf(tmpfile)
+}
+
+#' Convert an sf object to a json list
+#'
+#' The sf object is written to a temporary file and re-read with jsonlite::read_json().
+#'
+#' @param sf_obj sf table
+#'
+#' @return json list
+#' @importFrom jsonlite read_json
+#' @importFrom sf write_sf
+#' @keywords internal
+sf_to_json = function(sf_obj, layer_name) {
+  tmpfile = tempfile(fileext = ".geojson")
+  write_sf(sf_obj, tmpfile, driver = "GeoJSON", layer = layer_name)
+  read_json(tmpfile)
+}
+
+sf_as_json = function(gtfs_obj) {
+  for(geojson_file in names(gtfs_reference_filetype[gtfs_reference_filetype == "geojson"])) {
+    if(feed_contains(gtfs_obj, geojson_file) && inherits(gtfs_obj[[geojson_file]], "sf")) {
+      json = sf_to_json(gtfs_obj[[geojson_file]], geojson_file)
+      json$name <- geojson_file
+      gtfs_obj[[geojson_file]] <- json
+    }
+  }
+  return(gtfs_obj)
 }

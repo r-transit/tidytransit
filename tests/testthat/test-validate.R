@@ -1,10 +1,3 @@
-test_that("specs", {
-  m = get_gtfs_meta()
-  
-  ids = unlist(lapply(m, function(x) x[["primary_key"]]))
-  expect_equal(length(setdiff(c(NA, "stop_id", "route_id", "trip_id", "service_id", "fare_id", "pathway_id", "level_id"), ids)), 0)
-})
-
 test_that("warning for duplicated primary key", {
   g1 = read_gtfs(system.file("extdata", "routing.zip", package = "tidytransit"))
   g1$stops$stop_id[1] <- "stop1a"
@@ -33,4 +26,18 @@ test_that("warning for duplicated primary key", {
 
 test_that("validate non gtfs object", {
   expect_error(validate_gtfs(data.frame(stop_id = "1")), "gtfs_obj must be a gtfs or list object")
+})
+
+test_that("validation", {
+  g_invalid_path = system.file("extdata","sample-feed-invalid.zip", package = "tidytransit")
+  expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required file(s): stop_times.txt", fixed = T)
+  expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required field(s) in stops: stop_id", fixed = T)
+  
+  # extra table
+  g = read_gtfs(system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit"))
+  g$extra <- "not_a_dataframe"
+  vd = validate_gtfs(g)
+  expect_true(is.na(vd[vd$file == "extra","field"]))
+  
+  expect_error(validate_gtfs(g, files = c("unknown", "other")), "File names not found in gtfs_obj: unknown, other")
 })

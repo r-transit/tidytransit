@@ -140,6 +140,12 @@ test_that("stop_group_distances", {
   expect_equal(colnames(x), c("stop_name", "distances", "n_stop_ids", "dist_mean", "dist_median", "dist_max"))
   expect_true(is.matrix(x$distances[1][[1]]))
   expect_equal(x$n_stop_ids, c(3,2))
+  
+  stopdist_sf = stops_as_sf(stopdist_df)
+  y = stop_group_distances(stopdist_sf)
+  expect_equal(x,y)
+  expect_error(stop_group_distances(stopdist_sf, "stop_group"), 
+               "column stop_group does not exist in stopdist_sf")
 })
 
 test_that("stop_group_distances real feed", {
@@ -183,4 +189,48 @@ test_that("stops cluster", {
   # piping gtfs_obj
   g_nyc2 = cluster_stops(g_nyc2)
   expect_s3_class(g_nyc2, "tidygtfs")
+})
+
+test_that("handle feeds with geojson",{
+  locations_path = system.file("extdata", "locations_feed.zip", package = "tidytransit")
+  gtfsio_tmpdir = tempfile("gtfsio")
+  gtfsio0 = gtfsio::import_gtfs(locations_path)
+  gtfsio::export_gtfs(gtfsio0, gtfsio_tmpdir, as_dir = TRUE)
+  
+  # convert json/sf
+  locations.geojson = file.path(gtfsio_tmpdir, "locations.geojson")
+  sf_expected = sf::read_sf(locations.geojson)
+  json_expected = jsonlite::read_json(locations.geojson)
+  
+  sf_actual = json_to_sf(json_expected)
+  expect_equal(sf_actual, sf_expected)
+  
+  json_actual = sf_to_json(sf_actual, "locations")
+  expect_equal(json_actual, json_expected)
+  expect_equal(gtfsio0$locations, json_expected)
+  
+  # read feed
+  tidygtfs1 = read_gtfs(locations_path)
+  expect_is(tidygtfs1[["locations"]], "sf")
+  expect_equal(nrow(tidygtfs1[["locations"]]), 2)
+  
+  tidygtfs2 = read_gtfs(locations_path, files = "locations")
+  expect_equal(tidygtfs2$locations, tidygtfs1$locations)
+  
+  # transform
+  tidygtfs3 <- gtfs_transform(tidygtfs1, 2232)
+  expect_equal(sf::st_crs(tidygtfs3$stops)$input, "EPSG:2232")
+  expect_equal(sf::st_crs(tidygtfs3$shapes)$input, "EPSG:2232")
+  expect_equal(sf::st_crs(tidygtfs3$locations)$input, "EPSG:2232")
+  
+  # write and re-read feed
+  tidygtfs_zip1 = tempfile("tidygtfs", fileext = ".zip")
+  write_gtfs(tidygtfs1, tidygtfs_zip1)
+  tidygtfs_zip2 = tempfile("tidygtfs", fileext = ".zip")
+  write_gtfs(tidygtfs2, tidygtfs_zip2)
+  
+  reread1 = read_gtfs(tidygtfs_zip1)
+  expect_equal(reread1$locations, tidygtfs1$locations)
+  reread2 = read_gtfs(tidygtfs_zip2, files = "locations")
+  expect_equal(reread2$locations, tidygtfs1$locations)
 })

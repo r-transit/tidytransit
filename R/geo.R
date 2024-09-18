@@ -125,11 +125,11 @@ prep_dist_mtrx = function(dist_list) {
 #' @export
 stop_group_distances = function(gtfs_stops, by = "stop_name") {
   distances <- n_stop_ids <- dist_mean <- dist_median <- dist_max <- NULL
-  if(inherits(gtfs_stops, "sf")) {
-    gtfs_stops <- sf_points_to_df(gtfs_stops, c("stop_lon", "stop_lat"), TRUE)
-  }
   if(!by %in% colnames(gtfs_stops)) {
     stop("column ", by, " does not exist in ", deparse(substitute(gtfs_stops)))
+  }
+  if(inherits(gtfs_stops, "sf")) {
+    gtfs_stops <- sf_points_to_df(gtfs_stops, c("stop_lon", "stop_lat"), TRUE)
   }
   n_stops = table(gtfs_stops$stop_name)
   

@@ -1,54 +1,7 @@
-#' Convert time columns to hms::hms in feed
-#' 
-#' Overwrites character columns in stop_times (arrival_time, departure_time) and 
-#' frequencies (start_time, end_time) with times converted with [hms::hms()].
-#' 
-#' @param gtfs_obj gtfs feed (tidygtfs object)
-#' @return gtfs_obj with hms times columns for stop_times and frequencies
-#' 
-#' @importFrom hms new_hms
-convert_times_to_hms <- function(gtfs_obj) {
-  arrival_time_hms <- departure_time_hms <- start_time_hms <- end_time_hms <-  NULL
-  
-  # stop_times ####
-  if(feed_contains(gtfs_obj, "stop_times")) {
-    stopifnot(inherits(gtfs_obj$stop_times, "data.table"))
-    gtfs_obj$stop_times[, arrival_time := hhmmss_to_hms(arrival_time)]
-    gtfs_obj$stop_times[, departure_time := hhmmss_to_hms(departure_time)]
-  }
-  
-  # frequencies ####
-  if(feed_contains(gtfs_obj, "frequencies") && nrow(gtfs_obj$frequencies) > 0) {
-    stopifnot(inherits(gtfs_obj$frequencies, "data.table"))
-    gtfs_obj$frequencies[, start_time := hhmmss_to_hms(start_time)]
-    gtfs_obj$frequencies[, end_time := hhmmss_to_hms(end_time)]
-  }
-  
-  return(gtfs_obj)
-}
-
-convert_hms_to_char <- function(gtfs_obj) {
-  if(feed_contains(gtfs_obj, "stop_times")) {
-    stopifnot(inherits(gtfs_obj$stop_times, "data.table"))
-    gtfs_obj$stop_times[, arrival_time := hms_to_hhmmss(arrival_time)]
-    gtfs_obj$stop_times[, departure_time := hms_to_hhmmss(departure_time)]
-  }
-  
-  if(feed_contains(gtfs_obj, "frequencies") && nrow(gtfs_obj$frequencies) > 0) {
-    stopifnot(inherits(gtfs_obj$frequencies, "data.table"))
-    gtfs_obj$frequencies[, start_time := hms_to_hhmmss(start_time)]
-    gtfs_obj$frequencies[, end_time := hms_to_hhmmss(end_time)]
-  }
-  
-  gtfs_obj
-}
-
-# string conversion functions ####
-
 #' convert a vector of time strings
 #' empty strings are converted to NA
 #' @param time_strings char vector ("HH:MM:SS")
-hhmmss_to_hms = function(time_strings) {
+hhmmss_to_hms <- function(time_strings) {
   if(inherits(time_strings, "hms")) { return(time_strings) }
   empty_strings = nchar(time_strings) == 0
   
