@@ -7,9 +7,9 @@
 \method{summary}{tidygtfs}(object, ...)
 }
 \arguments{
-\item{object}{a gtfs_obj as read by \code{\link[=read_gtfs]{read_gtfs()}}}
+\item{object}{a tidygtfs object as read by \code{\link[=read_gtfs]{read_gtfs()}}}
 
-\item{...}{further specifications}
+\item{...}{ignored for tidygtfs}
 }
 \value{
 the tidygtfs object, invisibly

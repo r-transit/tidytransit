@@ -7,9 +7,9 @@
 \method{plot}{tidygtfs}(x, ...)
 }
 \arguments{
-\item{x}{a gtfs_obj as read by read_gtfs()}
+\item{x}{a tidygtfs object as read by \code{\link[=read_gtfs]{read_gtfs()}}}
 
-\item{...}{further specifications}
+\item{...}{ignored for tidygtfs}
 }
 \value{
 plot

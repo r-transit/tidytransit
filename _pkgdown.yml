@@ -15,7 +15,7 @@ reference:
   - filter_feed_by_stops
   - filter_feed_by_trips
   - filter_stops
-- title: "Analyse"
+- title: "Analyse GTFS objects"
   contents:
   - validate_gtfs
   - set_servicepattern

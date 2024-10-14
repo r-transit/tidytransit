@@ -42,12 +42,6 @@
 #'             travel time is returned. With `earliest` the journey arriving at a stop the
 #'             earliest is returned, `latest` works accordingly.
 #'
-#' All departures from `stop_ids` within
-#'                   the time range stop_id in
-#'                   `stop_ids`) within `time_range` are considered. If `arrival` is TRUE,
-#'                   all arrivals within `time_range` before the latest arrival time of
-#'                   stop_times are considered.
-#'
 #' @return A data.table with journeys (departure, arrival and travel time) to/from all
 #'         stop_ids reachable by `stop_ids`.
 #'

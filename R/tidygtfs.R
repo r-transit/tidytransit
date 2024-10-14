@@ -20,7 +20,7 @@ as_tidygtfs.gtfs = function(x, ...) {
 
 #' @export
 as_tidygtfs.dt_gtfs = function(x, ...) {
-  gtfs_to_tidygtfs(x)
+  gtfs_to_tidygtfs(x, ...)
 }
 
 #' @export

@@ -16,5 +16,5 @@
 #' Data obtained from 
 #' \url{https://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip}. 
 #' @docType data
-#' @seealso read_gtfs
+#' @seealso [read_gtfs()]
 "gtfs_duke"

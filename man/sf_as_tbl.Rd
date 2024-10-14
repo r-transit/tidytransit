@@ -13,7 +13,8 @@ sf_as_tbl(gtfs_obj)
 tidygtfs object with stops and shapes converted to tibbles
 }
 \description{
-Coordinates are transformed to lon/lat
+Coordinates are transformed to lon/lat columns (\code{stop_lon}/\code{stop_lat} or
+\code{shape_pt_lon}/\code{shape_pt_lat})
 }
 \seealso{
 \code{\link{gtfs_as_sf}}

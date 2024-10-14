@@ -13,7 +13,6 @@ set_dates_services(gtfs_obj)
 a date_service data frame
 }
 \description{
-Use it to summarise service. For example, get a count of the number of
-services for a date. See example.
+Returns all possible date/service_id combinations as a data frame
 }
 \keyword{internal}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/time.R
 \name{hhmmss_to_hms}
 \alias{hhmmss_to_hms}
-\title{convert a vector of time strings
+\title{Convert "HH:MM:SS" time strings to hms values
 empty strings are converted to NA}
 \usage{
 hhmmss_to_hms(time_strings)
@@ -11,7 +11,7 @@ hhmmss_to_hms(time_strings)
 \item{time_strings}{char vector ("HH:MM:SS")}
 }
 \description{
-convert a vector of time strings
+Convert "HH:MM:SS" time strings to hms values
 empty strings are converted to NA
 }
 \keyword{internal}

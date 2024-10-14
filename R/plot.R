@@ -1,7 +1,7 @@
 #' Plot GTFS stops and trips
 #'
-#' @param x a gtfs_obj as read by read_gtfs()
-#' @param ... further specifications
+#' @param x a tidygtfs object as read by [read_gtfs()]
+#' @param ... ignored for tidygtfs
 #' @return plot
 #'
 #' @examples \donttest{
@@ -13,7 +13,6 @@
 #' }
 #' 
 #' @importFrom graphics plot
-#' @importFrom dplyr select
 #' @export
 plot.tidygtfs <- function(x, ...) {
   dots <- list(...)

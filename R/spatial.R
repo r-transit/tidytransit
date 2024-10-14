@@ -186,12 +186,15 @@ gtfs_transform = function(gtfs_obj, crs) {
 
 #' Convert stops and shapes from sf objects to tibbles
 #' 
-#' Coordinates are transformed to lon/lat
+#' Coordinates are transformed to lon/lat columns (`stop_lon`/`stop_lat` or 
+#' `shape_pt_lon`/`shape_pt_lat`)
+#' 
 #' @param gtfs_obj gtfs feed (tidygtfs object)
 #' 
 #' @return tidygtfs object with stops and shapes converted to tibbles
 #' 
 #' @seealso \code{\link{gtfs_as_sf}}
+#' 
 #' @export
 sf_as_tbl = function(gtfs_obj) {
   if(inherits(gtfs_obj$stops, "sf")) {

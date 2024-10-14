@@ -9,9 +9,9 @@ read_gtfs(path, files = NULL, quiet = TRUE, ...)
 \arguments{
 \item{path}{The path to a GTFS \code{.zip} file.}
 
-\item{files}{A character vector containing the text files to be read from the
-GTFS (without the \code{.txt} extension). If \code{NULL} (the default) all
-existing files are read.}
+\item{files}{A character vector containing the text files to be validated against the GTFS
+specification without the file extension (\code{txt} or \code{geojson}). If \code{NULL} (the default),
+all existing files are read.}
 
 \item{quiet}{Whether to hide log messages and progress bars (defaults to TRUE).}
 
@@ -19,12 +19,12 @@ existing files are read.}
 \code{files} and \code{quiet} are passed on by default.}
 }
 \value{
-A tidygtfs object: a list of tibbles in which each entry represents a
-GTFS text file. Additional tables are stored in the \code{.} sublist.
+A tidygtfs object: a list of tibbles in which each entry represents a GTFS text
+file. Additional tables are stored in the \code{.} sublist.
 }
 \description{
-Reads GTFS text files from either a local \code{.zip} file or an URL and
-validates them against GTFS specifications.
+Reads a GTFS feed from either a local \code{.zip} file or an URL and validates them againts
+GTFS specifications.
 }
 \examples{
 \dontrun{
@@ -37,5 +37,5 @@ names(gtfs)
 }
 }
 \seealso{
-\code{\link{validate_gtfs}}
+\code{\link[=validate_gtfs]{validate_gtfs()}}, \code{\link[=write_gtfs]{write_gtfs()}}
 }

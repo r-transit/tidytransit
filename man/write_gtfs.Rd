@@ -9,19 +9,24 @@ write_gtfs(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE)
 \arguments{
 \item{gtfs_obj}{gtfs feed (tidygtfs object)}
 
-\item{zipfile}{path to the zip file the feed should be written to}
+\item{zipfile}{path to the zip file the feed should be written to. The file is overwritten
+if it already exists.}
 
-\item{compression_level}{a number between 1 and 9.9, passed to zip::zip}
+\item{compression_level}{a number between 1 and 9, defaults to 9 (best compression).}
 
-\item{as_dir}{if TRUE, the feed is not zipped and zipfile is used as a directory path.
-Files within the directory will be overwritten.}
+\item{as_dir}{if \code{TRUE}, the feed is not zipped and zipfile is used as a directory path.
+The directory will be overwritten if it already exists.}
 }
 \value{
-Invisibly returns gtfs_obj
+Invisibly returns \code{gtfs_obj}
 }
 \description{
 Write a tidygtfs object to a zip file
 }
 \note{
-Auxilliary tidytransit tables (e.g. \code{dates_services}) are not exported.
+Auxilliary tidytransit tables (e.g. \code{dates_services}) are not exported. Calls
+\code{\link[gtfsio:export_gtfs]{gtfsio::export_gtfs()}} after preparing the data.
+}
+\seealso{
+\code{\link[=read_gtfs]{read_gtfs()}}
 }

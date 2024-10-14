@@ -11,9 +11,6 @@
 
 #' Returns all possible date/service_id combinations as a data frame
 #' 
-#' Use it to summarise service. For example, get a count of the number of 
-#' services for a date. See example. 
-#' 
 #' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @return a date_service data frame
 #' 

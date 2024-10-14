@@ -2,7 +2,7 @@
 % Please edit documentation in R/validate_gtfs.R
 \name{validate_gtfs}
 \alias{validate_gtfs}
-\title{Validate GTFS file}
+\title{Validate GTFS feed}
 \usage{
 validate_gtfs(gtfs_obj, files = NULL, warnings = TRUE)
 }
@@ -10,11 +10,11 @@ validate_gtfs(gtfs_obj, files = NULL, warnings = TRUE)
 \item{gtfs_obj}{gtfs object (i.e. a list of tables, not necessary a tidygtfs object)}
 
 \item{files}{A character vector containing the text files to be validated
-against the GTFS specification (without the \code{.txt} extension). If
-\code{NULL} (the default) the provided GTFS is validated against all
+against the GTFS specification without the file extension (\code{txt} or \code{geojson}). If
+\code{NULL} (the default), the provided GTFS feed is validated against all
 possible GTFS text files.}
 
-\item{warnings}{Whether to display warning messages (defaults to TRUE).}
+\item{warnings}{Whether to display warning messages (defaults to \code{TRUE}).}
 }
 \value{
 A \code{validation_result} tibble containing the validation summary of all
@@ -22,7 +22,7 @@ possible fields from the specified files.
 }
 \description{
 Validates the GTFS object against GTFS specifications and raises warnings if
-required files/fields are not found. This function is called in \code{\link{read_gtfs}}.
+required files/fields are not found. This function is called in \code{\link[=read_gtfs]{read_gtfs()}}.
 }
 \details{
 Note that this function just checks if required files or fields are missing. There's no

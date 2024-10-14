@@ -1,4 +1,4 @@
-#' convert a vector of time strings
+#' Convert "HH:MM:SS" time strings to hms values
 #' empty strings are converted to NA
 #' @param time_strings char vector ("HH:MM:SS")
 #' @keywords internal
@@ -17,8 +17,9 @@ hhmmss_to_hms <- function(time_strings) {
   return(hms::new_hms(time_seconds))
 }
 
-#' Function to convert "HH:MM:SS" time strings to seconds.
-#' @param hhmmss_str string
+#' Convert "HH:MM:SS" time strings to seconds (numeric)
+#' empty strings are converted to NA
+#' @param hhmmss_str char vector ("HH:MM:SS")
 #' @keywords internal
 hhmmss_to_seconds <- function(hhmmss_str) {
   as.numeric(substr(hhmmss_str, 0, 2)) * 3600 +
@@ -55,11 +56,12 @@ replace_NA_times = function(stop_times) {
 # interpolate stop_times ####
 
 #' Interpolate missing stop_times linearly
-#' Uses shape_dist_traveled if available
+#' 
 #' @param x tidygtfs object or stop_times table
-#' @param use_shape_dist if available, use shape_dist_traveled column for time
-#'                       interpolation. If shape_dist_traveled is missing, times
-#'                       are interpolated equally between stops. 
+#' @param use_shape_dist If TRUE, use `shape_dist_traveled` column from the shapes table for 
+#'                       time interpolation (if that column is available). If FALSE or 
+#'                       `shape_dist_traveled` is missing, times are interpolated equally 
+#'                       between stops. 
 #' @return tidygtfs or stop_times with interpolated arrival and departure times
 #' @examples
 #' \dontrun{

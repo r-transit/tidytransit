@@ -1,7 +1,7 @@
-#' Validate GTFS file
+#' Validate GTFS feed
 #'
 #' Validates the GTFS object against GTFS specifications and raises warnings if
-#' required files/fields are not found. This function is called in \code{\link{read_gtfs}}.
+#' required files/fields are not found. This function is called in [read_gtfs()].
 #' 
 #' Note that this function just checks if required files or fields are missing. There's no
 #' validation for internal consistency (e.g. no departure times before arrival times or 
@@ -9,10 +9,10 @@
 #'
 #' @param gtfs_obj gtfs object (i.e. a list of tables, not necessary a tidygtfs object)
 #' @param files A character vector containing the text files to be validated
-#'   against the GTFS specification (without the \code{.txt} extension). If
-#'   \code{NULL} (the default) the provided GTFS is validated against all
+#'   against the GTFS specification without the file extension (`txt` or `geojson`). If
+#'   `NULL` (the default), the provided GTFS feed is validated against all
 #'   possible GTFS text files.
-#' @param warnings Whether to display warning messages (defaults to TRUE).
+#' @param warnings Whether to display warning messages (defaults to `TRUE`).
 #'
 #' @return A \code{validation_result} tibble containing the validation summary of all
 #'   possible fields from the specified files.
@@ -40,7 +40,7 @@
 #'   \item \code{feed_info.txt} is initially set as an optional file. If
 #'     \code{translations.txt} is present, however, it becomes required.
 #' }
-#'
+#' 
 #' @examples
 #' validate_gtfs(gtfs_duke)
 #' #> # A tibble: 233 × 8

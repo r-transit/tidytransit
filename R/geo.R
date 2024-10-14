@@ -6,8 +6,8 @@
 #' @return Returns a data.frame with each row containing a pair of stop_ids (columns
 #'         `from_stop_id` and `to_stop_id`) and the `distance` between them (in meters)
 #'        
-#' @note The resulting data.frame has nrow(gtfs_stops)^2 rows, distances calculations 
-#'       among all stops for large feeds should be avoided
+#' @note The resulting data.frame has `nrow(gtfs_stops)^2` rows, distances calculations 
+#'       among all stops for large feeds should be avoided.
 #'       
 #' @examples
 #' \dontrun{
@@ -93,7 +93,7 @@ prep_dist_mtrx = function(dist_list) {
 #' By default calculates distances among stop_ids with the same stop_name.
 #' 
 #' @inheritParams stop_distances
-#' @param by group column, default: stop_name
+#' @param by group column, default: "stop_name"
 #' 
 #' @returns data.frame with one row per group containing a distance matrix (distances),
 #'          number of stop ids within that group (n_stop_ids) and distance summary values 

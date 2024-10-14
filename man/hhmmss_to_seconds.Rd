@@ -2,14 +2,16 @@
 % Please edit documentation in R/time.R
 \name{hhmmss_to_seconds}
 \alias{hhmmss_to_seconds}
-\title{Function to convert "HH:MM:SS" time strings to seconds.}
+\title{Convert "HH:MM:SS" time strings to seconds (numeric)
+empty strings are converted to NA}
 \usage{
 hhmmss_to_seconds(hhmmss_str)
 }
 \arguments{
-\item{hhmmss_str}{string}
+\item{hhmmss_str}{char vector ("HH:MM:SS")}
 }
 \description{
-Function to convert "HH:MM:SS" time strings to seconds.
+Convert "HH:MM:SS" time strings to seconds (numeric)
+empty strings are converted to NA
 }
 \keyword{internal}

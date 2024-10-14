@@ -7,7 +7,7 @@
 \method{print}{tidygtfs}(x, ...)
 }
 \arguments{
-\item{x}{A GTFS object.}
+\item{x}{a tidygtfs object as read by \code{\link[=read_gtfs]{read_gtfs()}}}
 
 \item{...}{Optional arguments ultimately passed to \code{format}.}
 }
@@ -15,7 +15,8 @@
 The GTFS object that was printed, invisibly
 }
 \description{
-Prints a GTFS object suppressing the \code{class} attribute.
+Prints a GTFS object suppressing the \code{class} attribute and hiding the
+validation_result attribute, created with \code{\link[=validate_gtfs]{validate_gtfs()}}.
 }
 \examples{
  \dontrun{

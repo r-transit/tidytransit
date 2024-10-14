@@ -42,13 +42,7 @@ latest possible journey departure time) as seconds or
 \item{keep}{One of c("all", "shortest", "earliest", "latest"). By default, \code{all} journeys
 between stop_ids are returned. With \code{shortest} only the journey with shortest
 travel time is returned. With \code{earliest} the journey arriving at a stop the
-earliest is returned, \code{latest} works accordingly.
-
-All departures from \code{stop_ids} within
-the time range stop_id in
-\code{stop_ids}) within \code{time_range} are considered. If \code{arrival} is TRUE,
-all arrivals within \code{time_range} before the latest arrival time of
-stop_times are considered.}
+earliest is returned, \code{latest} works accordingly.}
 }
 \value{
 A data.table with journeys (departure, arrival and travel time) to/from all

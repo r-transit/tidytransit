@@ -18,8 +18,8 @@ Returns a data.frame with each row containing a pair of stop_ids (columns
 Calculate distances between a given set of stops
 }
 \note{
-The resulting data.frame has nrow(gtfs_stops)^2 rows, distances calculations
-among all stops for large feeds should be avoided
+The resulting data.frame has \code{nrow(gtfs_stops)^2} rows, distances calculations
+among all stops for large feeds should be avoided.
 }
 \examples{
 \dontrun{

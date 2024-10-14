@@ -2,24 +2,23 @@
 % Please edit documentation in R/time.R
 \name{interpolate_stop_times}
 \alias{interpolate_stop_times}
-\title{Interpolate missing stop_times linearly
-Uses shape_dist_traveled if available}
+\title{Interpolate missing stop_times linearly}
 \usage{
 interpolate_stop_times(x, use_shape_dist = TRUE)
 }
 \arguments{
 \item{x}{tidygtfs object or stop_times table}
 
-\item{use_shape_dist}{if available, use shape_dist_traveled column for time
-interpolation. If shape_dist_traveled is missing, times
-are interpolated equally between stops.}
+\item{use_shape_dist}{If TRUE, use \code{shape_dist_traveled} column from the shapes table for
+time interpolation (if that column is available). If FALSE or
+\code{shape_dist_traveled} is missing, times are interpolated equally
+between stops.}
 }
 \value{
 tidygtfs or stop_times with interpolated arrival and departure times
 }
 \description{
 Interpolate missing stop_times linearly
-Uses shape_dist_traveled if available
 }
 \examples{
 \dontrun{

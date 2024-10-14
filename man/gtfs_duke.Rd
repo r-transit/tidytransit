@@ -15,6 +15,6 @@ Data obtained from
 \url{https://data.trilliumtransit.com/gtfs/duke-nc-us/duke-nc-us.zip}.
 }
 \seealso{
-read_gtfs
+\code{\link[=read_gtfs]{read_gtfs()}}
 }
 \keyword{datasets}

@@ -1,8 +1,9 @@
 #' Print a GTFS object
 #'
-#' Prints a GTFS object suppressing the \code{class} attribute.
+#' Prints a GTFS object suppressing the \code{class} attribute and hiding the 
+#' validation_result attribute, created with [validate_gtfs()]. 
 #'
-#' @param x A GTFS object.
+#' @param x a tidygtfs object as read by [read_gtfs()]
 #' @param ... Optional arguments ultimately passed to \code{format}.
 #'
 #' @return The GTFS object that was printed, invisibly
@@ -25,12 +26,12 @@ print.tidygtfs = function(x, ...) {
 
 #' GTFS feed summary
 #'
-#' @param object a gtfs_obj as read by [read_gtfs()]
+#' @param object a tidygtfs object as read by [read_gtfs()]
 #' @export
 #' 
 #' @return the tidygtfs object, invisibly
 #' 
-#' @param ... further specifications
+#' @param ... ignored for tidygtfs
 #' @importFrom dplyr select arrange filter
 summary.tidygtfs <- function(object, ...) {
   dots <- list(...)
