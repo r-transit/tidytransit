@@ -96,7 +96,7 @@ shapes_as_sf <- function(gtfs_shapes, crs = NULL) {
 #' routes_sf <- get_route_geometry(gtfs_duke_sf)
 #' plot(routes_sf[c(1,1350),])
 get_route_geometry <- function(gtfs_sf_obj, route_ids = NULL, service_ids = NULL) {
-  if(!"sf" %in% class(gtfs_sf_obj$shapes)) {
+  if(!inherits(gtfs_sf_obj$shapes, "sf")) {
     stop("shapes not converted to sf, use gtfs_obj <- gtfs_as_sf(gtfs_obj)")
   }
   trips <- gtfs_sf_obj$trips
@@ -137,7 +137,7 @@ get_route_geometry <- function(gtfs_sf_obj, route_ids = NULL, service_ids = NULL
 #' trips_sf <- get_trip_geometry(gtfs_duke, c("t_726295_b_19493_tn_41", "t_726295_b_19493_tn_40"))
 #' plot(trips_sf[1,])
 get_trip_geometry <- function(gtfs_sf_obj, trip_ids) {
-  if(!"sf" %in% class(gtfs_sf_obj$shapes)) {
+  if(!inherits(gtfs_sf_obj$shapes, "sf")) {
     stop("shapes not converted to sf, use gtfs_obj <- gtfs_as_sf(gtfs_obj)")
   }
   id_diff = setdiff(trip_ids, gtfs_sf_obj$trips$trip_id)
@@ -215,7 +215,7 @@ sf_points_to_df = function(pts_sf,
   stopifnot(length(coord_colnames) == 2)
   
   pts_sf <- sf::st_transform(pts_sf, 4326)
-  mtrx = matrix(unlist(sf::st_geometry(pts_sf)), ncol = 2, byrow = T)
+  mtrx = matrix(unlist(sf::st_geometry(pts_sf)), ncol = 2, byrow = TRUE)
   pts_sf[coord_colnames[1]] <- mtrx[,1]
   pts_sf[coord_colnames[2]] <- mtrx[,2]
 
@@ -241,8 +241,8 @@ sf_lines_to_df = function(lines_sf,
   shps_list = lapply(sf::st_geometry(lines_sf), function(x) {
     df = as.data.frame(as.matrix(x))
     colnames(df) <- coord_colnames
-    df$shape_pt_sequence <- 1:nrow(df)
-    gdist = geodist(df[c("shape_pt_lon", "shape_pt_lat")], sequential = T)
+    df$shape_pt_sequence <- seq_len(nrow(df))
+    gdist = geodist(df[c("shape_pt_lon", "shape_pt_lat")], sequential = TRUE)
     df$shape_dist_traveled <- c(0, cumsum(round(gdist,1)))
     df
   })

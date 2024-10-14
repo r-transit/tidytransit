@@ -78,7 +78,7 @@ interpolate_stop_times = function(x, use_shape_dist = TRUE) {
     stoptimes = x
   }
   
-  stoptimes$....rowindex <- 1:nrow(stoptimes)
+  stoptimes$....rowindex <- seq_len(nrow(stoptimes))
   if(!use_shape_dist || !("shape_dist_traveled" %in% colnames(stoptimes))) {
     stoptimes$....shape_dist_traveled <- stoptimes$stop_sequence
   } else {
@@ -110,11 +110,11 @@ interpolate_stop_times = function(x, use_shape_dist = TRUE) {
 }
 
 approx_NA = function(values, x = NULL) {
-  if(!any(is.na(values))) {
+  if(!anyNA(values)) {
     return(values)
   }
   if(is.null(x)) {
-    x <- 1:length(values) 
+    x <- seq_len(length(values))
   }
   
   values_approx = stats::approx(x, values, x[is.na(values)], ties = "ordered")$y

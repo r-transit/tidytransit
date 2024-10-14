@@ -48,8 +48,8 @@ set_dates_services <- function(gtfs_obj) {
         "saturday")[as.POSIXlt(date)$wday + 1]
     }
     
-    min_date = min(feed_dates$calendar, na.rm = T)
-    max_date = max(feed_dates$calendar, na.rm = T)
+    min_date = min(feed_dates$calendar, na.rm = TRUE)
+    max_date = max(feed_dates$calendar, na.rm = TRUE)
     # get first and last date of a feed
     dates <- dplyr::tibble(
       date = seq(min_date, max_date, 1),

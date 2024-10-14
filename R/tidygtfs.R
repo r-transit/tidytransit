@@ -43,7 +43,7 @@ gtfs_to_tidygtfs = function(gtfs_list, files = NULL) {
   tbl_with_duplicated_ids = duplicated_primary_keys(gtfs_list)
   if(any(tbl_with_duplicated_ids)) {
     warning("Duplicated ids found in: ", 
-            paste0(names(tbl_with_duplicated_ids[tbl_with_duplicated_ids]), collapse = ", "), "\n",
+            paste(names(tbl_with_duplicated_ids[tbl_with_duplicated_ids]), collapse = ", "), "\n",
             "The returned object is not a tidygtfs object, you can use as_tidygtfs() after fixing the issue.")
     return(gtfs_list)
   }

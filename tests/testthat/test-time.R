@@ -150,8 +150,8 @@ test_that("interpolate stop_times", {
   
   gtfs_duke2 = interpolate_stop_times(gtfs_duke)
   expect_equal(class(gtfs_duke2$stop_times), class(gtfs_duke$stop_times))
-  expect_false(any(is.na(gtfs_duke2$stop_times$arrival_time)))
-  expect_false(any(is.na(gtfs_duke2$stop_times$departure_time)))
+  expect_false(anyNA(gtfs_duke2$stop_times$arrival_time))
+  expect_false(anyNA(gtfs_duke2$stop_times$departure_time))
 })
 
 test_that("approx_NA", {

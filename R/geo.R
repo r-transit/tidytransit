@@ -159,7 +159,7 @@ stop_group_distances = function(gtfs_stops, by = "stop_name") {
     dplyr::mutate(distances = list(matrix(0)), n_stop_ids = 1, dist_mean = 0, dist_median = 0, dist_max = 0)
 
   dists = dplyr::as_tibble(dplyr::bind_rows(gtfs_single_stops, gtfs_multip_stops))
-  dists[order(dists$dist_max, dists$n_stop_ids, dists[[by]], decreasing = T),]
+  dists[order(dists$dist_max, dists$n_stop_ids, dists[[by]], decreasing = TRUE),]
 }
 
 #' Cluster nearby stops within a group

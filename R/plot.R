@@ -21,9 +21,9 @@ plot.tidygtfs <- function(x, ...) {
     stop("Feed doesn't contain a stops table")
   }
   x_stops <- x$stops 
-  if(!"sf" %in% class(x$stops))  x_stops <- stops_as_sf(x$stops)
+  if(!inherits(x$stops, "sf"))  x_stops <- stops_as_sf(x$stops)
 
-  if("sf" %in% class(x$shapes)) {
+  if(inherits(x$shapes, "sf")) {
     plot(x$shapes["shape_id"], reset = FALSE, main = agency_info(x))
     plot(x_stops[,"stop_id"], add = TRUE)
   } else {

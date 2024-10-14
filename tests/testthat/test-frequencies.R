@@ -5,7 +5,7 @@ test_that("Stop frequencies (headways) for included data are as expected", {
 
   stops_frequency <- get_stop_frequency(gtfs_duke, service_ids = "c_853_b_19828_d_64")
   ex_address <- stops_frequency$mean_headway[stops_frequency$stop_id==778058]
-  expect_equal(as.integer(711), as.integer(ex_address))
+  expect_equal(711L, as.integer(ex_address))
   
   stops_frequency_by_route <- get_stop_frequency(gtfs_duke, 
                                                  service_ids = "c_853_b_19828_d_64",

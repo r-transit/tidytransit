@@ -9,7 +9,7 @@ test_that("warning for duplicated primary key", {
   g1b = convert_list_tables_to_data.tables(g1a)
   d1 = duplicated_primary_keys(g1a)
   d2 = duplicated_primary_keys(g1a)
-  expect_equal(unname(d1), c(F, T, F, T, T))
+  expect_equal(unname(d1), c(FALSE, TRUE, FALSE, TRUE, TRUE))
   expect_equal(d1, d2)
   
   # within as_tidygtfs
@@ -30,8 +30,8 @@ test_that("validate non gtfs object", {
 
 test_that("validation", {
   g_invalid_path = system.file("extdata","sample-feed-invalid.zip", package = "tidytransit")
-  expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required file(s): stop_times.txt", fixed = T)
-  expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required field(s) in stops: stop_id", fixed = T)
+  expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required file(s): stop_times.txt", fixed = TRUE)
+  expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required field(s) in stops: stop_id", fixed = TRUE)
   
   # extra table
   g = read_gtfs(system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit"))

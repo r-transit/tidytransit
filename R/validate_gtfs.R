@@ -252,7 +252,7 @@ duplicated_primary_keys = function(gtfs_list) {
   for(tbl_name in intersect(names(gtfs_list), names(gtfs_reference))) {
     id_fields = gtfs_reference[[tbl_name]]$primary_key
     
-    if(all(!is.na(id_fields))) {
+    if(!anyNA(id_fields)) {
       if(length(id_fields) == 1 && id_fields == "*") {
         id_fields <- colnames(gtfs_list[[tbl_name]])
       }

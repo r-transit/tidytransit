@@ -103,7 +103,7 @@ travel_times = function(filtered_stop_times,
                         stop_dist_check = 300) {
   travel_time <- journey_arrival_time <- journey_departure_time <- NULL
   stop_names = stop_name; rm(stop_name)
-  if("tidygtfs" %in% class(filtered_stop_times)) {
+  if(inherits(filtered_stop_times, "tidygtfs")) {
     gtfs_obj = filtered_stop_times
     if(is.null(attributes(gtfs_obj$stop_times)$extract_date)) {
       stop("Travel times cannot be calculated with an unfiltered tidygtfs object. Use filter_feed_by_date().")
@@ -126,7 +126,7 @@ travel_times = function(filtered_stop_times,
   # get stop_ids of names
   stop_ids = stops$stop_id[which(stops$stop_name %in% stop_names)]
   if(length(stop_ids) == 0) {
-    stop(paste0("Stop name '", stop_names, "' not found in stops table"))
+    stop("Stop name '", stop_names, "' not found in stops table")
   }
 
   # Check stop_name integrity
@@ -236,7 +236,7 @@ filter_stop_times = function(gtfs_obj,
   # trips running on day
   service_ids = filter(gtfs_obj$.$dates_services, date == extract_date)
   if(nrow(service_ids) == 0) {
-    stop(paste0("No stop_times on ", extract_date))
+    stop("No stop_times on ", extract_date)
   }
   trips = inner_join(gtfs_obj$trips, service_ids, by = "service_id")
   trips = as.data.table(unique(trips[,c("trip_id")]))

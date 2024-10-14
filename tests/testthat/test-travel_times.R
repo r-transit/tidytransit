@@ -125,9 +125,9 @@ test_that("time_range param", {
   tt1 = travel_times(st, stop_name = "One", time_range = c("07:09:00", "07:59:00"))
   expect_equal((as.numeric(unique(tt1$journey_departure_time))-7*3600)/60,
                c(9,10,12,17))
-  tt2 = travel_times(st, stop_name = "Three", time_range = c("07:20:00", "07:20:00"), arrival = T)
+  tt2 = travel_times(st, stop_name = "Three", time_range = c("07:20:00", "07:20:00"), arrival = TRUE)
   expect_equal(as.numeric(tt2$journey_departure_time), 7*3600+20*60)
-  tt3 = travel_times(st, stop_name = "Three", time_range = c("07:20:00", "07:23:00"), arrival = T)
+  tt3 = travel_times(st, stop_name = "Three", time_range = c("07:20:00", "07:23:00"), arrival = TRUE)
   expect_equal(tt3$journey_departure_time[2], hhmmss_to_hms("07:17:00"))
 })
 

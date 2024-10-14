@@ -38,8 +38,7 @@ test_that("route_geometry behaves as before", {
                length(unique(duke_sf$routes$route_id)))
   expect_equal(sort(route_geom$route_id), 
                sort(duke_sf$routes$route_id))
-  expect_equal(length(unique(as.character(sf::st_geometry_type(route_geom$geometry)))), 
-               1)
+  expect_length(unique(as.character(sf::st_geometry_type(route_geom$geometry))), 1)
   expect_equal(as.character(sf::st_geometry_type(route_geom$geometry[1])), 
                "MULTILINESTRING")
 })

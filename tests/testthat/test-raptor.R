@@ -254,9 +254,9 @@ test_that("raptor with arrival=TRUE and reduced time_range", {
 
 test_that("raptor with with time_range vector", {
   r1.1 = raptor(stop_times, transfers, "stop1a", time_range = c("07:00:00", "07:05:00"))
-  expect_equal(length(unique(r1.1$journey_departure_time)), 2)
+  expect_length(unique(r1.1$journey_departure_time), 2)
   r1.2 = raptor(stop_times, transfers, "stop1b", time_range = c("07:11:00", "07:17:00"))
-  expect_equal(length(unique(r1.2$journey_departure_time)), 3)
+  expect_length(unique(r1.2$journey_departure_time), 3)
 
   r2.1 = raptor(stop_times, transfers, "stop2", time_range = c("07:00:00", "07:05:00"))
   expect_equal(r2.1$journey_arrival_time[r2.1$to_stop_id == "stop8b"], 24*60+7*3600)
@@ -266,11 +266,11 @@ test_that("raptor with with time_range vector", {
   expect_equal(r2.3$journey_arrival_time[r2.3$to_stop_id == "stop8b"], 24*60+7*3600)
 
   # with arrival
-  r8.1 = raptor(stop_times, transfers, "stop8b", time_range = c("07:00:00", "07:30:00"), arrival = T)
+  r8.1 = raptor(stop_times, transfers, "stop8b", time_range = c("07:00:00", "07:30:00"), arrival = TRUE)
   expect_equal(
     sort(unique(r8.1$journey_arrival_time)-7*3600),
     c(0, 24*60, 29*60))
-  r8.2 = raptor(stop_times, transfers, "stop8b", time_range = c("07:32:10", "07:32:10"), arrival = T)
+  r8.2 = raptor(stop_times, transfers, "stop8b", time_range = c("07:32:10", "07:32:10"), arrival = TRUE)
   expect_equal(sort(unique(r8.2$from_stop_id)), c("stop1a", "stop1b", "stop5", "stop6", "stop7", "stop8a", "stop8b"))
 
   raptor(stop_times, transfers, c("stop1a", "stop1b"), time_range = c("07:11:50", "07:12:00")) %>% filter(to_stop_id == "stop4")
