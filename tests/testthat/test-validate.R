@@ -7,10 +7,10 @@ test_that("warning for duplicated primary key", {
   g1a = g1[3:6]
   g1a$fare_rules <- data.frame(fare_id = c("1", "2", "2", "2"), route_id = c("B", "B", "A", "A"))
   g1b = convert_list_tables_to_data.tables(g1a)
-  d1 = duplicated_primary_keys(g1a)
-  d2 = duplicated_primary_keys(g1a)
-  expect_equal(unname(d1), c(FALSE, TRUE, FALSE, TRUE, TRUE))
-  expect_equal(d1, d2)
+  d1a = duplicated_primary_keys(g1a)
+  d1b = duplicated_primary_keys(g1b)
+  expect_identical(unname(d1a), c(FALSE, TRUE, FALSE, TRUE, TRUE))
+  expect_identical(d1a, d1b)
   
   # within as_tidygtfs
   g2 = expect_warning(as_tidygtfs(g1), "Duplicated ids found in: routes, stops")
