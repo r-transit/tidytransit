@@ -12,3 +12,4 @@ duplicated_primary_keys(gtfs_list)
 \description{
 Check if primary keys are unique within tables
 }
+\keyword{internal}

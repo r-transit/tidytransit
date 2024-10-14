@@ -17,8 +17,8 @@
 #' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @return a date_service data frame
 #' 
-#' @keywords internal
 #' @importFrom stats reshape
+#' @keywords internal
 set_dates_services <- function(gtfs_obj) {
   has_calendar = feed_contains(gtfs_obj, "calendar") && nrow(gtfs_obj[["calendar"]]) > 0
   has_calendar_dates = feed_contains(gtfs_obj, "calendar_dates") && nrow(gtfs_obj[["calendar_dates"]]) > 0

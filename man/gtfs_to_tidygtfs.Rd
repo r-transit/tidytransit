@@ -14,3 +14,4 @@ gtfs_to_tidygtfs(gtfs_list, files = NULL)
 \description{
 Some basic validation is done to ensure the feed works in tidytransit
 }
+\keyword{internal}

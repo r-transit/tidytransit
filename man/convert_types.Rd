@@ -20,3 +20,4 @@ gtfs_list with converted (overwritten) columns in tables
 \description{
 Convert columns between gtfsio types to tidytransit types according to GTFS reference
 }
+\keyword{internal}

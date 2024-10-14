@@ -154,7 +154,7 @@ get_trip_geometry <- function(gtfs_sf_obj, trip_ids) {
 
 #' return an sf linestring with lat and long from gtfs
 #' @param df dataframe from the gtfs shapes split() on shape_id
-#' @noRd
+#' @keywords internal
 #' @return st_linestring (sfr) object
 shape_as_sf_linestring <- function(df) {
   # as suggested by www.github.com/mdsumner
@@ -207,6 +207,7 @@ sf_as_tbl = function(gtfs_obj) {
 #' @param pts_sf sf object
 #' @param coord_colnames names of the new columns (existing columns are overwritten)
 #' @param remove_geometry remove sf geometry column?
+#' @keywords internal
 sf_points_to_df = function(pts_sf,
                            coord_colnames = c("stop_lon", "stop_lat"), 
                            remove_geometry = TRUE) {
@@ -230,6 +231,7 @@ sf_points_to_df = function(pts_sf,
 #' @param coord_colnames names of the new columns (existing columns are overwritten)
 #' @param remove_geometry remove sf geometry column?
 #' @importFrom geodist geodist
+#' @keywords internal
 sf_lines_to_df = function(lines_sf,
                           coord_colnames = c("shape_pt_lon", "shape_pt_lat"), 
                           remove_geometry = TRUE) {

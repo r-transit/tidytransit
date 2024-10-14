@@ -16,3 +16,4 @@ feed_contains(gtfs_obj, table_name)
 Returns TRUE if the given gtfs_obj contains the table. Used to check for
 tidytransit's calculated tables in sublist (\code{gtfs_obj$.})
 }
+\keyword{internal}

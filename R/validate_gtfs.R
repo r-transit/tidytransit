@@ -243,6 +243,7 @@ validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
 
 #' Check if primary keys are unique within tables
 #' @param gtfs_list list of tables
+#' @keywords internal
 duplicated_primary_keys = function(gtfs_list) {
   stopifnot(inherits(gtfs_list, "list"))
 

@@ -37,19 +37,10 @@ reference:
   - get_trip_geometry
   - get_route_geometry
   - sf_as_tbl
-  - sf_lines_to_df
-  - sf_points_to_df
-- title: "Helpers"
+  title: "Helpers"
   contents:
   - as_tidygtfs
-  - gtfs_to_tidygtfs
-  - convert_times_to_hms
-  - hhmmss_to_hms
-  - hhmmss_to_seconds
-  - hhmmss_to_sec_split
   - na_to_empty_strings
-  - feed_contains
-  - duplicated_primary_keys
   - empty_strings_to_na
   - plot.tidygtfs
   - print.tidygtfs

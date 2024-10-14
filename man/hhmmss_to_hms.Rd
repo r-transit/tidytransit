@@ -14,3 +14,4 @@ hhmmss_to_hms(time_strings)
 convert a vector of time strings
 empty strings are converted to NA
 }
+\keyword{internal}

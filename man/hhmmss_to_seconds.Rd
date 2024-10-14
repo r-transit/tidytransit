@@ -12,3 +12,4 @@ hhmmss_to_seconds(hhmmss_str)
 \description{
 Function to convert "HH:MM:SS" time strings to seconds.
 }
+\keyword{internal}

@@ -1,6 +1,7 @@
 #' convert a vector of time strings
 #' empty strings are converted to NA
 #' @param time_strings char vector ("HH:MM:SS")
+#' @keywords internal
 hhmmss_to_hms <- function(time_strings) {
   if(inherits(time_strings, "hms")) { return(time_strings) }
   empty_strings = nchar(time_strings) == 0
@@ -18,6 +19,7 @@ hhmmss_to_hms <- function(time_strings) {
 
 #' Function to convert "HH:MM:SS" time strings to seconds.
 #' @param hhmmss_str string
+#' @keywords internal
 hhmmss_to_seconds <- function(hhmmss_str) {
   as.numeric(substr(hhmmss_str, 0, 2)) * 3600 +
     as.numeric(substr(hhmmss_str, 4, 5)) * 60 +
@@ -27,6 +29,7 @@ hhmmss_to_seconds <- function(hhmmss_str) {
 #' Fallback function to convert strings like 5:02:11
 #' 10x slower than [hhmmss_to_seconds()], empty strings are converted to NA
 #' @param hhmmss_str string
+#' @keywords internal
 hhmmss_to_sec_split <- function(hhmmss_str) {
   seconds = sapply(strsplit(hhmmss_str, ":"), function(Y) {
     sum(as.numeric(Y) * c(3600, 60, 1))

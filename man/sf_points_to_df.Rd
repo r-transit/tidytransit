@@ -20,3 +20,4 @@ sf_points_to_df(
 \description{
 Adds the coordinates of an sf POINT object as columns
 }
+\keyword{internal}

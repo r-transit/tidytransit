@@ -2,6 +2,7 @@
 #' tidytransit's calculated tables in sublist (\code{gtfs_obj$.})
 #' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @param table_name name of the table to look for, as string
+#' @keywords internal
 feed_contains <- function(gtfs_obj, table_name) {
   exists(table_name, where = gtfs_obj) ||
     (exists(".", where = gtfs_obj) && exists(table_name, where = gtfs_obj$.))

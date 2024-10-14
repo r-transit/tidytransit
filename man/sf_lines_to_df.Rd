@@ -20,3 +20,4 @@ sf_lines_to_df(
 \description{
 Adds the coordinates of an sf LINESTRING object as columns and rows
 }
+\keyword{internal}

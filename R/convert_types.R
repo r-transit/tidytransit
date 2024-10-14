@@ -6,7 +6,7 @@
 #' @param conversion_function function to convert columns
 #'
 #' @return gtfs_list with converted (overwritten) columns in tables
-#' 
+#' @keywords internal
 convert_types <- function(gtfs_list, conversion_table, conversion_function) {
   for(i in seq_len(nrow(conversion_table))) {
     file = conversion_table$file[i]

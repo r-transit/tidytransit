@@ -14,3 +14,4 @@ hhmmss_to_sec_split(hhmmss_str)
 Fallback function to convert strings like 5:02:11
 10x slower than \code{\link[=hhmmss_to_seconds]{hhmmss_to_seconds()}}, empty strings are converted to NA
 }
+\keyword{internal}

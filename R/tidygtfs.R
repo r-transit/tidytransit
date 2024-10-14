@@ -35,6 +35,7 @@ as_tidygtfs.tidygtfs = function(x, ...) {
 #' 
 #' @param gtfs_list list of tables
 #' @param files subset of files to validate
+#' @keywords internal
 gtfs_to_tidygtfs = function(gtfs_list, files = NULL) {
   # validate files and fields
   validation_result = validate_gtfs(gtfs_list, files = files)
