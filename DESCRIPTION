@@ -1,7 +1,7 @@
 Package: tidytransit
 Type: Package
 Title: Read, Validate, Analyze, and Map GTFS Feeds
-Version: 1.6.1
+Version: 1.6.1.9000
 Authors@R: c(
     person("Flavio", "Poletti", role = c("aut", "cre"), email = "flavio.poletti@hotmail.ch"),
     person(given = "Daniel",family = "Herszenhut",role = c("aut"),email = "dhersz@gmail.com",comment = c(ORCID = "0000-0001-8066-1105")),
@@ -28,7 +28,7 @@ License: GPL
 LazyData: TRUE
 Depends: R (>= 3.6.0)
 Imports:
-    gtfsio (>= 1.1.0),
+    gtfsio (>= 1.2.0),
     dplyr (>= 1.1.1),
     data.table (>= 1.12.8),
     rlang,
