@@ -149,7 +149,7 @@ raptor = function(stop_times,
                              journey_departure_stop_id = from_stop_ids,
                              transfers = 0, travel_time = 0)
   initial_transfers = find_initial_transfers(initial_stops, transfers_dt, max_transfers, arrival)
-  # browser()
+
   # 3) run raptor ####
   rptr = raptor_core(initial_stops, initial_transfers, stop_times_dt, transfers_dt, max_transfers)
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/spatial.R
 \name{gtfs_transform}
 \alias{gtfs_transform}
-\title{Transform or convert coordinates of a gtfs feed}
+\title{Transform coordinates of a gtfs feed}
 \usage{
 gtfs_transform(gtfs_obj, crs)
 }
@@ -13,7 +13,9 @@ gtfs_transform(gtfs_obj, crs)
 }
 \value{
 tidygtfs object with transformed stops and shapes sf dataframes
+
+gtfs object with transformed sf tables
 }
 \description{
-Transform or convert coordinates of a gtfs feed
+Transform coordinates of a gtfs feed
 }

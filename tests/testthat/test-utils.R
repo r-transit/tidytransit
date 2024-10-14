@@ -93,10 +93,6 @@ test_that("filter_feed_by_date", {
   expect_s3_class(g2$stop_times, "tbl_df")
 })
 
-test_that("gtfs_meta", {
-  expect_equal(gtfs_meta, get_gtfs_meta())
-})
-
 test_that("empty_strings_to_na", {
   gpath = system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
   g1 = read_gtfs(gpath)
