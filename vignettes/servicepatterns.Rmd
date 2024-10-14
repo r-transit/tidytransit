@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
   
 ## Overview
 
-Each trip in a GTFS feed is referenced to a service_id (in trips.txt). The [GTFS reference](https://gtfs.org/schedule/reference/#calendartxt) 
+Each trip in a GTFS feed is referenced to a service_id (in trips.txt). The [GTFS reference](https://gtfs.org/documentation/schedule/reference/#calendartxt) 
 specifies that a "service_id contains an ID that uniquely identifies a set of dates when 
 service is available for one or more routes". A service could run on every weekday or only 
 on Saturdays for example. Other possible services run only on holidays during a year, 
@@ -42,6 +42,7 @@ local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", packa
 gtfs <- read_gtfs(local_gtfs_path)
 # gtfs <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
 ```
+
 
 Tidytransit provides a `dates_services` (stored in the list `.`) that indicates which
 `service_id` runs on which date. This is later useful for linking dates and trips via 
