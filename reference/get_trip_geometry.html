@@ -44,6 +44,9 @@
       <a href="../articles/timetable.html">Generate a Departure Timetable</a>
     </li>
   </ul></li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/r-transit/tidytransit/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
@@ -94,12 +97,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">gtfs_duke</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">gtfs_duke</span> <span class="op">&lt;-</span> <span class="fu"><a href="gtfs_as_sf.html">gtfs_as_sf</a></span><span class="op">(</span><span class="va">gtfs_duke</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">trips_sf</span> <span class="op">&lt;-</span> <span class="fu">get_trip_geometry</span><span class="op">(</span><span class="va">gtfs_duke</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"t_726295_b_19493_tn_41"</span>, <span class="st">"t_726295_b_19493_tn_40"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">trips_sf</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>plotting the first 10 out of 18 attributes; use max.plot = 18 to plot all</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to min; returning Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to min; returning Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">trips_sf</span><span class="op">[</span><span class="fl">1</span>,<span class="st">"shape_id"</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="get_trip_geometry-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>

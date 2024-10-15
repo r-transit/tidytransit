@@ -46,6 +46,9 @@ time_range."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
       <a href="../articles/timetable.html">Generate a Departure Timetable</a>
     </li>
   </ul></li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/r-transit/tidytransit/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
@@ -114,10 +117,10 @@ TRUE, all journeys <em>end</em> at <code>stop_ids</code>.</p></dd>
 
 
 <dt id="arg-time-range">time_range<a class="anchor" aria-label="anchor" href="#arg-time-range"></a></dt>
-<dd><p>Either a range in seconds or a vector containing the
-minimal and maximal departure time (i.e. earliest and
-latest possible journey departure time) as seconds or
-"HH:MM:SS" character.</p></dd>
+<dd><p>Either a range in seconds or a vector containing the minimal and maximal
+departure time (i.e. earliest and latest possible journey departure time)
+as seconds or "HH:MM:SS" character. If <code>arrival</code> is TRUE, <code>time_range</code>
+describes the time window when journeys should end at <code>stop_ids</code>.</p></dd>
 
 
 <dt id="arg-max-transfers">max_transfers<a class="anchor" aria-label="anchor" href="#arg-max-transfers"></a></dt>
@@ -126,9 +129,9 @@ latest possible journey departure time) as seconds or
 
 <dt id="arg-keep">keep<a class="anchor" aria-label="anchor" href="#arg-keep"></a></dt>
 <dd><p>One of c("all", "shortest", "earliest", "latest"). By default, <code>all</code> journeys
-between stop_ids are returned. With <code>shortest</code> only the journey with shortest
-travel time is returned. With <code>earliest</code> the journey arriving at a stop the
-earliest is returned, <code>latest</code> works accordingly.</p></dd>
+between stop_ids are returned. With <code>shortest</code> only the journey with the
+shortest travel time is returned. With <code>earliest</code> the journey arriving at a
+stop the earliest is returned, <code>latest</code> works accordingly.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -145,7 +148,7 @@ travel time is kept. By default, all journeys departing within <code>time_range<
 at a stop are returned in a table. If you want all journeys <em>arriving</em> at stop_ids within
 the specified time range, set <code>arrival</code> to TRUE.</p>
 <p>Journeys are defined by a "from" and "to" stop_id, a departure, arrival and travel time.
-Note that the exact journeys (with each intermediate stop and route ids for example) is
+Note that exact journeys (with each intermediate stop and route ids for example) are
 <em>not</em> returned.</p>
 <p>For most cases, <code>stop_times</code> needs to be filtered, as it should only contain trips
 happening on a single day, see <code><a href="filter_stop_times.html">filter_stop_times()</a></code>. The algorithm scans all trips

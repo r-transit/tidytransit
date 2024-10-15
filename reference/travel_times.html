@@ -46,6 +46,9 @@ filter_stop_times() or filter_feed_by_date()."><!-- mathjax --><script src="http
       <a href="../articles/timetable.html">Generate a Departure Timetable</a>
     </li>
   </ul></li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/r-transit/tidytransit/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
@@ -102,10 +105,10 @@ multiple names can be used.</p></dd>
 
 
 <dt id="arg-time-range">time_range<a class="anchor" aria-label="anchor" href="#arg-time-range"></a></dt>
-<dd><p>Either a range in seconds or a vector containing the
-minimal and maximal departure time (i.e. earliest and
-latest possible journey departure time) as seconds or
-"HH:MM:SS" character.</p></dd>
+<dd><p>Either a range in seconds or a vector containing the minimal and maximal
+departure time (i.e. earliest and latest possible journey departure time)
+as seconds or "HH:MM:SS" character. If <code>arrival</code> is TRUE, <code>time_range</code>
+describes the time window when journeys should end at <code>stop_name</code>.</p></dd>
 
 
 <dt id="arg-arrival">arrival<a class="anchor" aria-label="anchor" href="#arg-arrival"></a></dt>
@@ -114,7 +117,7 @@ TRUE, all journeys <em>end</em> at <code>stop_name</code>.</p></dd>
 
 
 <dt id="arg-max-transfers">max_transfers<a class="anchor" aria-label="anchor" href="#arg-max-transfers"></a></dt>
-<dd><p>The maximimum number of transfers</p></dd>
+<dd><p>The maximum number of transfers. No limit if <code>NULL</code></p></dd>
 
 
 <dt id="arg-max-departure-time">max_departure_time<a class="anchor" aria-label="anchor" href="#arg-max-departure-time"></a></dt>
@@ -128,7 +131,7 @@ possible departure time.</p></dd>
 
 <dt id="arg-return-dt">return_DT<a class="anchor" aria-label="anchor" href="#arg-return-dt"></a></dt>
 <dd><p>travel_times() returns a data.table if TRUE. Default is FALSE which
-returns a tibble/tbl_df.</p></dd>
+returns a <code>tibble/tbl_df</code>.</p></dd>
 
 
 <dt id="arg-stop-dist-check">stop_dist_check<a class="anchor" aria-label="anchor" href="#arg-stop-dist-check"></a></dt>
