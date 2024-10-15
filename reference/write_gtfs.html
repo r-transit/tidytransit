@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.6.1.9000</span>
       </span>
     </div>
 
@@ -81,25 +81,31 @@
 
 
 <dt id="arg-zipfile">zipfile<a class="anchor" aria-label="anchor" href="#arg-zipfile"></a></dt>
-<dd><p>path to the zip file the feed should be written to</p></dd>
+<dd><p>path to the zip file the feed should be written to. The file is overwritten
+if it already exists.</p></dd>
 
 
 <dt id="arg-compression-level">compression_level<a class="anchor" aria-label="anchor" href="#arg-compression-level"></a></dt>
-<dd><p>a number between 1 and 9.9, passed to zip::zip</p></dd>
+<dd><p>a number between 1 and 9, defaults to 9 (best compression).</p></dd>
 
 
 <dt id="arg-as-dir">as_dir<a class="anchor" aria-label="anchor" href="#arg-as-dir"></a></dt>
-<dd><p>if TRUE, the feed is not zipped and zipfile is used as a directory path.
-Files within the directory will be overwritten.</p></dd>
+<dd><p>if <code>TRUE</code>, the feed is not zipped and zipfile is used as a directory path.
+The directory will be overwritten if it already exists.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Invisibly returns gtfs_obj</p>
+    <p>Invisibly returns <code>gtfs_obj</code></p>
     </div>
     <div id="note">
     <h2>Note</h2>
-    <p>Auxilliary tidytransit tables (e.g. <code>dates_services</code>) are not exported.</p>
+    <p>Auxilliary tidytransit tables (e.g. <code>dates_services</code>) are not exported. Calls
+<code><a href="https://r-transit.github.io/gtfsio/reference/export_gtfs.html" class="external-link">gtfsio::export_gtfs()</a></code> after preparing the data.</p>
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
+    <div class="dont-index"><p><code><a href="read_gtfs.html">read_gtfs()</a></code></p></div>
     </div>
 
   </div>
@@ -114,7 +120,7 @@ Files within the directory will be overwritten.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>

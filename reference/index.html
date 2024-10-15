@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidytransit</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.6.1.9000</span>
       </span>
     </div>
 
@@ -115,13 +115,13 @@
         </td>
         <td><p>Get a set of stops for a given set of service ids and route ids</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
-          <h2 id="analyse">Analyse <a href="#analyse" class="anchor" aria-hidden="true"></a></h2>
+          <h2 id="analyse-gtfs-objects">Analyse GTFS objects <a href="#analyse-gtfs-objects" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
           <p><code><a href="validate_gtfs.html">validate_gtfs()</a></code> </p>
         </td>
-        <td><p>Validate GTFS file</p></td>
+        <td><p>Validate GTFS feed</p></td>
       </tr><tr><td>
           <p><code><a href="set_servicepattern.html">set_servicepattern()</a></code> </p>
         </td>
@@ -145,7 +145,7 @@
       </tr></tbody><tbody><tr><td>
           <p><code><a href="interpolate_stop_times.html">interpolate_stop_times()</a></code> </p>
         </td>
-        <td><p>Interpolate missing stop_times linearly Uses shape_dist_traveled if available</p></td>
+        <td><p>Interpolate missing stop_times linearly</p></td>
       </tr><tr><td>
           <p><code><a href="cluster_stops.html">cluster_stops()</a></code> </p>
         </td>
@@ -169,7 +169,7 @@
       </tr><tr><td>
           <p><code><a href="gtfs_transform.html">gtfs_transform()</a></code> </p>
         </td>
-        <td><p>Transform or convert coordinates of a gtfs feed</p></td>
+        <td><p>Transform coordinates of a gtfs feed</p></td>
       </tr><tr><td>
           <p><code><a href="shapes_as_sf.html">shapes_as_sf()</a></code> </p>
         </td>
@@ -190,14 +190,6 @@
           <p><code><a href="sf_as_tbl.html">sf_as_tbl()</a></code> </p>
         </td>
         <td><p>Convert stops and shapes from sf objects to tibbles</p></td>
-      </tr><tr><td>
-          <p><code><a href="sf_lines_to_df.html">sf_lines_to_df()</a></code> </p>
-        </td>
-        <td><p>Adds the coordinates of an sf LINESTRING object as columns and rows</p></td>
-      </tr><tr><td>
-          <p><code><a href="sf_points_to_df.html">sf_points_to_df()</a></code> </p>
-        </td>
-        <td><p>Adds the coordinates of an sf POINT object as columns</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="helpers">Helpers <a href="#helpers" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
@@ -207,37 +199,9 @@
         </td>
         <td><p>Convert another gtfs like object to a tidygtfs object</p></td>
       </tr><tr><td>
-          <p><code><a href="gtfs_to_tidygtfs.html">gtfs_to_tidygtfs()</a></code> </p>
-        </td>
-        <td><p>Convert an object created by gtfsio::import_gtfs to a tidygtfs object</p></td>
-      </tr><tr><td>
-          <p><code><a href="convert_times_to_hms.html">convert_times_to_hms()</a></code> </p>
-        </td>
-        <td><p>Convert time columns to hms::hms in feed</p></td>
-      </tr><tr><td>
-          <p><code><a href="hhmmss_to_hms.html">hhmmss_to_hms()</a></code> </p>
-        </td>
-        <td><p>convert a vector of time strings empty strings are converted to NA</p></td>
-      </tr><tr><td>
-          <p><code><a href="hhmmss_to_seconds.html">hhmmss_to_seconds()</a></code> </p>
-        </td>
-        <td><p>Function to convert "HH:MM:SS" time strings to seconds.</p></td>
-      </tr><tr><td>
-          <p><code><a href="hhmmss_to_sec_split.html">hhmmss_to_sec_split()</a></code> </p>
-        </td>
-        <td><p>Fallback function to convert strings like 5:02:11 10x slower than <code><a href="../reference/hhmmss_to_seconds.html">hhmmss_to_seconds()</a></code>, empty strings are converted to NA</p></td>
-      </tr><tr><td>
           <p><code><a href="na_to_empty_strings.html">na_to_empty_strings()</a></code> </p>
         </td>
         <td><p>Convert NA values to empty strings ("")</p></td>
-      </tr><tr><td>
-          <p><code><a href="feed_contains.html">feed_contains()</a></code> </p>
-        </td>
-        <td><p>Returns TRUE if the given gtfs_obj contains the table. Used to check for tidytransit's calculated tables in sublist (<code>gtfs_obj$.</code>)</p></td>
-      </tr><tr><td>
-          <p><code><a href="duplicated_primary_keys.html">duplicated_primary_keys()</a></code> </p>
-        </td>
-        <td><p>Check if primary keys are unique within tables</p></td>
       </tr><tr><td>
           <p><code><a href="empty_strings_to_na.html">empty_strings_to_na()</a></code> </p>
         </td>
@@ -275,7 +239,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>

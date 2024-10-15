@@ -12,7 +12,7 @@
 <url><loc>/reference/agency_info.html</loc></url>
 <url><loc>/reference/as_tidygtfs.html</loc></url>
 <url><loc>/reference/cluster_stops.html</loc></url>
-<url><loc>/reference/convert_times_to_hms.html</loc></url>
+<url><loc>/reference/convert_types.html</loc></url>
 <url><loc>/reference/duplicated_primary_keys.html</loc></url>
 <url><loc>/reference/empty_strings_to_na.html</loc></url>
 <url><loc>/reference/feed_contains.html</loc></url>
@@ -35,6 +35,7 @@
 <url><loc>/reference/hhmmss_to_seconds.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
 <url><loc>/reference/interpolate_stop_times.html</loc></url>
+<url><loc>/reference/json_to_sf.html</loc></url>
 <url><loc>/reference/na_to_empty_strings.html</loc></url>
 <url><loc>/reference/plot.tidygtfs.html</loc></url>
 <url><loc>/reference/print.tidygtfs.html</loc></url>
@@ -46,11 +47,14 @@
 <url><loc>/reference/sf_as_tbl.html</loc></url>
 <url><loc>/reference/sf_lines_to_df.html</loc></url>
 <url><loc>/reference/sf_points_to_df.html</loc></url>
+<url><loc>/reference/sf_to_json.html</loc></url>
+<url><loc>/reference/shape_as_sf_linestring.html</loc></url>
 <url><loc>/reference/shapes_as_sf.html</loc></url>
 <url><loc>/reference/stop_distances.html</loc></url>
 <url><loc>/reference/stop_group_distances.html</loc></url>
 <url><loc>/reference/stops_as_sf.html</loc></url>
 <url><loc>/reference/summary.tidygtfs.html</loc></url>
+<url><loc>/reference/tidygtfs_to_gtfs.html</loc></url>
 <url><loc>/reference/travel_times.html</loc></url>
 <url><loc>/reference/validate_gtfs.html</loc></url>
 <url><loc>/reference/write_gtfs.html</loc></url>
