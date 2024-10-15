@@ -37,7 +37,7 @@ reference:
   - get_trip_geometry
   - get_route_geometry
   - sf_as_tbl
-  title: "Helpers"
+- title: "Helpers"
   contents:
   - as_tidygtfs
   - na_to_empty_strings
