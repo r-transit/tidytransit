@@ -54,13 +54,14 @@ set_dates_services <- function(gtfs_obj) {
     )
     
     # gather services by weekdays
+    .availability = NULL
     .days = c("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday") 
     .cns_nondays = colnames(gtfs_obj$calendar)[which(!colnames(gtfs_obj$calendar) %in% .days)]
     service_ids_weekdays = gtfs_obj$calendar %>% 
       reshape(gc, direction = "long", idvar = .cns_nondays, varying = .days, 
-              v.names = "bool", timevar = "weekday_num") %>% 
+              v.names = ".availability", timevar = "weekday_num") %>% 
       left_join(data.frame(weekday_num = 1:7, weekday = .days), "weekday_num") %>% 
-      dplyr::filter(bool == 1) %>% dplyr::select(service_id, weekday, start_date, end_date)
+      dplyr::filter(.availability == 1) %>% dplyr::select(service_id, weekday, start_date, end_date)
     
     # set services to dates according to weekdays and start/end date
     date_service_df <- dates %>%
