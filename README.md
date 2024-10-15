@@ -15,6 +15,7 @@ frequencies, and validate transit feeds. Tidytransit reads the
 [tidyverse](https://tibble.tidyverse.org/) and 
 [simple features](https://en.wikipedia.org/wiki/Simple_Features) data frames. 
 Tidytransit can be used to:
+
 - [read GTFS feeds into R](https://r-transit.github.io/tidytransit/reference/read_gtfs.html)
 - [calculate travel times between transit stops](https://r-transit.github.io/tidytransit/reference/travel_times.html)
 - [convert stops and routes to sf data frames](https://r-transit.github.io/tidytransit/reference/gtfs_as_sf.html)

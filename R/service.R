@@ -1,16 +1,17 @@
-#' Calculate servicepattern ids for a gtfs feed
+#' Calculate service pattern ids for a GTFS feed
 #' 
 #' Each trip has a defined number of dates it runs on. This set of dates is called a 
-#' service pattern in tidytransit. Trips with the same servicepattern id run on the same
-#' dates. In general, \code{service_id} can work this way but it is not enforced by the
+#' service pattern in tidytransit. Trips with the same `servicepattern` id run on the same
+#' dates. In general, `service_id` can work this way but it is not enforced by the
 #' GTFS standard.
 #' 
 #' @param gtfs_obj gtfs feed (tidygtfs object)
-#' @param id_prefix all servicepattern id will start with this string
+#' @param id_prefix all servicepattern ids will start with this string
 #' @param hash_algo hashing algorithm used by digest
-#' @param hash_length length the hash should be cut to with substr(). Use -1 if the full hash should be used
+#' @param hash_length length the hash should be cut to with `substr()`. Use `-1` if the full 
+#'                    hash should be used
 #' @return modified gtfs_obj with added servicepattern list and a table linking 
-#'         trips and pattern (trip_servicepatterns)
+#'         trips and pattern (trip_servicepatterns), added to `gtfs_obj$.` sublist.
 #' 
 #' @importFrom dplyr group_by summarise ungroup left_join
 #' @importFrom digest digest

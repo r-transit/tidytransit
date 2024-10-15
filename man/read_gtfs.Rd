@@ -23,7 +23,7 @@ A tidygtfs object: a list of tibbles in which each entry represents a GTFS text
 file. Additional tables are stored in the \code{.} sublist.
 }
 \description{
-Reads a GTFS feed from either a local \code{.zip} file or an URL and validates them againts
+Reads a GTFS feed from either a local \code{.zip} file or an URL and validates them against
 GTFS specifications.
 }
 \examples{

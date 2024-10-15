@@ -24,7 +24,7 @@ Invisibly returns \code{gtfs_obj}
 Write a tidygtfs object to a zip file
 }
 \note{
-Auxilliary tidytransit tables (e.g. \code{dates_services}) are not exported. Calls
+Auxiliary tidytransit tables (e.g. \code{dates_services}) are not exported. Calls
 \code{\link[gtfsio:export_gtfs]{gtfsio::export_gtfs()}} after preparing the data.
 }
 \seealso{

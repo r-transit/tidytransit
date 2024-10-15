@@ -21,5 +21,5 @@ Get all trip shapes for given trip ids
 data(gtfs_duke)
 gtfs_duke <- gtfs_as_sf(gtfs_duke)
 trips_sf <- get_trip_geometry(gtfs_duke, c("t_726295_b_19493_tn_41", "t_726295_b_19493_tn_40"))
-plot(trips_sf[1,])
+plot(trips_sf[1,"shape_id"])
 }

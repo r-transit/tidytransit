@@ -320,7 +320,7 @@ theory, should allow us to say what the frequency of vehicles passing through an
 shape is, using similar methods. This kind of method is beyond the scope of this vignette. 
 
 Alternatively, regular ggplot users might expect the ggplot `dodge` function to allow us to 
-move around these lines but, by design, thats not possible with `geom_sf`. One can see why: 
+move around these lines but, by design, that is not possible with `geom_sf`. One can see why: 
 unlike a bar chart, the representations of route lines in geographic space on a map have a 
 specific meaning. 
 

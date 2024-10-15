@@ -1,6 +1,6 @@
 #' Read and validate GTFS files
 #'
-#' Reads a GTFS feed from either a local `.zip` file or an URL and validates them againts 
+#' Reads a GTFS feed from either a local `.zip` file or an URL and validates them against 
 #' GTFS specifications.
 #'
 #' @param path The path to a GTFS \code{.zip} file.
@@ -36,7 +36,7 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE, ...) {
 
 #' Write a tidygtfs object to a zip file
 #'
-#' @note Auxilliary tidytransit tables (e.g. \code{dates_services}) are not exported. Calls
+#' @note Auxiliary tidytransit tables (e.g. \code{dates_services}) are not exported. Calls
 #'   [gtfsio::export_gtfs()] after preparing the data.
 #'
 #' @param gtfs_obj gtfs feed (tidygtfs object)

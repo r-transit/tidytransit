@@ -12,7 +12,7 @@
 #' the specified time range, set `arrival` to TRUE.
 #'
 #' Journeys are defined by a "from" and "to" stop_id, a departure, arrival and travel time.
-#' Note that the exact journeys (with each intermediate stop and route ids for example) is
+#' Note that exact journeys (with each intermediate stop and route ids for example) are
 #' _not_ returned.
 #'
 #' For most cases, `stop_times` needs to be filtered, as it should only contain trips
@@ -32,15 +32,15 @@
 #'                 reasonably close to each other.
 #' @param arrival If FALSE (default), all journeys _start_ from `stop_ids`. If
 #'                TRUE, all journeys _end_ at `stop_ids`.
-#' @param time_range Either a range in seconds or a vector containing the
-#'                   minimal and maximal departure time (i.e. earliest and
-#'                   latest possible journey departure time) as seconds or
-#'                   "HH:MM:SS" character.
+#' @param time_range Either a range in seconds or a vector containing the minimal and maximal 
+#'                   departure time (i.e. earliest and latest possible journey departure time) 
+#'                   as seconds or "HH:MM:SS" character. If `arrival` is TRUE, `time_range` 
+#'                   describes the time window when journeys should end at `stop_ids`.
 #' @param max_transfers Maximum number of transfers allowed, no limit (NULL) as default.
 #' @param keep One of c("all", "shortest", "earliest", "latest"). By default, `all` journeys
-#'             between stop_ids are returned. With `shortest` only the journey with shortest
-#'             travel time is returned. With `earliest` the journey arriving at a stop the
-#'             earliest is returned, `latest` works accordingly.
+#'             between stop_ids are returned. With `shortest` only the journey with the 
+#'             shortest travel time is returned. With `earliest` the journey arriving at a 
+#'             stop the earliest is returned, `latest` works accordingly.
 #'
 #' @return A data.table with journeys (departure, arrival and travel time) to/from all
 #'         stop_ids reachable by `stop_ids`.

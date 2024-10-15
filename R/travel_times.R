@@ -17,18 +17,18 @@
 #'                            departure or arrival time has been set.
 #' @param stop_name Stop name for which travel times should be calculated. A vector with
 #'                  multiple names can be used.
-#' @param time_range Either a range in seconds or a vector containing the
-#'                   minimal and maximal departure time (i.e. earliest and
-#'                   latest possible journey departure time) as seconds or
-#'                   "HH:MM:SS" character.
+#' @param time_range Either a range in seconds or a vector containing the minimal and maximal 
+#'                   departure time (i.e. earliest and latest possible journey departure time) 
+#'                   as seconds or "HH:MM:SS" character. If `arrival` is TRUE, `time_range` 
+#'                   describes the time window when journeys should end at `stop_name`.
 #' @param arrival If FALSE (default), all journeys _start_ from `stop_name`. If
 #'                TRUE, all journeys _end_ at `stop_name`.
-#' @param max_transfers The maximimum number of transfers
+#' @param max_transfers The maximum number of transfers. No limit if `NULL`
 #' @param max_departure_time Deprecated. Use `time_range` to set the latest
 #'                           possible departure time.
 #' @param return_coords Returns stop coordinates (lon/lat) as columns. Default is FALSE.
 #' @param return_DT travel_times() returns a data.table if TRUE. Default is FALSE which
-#'                  returns a tibble/tbl_df.
+#'                  returns a `tibble/tbl_df`.
 #' @param stop_dist_check stop_names are not structured identifiers like
 #'                        stop_ids or parent_stations, so it's possible that
 #'                        stops with the same name are far apart. travel_times()
@@ -193,11 +193,11 @@ travel_times = function(filtered_stop_times,
 #'
 #' @export
 #' @examples
-#' feed_path <- system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
+#' feed_path <- system.file("extdata", "routing.zip", package = "tidytransit")
 #' g <- read_gtfs(feed_path)
 #'
 #' # filter the sample feed
-#' stop_times <- filter_stop_times(g, "2007-01-06", "06:00:00", "08:00:00")
+#' stop_times <- filter_stop_times(g, "2018-10-01", "06:00:00", "08:00:00")
 filter_stop_times = function(gtfs_obj,
                              extract_date,
                              min_departure_time,

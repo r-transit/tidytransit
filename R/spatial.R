@@ -42,7 +42,7 @@ gtfs_as_sf <- function(gtfs_obj, skip_shapes = FALSE, crs = NULL, quiet = TRUE) 
 #' data(gtfs_duke)
 #' some_stops <- gtfs_duke$stops[sample(nrow(gtfs_duke$stops), 40),]
 #' some_stops_sf <- stops_as_sf(some_stops)
-#' plot(some_stops_sf)
+#' plot(some_stops_sf[,"stop_name"])
 stops_as_sf <- function(stops, crs = NULL) {
   stops_sf <- sf::st_as_sf(stops,
                            coords = c("stop_lon", "stop_lat"),
@@ -135,7 +135,7 @@ get_route_geometry <- function(gtfs_sf_obj, route_ids = NULL, service_ids = NULL
 #' data(gtfs_duke)
 #' gtfs_duke <- gtfs_as_sf(gtfs_duke)
 #' trips_sf <- get_trip_geometry(gtfs_duke, c("t_726295_b_19493_tn_41", "t_726295_b_19493_tn_40"))
-#' plot(trips_sf[1,])
+#' plot(trips_sf[1,"shape_id"])
 get_trip_geometry <- function(gtfs_sf_obj, trip_ids) {
   if(!inherits(gtfs_sf_obj$shapes, "sf")) {
     stop("shapes not converted to sf, use gtfs_obj <- gtfs_as_sf(gtfs_obj)")
