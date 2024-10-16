@@ -1,3 +1,10 @@
+# tidytransit 1.7.0
+
+- `read_gtfs()` can now read `locations.geojson` files according to the updated specifications [#214](https://github.com/r-transit/tidytransit/pull/214)
+- tidytransit 1.7.0 needs `gtfsio` 1.2.0 as it uses json reading capabilities from `gtfsio::import_gtfs()`
+- Internally, the automatically parsed specifications from https://gtfs.org/documentation/schedule/reference/ are now used
+
+
 # tidytransit 1.6.1
 
 - fix: Add `fare_media_id` to `fare_products` in spec.R [#207](https://github.com/r-transit/tidytransit/pull/207)
@@ -71,6 +78,7 @@
 - added gtfs_transform which runs sf::st_transform on shapes and stops [#168](https://github.com/r-transit/tidytransit/pull/168)
 - added trolleybus and monorail to route_types
 - update documentation and deployment
+
 
 # tidytransit 1.0.0
 

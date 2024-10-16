@@ -44,7 +44,7 @@ devtools::install_github("r-transit/tidytransit")
 
 # The General Transit Feed Specification
 
-The [summary page for the GTFS standard](https://gtfs.org/schedule/) 
+The [summary page for the GTFS standard](https://gtfs.org/documentation/overview/) 
 is a good resource for more information on the standard.
 
 GTFS feeds contain many linked tables about published transit schedules, service 
