@@ -239,7 +239,7 @@ We can plot the number of trips for each day as a calendar heat map.
 
 ```{r fig.height=4, fig.width=7}
 trips_servicepattern = left_join(select(gtfs$trips, trip_id, service_id), gtfs$.$servicepatterns, by = "service_id")
-trip_dates = left_join(gtfs$.$dates_servicepatterns, trips_servicepattern, by = "servicepattern_id")
+trip_dates = left_join(gtfs$.$dates_servicepatterns, trips_servicepattern, by = "servicepattern_id", relationship = "many-to-many")
 
 trip_dates_count = trip_dates %>% group_by(date) %>% summarise(count = dplyr::n()) 
 trip_dates_count$weekday <- lubridate::wday(trip_dates_count$date, label = T, abbr = T, week_start = 7)
