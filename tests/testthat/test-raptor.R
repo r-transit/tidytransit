@@ -101,11 +101,11 @@ test_that("parameters are checked", {
 
 test_that("pick transfers from attributes", {
   fst = filter_stop_times(gtfs_routing, "2018-10-01", 7*3600)
-  r1 = raptor(fst, stop_id = "stop5")
-  r2 = raptor(gtfs_routing$stop_times, gtfs_routing$transfers, stop_id = "stop5")
+  r1 = raptor(fst, stop_ids = "stop5")
+  r2 = raptor(gtfs_routing$stop_times, gtfs_routing$transfers, stop_ids = "stop5")
   expect_equal(r1, r2)
-  expect_error(raptor(gtfs_routing$stop_times, stop_id = "stop5"), 'argument "transfers" is missing, with no default')
-  expect_error(raptor(gtfs_routing, stop_id = "stop5"), 'Travel times cannot be calculated with a tidygtfs object')
+  expect_error(raptor(gtfs_routing$stop_times, stop_ids = "stop5"), 'argument "transfers" is missing, with no default')
+  expect_error(raptor(gtfs_routing, stop_ids = "stop5"), 'Travel times cannot be calculated with a tidygtfs object')
 })
 
 test_that("earliest arrival times", {
