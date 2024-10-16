@@ -34,21 +34,21 @@ set_servicepattern <- function(gtfs_obj, id_prefix = "s_", hash_algo = "md5", ha
   
   # find servicepattern_ids for all services
   servicepattern_id <- NULL # prevents CMD chek note on non-visible binding
-  service_pattern <- gtfs_obj$.$dates_services %>% 
+  service_patterns <- gtfs_obj$.$dates_services %>% 
     group_by(service_id) %>%
     summarise(
       servicepattern_id = get_servicepattern_id(.data$date)
     ) %>% ungroup()
 
-  # find dates for servicepattern
+  # find dates for servicepatterns
   dates_servicepatterns <- gtfs_obj$.$dates_services %>% 
-    left_join(service_pattern, by = "service_id") %>% 
+    left_join(service_patterns, by = "service_id") %>% 
     group_by(date, servicepattern_id) %>% 
     summarise() %>% ungroup()
 
   # assign to gtfs_obj
-  gtfs_obj$.$servicepatterns <- service_pattern
-  gtfs_obj$.$dates_servicepatterns <- dates_servicepatterns
+  gtfs_obj$.[["servicepatterns"]] <- service_patterns
+  gtfs_obj$.[["dates_servicepatterns"]] <- dates_servicepatterns
   
   return(gtfs_obj)
 }

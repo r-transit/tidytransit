@@ -132,7 +132,7 @@ We'll use that pattern below to pull out the service_ids that we need to use to 
 trips in the GTFS feed for which we want to summarise service. 
 
 ```{r}
-service_ids <- gtfs$.$servicepattern %>% 
+service_ids <- gtfs$.$servicepatterns %>% 
   filter(servicepattern_id == 's_e25d6ca') %>% 
   pull(service_id)
 

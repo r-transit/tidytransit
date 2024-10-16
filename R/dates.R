@@ -27,12 +27,12 @@ set_dates_services <- function(gtfs_obj) {
   
   feed_dates = list()
   if(has_calendar) {
-    feed_dates$calendar <- c(gtfs_obj$calendar$start_date, gtfs_obj$calendar$end_date)
+    feed_dates[["calendar"]] <- c(gtfs_obj$calendar$start_date, gtfs_obj$calendar$end_date)
   }
   if(has_calendar_dates) {
-    feed_dates$calendar_dates <- gtfs_obj$calendar_dates$date[which(gtfs_obj$calendar_dates$exception_type != 2)]
+    feed_dates[["calendar_dates"]] <- gtfs_obj$calendar_dates$date[which(gtfs_obj$calendar_dates$exception_type != 2)]
   }
-  if(length(feed_dates$calendar) == 0 && length(feed_dates$calendar_dates) == 0) {
+  if(length(feed_dates[["calendar"]]) == 0 && length(feed_dates[["calendar_dates"]]) == 0) {
     warning("No valid dates defined in feed")
     return(gtfs_obj)
   }
@@ -45,8 +45,8 @@ set_dates_services <- function(gtfs_obj) {
         "saturday")[as.POSIXlt(date)$wday + 1]
     }
     
-    min_date = min(feed_dates$calendar, na.rm = TRUE)
-    max_date = max(feed_dates$calendar, na.rm = TRUE)
+    min_date = min(feed_dates[["calendar"]], na.rm = TRUE)
+    max_date = max(feed_dates[["calendar"]], na.rm = TRUE)
     # get first and last date of a feed
     dates <- dplyr::tibble(
       date = seq(min_date, max_date, 1),
@@ -56,8 +56,8 @@ set_dates_services <- function(gtfs_obj) {
     # gather services by weekdays
     .availability = NULL
     .days = c("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday") 
-    .cns_nondays = colnames(gtfs_obj$calendar)[which(!colnames(gtfs_obj$calendar) %in% .days)]
-    service_ids_weekdays = gtfs_obj$calendar %>% 
+    .cns_nondays = colnames(gtfs_obj[["calendar"]])[which(!colnames(gtfs_obj[["calendar"]]) %in% .days)]
+    service_ids_weekdays = gtfs_obj[["calendar"]] %>% 
       reshape(gc, direction = "long", idvar = .cns_nondays, varying = .days, 
               v.names = ".availability", timevar = "weekday_num") %>% 
       left_join(data.frame(weekday_num = 1:7, weekday = .days), "weekday_num") %>% 
@@ -74,7 +74,7 @@ set_dates_services <- function(gtfs_obj) {
     # addtions and exceptions
     if(has_calendar_dates) {
       # add calendar_dates additions (1)
-      additions = gtfs_obj$calendar_dates %>% 
+      additions = gtfs_obj[["calendar_dates"]] %>% 
         filter(exception_type == 1) %>% 
         dplyr::select(-exception_type)
       if(nrow(additions) > 0) {
@@ -84,7 +84,7 @@ set_dates_services <- function(gtfs_obj) {
       }
       
       # remove calendar_dates exceptions (2) 
-      exceptions = gtfs_obj$calendar_dates %>% 
+      exceptions = gtfs_obj[["calendar_dates"]] %>% 
         dplyr::filter(exception_type == 2) %>% 
         dplyr::select(-exception_type)
       if(nrow(exceptions) > 0) {
@@ -94,7 +94,7 @@ set_dates_services <- function(gtfs_obj) {
       }
     }
   } else if(has_calendar_dates) { # only calendar_dates.txt
-    date_service_df = gtfs_obj$calendar_dates[gtfs_obj$calendar_dates$exception_type != 2, c("date", "service_id")]
+    date_service_df = gtfs_obj[["calendar_dates"]][gtfs_obj$calendar_dates$exception_type != 2, c("date", "service_id")]
     date_service_df <- dplyr::as_tibble(date_service_df)
   }
   
