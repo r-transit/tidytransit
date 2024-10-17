@@ -50,7 +50,7 @@
 #' @import data.table
 #' @export
 #' @examples \donttest{
-#' nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+#' nyc_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
 #' nyc <- read_gtfs(nyc_path)
 #'
 #' # you can use initial walk times to different stops in walking distance (arbitrary example values)

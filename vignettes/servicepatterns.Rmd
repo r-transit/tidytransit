@@ -39,7 +39,7 @@ as a sample feed with tidytransit but you can read it directly from the MTA's we
 that some routes and services have been removed from the feed to reduce package size.
   
 ```{r}
-local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+local_gtfs_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
 gtfs <- read_gtfs(local_gtfs_path)
 # gtfs <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
 ```

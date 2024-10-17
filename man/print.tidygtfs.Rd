@@ -21,7 +21,7 @@ validation_result attribute, created with \code{\link[=validate_gtfs]{validate_g
 \examples{
  \dontrun{
 path = system.file("extdata", 
-           "google_transit_nyc_subway.zip", 
+           "nyc_subway.zip", 
            package = "tidytransit")
 
 g = read_gtfs(path)

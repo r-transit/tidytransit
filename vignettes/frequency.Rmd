@@ -50,7 +50,7 @@ We'll start by importing a snapshot of the NYC MTA's subway schedule, which is i
 with the package when [installed](https://r-transit.github.io/tidytransit/index.html#installation).  
 
 ```{r}
-local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+local_gtfs_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
 gtfs <- read_gtfs(local_gtfs_path)
 ```
 

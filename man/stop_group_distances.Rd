@@ -24,7 +24,7 @@ By default calculates distances among stop_ids with the same stop_name.
 \dontrun{
 library(dplyr)
 
-nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+nyc_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
 nyc <- read_gtfs(nyc_path)
 
 stop_group_distances(nyc$stops)

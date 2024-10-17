@@ -17,7 +17,7 @@
 #' @seealso [validate_gtfs()], [write_gtfs()]
 #'
 #' @examples \dontrun{
-#' local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+#' local_gtfs_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
 #' gtfs <- read_gtfs(local_gtfs_path)
 #' summary(gtfs)
 #'

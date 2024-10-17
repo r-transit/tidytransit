@@ -74,7 +74,7 @@ section on "Finding More GTFS Feeds" for more sources of feeds.
 # nyc <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
 
 local_gtfs_path <- system.file("extdata", 
-                               "google_transit_nyc_subway.zip", 
+                               "nyc_subway.zip", 
                                package = "tidytransit")
 nyc <- read_gtfs(local_gtfs_path)
 ```

@@ -14,7 +14,7 @@ test_that("read_gtfs() imports a local file to a list of
 
 test_that("reading a real feed", {
   skip_on_cran()
-  g_nyc_path = system.file("extdata", "google_transit_nyc_subway.zip", 
+  g_nyc_path = system.file("extdata", "nyc_subway.zip", 
                            package = "tidytransit")
   gtfs_obj = read_gtfs(g_nyc_path)
   

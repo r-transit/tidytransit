@@ -13,7 +13,7 @@
 #' \dontrun{
 #' library(dplyr)
 #' 
-#' nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+#' nyc_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
 #' nyc <- read_gtfs(nyc_path)
 #' 
 #' nyc$stops %>%
@@ -103,7 +103,7 @@ prep_dist_mtrx = function(dist_list) {
 #' \dontrun{
 #' library(dplyr)
 #' 
-#' nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+#' nyc_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
 #' nyc <- read_gtfs(nyc_path)
 #' 
 #' stop_group_distances(nyc$stops)
@@ -185,7 +185,7 @@ stop_group_distances = function(gtfs_stops, by = "stop_name") {
 #' @importFrom stats kmeans
 #' @examples \donttest{
 #' library(dplyr)
-#' nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+#' nyc_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
 #' nyc <- read_gtfs(nyc_path)
 #' nyc <- cluster_stops(nyc)
 #' 

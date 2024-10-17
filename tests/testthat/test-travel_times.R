@@ -158,7 +158,7 @@ test_that("feed without transfers", {
 
 test_that("nyc feed", {
   skip_on_cran()
-  nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+  nyc_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
   nyc <- read_gtfs(nyc_path)
 
   .child_index = which(nyc$stops$location_type == 0)
