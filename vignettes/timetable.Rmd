@@ -199,7 +199,7 @@ ggplot(departures_180823) + theme_bw() +
 Now we plot departures for all stop_ids with the same name, so we can separate for different
 stop_ids. The following plot shows all departures for stop_ids 127N and 127S from 7 to 8 AM.
 
-```{r fig.width=6, fig.height=6}
+```{r fig.width=7, fig.height=5}
 departures_180823_sub_7to8 <- departures_180823 %>% 
   filter(stop_id %in% c("127N", "127S")) %>% 
   filter(departure_time >= hms::hms(hours = 7) & departure_time <= hms::hms(hours = 8))

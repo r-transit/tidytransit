@@ -296,7 +296,7 @@ routes_sf <- routes_sf %>%
 
 And finally, lets plot the routes with median headways of less than 10 minutes in the morning.
 
-```{r, fig.width=6, fig.height=10, warn=FALSE}
+```{r, fig.width=6, fig.height=8, warn=FALSE}
 # convert to an appropriate coordinate reference system
 routes_sf_crs <- sf::st_transform(routes_sf, 26919) 
 routes_sf_crs %>% 
@@ -338,7 +338,7 @@ routes_sf_buffer <- st_buffer(routes_sf,
 Next, when we render the map, we'll make sure to make the borders around each route 
 transparent, and set the opacity for the fill of all the polygons high again. 
 
-```{r, fig.width=6, fig.height=10}
+```{r, fig.width=6, fig.height=7}
 routes_sf_buffer %>% 
   ggplot() + 
   geom_sf(colour = alpha("white", 0), fill = alpha("red",0.2)) +
@@ -379,7 +379,7 @@ am_stop_name_departures <- am_stop_name_departures %>%
 
 Finally, we can plot both the route line counts and the stop departure counts on one map:
 
-```{r, fig.width=6, fig.height=10}
+```{r, fig.width=6, fig.height=7}
 ggplot() + 
   geom_sf(data = routes_sf_buffer, 
           colour = alpha("white",0), fill = alpha("red",0.3)) +
