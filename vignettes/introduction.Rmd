@@ -187,9 +187,9 @@ MobilityData_sf = MobilityData_feedlist %>%
   ungroup() %>% st_as_sf()
 ```
 
-Now show the feeds on a map:
+These boxes could now be shown on an interactive map.
 
-```{r, fig.width=7}
+```{r, fig.width=7, eval=FALSE}
 library(leaflet)
 leaflet() %>% 
   addProviderTiles(provider = providers$CartoDB.Positron) %>% 
@@ -197,4 +197,3 @@ leaflet() %>%
               fillOpacity = 0.1, label = substr(MobilityData_sf$provider, 0, 60))
 
 ```
-
