@@ -17,8 +17,8 @@
 #' @importFrom stats reshape
 #' @keywords internal
 set_dates_services <- function(gtfs_obj) {
-  has_calendar = feed_contains(gtfs_obj, "calendar") && nrow(gtfs_obj[["calendar"]]) > 0
-  has_calendar_dates = feed_contains(gtfs_obj, "calendar_dates") && nrow(gtfs_obj[["calendar_dates"]]) > 0
+  has_calendar = feed_has_non_empty_table(gtfs_obj, "calendar")
+  has_calendar_dates = feed_has_non_empty_table(gtfs_obj, "calendar_dates")
   
   # check date validity 
   if(!has_calendar && !has_calendar_dates) {

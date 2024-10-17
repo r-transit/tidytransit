@@ -8,6 +8,20 @@ feed_contains <- function(gtfs_obj, table_name) {
     (exists(".", where = gtfs_obj) && exists(table_name, where = gtfs_obj$.))
 }
 
+feed_has_non_empty_table <- function(gtfs_obj, table_name) {
+  if(exists(table_name, where = gtfs_obj)) {
+    if(nrow(gtfs_obj[[table_name]]) > 0) {
+      return(TRUE)
+    }
+  } else if(exists(".", where = gtfs_obj) && exists(table_name, where = gtfs_obj$.)) {
+    if(nrow(gtfs_obj[["."]][[table_name]]) > 0) {
+      return(TRUE)
+    }
+  }
+  return(FALSE)
+}
+
+
 #' Convert empty strings ("") to NA values in all gtfs tables
 #' 
 #' @param gtfs_obj gtfs feed (tidygtfs object)
@@ -55,7 +69,7 @@ gather_dt = function(df_wide, new_key_colname, new_val_colname,
                      value_colnames) {
   dt = as.data.table(df_wide)
   dt_melted = data.table::melt(dt, measure.vars = value_colnames,
-       variable.name = new_key_colname, value.name = new_val_colname)
+                               variable.name = new_key_colname, value.name = new_val_colname)
   
   return(dt_melted)
 }

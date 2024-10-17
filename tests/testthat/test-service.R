@@ -11,6 +11,9 @@ test_that("set_servicepattern", {
   )
   g <- set_servicepattern(g)
   expect_equal(length(unique(g$.$servicepatterns$servicepattern_id)), length(unique(gtfs_orig$calendar$service_id)))
+  g$calendar <- g$calendar[0,]
+  g$calendar_dates <- g$calendar_dates[0,]
+  expect_warning(set_servicepattern(g), "No dates defined in feed")
 })
 
 test_that("set_servicepattern w/ more params", {
