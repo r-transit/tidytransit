@@ -24,7 +24,7 @@ options(dplyr.summarise.inform=F)
 ## Introduction
 
 The focus of this vignette is on how to use R to make graphics about where and how often 
-transit service operates based on schedule data published in the [General Transit Feed Specification](https://gtfs.org/). 
+transit services operate based on schedule data published in the [General Transit Feed Specification](https://gtfs.org/). 
 We'll focus on the New York City Metropolitan Transit Agency's Subway schedule for this 
 vignette, but you can easily apply it to thousands of other GTFS data sources. See the 
 [tidytransit introductory vignette](https://r-transit.github.io/tidytransit/articles/introduction.html#finding-more-gtfs-feeds) 
@@ -55,7 +55,8 @@ gtfs <- read_gtfs(local_gtfs_path)
 ```
 
 But note that you can also just uncomment the line below and import the data from the NYC 
-MTA's URL directly. 
+MTA's URL directly. Note that some routes and services have been removed from the exmaple feed 
+to reduce package size.
 
 ```{r}
 # gtfs <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
@@ -65,10 +66,10 @@ MTA's URL directly.
 
 GTFS feeds typically contain a schedule of all the schedules of service for a given system. 
 Selecting a schedule of service in NYC allows us to focus on, for example, non-holiday 
-weekday service, in the Fall of 2019. In some feeds, service selection can be more or less 
+weekday service, in the Fall of 2018. In some feeds, service selection can be more or less 
 complicated than NYC. In any case, you'll want to read the [service patterns](https://r-transit.github.io/tidytransit/articles/servicepatterns.html) 
 vignette included in this package in order to see how you can select the right service for 
-your needs. 
+your needs.
 
 We use one of the functions described in that vignette to create a table on the gtfs feed 
 that lets us filter by weekday/weekend service. 
@@ -171,7 +172,7 @@ system on weekdays.
 
 ```{r}
 am_stop_freq <- get_stop_frequency(gtfs, start_time = 6*3600, end_time = 10*3600, 
-                              service_ids = service_ids, by_route = TRUE)
+                                   service_ids = service_ids, by_route = TRUE)
 ```
 
 ```{r}
@@ -196,7 +197,7 @@ stop_name.
 
 ```{r}
 one_line_stops <- am_stop_freq %>% 
-    filter(route_id == 1 & direction_id == 0) %>%
+    filter(route_id == "1" & direction_id == 0) %>%
     left_join(gtfs$stops, by ="stop_id") %>% 
     mutate(mean_headway_minutes = mean_headway/60)
 ```

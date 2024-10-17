@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
   
 ## Overview
 
-Each trip in a GTFS feed is referenced to a service_id (in trips.txt). The [GTFS reference](https://gtfs.org/documentation/schedule/reference/#calendartxt) 
+Each trip in a GTFS feed is referenced to a service_id (in `trips.txt`). The [GTFS reference](https://gtfs.org/documentation/schedule/reference/#calendartxt) 
 specifies that a "service_id contains an ID that uniquely identifies a set of dates when 
 service is available for one or more routes". A service could run on every weekday or only 
 on Saturdays for example. Other possible services run only on holidays during a year, 
@@ -35,7 +35,8 @@ trip frequencies for different days.
 ## Prepare data
 
 We use a feed from the New York Metropolitan Transportation Authority. It is provided 
-as a sample feed with tidytransit but you can read it directly from the MTA's website. 
+as a sample feed with tidytransit but you can read it directly from the MTA's website. Note
+that some routes and services have been removed from the feed to reduce package size.
   
 ```{r}
 local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
@@ -99,14 +100,14 @@ patterns (like `dates_services`). We can compare the number of service patterns 
 ```{r}
 head(gtfs$.$dates_servicepatterns)
 
-# service ids used
-n_services <- length(unique(gtfs$trips$service_id)) # 70
+# number of service ids used
+n_services <- length(unique(gtfs$trips$service_id)) # 52
 
 # unique date patterns 
-n_servicepatterns <- length(unique(gtfs$.$servicepatterns$servicepattern_id)) # 7
+n_servicepatterns <- length(unique(gtfs$.$servicepatterns$servicepattern_id)) # 3
 ```
 
-The feed uses 70 service_ids but there are actually only 7 different date patterns. Other 
+The example feed uses 52 service_ids but there are actually only 3 different date patterns. Other 
 feeds might not have such low numbers, for example the [Swiss GTFS feed](https://opentransportdata.swiss/dataset/timetable-2019-gtfs) 
 uses around 15'600 service_ids which all identify unique date patterns.
 
@@ -124,10 +125,9 @@ ggplot(date_servicepattern_table) + theme_bw() +
   scale_x_date(breaks = scales::date_breaks("1 month")) + theme(legend.position = "bottom")
 ```
 
-The plot shows that pattern `s_128de43` runs on every Sunday from July until October without 
-exceptions. `s_a4c6b26` also runs on Sundays but it also covers a Monday (September 3rd). 
-Similarly, the date pattern `s_f3bcc6f` runs every Saturday. `s_d7d9701` covers weekdays 
-(Mondays through Friday), `s_e25d6ca` seems to do the same through November with some exceptions. 
+The plot shows that pattern `s_a4c6b26` runs on every Sunday from July until October. 
+`s_c578d4a` runs every Saturday and on one Wednesday. 
+`s_e25d6ca` covers weekdays (Mondays through Friday) with one exception.
 
 ### Names for service patterns
 

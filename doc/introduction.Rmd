@@ -62,9 +62,9 @@ a list of the tables in each feed.
 Below we use the tidytransit `read_gtfs` function in order to read a feed from the NYC MTA 
 into R.
 
-We use a feed included in the package in the example below. But note that you can read 
+We use an example feed included in the package in the example below. But note that you can read 
 directly from the New York City Metropolitan Transit Authority, as shown in the commented 
-code below. 
+code below.
 
 You can also read from any other URL. This is useful because there are many sources for 
 GTFS data, and often the best source is transit service providers themselves. See the next 

@@ -40,11 +40,11 @@ head(gtfs$.$servicepatterns)
 ## -----------------------------------------------------------------------------
 head(gtfs$.$dates_servicepatterns)
 
-# service ids used
-n_services <- length(unique(gtfs$trips$service_id)) # 70
+# number of service ids used
+n_services <- length(unique(gtfs$trips$service_id)) # 52
 
 # unique date patterns 
-n_servicepatterns <- length(unique(gtfs$.$servicepatterns$servicepattern_id)) # 7
+n_servicepatterns <- length(unique(gtfs$.$servicepatterns$servicepattern_id)) # 3
 
 ## ----fig.height=4, fig.width=7------------------------------------------------
 date_servicepattern_table <- gtfs$.$dates_servicepatterns %>% left_join(calendar, by = "date")

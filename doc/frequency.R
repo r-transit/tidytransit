@@ -67,14 +67,14 @@ gtfs$trips %>%
 
 ## -----------------------------------------------------------------------------
 am_stop_freq <- get_stop_frequency(gtfs, start_time = 6*3600, end_time = 10*3600, 
-                              service_ids = service_ids, by_route = TRUE)
+                                   service_ids = service_ids, by_route = TRUE)
 
 ## -----------------------------------------------------------------------------
 knitr::kable(head(am_stop_freq))
 
 ## -----------------------------------------------------------------------------
 one_line_stops <- am_stop_freq %>% 
-    filter(route_id == 1 & direction_id == 0) %>%
+    filter(route_id == "1" & direction_id == 0) %>%
     left_join(gtfs$stops, by ="stop_id") %>% 
     mutate(mean_headway_minutes = mean_headway/60)
 
