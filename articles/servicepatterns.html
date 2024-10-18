@@ -103,7 +103,7 @@ Poletti</h4>
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p>Each trip in a GTFS feed is referenced to a service_id (in
-trips.txt). The <a href="https://gtfs.org/documentation/schedule/reference/#calendartxt" class="external-link">GTFS
+<code>trips.txt</code>). The <a href="https://gtfs.org/documentation/schedule/reference/#calendartxt" class="external-link">GTFS
 reference</a> specifies that a “service_id contains an ID that uniquely
 identifies a set of dates when service is available for one or more
 routes”. A service could run on every weekday or only on Saturdays for
@@ -120,9 +120,10 @@ analysis like routing or trip frequencies for different days.</p>
 </h2>
 <p>We use a feed from the New York Metropolitan Transportation
 Authority. It is provided as a sample feed with tidytransit but you can
-read it directly from the MTA’s website.</p>
+read it directly from the MTA’s website. Note that some routes and
+services have been removed from the feed to reduce package size.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">local_gtfs_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"google_transit_nyc_subway.zip"</span>, package <span class="op">=</span> <span class="st">"tidytransit"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">local_gtfs_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"nyc_subway.zip"</span>, package <span class="op">=</span> <span class="st">"tidytransit"</span><span class="op">)</span></span>
 <span><span class="va">gtfs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_gtfs.html">read_gtfs</a></span><span class="op">(</span><span class="va">local_gtfs_path</span><span class="op">)</span></span>
 <span><span class="co"># gtfs &lt;- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")</span></span></code></pre></div>
 <p>Tidytransit provides a <code>dates_services</code> (stored in the
@@ -204,21 +205,21 @@ patterns to the number of services.</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 2</span></span></span>
 <span><span class="co">##   date       servicepattern_id</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> 2018-06-24 s_128de43        </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> 2018-06-24 s_a4c6b26        </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> 2018-06-25 s_d7d9701        </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> 2018-06-25 s_e25d6ca        </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span> 2018-06-26 s_498c8ac        </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">6</span> 2018-06-26 s_d7d9701</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> 2018-06-24 s_a4c6b26        </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> 2018-06-25 s_e25d6ca        </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> 2018-06-26 s_e25d6ca        </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> 2018-06-27 s_e25d6ca        </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> 2018-06-28 s_e25d6ca        </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span> 2018-06-29 s_e25d6ca</span></span></code></pre>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># service ids used</span></span>
-<span><span class="va">n_services</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span><span class="op">$</span><span class="va">service_id</span><span class="op">)</span><span class="op">)</span> <span class="co"># 70</span></span>
+<code class="sourceCode R"><span><span class="co"># number of service ids used</span></span>
+<span><span class="va">n_services</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">trips</span><span class="op">$</span><span class="va">service_id</span><span class="op">)</span><span class="op">)</span> <span class="co"># 52</span></span>
 <span></span>
 <span><span class="co"># unique date patterns </span></span>
-<span><span class="va">n_servicepatterns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">servicepatterns</span><span class="op">$</span><span class="va">servicepattern_id</span><span class="op">)</span><span class="op">)</span> <span class="co"># 7</span></span></code></pre></div>
-<p>The feed uses 70 service_ids but there are actually only 7 different
-date patterns. Other feeds might not have such low numbers, for example
-the <a href="https://opentransportdata.swiss/dataset/timetable-2019-gtfs" class="external-link">Swiss
+<span><span class="va">n_servicepatterns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">servicepatterns</span><span class="op">$</span><span class="va">servicepattern_id</span><span class="op">)</span><span class="op">)</span> <span class="co"># 3</span></span></code></pre></div>
+<p>The example feed uses 52 service_ids but there are actually only 3
+different date patterns. Other feeds might not have such low numbers,
+for example the <a href="https://opentransportdata.swiss/dataset/timetable-2019-gtfs" class="external-link">Swiss
 GTFS feed</a> uses around 15’600 service_ids which all identify unique
 date patterns.</p>
 </div>
@@ -237,13 +238,10 @@ way to start is visualising the data.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">servicepattern_id</span>, color <span class="op">=</span> <span class="va">weekday</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_date.html" class="external-link">scale_x_date</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/date_breaks.html" class="external-link">date_breaks</a></span><span class="op">(</span><span class="st">"1 month"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="servicepatterns_files/figure-html/unnamed-chunk-7-1.png" width="672"></p>
-<p>The plot shows that pattern <code>s_128de43</code> runs on every
-Sunday from July until October without exceptions.
-<code>s_a4c6b26</code> also runs on Sundays but it also covers a Monday
-(September 3rd). Similarly, the date pattern <code>s_f3bcc6f</code> runs
-every Saturday. <code>s_d7d9701</code> covers weekdays (Mondays through
-Friday), <code>s_e25d6ca</code> seems to do the same through November
-with some exceptions.</p>
+<p>The plot shows that pattern <code>s_a4c6b26</code> runs on every
+Sunday from July until October. <code>s_c578d4a</code> runs every
+Saturday and on one Wednesday. <code>s_e25d6ca</code> covers weekdays
+(Mondays through Friday) with one exception.</p>
 </div>
 <div class="section level3">
 <h3 id="names-for-service-patterns">Names for service patterns<a class="anchor" aria-label="anchor" href="#names-for-service-patterns"></a>
@@ -322,16 +320,12 @@ with ids and names.</p>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">servicepattern_names</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 7 × 2</span></span></span>
-<span><span class="co">##   servicepattern_id servicepattern_name                                         </span></span>
-<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                       </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> s_128de43         Sundays (2018-06-24 - 2018-09-30)                           </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> s_498c8ac         Tuesday, Wednesday, Thursday, Friday (2018-06-26 - 2018-11-…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> s_a4c6b26         Sundays and Labor Day (2018-06-24 - 2018-10-28)             </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> s_c578d4a         Saturdays and Independence Day (2018-06-30 - 2018-11-03)    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span> s_d7d9701         Weekdays (2018-06-25 - 2018-10-05)                          </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">6</span> s_e25d6ca         Weekdays (2018-06-25 - 2018-11-02)                          </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">7</span> s_f3bcc6f         Saturdays (2018-06-30 - 2018-10-06)</span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 3 × 2</span></span></span>
+<span><span class="co">##   servicepattern_id servicepattern_name                                     </span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                   </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> s_a4c6b26         Sundays and Labor Day (2018-06-24 - 2018-10-28)         </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> s_c578d4a         Saturdays and Independence Day (2018-06-30 - 2018-11-03)</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> s_e25d6ca         Weekdays (2018-06-25 - 2018-11-02)</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
