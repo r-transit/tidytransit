@@ -194,6 +194,8 @@ test_that("handle feeds with geojson",{
   locations_path = system.file("extdata", "locations_feed.zip", package = "tidytransit")
   gtfsio_tmpdir = tempfile("gtfsio")
   gtfsio0 = gtfsio::import_gtfs(locations_path)
+  expect_true(feed_contains(gtfsio0, "locations"))
+  expect_false(feed_has_non_empty_table(gtfsio0, "locations"))
   gtfsio::export_gtfs(gtfsio0, gtfsio_tmpdir, as_dir = TRUE)
   
   # convert json/sf

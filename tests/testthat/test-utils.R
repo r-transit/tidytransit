@@ -111,3 +111,22 @@ test_that("empty_strings_to_na", {
     expect_equal(g1[[tbl]], g3[[tbl]])
   } 
 })
+
+test_that("feed_contains, feed_has_non_empty_table", {
+  g = gtfs_duke
+  expect_false(feed_contains(g, "dates_services"))
+  expect_false(feed_has_non_empty_table(g, "dates_services"))
+  expect_true(feed_contains.(g, "dates_services"))
+  
+  expect_true(feed_contains(g, "calendar_dates"))
+  expect_false(feed_contains.(g, "calendar_dates"))
+  expect_false(feed_has_non_empty_table(g, "calendar_dates"))
+
+  expect_true(feed_contains(g, "calendar"))
+  expect_false(feed_contains.(g, "calendar"))
+  expect_true(feed_has_non_empty_table(g, "calendar"))
+  
+  expect_false(feed_contains.(g, "servicepatterns"))
+  g <- set_servicepattern(g)
+  expect_true(feed_contains.(g, "servicepatterns"))
+})

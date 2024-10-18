@@ -1,20 +1,19 @@
-#' Returns TRUE if the given gtfs_obj contains the table. Used to check for
-#' tidytransit's calculated tables in sublist (\code{gtfs_obj$.})
+#' Returns TRUE if the given gtfs_obj contains the table in tidytransit's "calculated 
+#' tables sublist" (\code{gtfs_obj$.})
 #' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @param table_name name of the table to look for, as string
 #' @keywords internal
-feed_contains <- function(gtfs_obj, table_name) {
-  exists(table_name, where = gtfs_obj) ||
+feed_contains. <- function(gtfs_obj, table_name) {
     (exists(".", where = gtfs_obj) && exists(table_name, where = gtfs_obj$.))
+}
+
+feed_contains <- function(gtfs_obj, table_name) {
+  exists(table_name, where = gtfs_obj)
 }
 
 feed_has_non_empty_table <- function(gtfs_obj, table_name) {
   if(exists(table_name, where = gtfs_obj)) {
-    if(nrow(gtfs_obj[[table_name]]) > 0) {
-      return(TRUE)
-    }
-  } else if(exists(".", where = gtfs_obj) && exists(table_name, where = gtfs_obj$.)) {
-    if(nrow(gtfs_obj[["."]][[table_name]]) > 0) {
+    if(is.data.frame(gtfs_obj[[table_name]]) && nrow(gtfs_obj[[table_name]]) > 0) {
       return(TRUE)
     }
   }
