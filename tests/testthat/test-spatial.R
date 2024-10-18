@@ -149,7 +149,7 @@ test_that("stop_group_distances", {
 
 test_that("stop_group_distances real feed", {
   skip_on_cran()
-  g_nyc = read_gtfs(system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit"))
+  g_nyc = read_gtfs(system.file("extdata", "nyc_subway.zip", package = "tidytransit"))
   
   x1 = stop_group_distances(g_nyc$stops)
 
@@ -170,7 +170,7 @@ test_that("stop_group_distances real feed", {
 test_that("stops cluster", {
   skip_on_cran()
   
-  g_nyc = read_gtfs(system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit"))
+  g_nyc = read_gtfs(system.file("extdata", "nyc_subway.zip", package = "tidytransit"))
   g_nyc2 <- filter_feed_by_area(g_nyc, c(-74.0144, 40.7402, -73.9581, 40.7696))
 
   x1 = cluster_stops(g_nyc2$stops)

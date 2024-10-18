@@ -25,7 +25,7 @@ among all stops for large feeds should be avoided.
 \dontrun{
 library(dplyr)
 
-nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+nyc_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
 nyc <- read_gtfs(nyc_path)
 
 nyc$stops \%>\%

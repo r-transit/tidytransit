@@ -69,7 +69,7 @@
 #'
 #' # 2) separate filtering and travel time calculation for a more granular analysis
 #' # stop_names in this feed are not restricted to an area, create clusters of stops to fix
-#' nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+#' nyc_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
 #' nyc <- read_gtfs(nyc_path)
 #' nyc <- cluster_stops(nyc, group_col = "stop_name", cluster_colname = "stop_name")
 #' 

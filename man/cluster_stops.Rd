@@ -39,7 +39,7 @@ which contains the \code{group_col} value and the cluster number.
 \examples{
 \donttest{
 library(dplyr)
-nyc_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+nyc_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
 nyc <- read_gtfs(nyc_path)
 nyc <- cluster_stops(nyc)
 
