@@ -20,3 +20,4 @@ contributing.md
 conduct.md
 ^docs/
 ^\.github$
+^cran-comments\.md$
