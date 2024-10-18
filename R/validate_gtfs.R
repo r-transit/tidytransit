@@ -43,21 +43,6 @@
 #' 
 #' @examples
 #' validate_gtfs(gtfs_duke)
-#' #> # A tibble: 233 × 8
-#' #>    file   file_spec file_provided_status field  field_spec field_provided_status
-#' #>    <chr>  <chr>     <lgl>                <chr>  <chr>      <lgl>                
-#' #>  1 agency req       TRUE                 agenc… opt        TRUE                 
-#' #>  2 agency req       TRUE                 agenc… req        TRUE                 
-#' #>  3 agency req       TRUE                 agenc… req        TRUE                 
-#' #>  4 agency req       TRUE                 agenc… req        TRUE                 
-#' #>  5 agency req       TRUE                 agenc… opt        TRUE                 
-#' #>  6 agency req       TRUE                 agenc… opt        TRUE                 
-#' #>  7 agency req       TRUE                 agenc… opt        TRUE                 
-#' #>  8 agency req       TRUE                 agenc… opt        FALSE                
-#' #>  9 stops  req       TRUE                 stop_… req        TRUE                 
-#' #> 10 stops  req       TRUE                 stop_… opt        TRUE                 
-#' #> # 223 more rows
-#' #> # 2 more variables: validation_status <chr>, validation_details <chr>
 #' 
 #' \dontrun{
 #' local_gtfs_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")

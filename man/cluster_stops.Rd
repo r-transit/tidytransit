@@ -48,19 +48,8 @@ stops_86_St = nyc$stops \%>\%
   filter(stop_name == "86 St")
 
 table(stops_86_St$stop_name_cluster)
-#> 86 St [1] 86 St [2] 86 St [3] 86 St [4] 86 St [5] 86 St [6] 
-#>         3         3         3         3         3         3 
 
 stops_86_St \%>\% select(stop_id, stop_name, parent_station, stop_name_cluster) \%>\% head()
-#> # A tibble: 6 × 4
-#>   stop_id stop_name parent_station stop_name_cluster
-#>   <chr>   <chr>     <chr>          <chr>            
-#> 1 121     86 St     ""             86 St [3]        
-#> 2 121N    86 St     "121"          86 St [3]        
-#> 3 121S    86 St     "121"          86 St [3]        
-#> 4 626     86 St     ""             86 St [4]        
-#> 5 626N    86 St     "626"          86 St [4]        
-#> 6 626S    86 St     "626"          86 St [4]
 
 library(ggplot2)
 ggplot(stops_86_St) +
