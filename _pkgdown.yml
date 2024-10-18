@@ -48,3 +48,16 @@ reference:
   contents:
   - gtfs_duke
   - route_type_names
+navbar:
+ components:
+   articles:
+    text: Articles
+    menu:
+    - text: "Introduction to tidytransit"
+      href: articles/introduction.html
+    - text: "Service Patterns and Calendar Schedules"
+      href: articles/servicepatterns.html
+    - text: "Generate a Departure Timetable"
+      href: articles/timetable.html
+    - text: "Transit (GTFS) Service & Headway Mapping with R"
+      href: articles/frequency.html
