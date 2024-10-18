@@ -33,9 +33,6 @@ required files/fields are not found. This function is called in read_gtfs()."><!
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/frequency.html">Transit (GTFS) Service &amp; Headway Mapping with R</a>
-    </li>
-    <li>
       <a href="../articles/introduction.html">Introduction to tidytransit</a>
     </li>
     <li>
@@ -43,6 +40,9 @@ required files/fields are not found. This function is called in read_gtfs()."><!
     </li>
     <li>
       <a href="../articles/timetable.html">Generate a Departure Timetable</a>
+    </li>
+    <li>
+      <a href="../articles/frequency.html">Transit (GTFS) Service &amp; Headway Mapping with R</a>
     </li>
   </ul></li>
 <li>
@@ -147,21 +147,6 @@ present, however, it becomes optional and <code>calendar_dates.txt</code>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> areas  Optional  TRUE                 area_… Optional   FALSE                </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 270 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: validation_status &lt;chr&gt;, validation_details &lt;chr&gt;</span></span>
-<span class="r-in"><span><span class="co">#&gt; # A tibble: 233 × 8</span></span></span>
-<span class="r-in"><span><span class="co">#&gt;    file   file_spec file_provided_status field  field_spec field_provided_status</span></span></span>
-<span class="r-in"><span><span class="co">#&gt;    &lt;chr&gt;  &lt;chr&gt;     &lt;lgl&gt;                &lt;chr&gt;  &lt;chr&gt;      &lt;lgl&gt;                </span></span></span>
-<span class="r-in"><span><span class="co">#&gt;  1 agency req       TRUE                 agenc… opt        TRUE                 </span></span></span>
-<span class="r-in"><span><span class="co">#&gt;  2 agency req       TRUE                 agenc… req        TRUE                 </span></span></span>
-<span class="r-in"><span><span class="co">#&gt;  3 agency req       TRUE                 agenc… req        TRUE                 </span></span></span>
-<span class="r-in"><span><span class="co">#&gt;  4 agency req       TRUE                 agenc… req        TRUE                 </span></span></span>
-<span class="r-in"><span><span class="co">#&gt;  5 agency req       TRUE                 agenc… opt        TRUE                 </span></span></span>
-<span class="r-in"><span><span class="co">#&gt;  6 agency req       TRUE                 agenc… opt        TRUE                 </span></span></span>
-<span class="r-in"><span><span class="co">#&gt;  7 agency req       TRUE                 agenc… opt        TRUE                 </span></span></span>
-<span class="r-in"><span><span class="co">#&gt;  8 agency req       TRUE                 agenc… opt        FALSE                </span></span></span>
-<span class="r-in"><span><span class="co">#&gt;  9 stops  req       TRUE                 stop_… req        TRUE                 </span></span></span>
-<span class="r-in"><span><span class="co">#&gt; 10 stops  req       TRUE                 stop_… opt        TRUE                 </span></span></span>
-<span class="r-in"><span><span class="co">#&gt; # 223 more rows</span></span></span>
-<span class="r-in"><span><span class="co">#&gt; # 2 more variables: validation_status &lt;chr&gt;, validation_details &lt;chr&gt;</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="va">local_gtfs_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"nyc_subway.zip"</span>, package <span class="op">=</span> <span class="st">"tidytransit"</span><span class="op">)</span></span></span>

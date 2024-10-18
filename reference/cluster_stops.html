@@ -35,9 +35,6 @@ which contains the group_col value and the cluster number."><!-- mathjax --><scr
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/frequency.html">Transit (GTFS) Service &amp; Headway Mapping with R</a>
-    </li>
-    <li>
       <a href="../articles/introduction.html">Introduction to tidytransit</a>
     </li>
     <li>
@@ -45,6 +42,9 @@ which contains the group_col value and the cluster number."><!-- mathjax --><scr
     </li>
     <li>
       <a href="../articles/timetable.html">Generate a Departure Timetable</a>
+    </li>
+    <li>
+      <a href="../articles/frequency.html">Transit (GTFS) Service &amp; Headway Mapping with R</a>
     </li>
   </ul></li>
 <li>
@@ -143,8 +143,6 @@ modified tidygtfs object is return</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 86 St [1] 86 St [2] 86 St [3] 86 St [4] 86 St [5] 86 St [6] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         3         3         3         3         3         3 </span>
-<span class="r-in"><span><span class="co">#&gt; 86 St [1] 86 St [2] 86 St [3] 86 St [4] 86 St [5] 86 St [6] </span></span></span>
-<span class="r-in"><span><span class="co">#&gt;         3         3         3         3         3         3 </span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">stops_86_St</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">stop_id</span>, <span class="va">stop_name</span>, <span class="va">parent_station</span>, <span class="va">stop_name_cluster</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 4</span></span>
@@ -156,15 +154,6 @@ modified tidygtfs object is return</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> 626     86 St     <span style="color: #949494;">""</span>             86 St [3]        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> 626N    86 St     <span style="color: #949494;">"</span>626<span style="color: #949494;">"</span>          86 St [3]        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> 626S    86 St     <span style="color: #949494;">"</span>626<span style="color: #949494;">"</span>          86 St [3]        </span>
-<span class="r-in"><span><span class="co">#&gt; # A tibble: 6 × 4</span></span></span>
-<span class="r-in"><span><span class="co">#&gt;   stop_id stop_name parent_station stop_name_cluster</span></span></span>
-<span class="r-in"><span><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;            </span></span></span>
-<span class="r-in"><span><span class="co">#&gt; 1 121     86 St     ""             86 St [3]        </span></span></span>
-<span class="r-in"><span><span class="co">#&gt; 2 121N    86 St     "121"          86 St [3]        </span></span></span>
-<span class="r-in"><span><span class="co">#&gt; 3 121S    86 St     "121"          86 St [3]        </span></span></span>
-<span class="r-in"><span><span class="co">#&gt; 4 626     86 St     ""             86 St [4]        </span></span></span>
-<span class="r-in"><span><span class="co">#&gt; 5 626N    86 St     "626"          86 St [4]        </span></span></span>
-<span class="r-in"><span><span class="co">#&gt; 6 626S    86 St     "626"          86 St [4]</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">stops_86_St</span><span class="op">)</span> <span class="op">+</span></span></span>
