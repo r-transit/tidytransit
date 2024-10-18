@@ -3,6 +3,7 @@
 - `read_gtfs()` can now read `locations.geojson` files according to the updated specifications [#214](https://github.com/r-transit/tidytransit/pull/214)
 - tidytransit 1.7.0 needs `gtfsio` 1.2.0 as it uses json reading capabilities from `gtfsio::import_gtfs()`
 - Internally, the automatically parsed specifications from https://gtfs.org/documentation/schedule/reference/ are now used
+- The example feed `google_transit_nyc_subway.zip` has been modified and renamed to `nyc_subway.zip` [#218](https://github.com/r-transit/tidytransit/pull/218)
 
 
 # tidytransit 1.6.1
