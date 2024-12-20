@@ -258,33 +258,33 @@ cannot handle GTFS realtime data, so we can remove those entries.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">data_type</span> <span class="op">==</span> <span class="st">"gtfs"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">MobilityData_feedlist</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## tibble [1,610 × 26] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">##  $ mdb_source_id                          : int [1:1610] 1 2 3 4 5 6 7 8 9 10 ...</span></span>
-<span><span class="co">##  $ data_type                              : chr [1:1610] "gtfs" "gtfs" "gtfs" "gtfs" ...</span></span>
-<span><span class="co">##  $ entity_type                            : chr [1:1610] "" "" "" "" ...</span></span>
-<span><span class="co">##  $ location.country_code                  : chr [1:1610] "US" "CA" "CA" "US" ...</span></span>
-<span><span class="co">##  $ location.subdivision_name              : chr [1:1610] "Maine" "Ontario" "Ontario" "Ohio" ...</span></span>
-<span><span class="co">##  $ location.municipality                  : chr [1:1610] "Casco Bay" "London" "Barrie" "Athens" ...</span></span>
-<span><span class="co">##  $ provider                               : chr [1:1610] "Casco Bay Lines" "London Transit Commission" "Barrie Transit" "Athens Public Transit" ...</span></span>
-<span><span class="co">##  $ name                                   : chr [1:1610] "" "" "" "" ...</span></span>
-<span><span class="co">##  $ note                                   : chr [1:1610] "" "" "" "" ...</span></span>
-<span><span class="co">##  $ feed_contact_email                     : chr [1:1610] "" "croy@londontransit.ca" "" "" ...</span></span>
-<span><span class="co">##  $ static_reference                       : int [1:1610] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">##  $ urls.direct_download                   : chr [1:1610] "http://smttracker.com/downloads/gtfs/cascobaylines-portland-me-usa.zip" "http://www.londontransit.ca/gtfsfeed/google_transit.zip" "http://www.myridebarrie.ca/gtfs/Google_transit.zip" "https://transitfeeds.com/p/athens-public-transit/298/latest/download" ...</span></span>
-<span><span class="co">##  $ urls.authentication_type               : int [1:1610] NA 0 NA NA NA NA NA NA 0 NA ...</span></span>
-<span><span class="co">##  $ urls.authentication_info               : chr [1:1610] "" "" "" "" ...</span></span>
-<span><span class="co">##  $ urls.api_key_parameter_name            : chr [1:1610] "" "" "" "" ...</span></span>
-<span><span class="co">##  $ urls.latest                            : chr [1:1610] "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-maine-casco-bay-lines-gtfs-1.zip?alt=media" "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/ca-ontario-london-transit-commission-gtfs-2.zip?alt=media" "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/ca-ontario-barrie-transit-gtfs-3.zip?alt=media" "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-ohio-athens-public-transit-gtfs-4.zip?alt=media" ...</span></span>
-<span><span class="co">##  $ urls.license                           : chr [1:1610] "" "https://www.londontransit.ca/open-data/ltcs-open-data-terms-of-use/" "https://www.barrie.ca/services-payments/transportation-parking/barrie-transit/barrie-gtfs" "" ...</span></span>
-<span><span class="co">##  $ location.bounding_box.minimum_latitude : num [1:1610] 43.7 42.9 44.3 39.3 44.1 ...</span></span>
-<span><span class="co">##  $ location.bounding_box.maximum_latitude : num [1:1610] 43.7 43.1 44.4 39.4 45 ...</span></span>
-<span><span class="co">##  $ location.bounding_box.minimum_longitude: num [1:1610] -70.2 -81.4 -79.7 -82.1 -75.8 ...</span></span>
-<span><span class="co">##  $ location.bounding_box.maximum_longitude: num [1:1610] -70.1 -81.1 -79.6 -82 -74.6 ...</span></span>
-<span><span class="co">##  $ location.bounding_box.extracted_on     : chr [1:1610] "2022-02-22T19:51:22+00:00" "2022-02-22T19:51:34+00:00" "2022-03-01T22:43:25+00:00" "2022-03-23T14:43:11+00:00" ...</span></span>
-<span><span class="co">##  $ status                                 : chr [1:1610] "inactive" "" "" "deprecated" ...</span></span>
-<span><span class="co">##  $ features                               : chr [1:1610] "" "" "" "" ...</span></span>
-<span><span class="co">##  $ redirect.id                            : chr [1:1610] "" "" "" "1973" ...</span></span>
-<span><span class="co">##  $ redirect.comment                       : chr [1:1610] "" "" "" "" ...</span></span></code></pre>
+<pre><code><span><span class="co">## tibble [1,798 × 26] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">##  $ mdb_source_id                          : int [1:1798] 1 2 3 4 5 6 7 8 9 10 ...</span></span>
+<span><span class="co">##  $ data_type                              : chr [1:1798] "gtfs" "gtfs" "gtfs" "gtfs" ...</span></span>
+<span><span class="co">##  $ entity_type                            : chr [1:1798] "" "" "" "" ...</span></span>
+<span><span class="co">##  $ location.country_code                  : chr [1:1798] "US" "CA" "CA" "US" ...</span></span>
+<span><span class="co">##  $ location.subdivision_name              : chr [1:1798] "Maine" "Ontario" "Ontario" "Ohio" ...</span></span>
+<span><span class="co">##  $ location.municipality                  : chr [1:1798] "Casco Bay" "London" "Barrie" "Athens" ...</span></span>
+<span><span class="co">##  $ provider                               : chr [1:1798] "Casco Bay Lines" "London Transit Commission" "Barrie Transit" "Athens Public Transit" ...</span></span>
+<span><span class="co">##  $ name                                   : chr [1:1798] "" "" "" "" ...</span></span>
+<span><span class="co">##  $ note                                   : chr [1:1798] "" "" "" "" ...</span></span>
+<span><span class="co">##  $ feed_contact_email                     : chr [1:1798] "" "croy@londontransit.ca" "" "" ...</span></span>
+<span><span class="co">##  $ static_reference                       : int [1:1798] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">##  $ urls.direct_download                   : chr [1:1798] "http://smttracker.com/downloads/gtfs/cascobaylines-portland-me-usa.zip" "http://www.londontransit.ca/gtfsfeed/google_transit.zip" "http://www.myridebarrie.ca/gtfs/Google_transit.zip" "https://transitfeeds.com/p/athens-public-transit/298/latest/download" ...</span></span>
+<span><span class="co">##  $ urls.authentication_type               : int [1:1798] NA 0 NA NA NA NA NA NA 0 NA ...</span></span>
+<span><span class="co">##  $ urls.authentication_info               : chr [1:1798] "" "" "" "" ...</span></span>
+<span><span class="co">##  $ urls.api_key_parameter_name            : chr [1:1798] "" "" "" "" ...</span></span>
+<span><span class="co">##  $ urls.latest                            : chr [1:1798] "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-maine-casco-bay-lines-gtfs-1.zip?alt=media" "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/ca-ontario-london-transit-commission-gtfs-2.zip?alt=media" "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/ca-ontario-barrie-transit-gtfs-3.zip?alt=media" "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-ohio-athens-public-transit-gtfs-4.zip?alt=media" ...</span></span>
+<span><span class="co">##  $ urls.license                           : chr [1:1798] "" "https://www.londontransit.ca/open-data/ltcs-open-data-terms-of-use/" "https://www.barrie.ca/services-payments/transportation-parking/barrie-transit/barrie-gtfs" "" ...</span></span>
+<span><span class="co">##  $ location.bounding_box.minimum_latitude : num [1:1798] 43.7 42.9 44.3 39.3 44.1 ...</span></span>
+<span><span class="co">##  $ location.bounding_box.maximum_latitude : num [1:1798] 43.7 43.1 44.4 39.4 45 ...</span></span>
+<span><span class="co">##  $ location.bounding_box.minimum_longitude: num [1:1798] -70.2 -81.4 -79.7 -82.1 -75.8 ...</span></span>
+<span><span class="co">##  $ location.bounding_box.maximum_longitude: num [1:1798] -70.1 -81.1 -79.6 -82 -74.6 ...</span></span>
+<span><span class="co">##  $ location.bounding_box.extracted_on     : chr [1:1798] "2022-02-22T19:51:22+00:00" "2022-02-22T19:51:34+00:00" "2022-03-01T22:43:25+00:00" "2022-03-23T14:43:11+00:00" ...</span></span>
+<span><span class="co">##  $ status                                 : chr [1:1798] "inactive" "" "" "deprecated" ...</span></span>
+<span><span class="co">##  $ features                               : chr [1:1798] "" "" "" "" ...</span></span>
+<span><span class="co">##  $ redirect.id                            : chr [1:1798] "" "" "" "1973" ...</span></span>
+<span><span class="co">##  $ redirect.comment                       : chr [1:1798] "" "" "" "" ...</span></span></code></pre>
 <p>There is a URL (column <code>urls.direct_download</code>) for each
 feed, which can be used to read the feed for a given area directly into
 R. For example:</p>
