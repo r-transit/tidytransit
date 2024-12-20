@@ -120,6 +120,7 @@ test_that("travel_times with filtered feed", {
 })
 
 test_that("time_range param", {
+  expect_is(filter_feed_by_date(gtfs_duke, "2019-10-01"), "tidygtfs")
   st = filter_feed_by_date(gtfs_routing, "2018-10-01")
 
   tt1 = travel_times(st, stop_name = "One", time_range = c("07:09:00", "07:59:00"))

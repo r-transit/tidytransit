@@ -214,7 +214,7 @@ filter_stop_times = function(gtfs_obj,
     min_departure_time <- hhmmss_to_seconds(min_departure_time)
   }
   if(missing(max_arrival_time)) {
-    max_arrival_time <- max(gtfs_obj$stop_times$arrival_time)+1
+    max_arrival_time <- max(gtfs_obj$stop_times$arrival_time, na.rm = TRUE)+1
   } else if(is.character(max_arrival_time)) {
     max_arrival_time <- hhmmss_to_seconds(max_arrival_time)
   }
