@@ -46,6 +46,12 @@ test_that("stop times are filtered correctly", {
   fst = filter_stop_times(gtfs_routing, "2018-10-01", "07:00:00", "08:00:00")
   expect_true(all(c("transfers", "stops") %in% names(attributes(fst))))
   expect_error(travel_times(gtfs_routing$stop_times, "One"))
+  
+  g_no_st = gtfs_routing
+  g_no_st$stop_times <- g_no_st$stop_times[0,]
+  expect_error(filter_stop_times(g_no_st, "2018-09-28"), "gtfs_obj has no stop_times")
+  g_no_st$stop_times <- NULL
+  expect_error(filter_stop_times(g_no_st, "2018-09-28"), "gtfs_obj has no stop_times")
 })
 
 test_that("travel_time works with different params", {

@@ -202,6 +202,9 @@ filter_stop_times = function(gtfs_obj,
                              extract_date,
                              min_departure_time,
                              max_arrival_time) {
+  if(!feed_has_non_empty_table(gtfs_obj, "stop_times")) {
+    stop("gtfs_obj has no stop_times")
+  }
   gtfs_obj$stop_times <- replace_NA_times(gtfs_obj$stop_times)
 
   departure_time_num <- arrival_time_num <- NULL
