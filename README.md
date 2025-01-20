@@ -42,17 +42,17 @@ install.packages('tidytransit')
 For the development version from Github:
 
 ```r
-# install.packages("devtools")
-devtools::install_github("r-transit/tidytransit")
+# install.packages("remotes")
+remotes::install_github("r-transit/tidytransit")
 ```
 
 ## GTFS-related packages
 
--   [`gtfsio`](https://github.com/r-transit/gtfsio) R package to read and write gtfs feeds, tidytransit builds on gtfsio
+-   [`gtfsio`](https://github.com/r-transit/gtfsio) R package to read and write gtfs feeds, tidytransit uses gtfsio for reading/writing feeds
 -   [`gtfstools`](https://github.com/ipeaGIT/gtfstools) Tools for editing and analysing transit feeds
 -   [`gtfsrouter`](https://github.com/UrbanAnalyst/gtfsrouter) Package for public transport routing 
 -   [`gtfs2gps`](https://github.com/ipeaGIT/gtfs2gps) Converting public transport data from GTFS format to GPS-like records
-
+-   [`GTFSwizard`](https://github.com/nelsonquesado/GTFSwizard) Set of tools for exploring and manipulating, builds on tidytransit
 
 ## Contributing
 
