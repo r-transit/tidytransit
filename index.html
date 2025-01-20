@@ -114,21 +114,23 @@
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">'tidytransit'</span><span class="op">)</span></span></code></pre></div>
 <p>For the development version from Github:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"r-transit/tidytransit"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"r-transit/tidytransit"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="gtfs-related-packages">GTFS-related packages<a class="anchor" aria-label="anchor" href="#gtfs-related-packages"></a>
 </h2>
 <ul>
 <li>
-<a href="https://github.com/r-transit/gtfsio" class="external-link"><code>gtfsio</code></a> R package to read and write gtfs feeds, tidytransit builds on gtfsio</li>
+<a href="https://github.com/r-transit/gtfsio" class="external-link"><code>gtfsio</code></a> R package to read and write gtfs feeds, tidytransit uses gtfsio for reading/writing feeds</li>
 <li>
 <a href="https://github.com/ipeaGIT/gtfstools" class="external-link"><code>gtfstools</code></a> Tools for editing and analysing transit feeds</li>
 <li>
 <a href="https://github.com/UrbanAnalyst/gtfsrouter" class="external-link"><code>gtfsrouter</code></a> Package for public transport routing</li>
 <li>
 <a href="https://github.com/ipeaGIT/gtfs2gps" class="external-link"><code>gtfs2gps</code></a> Converting public transport data from GTFS format to GPS-like records</li>
+<li>
+<a href="https://github.com/nelsonquesado/GTFSwizard" class="external-link"><code>GTFSwizard</code></a> Set of tools for exploring and manipulating, builds on tidytransit</li>
 </ul>
 </div>
 <div class="section level2">
