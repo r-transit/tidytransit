@@ -1,11 +1,9 @@
-[![CRAN
-status](https://www.r-pkg.org/badges/version-ago/tidytransit?)](https://cran.r-project.org/package=tidytransit)
+[![CRAN status](https://www.r-pkg.org/badges/version/tidytransit)](https://cran.r-project.org/package=tidytransit/)
 [![Project Status: Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active) 
 [![](https://cranlogs.r-pkg.org/badges/tidytransit)](https://cran.r-project.org/package=tidytransit)
 [![](https://cranlogs.r-pkg.org/badges/grand-total/tidytransit?color=lightgrey)](https://cran.r-project.org/package=tidytransit)
-[![R build
-status](https://github.com/r-transit/tidytransit/workflows/R-CMD-check/badge.svg)](https://github.com/r-transit/tidytransit/actions?query=workflow%3AR-CMD-check)
-[![codecov](https://codecov.io/gh/r-transit/tidytransit/branch/master/graph/badge.svg)](https://app.codecov.io/gh/r-transit/tidytransit/)
+[![R-CMD-check](https://github.com/r-transit/tidytransit/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-transit/tidytransit/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/r-transit/tidytransit/graph/badge.svg)](https://app.codecov.io/gh/r-transit/tidytransit)
 
 # tidytransit
 
@@ -30,8 +28,7 @@ Have a look at the following vignettes to see how tidytransit can be used to ana
 
 ## Installation
 
-This package requires a working installation of
-[sf](https://github.com/r-spatial/sf#installing).
+This package requires a working installation of [sf](https://github.com/r-spatial/sf#installing).
 
 Install tidytransit from CRAN:
 
@@ -48,11 +45,11 @@ remotes::install_github("r-transit/tidytransit")
 
 ## GTFS-related packages
 
--   [`gtfsio`](https://github.com/r-transit/gtfsio) R package to read and write gtfs feeds, tidytransit uses gtfsio for reading/writing feeds
--   [`gtfstools`](https://github.com/ipeaGIT/gtfstools) Tools for editing and analysing transit feeds
--   [`gtfsrouter`](https://github.com/UrbanAnalyst/gtfsrouter) Package for public transport routing 
--   [`gtfs2gps`](https://github.com/ipeaGIT/gtfs2gps) Converting public transport data from GTFS format to GPS-like records
--   [`GTFSwizard`](https://github.com/nelsonquesado/GTFSwizard) Set of tools for exploring and manipulating, builds on tidytransit
+- [`gtfsio`](https://github.com/r-transit/gtfsio) R package to read and write gtfs feeds, tidytransit uses gtfsio for reading/writing feeds
+- [`gtfstools`](https://github.com/ipeaGIT/gtfstools) Tools for editing and analysing transit feeds
+- [`gtfsrouter`](https://github.com/UrbanAnalyst/gtfsrouter) Package for public transport routing 
+- [`gtfs2gps`](https://github.com/ipeaGIT/gtfs2gps) Converting public transport data from GTFS format to GPS-like records
+- [`GTFSwizard`](https://github.com/nelsonquesado/GTFSwizard) Set of tools for exploring and manipulating, builds on tidytransit
 
 ## Contributing
 
