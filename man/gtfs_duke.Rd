@@ -5,7 +5,7 @@
 \alias{gtfs_duke}
 \title{Example GTFS data}
 \format{
-An object of class \code{tidygtfs} (inherits from \code{gtfs}) of length 25.
+An object of class \code{tidygtfs} (inherits from \code{gtfs}) of length 18.
 }
 \usage{
 gtfs_duke
