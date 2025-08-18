@@ -132,12 +132,13 @@ travel_times = function(filtered_stop_times,
   }
 
   # Check stop_name integrity
-  if(length(stop_ids) > 1 && !is.null(stop_dist_check) && !isFALSE(stop_dist_check)) {
-    stop_dists = stop_group_distances(stops, "stop_name")
+  if(!is.null(stop_dist_check) && !isFALSE(stop_dist_check)) {
+    stop_dists = stop_group_distances(stops, "stop_name", max_only = TRUE)
 
     if(max(stop_dists$dist_max) > stop_dist_check) {
       stop("Some stops with the same name are more than ", stop_dist_check, " meters apart, see stop_group_distances().\n",
-           "Using travel_times() might lead to unexpected results. Set stop_dist_check=FALSE to ignore this error.")
+           "Using travel_times() might lead to unexpected results. Set stop_dist_check=FALSE to ignore this error.",
+           call. = FALSE)
     }
   }
 

@@ -4,13 +4,16 @@
 \alias{stop_group_distances}
 \title{Calculates distances among stop within the same group column}
 \usage{
-stop_group_distances(gtfs_stops, by = "stop_name")
+stop_group_distances(gtfs_stops, by = "stop_name", max_only = FALSE)
 }
 \arguments{
 \item{gtfs_stops}{gtfs stops table either as data frame (with at least \code{stop_id},
 \code{stop_lon} and \code{stop_lat} columns) or as \code{sf} object.}
 
 \item{by}{group column, default: "stop_name"}
+
+\item{max_only}{only return max distance among stops? (default \code{FALSE}). \code{TRUE} allows a
+slightly faster calculation.}
 }
 \value{
 data.frame with one row per group containing a distance matrix (distances),
