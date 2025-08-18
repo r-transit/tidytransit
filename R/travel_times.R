@@ -133,12 +133,20 @@ travel_times = function(filtered_stop_times,
 
   # Check stop_name integrity
   if(!is.null(stop_dist_check) && !isFALSE(stop_dist_check)) {
+    .time_prev = Sys.time()
     stop_dists = stop_group_distances(stops, "stop_name", max_only = TRUE)
+    .time_post = Sys.time()
 
     if(max(stop_dists$dist_max) > stop_dist_check) {
       stop("Some stops with the same name are more than ", stop_dist_check, " meters apart, see stop_group_distances().\n",
            "Using travel_times() might lead to unexpected results. Set stop_dist_check=FALSE to ignore this error.",
            call. = FALSE)
+    }
+  
+    .time_check = as.numeric(difftime(.time_post, .time_prev, units = "secs"))
+    if(.time_check > 1) {
+      message("Stop distance check took longer than 1 second (", round(.time_check, 1), # nocov
+              "s). Set stop_dist_check=FALSE to skip it.") # nocov
     }
   }
 
