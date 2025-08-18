@@ -133,7 +133,13 @@ You can load it in R and browse it as a data frame. Tidytransit cannot handle GT
 data, so we can remove those entries.
 
 ```{r}
-MobilityData.csv = read.csv("https://storage.googleapis.com/storage/v1/b/mdb-csv/o/sources.csv?alt=media")
+mdb_url = "https://storage.googleapis.com/storage/v1/b/mdb-csv/o/sources.csv?alt=media"
+
+MobilityData.csv = tryCatch(
+  read.csv(mdb_url), 
+  warning = function(e) { # If URL is not reachable, load local dataset
+    readRDS(system.file("extdata", "mobilitydata.rds", package = "tidytransit"))
+  })
 
 MobilityData_feedlist = MobilityData.csv %>% 
   as_tibble() %>% 
