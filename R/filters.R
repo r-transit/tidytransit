@@ -5,6 +5,8 @@
 #' @param route_ids the route_ids for which to get stops 
 #' @return stops table for a given service or route
 #' 
+#' @importFrom dplyr filter
+#' 
 #' @export
 #' @examples \donttest{
 #' library(dplyr)
@@ -15,15 +17,15 @@
 #' filtered_stops_df <- filter_stops(nyc, select_service_id, select_route_id)
 #' }
 filter_stops <- function(gtfs_obj, service_ids, route_ids) {
-  some_trips <- dplyr::filter(gtfs_obj$trips, 
-                              .data$service_id %in% service_ids &
-                                .data$route_id %in% route_ids)
+  some_trips <- filter(gtfs_obj$trips, 
+                       .data$service_id %in% service_ids &
+                         .data$route_id %in% route_ids)
   
-  some_stop_times <- dplyr::filter(gtfs_obj$stop_times,
-                                   .data$trip_id %in% some_trips$trip_id) 
+  some_stop_times <- filter(gtfs_obj$stop_times,
+                            .data$trip_id %in% some_trips$trip_id) 
   
-  some_stops <- dplyr::filter(gtfs_obj$stops,
-                              .data$stop_id %in% some_stop_times$stop_id)
+  some_stops <- filter(gtfs_obj$stops,
+                       .data$stop_id %in% some_stop_times$stop_id)
   
   return(some_stops)
 }
@@ -152,11 +154,13 @@ filter_feed_by_stops = function(gtfs_obj, stop_ids = NULL, stop_names = NULL) {
 #' 
 #' @seealso \code{\link{filter_stop_times}}, \code{\link{filter_feed_by_trips}}, 
 #'          \code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_date}}
+#'
+#' @importFrom dplyr as_tibble
 #' @export
 filter_feed_by_date = function(gtfs_obj, extract_date,
                                min_departure_time, max_arrival_time) {
   st = filter_stop_times(gtfs_obj, extract_date, min_departure_time, max_arrival_time)
-  st <- dplyr::as_tibble(st)
+  st <- as_tibble(st)
   attributes(st)$stops <- NULL
   attributes(st)$transfers <- NULL
   attributes(st)$sorted <- NULL

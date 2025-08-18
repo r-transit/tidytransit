@@ -130,12 +130,13 @@ get_route_geometry <- function(gtfs_sf_obj, route_ids = NULL, service_ids = NULL
 #' @param trip_ids trip_ids to extract shapes
 #' @return an sf dataframe for gtfs routes with a row/linestring for each trip
 #' 
-#' @export
 #' @examples
 #' data(gtfs_duke)
 #' gtfs_duke <- gtfs_as_sf(gtfs_duke)
 #' trips_sf <- get_trip_geometry(gtfs_duke, c("t_726295_b_19493_tn_41", "t_726295_b_19493_tn_40"))
 #' plot(trips_sf[1,"shape_id"])
+#' @importFrom dplyr inner_join
+#' @export
 get_trip_geometry <- function(gtfs_sf_obj, trip_ids) {
   if(!inherits(gtfs_sf_obj$shapes, "sf")) {
     stop("shapes not converted to sf, use gtfs_obj <- gtfs_as_sf(gtfs_obj)")
@@ -147,7 +148,7 @@ get_trip_geometry <- function(gtfs_sf_obj, trip_ids) {
 
   trips = gtfs_sf_obj$trips %>% filter(trip_id %in% trip_ids)
   
-  trips_shapes = dplyr::inner_join(gtfs_sf_obj$shapes, trips, by = "shape_id")
+  trips_shapes = inner_join(gtfs_sf_obj$shapes, trips, by = "shape_id")
 
   return(trips_shapes)
 }
@@ -195,13 +196,14 @@ gtfs_transform = function(gtfs_obj, crs) {
 #' 
 #' @seealso \code{\link{gtfs_as_sf}}
 #' 
+#' @importFrom dplyr as_tibble
 #' @export
 sf_as_tbl = function(gtfs_obj) {
   if(inherits(gtfs_obj$stops, "sf")) {
-    gtfs_obj$stops <- dplyr::as_tibble(sf_points_to_df(gtfs_obj$stops))
+    gtfs_obj$stops <- as_tibble(sf_points_to_df(gtfs_obj$stops))
   }
   if(feed_contains(gtfs_obj, "shapes") && inherits(gtfs_obj$shapes, "sf")) {
-    gtfs_obj$shapes <- dplyr::as_tibble(sf_lines_to_df(gtfs_obj$shapes))
+    gtfs_obj$shapes <- as_tibble(sf_lines_to_df(gtfs_obj$shapes))
   }
   gtfs_obj
 }
@@ -234,6 +236,7 @@ sf_points_to_df = function(pts_sf,
 #' @param coord_colnames names of the new columns (existing columns are overwritten)
 #' @param remove_geometry remove sf geometry column?
 #' @importFrom geodist geodist
+#' @importFrom dplyr bind_rows
 #' @keywords internal
 sf_lines_to_df = function(lines_sf,
                           coord_colnames = c("shape_pt_lon", "shape_pt_lat"), 
@@ -252,7 +255,7 @@ sf_lines_to_df = function(lines_sf,
     df
   })
   names(shps_list) <- lines_sf$shape_id
-  dplyr::bind_rows(shps_list, .id = "shape_id")
+  bind_rows(shps_list, .id = "shape_id")
 }
 
 #' Convert a json (read with jsonlite) to sf object

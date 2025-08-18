@@ -55,7 +55,8 @@
 #' # should raise a warning
 #' gtfs$stop_times <- NULL
 #' validation_result <- validate_gtfs(gtfs)
-#' }
+#' } 
+#' @importFrom dplyr as_tibble
 #' @export
 validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
   
@@ -222,8 +223,7 @@ validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
     
   }
 
-  # attach validation_result as an attribute of the given gtfs
-  dplyr::as_tibble(validation_result)
+  as_tibble(validation_result)
 }
 
 #' Check if primary keys are unique within tables

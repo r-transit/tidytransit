@@ -36,6 +36,7 @@
 #' #> 10 232          423             91.5
 #' #> # … with 26 more rows
 #' }
+#' @importFrom dplyr as_tibble
 #' @export
 stop_distances = function(gtfs_stops) {
   stopifnot(nrow(gtfs_stops) > 1)
@@ -50,10 +51,10 @@ stop_distances = function(gtfs_stops) {
   
   rownames(dist_matrix) <- gtfs_stops$stop_id
   colnames(dist_matrix) <- gtfs_stops$stop_id
-  dist_matrix_df = dplyr::as_tibble(dist_matrix, rownames = "from_stop_id")
+  dist_matrix_df = as_tibble(dist_matrix, rownames = "from_stop_id")
   
   # replace gather (no dependency on tidyr)
-  # dists_gathered = gather(dplyr::as_tibble(dist_matrix_df), "to_stop_id", "dist", -from_stop_id)
+  # dists_gathered = gather(as_tibble(dist_matrix_df), "to_stop_id", "dist", -from_stop_id)
   dists = reshape(as.data.frame(dist_matrix_df), direction = "long",
           idvar = "from_stop_id", timevar = "to_stop_id", v.names = "distance",
           varying = dist_matrix_df$from_stop_id)
@@ -61,7 +62,7 @@ stop_distances = function(gtfs_stops) {
   dists$to_stop_id <- rep(dist_matrix_df[["from_stop_id"]], each = length(dist_matrix_df[["from_stop_id"]]))
   dists$distance <- as.numeric(dists[["distance"]])
 
-  dplyr::as_tibble(dists)
+  as_tibble(dists)
 }
 
 geodist_list = function(lon, lat, names = NULL) {
@@ -121,6 +122,7 @@ prep_dist_mtrx = function(dist_list) {
 #' #> 10 111 St      <dbl [9 × 9]>            9     3877.       3877.    7753.
 #' #> # … with 370 more rows
 #' }
+#' @importFrom dplyr filter as_tibble
 #' @export
 stop_group_distances = function(gtfs_stops, by = "stop_name") {
   distances <- NULL
@@ -157,7 +159,7 @@ stop_group_distances = function(gtfs_stops, by = "stop_name") {
     select(stop_name) %>% 
     dplyr::mutate(distances = list(matrix(0)), n_stop_ids = 1, dist_mean = 0, dist_median = 0, dist_max = 0)
 
-  dists = dplyr::as_tibble(dplyr::bind_rows(gtfs_single_stops, gtfs_multip_stops))
+  dists = as_tibble(dplyr::bind_rows(gtfs_single_stops, gtfs_multip_stops))
   dists[order(dists$dist_max, dists$n_stop_ids, dists[[by]], decreasing = TRUE),]
 }
 

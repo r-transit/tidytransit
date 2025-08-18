@@ -74,6 +74,7 @@ replace_NA_times = function(stop_times) {
 #' gtfs_duke_3 = interpolate_stop_times(gtfs_duke, FALSE)
 #' print(gtfs_duke_3$stop_times[1:5, 1:5])
 #' }
+#' @importFrom dplyr as_tibble
 #' @export
 interpolate_stop_times = function(x, use_shape_dist = TRUE) {
   ....event_time <- ....shape_dist_traveled <- NULL
@@ -103,7 +104,7 @@ interpolate_stop_times = function(x, use_shape_dist = TRUE) {
   setorder(times_wide, "....rowindex")
   
   # return
-  stoptimes <- dplyr::as_tibble(times_wide)[,colnames(stoptimes)]
+  stoptimes <- as_tibble(times_wide)[,colnames(stoptimes)]
   attributes(stoptimes)$sorted <- NULL
   stoptimes$....shape_dist_traveled <- stoptimes$....rowindex <- NULL
   if(inherits(x, "tidygtfs")) {

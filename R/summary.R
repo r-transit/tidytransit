@@ -32,7 +32,7 @@ print.tidygtfs = function(x, ...) {
 #' @return the tidygtfs object, invisibly
 #' 
 #' @param ... ignored for tidygtfs
-#' @importFrom dplyr select arrange filter
+#' @importFrom dplyr select arrange filter desc
 summary.tidygtfs <- function(object, ...) {
   dots <- list(...)
   
@@ -64,7 +64,7 @@ summary.tidygtfs <- function(object, ...) {
   # files provided
   validation_result <- attributes(object)$validation_result
   files <- unique(validation_result[c("file", "file_spec", "file_provided_status")])
-  files <- arrange(files, dplyr::desc(file_spec))
+  files <- arrange(files, desc(file_spec))
   files <- filter(files, file_provided_status == TRUE)
 
   # date info
