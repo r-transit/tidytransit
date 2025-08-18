@@ -37,6 +37,8 @@
 #' #> # … with 26 more rows
 #' }
 #' @importFrom dplyr as_tibble
+#' @importFrom sf st_distance
+#' @importFrom geodist geodist
 #' @export
 stop_distances = function(gtfs_stops) {
   stopifnot(nrow(gtfs_stops) > 1)
@@ -44,9 +46,9 @@ stop_distances = function(gtfs_stops) {
     stop("Please pass a stops data.frame (i.e. with gtfs_obj$stops)")
   }
   if(inherits(gtfs_stops, "sf")) {
-    dist_matrix = sf::st_distance(gtfs_stops)
+    dist_matrix = st_distance(gtfs_stops)
   } else {
-    dist_matrix = geodist::geodist(gtfs_stops[,c("stop_id", "stop_lon", "stop_lat")])
+    dist_matrix = geodist(gtfs_stops[,c("stop_id", "stop_lon", "stop_lat")])
   }
   
   rownames(dist_matrix) <- gtfs_stops$stop_id

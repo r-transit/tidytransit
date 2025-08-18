@@ -9,7 +9,7 @@ gtfs_transform(gtfs_obj, crs)
 \arguments{
 \item{gtfs_obj}{gtfs feed (tidygtfs object)}
 
-\item{crs}{target coordinate reference system, used by sf::st_transform}
+\item{crs}{target coordinate reference system, used by \code{\link[sf:st_transform]{sf::st_transform()}}}
 }
 \value{
 tidygtfs object with transformed stops and shapes sf dataframes

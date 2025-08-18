@@ -86,21 +86,22 @@ filter_feed_by_trips = function(gtfs_obj, trip_ids) {
 #' @param area all trips passing through this area are kept. Either a bounding box 
 #'             (numeric vector with xmin, ymin, xmax, ymax) or a sf object.
 #' @seealso \code{\link{filter_feed_by_stops}}, \code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_date}}
+#' @importFrom sf st_crs st_set_agr st_intersection st_geometry st_transform st_bbox
 #' @export
 filter_feed_by_area <- function(gtfs_obj, area) {
   if(inherits(gtfs_obj$stops, "sf") && inherits(area, "sf")) {
-    if(sf::st_crs(gtfs_obj$stops) != sf::st_crs(area)) {
+    if(st_crs(gtfs_obj$stops) != st_crs(area)) {
       stop("feed and area are not in the same coordinate reference system")
     }
-    sf::st_agr(gtfs_obj$stops) <- "constant"
-    stops_area = sf::st_intersection(gtfs_obj$stops, sf::st_geometry(area))
+    gtfs_obj$stops <- st_set_agr(gtfs_obj$stops, "constant")
+    stops_area = st_intersection(gtfs_obj$stops, st_geometry(area))
     stop_ids = stops_area$stop_id
   } else {
     if(inherits(area, "sf")) {
-      if(sf::st_crs(area)$input != "EPSG:4326") {
-        area <- sf::st_transform(area, 4326)
+      if(st_crs(area)$input != "EPSG:4326") {
+        area <- st_transform(area, 4326)
       }
-      area <- sf::st_bbox(area)
+      area <- st_bbox(area)
     } else {
       if(length(area) != 4 || !is.numeric(area)) {
         stop("bbox_area must be a numeric vector of length four, with xmin, ymin, xmax and ymax values")

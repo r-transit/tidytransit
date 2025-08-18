@@ -11,7 +11,7 @@ gtfs_as_sf(gtfs_obj, skip_shapes = FALSE, crs = NULL, quiet = TRUE)
 
 \item{skip_shapes}{if TRUE, shapes are not converted. Default FALSE.}
 
-\item{crs}{optional coordinate reference system (used by sf::st_transform) to transform
+\item{crs}{optional coordinate reference system (used by \code{\link[sf:st_transform]{sf::st_transform()}}) to transform
 lon/lat coordinates of stops and shapes}
 
 \item{quiet}{boolean whether to print status messages}

@@ -1,6 +1,7 @@
 #' Convert "HH:MM:SS" time strings to hms values
 #' empty strings are converted to NA
 #' @param time_strings char vector ("HH:MM:SS")
+#' @importFrom hms new_hms
 #' @keywords internal
 hhmmss_to_hms <- function(time_strings) {
   if(inherits(time_strings, "hms")) { return(time_strings) }
@@ -14,7 +15,7 @@ hhmmss_to_hms <- function(time_strings) {
   }
   time_seconds[empty_strings] <- NA
   
-  return(hms::new_hms(time_seconds))
+  return(new_hms(time_seconds))
 }
 
 #' Convert "HH:MM:SS" time strings to seconds (numeric)

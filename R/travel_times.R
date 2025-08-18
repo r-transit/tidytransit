@@ -42,6 +42,7 @@
 #'         corresponding journey departure and arrival times.
 #'
 #' @importFrom data.table fifelse
+#' @importFrom hms hms
 #' @export
 #' @examples \donttest{
 #' library(dplyr)
@@ -163,8 +164,8 @@ travel_times = function(filtered_stop_times,
   keep_by = ifelse(arrival, "from_stop_name", "to_stop_name")
   setorder(rptr_names, travel_time)
   rptr_names <- rptr_names[, .SD[1], by = keep_by]
-  rptr_names[,journey_arrival_time := hms::hms(journey_arrival_time)]
-  rptr_names[,journey_departure_time := hms::hms(journey_departure_time)]
+  rptr_names[,journey_arrival_time := hms(journey_arrival_time)]
+  rptr_names[,journey_departure_time := hms(journey_departure_time)]
 
   rptr_names <- rptr_names[,c("from_stop_name", "to_stop_name",
                               "travel_time", "journey_departure_time",
