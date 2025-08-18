@@ -106,8 +106,7 @@ get_route_frequency <- function(gtfs_obj,
                                 start_time = "06:00:00",
                                 end_time = "22:00:00",
                                 service_ids = NULL) {
-  total_departures <- median_headways <- mean_headways <- NULL
-  n_departures <- mean_headway <- st_dev_headways <- stop_count <- NULL
+  n_departures <- mean_headway <- NULL
   if(feed_has_non_empty_table(gtfs_obj, "frequencies")) {  
     message("A pre-calculated frequencies dataframe exists for this feed already, consider using that.") 
   } 

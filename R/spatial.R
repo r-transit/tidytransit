@@ -14,7 +14,7 @@
 #' @seealso \code{\link{sf_as_tbl}}, \code{\link{stops_as_sf}}, \code{\link{shapes_as_sf}}
 #' @export
 gtfs_as_sf <- function(gtfs_obj, skip_shapes = FALSE, crs = NULL, quiet = TRUE) {
-  if(!quiet) message('Converting stops to simple features')
+  if(!quiet) message("Converting stops to simple features")
   if(!feed_contains(gtfs_obj, "stops")) {
     stop("No stops table in feed")
   } else if(!inherits(gtfs_obj$stops, "sf")) {
@@ -22,7 +22,7 @@ gtfs_as_sf <- function(gtfs_obj, skip_shapes = FALSE, crs = NULL, quiet = TRUE) 
   }
   
   if(feed_contains(gtfs_obj, "shapes") && !skip_shapes && !inherits(gtfs_obj$shapes, "sf")) {
-    if(!quiet) message('Converting shapes to simple features')
+    if(!quiet) message("Converting shapes to simple features")
     gtfs_obj$shapes <- try(shapes_as_sf(gtfs_obj$shapes, crs))
   }
   

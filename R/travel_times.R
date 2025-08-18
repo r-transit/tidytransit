@@ -102,7 +102,8 @@ travel_times = function(filtered_stop_times,
                         return_DT = FALSE,
                         stop_dist_check = 300) {
   travel_time <- journey_arrival_time <- journey_departure_time <- NULL
-  stop_names = stop_name; rm(stop_name)
+  stop_names = stop_name
+  rm(stop_name)
   if(inherits(filtered_stop_times, "tidygtfs")) {
     gtfs_obj = filtered_stop_times
     if(is.null(attributes(gtfs_obj$stop_times)$extract_date)) {

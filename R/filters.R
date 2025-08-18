@@ -100,7 +100,7 @@ filter_feed_by_area <- function(gtfs_obj, area) {
       }
       area <- sf::st_bbox(area)
     } else {
-      if(length(area) != 4 | !is.numeric(area)) {
+      if(length(area) != 4 || !is.numeric(area)) {
         stop("bbox_area must be a numeric vector of length four, with xmin, ymin, xmax and ymax values")
       }
     }

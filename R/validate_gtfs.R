@@ -60,7 +60,7 @@
 validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
   
   # input checking
-  if(!inherits(gtfs_obj, "gtfs") & !inherits(gtfs_obj, "list")) {
+  if(!inherits(gtfs_obj, "gtfs") && !inherits(gtfs_obj, "list")) {
     stop("gtfs_obj must be a gtfs or list object")
   }
   
@@ -186,7 +186,7 @@ validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
   # raises warnings if problems are found
   files_problems <- validation_result[validation_details == "missing_req_file"]
   
-  if(nrow(files_problems) >= 1 & warnings) {
+  if(nrow(files_problems) >= 1 && warnings) {
     
     warning(
       paste0(
@@ -200,7 +200,7 @@ validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
 
   fields_problems <- validation_result[validation_details == "missing_req_field"]
   
-  if(nrow(fields_problems) >= 1 & warnings) {
+  if(nrow(fields_problems) >= 1 && warnings) {
     problematic_files <- unique(fields_problems$file)
     
     problematic_fields <- unlist(

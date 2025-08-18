@@ -158,7 +158,8 @@ For example, for August 23rd 2018, a typical weekday, we can filter as follows:
 
 ```{r fig.width=8, fig.height=12}
 services_on_180823 <- gtfs$.$dates_services %>% 
-  filter(date == "2018-08-23") %>% select(service_id)
+  filter(date == "2018-08-23") %>% 
+  select(service_id)
 
 departures_180823 <- departures %>% 
   inner_join(services_on_180823, by = "service_id")
@@ -204,10 +205,11 @@ departures_180823_sub_7to8 <- departures_180823 %>%
   filter(stop_id %in% c("127N", "127S")) %>% 
   filter(departure_time >= hms::hms(hours = 7) & departure_time <= hms::hms(hours = 8))
 
-ggplot(departures_180823_sub_7to8) + theme_bw() +
+ggplot(departures_180823_sub_7to8) + 
+  theme_bw() +
   geom_point(aes(y=trip_headsign, x=departure_time, color = route_short_name), size = 1) +
   scale_x_time(breaks = seq(7*3600, 9*3600, 300), labels = scales::time_format("%H:%M")) +
-  scale_y_discrete(drop = F) +
+  scale_y_discrete(drop = FALSE) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   theme(legend.position = "bottom") +
   labs(title = "Departures from Times Square on 08/23/18") +

@@ -18,7 +18,7 @@ library(dplyr)
 library(tidytransit)
 library(ggplot2)
 library(sf)
-options(dplyr.summarise.inform=F)
+options(dplyr.summarise.inform = FALSE)
 ```
 
 ## Introduction
@@ -134,7 +134,7 @@ trips in the GTFS feed for which we want to summarise service.
 
 ```{r}
 service_ids <- gtfs$.$servicepatterns %>% 
-  filter(servicepattern_id == 's_e25d6ca') %>% 
+  filter(servicepattern_id == "s_e25d6ca") %>% 
   pull(service_id)
 
 head(service_ids) %>% 
@@ -291,7 +291,7 @@ Then we join the geometries to the calculated frequencies:
 
 ```{r}
 routes_sf <- routes_sf %>% 
-  inner_join(am_route_freq, by = 'route_id')
+  inner_join(am_route_freq, by = "route_id")
 ```
 
 And finally, lets plot the routes with median headways of less than 10 minutes in the morning.

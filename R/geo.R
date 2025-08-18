@@ -39,7 +39,6 @@
 #' @export
 stop_distances = function(gtfs_stops) {
   stopifnot(nrow(gtfs_stops) > 1)
-  from_stop_id <- NULL
   if(!inherits(gtfs_stops, "data.frame")) {
     stop("Please pass a stops data.frame (i.e. with gtfs_obj$stops)")
   }
@@ -59,8 +58,8 @@ stop_distances = function(gtfs_stops) {
           idvar = "from_stop_id", timevar = "to_stop_id", v.names = "distance",
           varying = dist_matrix_df$from_stop_id)
   
-  dists$to_stop_id <- rep(dist_matrix_df$from_stop_id, each = length(dist_matrix_df$from_stop_id))
-  dists$distance <- as.numeric(dists$distance)
+  dists$to_stop_id <- rep(dist_matrix_df[["from_stop_id"]], each = length(dist_matrix_df[["from_stop_id"]]))
+  dists$distance <- as.numeric(dists[["distance"]])
 
   dplyr::as_tibble(dists)
 }
@@ -124,7 +123,7 @@ prep_dist_mtrx = function(dist_list) {
 #' }
 #' @export
 stop_group_distances = function(gtfs_stops, by = "stop_name") {
-  distances <- n_stop_ids <- dist_mean <- dist_median <- dist_max <- NULL
+  distances <- NULL
   if(!by %in% colnames(gtfs_stops)) {
     stop("column ", by, " does not exist in ", deparse(substitute(gtfs_stops)))
   }

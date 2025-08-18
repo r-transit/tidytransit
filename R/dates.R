@@ -27,10 +27,10 @@ set_dates_services <- function(gtfs_obj) {
   
   feed_dates = list()
   if(has_calendar) {
-    feed_dates[["calendar"]] <- c(gtfs_obj$calendar$start_date, gtfs_obj$calendar$end_date)
+    feed_dates[["calendar"]] <- c(gtfs_obj[["calendar"]]$start_date, gtfs_obj$calendar$end_date)
   }
   if(has_calendar_dates) {
-    feed_dates[["calendar_dates"]] <- gtfs_obj$calendar_dates$date[which(gtfs_obj$calendar_dates$exception_type != 2)]
+    feed_dates[["calendar_dates"]] <- gtfs_obj[["calendar_dates"]]$date[which(gtfs_obj$calendar_dates$exception_type != 2)]
   }
   if(length(feed_dates[["calendar"]]) == 0 && length(feed_dates[["calendar_dates"]]) == 0) {
     warning("No valid dates defined in feed")
@@ -61,7 +61,8 @@ set_dates_services <- function(gtfs_obj) {
       reshape(gc, direction = "long", idvar = .cns_nondays, varying = .days, 
               v.names = ".availability", timevar = "weekday_num") %>% 
       left_join(data.frame(weekday_num = 1:7, weekday = .days), "weekday_num") %>% 
-      dplyr::filter(.availability == 1) %>% dplyr::select(service_id, weekday, start_date, end_date)
+      dplyr::filter(.availability == 1) %>% 
+      dplyr::select(service_id, weekday, start_date, end_date)
     
     # set services to dates according to weekdays and start/end date
     date_service_df <- dates %>%

@@ -84,8 +84,7 @@ raptor = function(stop_times,
                   keep = "all") {
   from_stop_id <- journey_departure_stop_id <- NULL
   to_stop_id <- journey_arrival_stop_id <- NULL
-  journey_departure_time <- journey_arrival_time <- travel_time <- min_transfer_time <- NULL
-  i.journey_departure_stop_id <- i.travel_time <- NULL
+  journey_departure_time <- journey_arrival_time <- travel_time <- NULL
   if(inherits(stop_times, "tidygtfs")) {
     stop("Travel times cannot be calculated with a tidygtfs object")
   }
@@ -367,7 +366,7 @@ setup_stop_times = function(stop_times, arrival, time_window) {
 
 setup_transfers = function(transfers) {
   stopifnot(is.data.table(transfers))
-  transfer_type <- min_transfer_time <- trnsfrs_from_stop_id <- trnsfrs_to_stop_id <- NULL
+  transfer_type <- min_transfer_time <- NULL
   if(is.null(transfers) || nrow(transfers) == 0) {
     return(NULL)
   }
