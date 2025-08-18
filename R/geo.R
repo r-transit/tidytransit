@@ -124,7 +124,7 @@ prep_dist_mtrx = function(dist_list) {
 #' #> 10 111 St      <dbl [9 × 9]>            9     3877.       3877.    7753.
 #' #> # … with 370 more rows
 #' }
-#' @importFrom dplyr filter as_tibble
+#' @importFrom dplyr filter as_tibble summarise mutate bind_rows group_by_at
 #' @export
 stop_group_distances = function(gtfs_stops, by = "stop_name") {
   distances <- NULL
@@ -134,34 +134,26 @@ stop_group_distances = function(gtfs_stops, by = "stop_name") {
   if(inherits(gtfs_stops, "sf")) {
     gtfs_stops <- sf_points_to_df(gtfs_stops, c("stop_lon", "stop_lat"), TRUE)
   }
-  n_stops = table(gtfs_stops$stop_name)
+  n_stops = table(gtfs_stops[[by]])
   
-  gtfs_single_stops = gtfs_stops %>% filter(stop_name %in% names(n_stops)[n_stops == 1])
-  gtfs_multip_stops = gtfs_stops %>% filter(stop_name %in% names(n_stops)[n_stops != 1])
-
+  gtfs_single_stops = gtfs_stops[gtfs_stops[[by]] %in% names(n_stops)[n_stops == 1],]
+  gtfs_multip_stops = gtfs_stops[gtfs_stops[[by]] %in% names(n_stops)[n_stops != 1],]
+  
   if(nrow(gtfs_multip_stops) > 0) {
     gtfs_multip_stops <- gtfs_multip_stops %>%
-      dplyr::group_by_at(by) %>%
-      dplyr::summarise(distances = geodist_list(stop_lon, stop_lat, stop_id), .groups = "keep") %>%
-      dplyr::mutate(n_stop_ids = nrow(distances[[1]]),
+      group_by_at(by) %>%
+      summarise(distances = geodist_list(stop_lon, stop_lat, stop_id), .groups = "keep") %>%
+      mutate(n_stop_ids = nrow(distances[[1]]),
                     dist_mean = median(prep_dist_mtrx(distances)),
                     dist_median = median(prep_dist_mtrx(distances)),
                     dist_max = max(prep_dist_mtrx(distances))) %>% ungroup()
-    
-    # tidytable version
-    # gtfs_multip_stops <- gtfs_multip_stops %>%
-    #   tidytable::summarise.(distances = geodist_list(stop_lon, stop_lat, stop_id), .by = by) %>%
-    #   tidytable::mutate.(n_stop_ids = nrow(distances[[1]]),
-    #                      dist_mean = median(prep_dist_mtrx(distances)),
-    #                      dist_median = median(prep_dist_mtrx(distances)),
-    #                      dist_max = max(prep_dist_mtrx(distances)), .by = "stop_name")
   }
   
   gtfs_single_stops <- gtfs_single_stops %>% 
-    select(stop_name) %>% 
-    dplyr::mutate(distances = list(matrix(0)), n_stop_ids = 1, dist_mean = 0, dist_median = 0, dist_max = 0)
+    select(!!by) %>% 
+    mutate(distances = list(matrix(0)), n_stop_ids = 1, dist_mean = 0, dist_median = 0, dist_max = 0)
 
-  dists = as_tibble(dplyr::bind_rows(gtfs_single_stops, gtfs_multip_stops))
+  dists = as_tibble(bind_rows(gtfs_single_stops, gtfs_multip_stops))
   dists[order(dists$dist_max, dists$n_stop_ids, dists[[by]], decreasing = TRUE),]
 }
 
