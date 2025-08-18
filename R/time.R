@@ -1,6 +1,7 @@
 #' Convert "HH:MM:SS" time strings to hms values
 #' empty strings are converted to NA
 #' @param time_strings char vector ("HH:MM:SS")
+#' @importFrom hms new_hms
 #' @keywords internal
 hhmmss_to_hms <- function(time_strings) {
   if(inherits(time_strings, "hms")) { return(time_strings) }
@@ -14,7 +15,7 @@ hhmmss_to_hms <- function(time_strings) {
   }
   time_seconds[empty_strings] <- NA
   
-  return(hms::new_hms(time_seconds))
+  return(new_hms(time_seconds))
 }
 
 #' Convert "HH:MM:SS" time strings to seconds (numeric)
@@ -74,6 +75,7 @@ replace_NA_times = function(stop_times) {
 #' gtfs_duke_3 = interpolate_stop_times(gtfs_duke, FALSE)
 #' print(gtfs_duke_3$stop_times[1:5, 1:5])
 #' }
+#' @importFrom dplyr as_tibble
 #' @export
 interpolate_stop_times = function(x, use_shape_dist = TRUE) {
   ....event_time <- ....shape_dist_traveled <- NULL
@@ -103,7 +105,7 @@ interpolate_stop_times = function(x, use_shape_dist = TRUE) {
   setorder(times_wide, "....rowindex")
   
   # return
-  stoptimes <- dplyr::as_tibble(times_wide)[,colnames(stoptimes)]
+  stoptimes <- as_tibble(times_wide)[,colnames(stoptimes)]
   attributes(stoptimes)$sorted <- NULL
   stoptimes$....shape_dist_traveled <- stoptimes$....rowindex <- NULL
   if(inherits(x, "tidygtfs")) {

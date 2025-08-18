@@ -9,7 +9,7 @@ stops_as_sf(stops, crs = NULL)
 \arguments{
 \item{stops}{a gtfs$stops dataframe}
 
-\item{crs}{optional coordinate reference system (used by sf::st_transform) to transform
+\item{crs}{optional coordinate reference system (used by \code{\link[sf:st_transform]{sf::st_transform()}}) to transform
 lon/lat coordinates}
 }
 \value{

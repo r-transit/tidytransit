@@ -69,5 +69,5 @@ validation_result <- validate_gtfs(gtfs)
 # should raise a warning
 gtfs$stop_times <- NULL
 validation_result <- validate_gtfs(gtfs)
-}
+} 
 }

@@ -40,7 +40,6 @@ Imports:
 Suggests:
     testthat (>= 3.1.5),
     knitr,
-    markdown,
     rmarkdown,
     ggplot2,
     scales,

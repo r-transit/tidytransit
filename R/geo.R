@@ -36,33 +36,35 @@
 #' #> 10 232          423             91.5
 #' #> # … with 26 more rows
 #' }
+#' @importFrom dplyr as_tibble
+#' @importFrom sf st_distance
+#' @importFrom geodist geodist
 #' @export
 stop_distances = function(gtfs_stops) {
   stopifnot(nrow(gtfs_stops) > 1)
-  from_stop_id <- NULL
   if(!inherits(gtfs_stops, "data.frame")) {
     stop("Please pass a stops data.frame (i.e. with gtfs_obj$stops)")
   }
   if(inherits(gtfs_stops, "sf")) {
-    dist_matrix = sf::st_distance(gtfs_stops)
+    dist_matrix = st_distance(gtfs_stops)
   } else {
-    dist_matrix = geodist::geodist(gtfs_stops[,c("stop_id", "stop_lon", "stop_lat")])
+    dist_matrix = geodist(gtfs_stops[,c("stop_id", "stop_lon", "stop_lat")])
   }
   
   rownames(dist_matrix) <- gtfs_stops$stop_id
   colnames(dist_matrix) <- gtfs_stops$stop_id
-  dist_matrix_df = dplyr::as_tibble(dist_matrix, rownames = "from_stop_id")
+  dist_matrix_df = as_tibble(dist_matrix, rownames = "from_stop_id")
   
   # replace gather (no dependency on tidyr)
-  # dists_gathered = gather(dplyr::as_tibble(dist_matrix_df), "to_stop_id", "dist", -from_stop_id)
+  # dists_gathered = gather(as_tibble(dist_matrix_df), "to_stop_id", "dist", -from_stop_id)
   dists = reshape(as.data.frame(dist_matrix_df), direction = "long",
           idvar = "from_stop_id", timevar = "to_stop_id", v.names = "distance",
           varying = dist_matrix_df$from_stop_id)
   
-  dists$to_stop_id <- rep(dist_matrix_df$from_stop_id, each = length(dist_matrix_df$from_stop_id))
-  dists$distance <- as.numeric(dists$distance)
+  dists$to_stop_id <- rep(dist_matrix_df[["from_stop_id"]], each = length(dist_matrix_df[["from_stop_id"]]))
+  dists$distance <- as.numeric(dists[["distance"]])
 
-  dplyr::as_tibble(dists)
+  as_tibble(dists)
 }
 
 geodist_list = function(lon, lat, names = NULL) {
@@ -94,6 +96,8 @@ prep_dist_mtrx = function(dist_list) {
 #' 
 #' @inheritParams stop_distances
 #' @param by group column, default: "stop_name"
+#' @param max_only only return max distance among stops? (default `FALSE`). `TRUE` allows a
+#'   slightly faster calculation.
 #' 
 #' @returns data.frame with one row per group containing a distance matrix (distances),
 #'          number of stop ids within that group (n_stop_ids) and distance summary values 
@@ -122,44 +126,55 @@ prep_dist_mtrx = function(dist_list) {
 #' #> 10 111 St      <dbl [9 × 9]>            9     3877.       3877.    7753.
 #' #> # … with 370 more rows
 #' }
+#' @importFrom dplyr filter as_tibble summarise mutate bind_rows group_by_at
 #' @export
-stop_group_distances = function(gtfs_stops, by = "stop_name") {
-  distances <- n_stop_ids <- dist_mean <- dist_median <- dist_max <- NULL
+stop_group_distances = function(gtfs_stops, by = "stop_name", max_only = FALSE) {
+  distances <- NULL
   if(!by %in% colnames(gtfs_stops)) {
     stop("column ", by, " does not exist in ", deparse(substitute(gtfs_stops)))
   }
   if(inherits(gtfs_stops, "sf")) {
     gtfs_stops <- sf_points_to_df(gtfs_stops, c("stop_lon", "stop_lat"), TRUE)
   }
-  n_stops = table(gtfs_stops$stop_name)
+  n_stops = table(gtfs_stops[[by]])
   
-  gtfs_single_stops = gtfs_stops %>% filter(stop_name %in% names(n_stops)[n_stops == 1])
-  gtfs_multip_stops = gtfs_stops %>% filter(stop_name %in% names(n_stops)[n_stops != 1])
-
+  gtfs_single_stops = gtfs_stops[gtfs_stops[[by]] %in% names(n_stops)[n_stops == 1],]
+  gtfs_multip_stops = gtfs_stops[gtfs_stops[[by]] %in% names(n_stops)[n_stops != 1],]
+  
+  if(max_only) {
+    return(stop_group_dists_max_only(gtfs_single_stops, gtfs_multip_stops, by))
+  }
+  
   if(nrow(gtfs_multip_stops) > 0) {
     gtfs_multip_stops <- gtfs_multip_stops %>%
-      dplyr::group_by_at(by) %>%
-      dplyr::summarise(distances = geodist_list(stop_lon, stop_lat, stop_id), .groups = "keep") %>%
-      dplyr::mutate(n_stop_ids = nrow(distances[[1]]),
+      group_by_at(by) %>%
+      summarise(distances = geodist_list(stop_lon, stop_lat, stop_id), .groups = "keep") %>%
+      mutate(n_stop_ids = nrow(distances[[1]]),
                     dist_mean = median(prep_dist_mtrx(distances)),
                     dist_median = median(prep_dist_mtrx(distances)),
                     dist_max = max(prep_dist_mtrx(distances))) %>% ungroup()
-    
-    # tidytable version
-    # gtfs_multip_stops <- gtfs_multip_stops %>%
-    #   tidytable::summarise.(distances = geodist_list(stop_lon, stop_lat, stop_id), .by = by) %>%
-    #   tidytable::mutate.(n_stop_ids = nrow(distances[[1]]),
-    #                      dist_mean = median(prep_dist_mtrx(distances)),
-    #                      dist_median = median(prep_dist_mtrx(distances)),
-    #                      dist_max = max(prep_dist_mtrx(distances)), .by = "stop_name")
+  }
+
+  gtfs_single_stops <- gtfs_single_stops %>% 
+    select(!!by) %>% 
+    mutate(distances = list(matrix(0)), n_stop_ids = 1, dist_mean = 0, dist_median = 0, dist_max = 0)
+
+  dists = as_tibble(bind_rows(gtfs_single_stops, gtfs_multip_stops))
+  dists[order(dists$dist_max, dists$n_stop_ids, dists[[by]], decreasing = TRUE),]
+}
+
+stop_group_dists_max_only = function(gtfs_single_stops, gtfs_multip_stops, BY) {
+  gtfs_single_stops$dist_max <- 0
+  gtfs_multip_stops$dist_max <- 0
+  
+  if(nrow(gtfs_multip_stops) > 0) {
+    dist_max <- NULL
+    gtfs_multip_stops <- as.data.table(gtfs_multip_stops)
+    gtfs_multip_stops[, dist_max := max(geodist::geodist(data.frame(stop_lon, stop_lat), measure = "cheap")), by = BY]
   }
   
-  gtfs_single_stops <- gtfs_single_stops %>% 
-    select(stop_name) %>% 
-    dplyr::mutate(distances = list(matrix(0)), n_stop_ids = 1, dist_mean = 0, dist_median = 0, dist_max = 0)
-
   dists = dplyr::as_tibble(dplyr::bind_rows(gtfs_single_stops, gtfs_multip_stops))
-  dists[order(dists$dist_max, dists$n_stop_ids, dists[[by]], decreasing = TRUE),]
+  dists[order(dists$dist_max, decreasing = TRUE),]
 }
 
 #' Cluster nearby stops within a group

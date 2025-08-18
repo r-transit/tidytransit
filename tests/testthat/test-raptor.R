@@ -105,7 +105,7 @@ test_that("pick transfers from attributes", {
   r2 = raptor(gtfs_routing$stop_times, gtfs_routing$transfers, stop_ids = "stop5")
   expect_equal(r1, r2)
   expect_error(raptor(gtfs_routing$stop_times, stop_ids = "stop5"), 'argument "transfers" is missing, with no default')
-  expect_error(raptor(gtfs_routing, stop_ids = "stop5"), 'Travel times cannot be calculated with a tidygtfs object')
+  expect_error(raptor(gtfs_routing, stop_ids = "stop5"), "Travel times cannot be calculated with a tidygtfs object")
 })
 
 test_that("earliest arrival times", {

@@ -35,7 +35,7 @@ This package requires a working installation of [sf](https://github.com/r-spatia
 
 ```{r, eval=FALSE}
 # Once sf is installed, you can install from CRAN with: 
-install.packages('tidytransit')
+install.packages("tidytransit")
 
 # For the development version from Github:
 # install.packages("devtools")
@@ -175,7 +175,7 @@ bbox_polygon = function(lon_min, lon_max, lat_min, lat_max) {
       lon_max, lat_max,
       lon_max, lat_min,
       lon_min, lat_min),
-    ncol = 2, byrow = T
+    ncol = 2, byrow = TRUE
   )
   polyg = st_polygon(list(corner_coords))
   return(st_sfc(polyg, crs = 4326))
@@ -190,7 +190,8 @@ MobilityData_sf = MobilityData_feedlist %>%
                                  location.bounding_box.maximum_longitude,
                                  location.bounding_box.minimum_latitude,
                                  location.bounding_box.maximum_latitude)) %>% 
-  ungroup() %>% st_as_sf()
+  ungroup() %>% 
+  st_as_sf()
 ```
 
 These boxes could now be shown on an interactive map.
@@ -201,5 +202,4 @@ leaflet() %>%
   addProviderTiles(provider = providers$CartoDB.Positron) %>% 
   addPolygons(data = MobilityData_sf, weight = 2, 
               fillOpacity = 0.1, label = substr(MobilityData_sf$provider, 0, 60))
-
 ```

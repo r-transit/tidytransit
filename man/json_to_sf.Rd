@@ -7,12 +7,12 @@
 json_to_sf(json_list)
 }
 \arguments{
-\item{json_list}{list as read by jsonlite::read_json (in gtfsio)}
+\item{json_list}{list as read by \code{\link[jsonlite:read_json]{jsonlite::read_json()}} (in gtfsio)}
 }
 \value{
 sf object
 }
 \description{
-The json object is written to a temporary file and re-read with sf::read().
+The json object is written to a temporary file and re-read with \code{\link[sf:st_read]{sf::read_sf()}}.
 }
 \keyword{internal}

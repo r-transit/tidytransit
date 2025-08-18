@@ -6,7 +6,7 @@
 #'
 #' @param gtfs_obj gtfs feed (tidygtfs object, created by [read_gtfs()])
 #' @param skip_shapes if TRUE, shapes are not converted. Default FALSE.
-#' @param crs optional coordinate reference system (used by sf::st_transform) to transform 
+#' @param crs optional coordinate reference system (used by [sf::st_transform()]) to transform 
 #'            lon/lat coordinates of stops and shapes
 #' @param quiet boolean whether to print status messages
 #' @return tidygtfs object with stops and shapes as sf dataframes
@@ -14,7 +14,7 @@
 #' @seealso \code{\link{sf_as_tbl}}, \code{\link{stops_as_sf}}, \code{\link{shapes_as_sf}}
 #' @export
 gtfs_as_sf <- function(gtfs_obj, skip_shapes = FALSE, crs = NULL, quiet = TRUE) {
-  if(!quiet) message('Converting stops to simple features')
+  if(!quiet) message("Converting stops to simple features")
   if(!feed_contains(gtfs_obj, "stops")) {
     stop("No stops table in feed")
   } else if(!inherits(gtfs_obj$stops, "sf")) {
@@ -22,7 +22,7 @@ gtfs_as_sf <- function(gtfs_obj, skip_shapes = FALSE, crs = NULL, quiet = TRUE) 
   }
   
   if(feed_contains(gtfs_obj, "shapes") && !skip_shapes && !inherits(gtfs_obj$shapes, "sf")) {
-    if(!quiet) message('Converting shapes to simple features')
+    if(!quiet) message("Converting shapes to simple features")
     gtfs_obj$shapes <- try(shapes_as_sf(gtfs_obj$shapes, crs))
   }
   
@@ -32,23 +32,24 @@ gtfs_as_sf <- function(gtfs_obj, skip_shapes = FALSE, crs = NULL, quiet = TRUE) 
 #' Convert stops into Simple Features Points
 #'
 #' @param stops a gtfs$stops dataframe
-#' @param crs optional coordinate reference system (used by sf::st_transform) to transform 
+#' @param crs optional coordinate reference system (used by [sf::st_transform()]) to transform 
 #'            lon/lat coordinates
 #' @return an sf dataframe for gtfs routes with a point column
 #' 
 #' @seealso \code{\link{gtfs_as_sf}}
-#' @export
 #' @examples
 #' data(gtfs_duke)
 #' some_stops <- gtfs_duke$stops[sample(nrow(gtfs_duke$stops), 40),]
 #' some_stops_sf <- stops_as_sf(some_stops)
 #' plot(some_stops_sf[,"stop_name"])
+#' @importFrom sf st_as_sf st_transform
+#' @export
 stops_as_sf <- function(stops, crs = NULL) {
-  stops_sf <- sf::st_as_sf(stops,
+  stops_sf <- st_as_sf(stops,
                            coords = c("stop_lon", "stop_lat"),
                            crs = 4326)
   if(!is.null(crs)) {
-    stops_sf <- sf::st_transform(stops_sf, crs)
+    stops_sf <- st_transform(stops_sf, crs)
   }
   
   return(stops_sf)
@@ -57,24 +58,25 @@ stops_as_sf <- function(stops, crs = NULL) {
 #' Convert shapes into Simple Features Linestrings
 #'
 #' @param gtfs_shapes a gtfs$shapes dataframe
-#' @param crs optional coordinate reference system (used by sf::st_transform) to transform 
+#' @param crs optional coordinate reference system (used by [sf::st_transform()]) to transform 
 #'            lon/lat coordinates
 #'            
 #' @return an sf dataframe for gtfs shapes
 #' 
 #' @seealso \code{\link{gtfs_as_sf}}
+#' @importFrom sf st_sfc st_sf st_transform
 #' @export
 shapes_as_sf <- function(gtfs_shapes, crs = NULL) {
   list_of_line_tibbles <- split(gtfs_shapes, gtfs_shapes$shape_id)
   list_of_linestrings <- lapply(list_of_line_tibbles, shape_as_sf_linestring)
   
-  shape_linestrings <- sf::st_sfc(list_of_linestrings, crs = 4326)
+  shape_linestrings <- st_sfc(list_of_linestrings, crs = 4326)
   
-  shapes_sf <- sf::st_sf(shape_id = names(list_of_line_tibbles), geometry = shape_linestrings)
+  shapes_sf <- st_sf(shape_id = names(list_of_line_tibbles), geometry = shape_linestrings)
   shapes_sf$shape_id <- as.character(shapes_sf$shape_id)
   
   if(!is.null(crs)) {
-    shapes_sf <- sf::st_transform(shapes_sf, crs)
+    shapes_sf <- st_transform(shapes_sf, crs)
   }
   
   return(shapes_sf)
@@ -130,12 +132,13 @@ get_route_geometry <- function(gtfs_sf_obj, route_ids = NULL, service_ids = NULL
 #' @param trip_ids trip_ids to extract shapes
 #' @return an sf dataframe for gtfs routes with a row/linestring for each trip
 #' 
-#' @export
 #' @examples
 #' data(gtfs_duke)
 #' gtfs_duke <- gtfs_as_sf(gtfs_duke)
 #' trips_sf <- get_trip_geometry(gtfs_duke, c("t_726295_b_19493_tn_41", "t_726295_b_19493_tn_40"))
 #' plot(trips_sf[1,"shape_id"])
+#' @importFrom dplyr inner_join
+#' @export
 get_trip_geometry <- function(gtfs_sf_obj, trip_ids) {
   if(!inherits(gtfs_sf_obj$shapes, "sf")) {
     stop("shapes not converted to sf, use gtfs_obj <- gtfs_as_sf(gtfs_obj)")
@@ -147,28 +150,29 @@ get_trip_geometry <- function(gtfs_sf_obj, trip_ids) {
 
   trips = gtfs_sf_obj$trips %>% filter(trip_id %in% trip_ids)
   
-  trips_shapes = dplyr::inner_join(gtfs_sf_obj$shapes, trips, by = "shape_id")
+  trips_shapes = inner_join(gtfs_sf_obj$shapes, trips, by = "shape_id")
 
   return(trips_shapes)
 }
 
 #' return an sf linestring with lat and long from gtfs
 #' @param df dataframe from the gtfs shapes split() on shape_id
-#' @keywords internal
 #' @return st_linestring (sfr) object
+#' @importFrom sf st_linestring
+#' @keywords internal
 shape_as_sf_linestring <- function(df) {
   # as suggested by www.github.com/mdsumner
 
   m <- as.matrix(df[order(df$shape_pt_sequence),
                     c("shape_pt_lon", "shape_pt_lat")])
 
-  return(sf::st_linestring(m))
+  return(st_linestring(m))
 }
 
 #' Transform coordinates of a gtfs feed
 #' 
 #' @param gtfs_obj gtfs feed (tidygtfs object)
-#' @param crs target coordinate reference system, used by sf::st_transform
+#' @param crs target coordinate reference system, used by [sf::st_transform()]
 #' @return tidygtfs object with transformed stops and shapes sf dataframes
 #' 
 #' @importFrom sf st_transform
@@ -195,13 +199,14 @@ gtfs_transform = function(gtfs_obj, crs) {
 #' 
 #' @seealso \code{\link{gtfs_as_sf}}
 #' 
+#' @importFrom dplyr as_tibble
 #' @export
 sf_as_tbl = function(gtfs_obj) {
   if(inherits(gtfs_obj$stops, "sf")) {
-    gtfs_obj$stops <- dplyr::as_tibble(sf_points_to_df(gtfs_obj$stops))
+    gtfs_obj$stops <- as_tibble(sf_points_to_df(gtfs_obj$stops))
   }
   if(feed_contains(gtfs_obj, "shapes") && inherits(gtfs_obj$shapes, "sf")) {
-    gtfs_obj$shapes <- dplyr::as_tibble(sf_lines_to_df(gtfs_obj$shapes))
+    gtfs_obj$shapes <- as_tibble(sf_lines_to_df(gtfs_obj$shapes))
   }
   gtfs_obj
 }
@@ -210,21 +215,22 @@ sf_as_tbl = function(gtfs_obj) {
 #' @param pts_sf sf object
 #' @param coord_colnames names of the new columns (existing columns are overwritten)
 #' @param remove_geometry remove sf geometry column?
+#' @importFrom sf st_transform st_geometry st_set_geometry st_geometry_type
 #' @keywords internal
 sf_points_to_df = function(pts_sf,
                            coord_colnames = c("stop_lon", "stop_lat"), 
                            remove_geometry = TRUE) {
   stopifnot(inherits(pts_sf, "sf"))
-  stopifnot(sf::st_geometry_type(pts_sf, FALSE) == "POINT")
+  stopifnot(st_geometry_type(pts_sf, FALSE) == "POINT")
   stopifnot(length(coord_colnames) == 2)
   
-  pts_sf <- sf::st_transform(pts_sf, 4326)
-  mtrx = matrix(unlist(sf::st_geometry(pts_sf)), ncol = 2, byrow = TRUE)
+  pts_sf <- st_transform(pts_sf, 4326)
+  mtrx = matrix(unlist(st_geometry(pts_sf)), ncol = 2, byrow = TRUE)
   pts_sf[coord_colnames[1]] <- mtrx[,1]
   pts_sf[coord_colnames[2]] <- mtrx[,2]
 
   if(remove_geometry) {
-    pts_sf <- sf::st_set_geometry(pts_sf, NULL)
+    pts_sf <- st_set_geometry(pts_sf, NULL)
   }
   pts_sf
 }
@@ -234,16 +240,18 @@ sf_points_to_df = function(pts_sf,
 #' @param coord_colnames names of the new columns (existing columns are overwritten)
 #' @param remove_geometry remove sf geometry column?
 #' @importFrom geodist geodist
+#' @importFrom dplyr bind_rows
+#' @importFrom sf st_transform st_geometry st_geometry_type
 #' @keywords internal
 sf_lines_to_df = function(lines_sf,
                           coord_colnames = c("shape_pt_lon", "shape_pt_lat"), 
                           remove_geometry = TRUE) {
   stopifnot(inherits(lines_sf, "sf"))
-  stopifnot(sf::st_geometry_type(lines_sf, FALSE) == "LINESTRING")
+  stopifnot(st_geometry_type(lines_sf, FALSE) == "LINESTRING")
   stopifnot(length(coord_colnames) == 2)
   
-  lines_sf <- sf::st_transform(lines_sf, 4326)
-  shps_list = lapply(sf::st_geometry(lines_sf), function(x) {
+  lines_sf <- st_transform(lines_sf, 4326)
+  shps_list = lapply(st_geometry(lines_sf), function(x) {
     df = as.data.frame(as.matrix(x))
     colnames(df) <- coord_colnames
     df$shape_pt_sequence <- seq_len(nrow(df))
@@ -252,14 +260,14 @@ sf_lines_to_df = function(lines_sf,
     df
   })
   names(shps_list) <- lines_sf$shape_id
-  dplyr::bind_rows(shps_list, .id = "shape_id")
+  bind_rows(shps_list, .id = "shape_id")
 }
 
 #' Convert a json (read with jsonlite) to sf object
 #'
-#' The json object is written to a temporary file and re-read with sf::read().
+#' The json object is written to a temporary file and re-read with [sf::read_sf()].
 #'
-#' @param json_list list as read by jsonlite::read_json (in gtfsio)
+#' @param json_list list as read by [jsonlite::read_json()] (in gtfsio)
 #'
 #' @return sf object
 #' @importFrom jsonlite write_json

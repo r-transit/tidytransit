@@ -5,6 +5,8 @@
 #' @param route_ids the route_ids for which to get stops 
 #' @return stops table for a given service or route
 #' 
+#' @importFrom dplyr filter
+#' 
 #' @export
 #' @examples \donttest{
 #' library(dplyr)
@@ -15,15 +17,15 @@
 #' filtered_stops_df <- filter_stops(nyc, select_service_id, select_route_id)
 #' }
 filter_stops <- function(gtfs_obj, service_ids, route_ids) {
-  some_trips <- dplyr::filter(gtfs_obj$trips, 
-                              .data$service_id %in% service_ids &
-                                .data$route_id %in% route_ids)
+  some_trips <- filter(gtfs_obj$trips, 
+                       .data$service_id %in% service_ids &
+                         .data$route_id %in% route_ids)
   
-  some_stop_times <- dplyr::filter(gtfs_obj$stop_times,
-                                   .data$trip_id %in% some_trips$trip_id) 
+  some_stop_times <- filter(gtfs_obj$stop_times,
+                            .data$trip_id %in% some_trips$trip_id) 
   
-  some_stops <- dplyr::filter(gtfs_obj$stops,
-                              .data$stop_id %in% some_stop_times$stop_id)
+  some_stops <- filter(gtfs_obj$stops,
+                       .data$stop_id %in% some_stop_times$stop_id)
   
   return(some_stops)
 }
@@ -84,23 +86,24 @@ filter_feed_by_trips = function(gtfs_obj, trip_ids) {
 #' @param area all trips passing through this area are kept. Either a bounding box 
 #'             (numeric vector with xmin, ymin, xmax, ymax) or a sf object.
 #' @seealso \code{\link{filter_feed_by_stops}}, \code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_date}}
+#' @importFrom sf st_crs st_set_agr st_intersection st_geometry st_transform st_bbox
 #' @export
 filter_feed_by_area <- function(gtfs_obj, area) {
   if(inherits(gtfs_obj$stops, "sf") && inherits(area, "sf")) {
-    if(sf::st_crs(gtfs_obj$stops) != sf::st_crs(area)) {
+    if(st_crs(gtfs_obj$stops) != st_crs(area)) {
       stop("feed and area are not in the same coordinate reference system")
     }
-    sf::st_agr(gtfs_obj$stops) <- "constant"
-    stops_area = sf::st_intersection(gtfs_obj$stops, sf::st_geometry(area))
+    gtfs_obj$stops <- st_set_agr(gtfs_obj$stops, "constant")
+    stops_area = st_intersection(gtfs_obj$stops, st_geometry(area))
     stop_ids = stops_area$stop_id
   } else {
     if(inherits(area, "sf")) {
-      if(sf::st_crs(area)$input != "EPSG:4326") {
-        area <- sf::st_transform(area, 4326)
+      if(st_crs(area)$input != "EPSG:4326") {
+        area <- st_transform(area, 4326)
       }
-      area <- sf::st_bbox(area)
+      area <- st_bbox(area)
     } else {
-      if(length(area) != 4 | !is.numeric(area)) {
+      if(length(area) != 4 || !is.numeric(area)) {
         stop("bbox_area must be a numeric vector of length four, with xmin, ymin, xmax and ymax values")
       }
     }
@@ -152,11 +155,13 @@ filter_feed_by_stops = function(gtfs_obj, stop_ids = NULL, stop_names = NULL) {
 #' 
 #' @seealso \code{\link{filter_stop_times}}, \code{\link{filter_feed_by_trips}}, 
 #'          \code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_date}}
+#'
+#' @importFrom dplyr as_tibble
 #' @export
 filter_feed_by_date = function(gtfs_obj, extract_date,
                                min_departure_time, max_arrival_time) {
   st = filter_stop_times(gtfs_obj, extract_date, min_departure_time, max_arrival_time)
-  st <- dplyr::as_tibble(st)
+  st <- as_tibble(st)
   attributes(st)$stops <- NULL
   attributes(st)$transfers <- NULL
   attributes(st)$sorted <- NULL

@@ -42,6 +42,7 @@
 #'         corresponding journey departure and arrival times.
 #'
 #' @importFrom data.table fifelse
+#' @importFrom hms hms
 #' @export
 #' @examples \donttest{
 #' library(dplyr)
@@ -102,7 +103,8 @@ travel_times = function(filtered_stop_times,
                         return_DT = FALSE,
                         stop_dist_check = 300) {
   travel_time <- journey_arrival_time <- journey_departure_time <- NULL
-  stop_names = stop_name; rm(stop_name)
+  stop_names = stop_name
+  rm(stop_name)
   if(inherits(filtered_stop_times, "tidygtfs")) {
     gtfs_obj = filtered_stop_times
     if(is.null(attributes(gtfs_obj$stop_times)$extract_date)) {
@@ -130,12 +132,21 @@ travel_times = function(filtered_stop_times,
   }
 
   # Check stop_name integrity
-  if(length(stop_ids) > 1 && !is.null(stop_dist_check) && !isFALSE(stop_dist_check)) {
-    stop_dists = stop_group_distances(stops, "stop_name")
+  if(!is.null(stop_dist_check) && !isFALSE(stop_dist_check)) {
+    .time_prev = Sys.time()
+    stop_dists = stop_group_distances(stops, "stop_name", max_only = TRUE)
+    .time_post = Sys.time()
 
     if(max(stop_dists$dist_max) > stop_dist_check) {
       stop("Some stops with the same name are more than ", stop_dist_check, " meters apart, see stop_group_distances().\n",
-           "Using travel_times() might lead to unexpected results. Set stop_dist_check=FALSE to ignore this error.")
+           "Using travel_times() might lead to unexpected results. Set stop_dist_check=FALSE to ignore this error.",
+           call. = FALSE)
+    }
+  
+    .time_check = as.numeric(difftime(.time_post, .time_prev, units = "secs"))
+    if(.time_check > 1) {
+      message("Stop distance check took longer than 1 second (", round(.time_check, 1), # nocov
+              "s). Set stop_dist_check=FALSE to skip it.") # nocov
     }
   }
 
@@ -162,8 +173,8 @@ travel_times = function(filtered_stop_times,
   keep_by = ifelse(arrival, "from_stop_name", "to_stop_name")
   setorder(rptr_names, travel_time)
   rptr_names <- rptr_names[, .SD[1], by = keep_by]
-  rptr_names[,journey_arrival_time := hms::hms(journey_arrival_time)]
-  rptr_names[,journey_departure_time := hms::hms(journey_departure_time)]
+  rptr_names[,journey_arrival_time := hms(journey_arrival_time)]
+  rptr_names[,journey_departure_time := hms(journey_departure_time)]
 
   rptr_names <- rptr_names[,c("from_stop_name", "to_stop_name",
                               "travel_time", "journey_departure_time",
@@ -174,7 +185,7 @@ travel_times = function(filtered_stop_times,
                            with = FALSE]
 
   if(!return_DT) {
-    rptr_names <- dplyr::as_tibble(rptr_names)
+    rptr_names <- as_tibble(rptr_names)
   }
 
   return(rptr_names)

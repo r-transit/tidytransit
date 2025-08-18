@@ -140,6 +140,12 @@ test_that("stop_group_distances", {
   expect_true(is.matrix(x$distances[1][[1]]))
   expect_equal(x$n_stop_ids, c(3,2))
   
+  stopdist_df2 = stopdist_df
+  colnames(stopdist_df2)[2] <- "stop_name_2"
+  x2 = stop_group_distances(stopdist_df2, "stop_name_2")
+  colnames(x2) <- colnames(x)
+  expect_equal(x2, x)
+  
   stopdist_sf = stops_as_sf(stopdist_df)
   y = stop_group_distances(stopdist_sf)
   expect_equal(x,y)

@@ -20,15 +20,15 @@
 #' @return dataframe of stops with the number of departures and the headway 
 #'         (departures divided by timespan) in seconds as columns
 #'
-#' @importFrom dplyr %>%
-#' @importFrom rlang .data !! quo enquo
-#' @importFrom stats median sd
-#' @export
 #' @examples 
 #' data(gtfs_duke)
 #' stop_frequency <- get_stop_frequency(gtfs_duke)
 #' x <- order(stop_frequency$mean_headway)
 #' head(stop_frequency[x,])
+#' @importFrom dplyr %>% filter group_by ungroup summarise left_join arrange desc count
+#' @importFrom rlang .data !! quo enquo
+#' @importFrom stats median sd
+#' @export
 get_stop_frequency <- function(gtfs_obj,
                                start_time = "06:00:00",
                                end_time = "22:00:00",
@@ -42,12 +42,13 @@ get_stop_frequency <- function(gtfs_obj,
   # get service id with most departures
   if(is.null(service_ids)) {
     dep_per_trip = gtfs_obj$stop_times %>% 
-      dplyr::group_by(trip_id) %>% dplyr::count(name = "n_deps") %>% 
-      dplyr::ungroup()
+      group_by(trip_id) %>% 
+      count(name = "n_deps") %>% 
+      ungroup()
     dep_per_service_id = left_join(gtfs_obj$trips, dep_per_trip, "trip_id") %>% 
-      dplyr::group_by(service_id) %>% 
-      dplyr::summarise(n_deps = sum(n_deps)) %>% 
-      dplyr::arrange(dplyr::desc(n_deps))
+      group_by(service_id) %>% 
+      summarise(n_deps = sum(n_deps)) %>% 
+      arrange(desc(n_deps))
     service_ids = dep_per_service_id$service_id[1]  
   }
   
@@ -62,12 +63,12 @@ get_stop_frequency <- function(gtfs_obj,
   # find number of departure per stop_id (route_id, direction_id, service_id)
   if(by_route) {
     freq = stop_times %>% 
-      dplyr::group_by(stop_id, route_id, direction_id, service_id) %>% 
-      dplyr::count(name = "n_departures") %>% dplyr::ungroup()
+      group_by(stop_id, route_id, direction_id, service_id) %>% 
+      count(name = "n_departures") %>% ungroup()
   } else {
     freq = stop_times %>% 
-      dplyr::group_by(stop_id, service_id) %>% 
-      dplyr::count(name = "n_departures") %>% dplyr::ungroup()
+      group_by(stop_id, service_id) %>% 
+      count(name = "n_departures") %>% ungroup()
   }
   
   # calculate average headway
@@ -96,18 +97,18 @@ get_stop_frequency <- function(gtfs_obj,
 #'                    with the most departures is used.
 #' @return a dataframe of routes with variables or headway/frequency in seconds for a route 
 #'         within a given time frame
-#' @export
 #' @examples 
 #' data(gtfs_duke)
 #' routes_frequency <- get_route_frequency(gtfs_duke)
 #' x <- order(routes_frequency$median_headways)
 #' head(routes_frequency[x,])
+#' @importFrom dplyr group_by summarise n
+#' @export
 get_route_frequency <- function(gtfs_obj,
                                 start_time = "06:00:00",
                                 end_time = "22:00:00",
                                 service_ids = NULL) {
-  total_departures <- median_headways <- mean_headways <- NULL
-  n_departures <- mean_headway <- st_dev_headways <- stop_count <- NULL
+  n_departures <- mean_headway <- NULL
   if(feed_has_non_empty_table(gtfs_obj, "frequencies")) {  
     message("A pre-calculated frequencies dataframe exists for this feed already, consider using that.") 
   } 
@@ -121,7 +122,7 @@ get_route_frequency <- function(gtfs_obj,
                 median_headways = round(median(mean_headway)),
                 mean_headways = round(mean(mean_headway)),
                 st_dev_headways = round(sd(mean_headway), 2),
-                stop_count = dplyr::n())
+                stop_count = n())
   } else {
     stop("Failed to calculate frequency, no departures found")
   }
