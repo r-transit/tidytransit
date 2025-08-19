@@ -1,3 +1,10 @@
+# tidytransit (development)
+- update gtfs reference sysdata [#221](https://github.com/r-transit/tidytransit/pull/221)
+- use fallback MobilityData dataset (extdata) in vignette if download fails [9e352eb](https://github.com/r-transit/tidytransit/commit/9e352ebc63adeb5f9bc540e2d56c432ddcb75f57)
+- bugfix: `by` parameter in `stop_group_distances()` is no longer ignored [#222](https://github.com/r-transit/tidytransit/pull/222)
+- bugfix: catch empty/NA parameter values in `filter_stop_times()`
+
+
 # tidytransit 1.7.0
 
 - `read_gtfs()` can now read `locations.geojson` files according to the updated specifications [#214](https://github.com/r-transit/tidytransit/pull/214)
