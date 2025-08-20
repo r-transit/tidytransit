@@ -129,18 +129,24 @@ Transit agencies might also provide their feeds on their on website.
 MobilityData.org provide a csv file with all their feed sources on their
 [GitHub page](https://github.com/MobilityData/mobility-database-catalogs).
 
+```{r, eval=FALSE}
+mbd_url = "https://storage.googleapis.com/storage/v1/b/mdb-csv/o/sources.csv?alt=media"
+MobilityData.csv = read.csv(mbd_url)
+```
+
 You can load it in R and browse it as a data frame. Tidytransit cannot handle GTFS realtime 
 data, so we can remove those entries.
 
-```{r}
+```{r, include=FALSE}
 mdb_url = "https://storage.googleapis.com/storage/v1/b/mdb-csv/o/sources.csv?alt=media"
-
 MobilityData.csv = tryCatch(
   read.csv(mdb_url), 
   warning = function(e) { # If URL is not reachable, load local dataset
     readRDS(system.file("extdata", "mobilitydata.rds", package = "tidytransit"))
   })
+```
 
+```{r}
 MobilityData_feedlist = MobilityData.csv %>% 
   as_tibble() %>% 
   filter(data_type == "gtfs")
