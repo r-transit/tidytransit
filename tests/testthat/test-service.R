@@ -22,4 +22,7 @@ test_that("set_servicepattern w/ more params", {
 
   expect_equal(unique(substr(gtfs_orig$.$servicepatterns$servicepattern_id,0,5)), "pref_")
   expect_error(set_servicepattern(gtfs_orig, hash_algo = "dummy"))
+  
+  expect_error(set_servicepattern(gtfs_duke, hash_length = 1),
+               "hash_length (1) too small", fixed = TRUE)
 })

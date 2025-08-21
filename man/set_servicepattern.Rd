@@ -16,7 +16,7 @@ set_servicepattern(
 
 \item{id_prefix}{all servicepattern ids will start with this string}
 
-\item{hash_algo}{hashing algorithm used by digest}
+\item{hash_algo}{hashing algorithm used by \code{\link[digest:digest]{digest::digest()}}}
 
 \item{hash_length}{length the hash should be cut to with \code{substr()}. Use \code{-1} if the full
 hash should be used}
