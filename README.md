@@ -1,7 +1,7 @@
 [![CRAN status](https://www.r-pkg.org/badges/version/tidytransit)](https://cran.r-project.org/package=tidytransit/)
 [![Project Status: Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active) 
-[![](https://cranlogs.r-pkg.org/badges/tidytransit)](https://cran.r-project.org/package=tidytransit)
-[![](https://cranlogs.r-pkg.org/badges/grand-total/tidytransit?color=lightgrey)](https://cran.r-project.org/package=tidytransit)
+[![CRAN downloads per month](https://cranlogs.r-pkg.org/badges/tidytransit)](https://cran.r-project.org/package=tidytransit)
+[![CRAN downloads total](https://cranlogs.r-pkg.org/badges/grand-total/tidytransit?color=lightgrey)](https://cran.r-project.org/package=tidytransit)
 [![R-CMD-check](https://github.com/r-transit/tidytransit/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-transit/tidytransit/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/r-transit/tidytransit/graph/badge.svg)](https://app.codecov.io/gh/r-transit/tidytransit)
 
