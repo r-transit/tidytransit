@@ -27,6 +27,16 @@ Write a tidygtfs object to a zip file
 Auxiliary tidytransit tables (e.g. \code{dates_services}) are not exported. Calls
 \code{\link[gtfsio:export_gtfs]{gtfsio::export_gtfs()}} after preparing the data.
 }
+\examples{
+\dontrun{
+local_gtfs_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
+gtfs <- read_gtfs(local_gtfs_path)
+
+gtfs <- filter_feed_by_date(gtfs, "2018-06-30")
+
+write_gtfs(gtfs, "feed_filtered.zip")
+}
+}
 \seealso{
 \code{\link[=read_gtfs]{read_gtfs()}}
 }

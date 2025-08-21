@@ -31,3 +31,8 @@ service pattern in tidytransit. Trips with the same \code{servicepattern} id run
 dates. In general, \code{service_id} can work this way but it is not enforced by the
 GTFS standard.
 }
+\examples{
+gtfs = set_servicepattern(gtfs_duke)
+gtfs$.$dates_servicepatterns
+
+}

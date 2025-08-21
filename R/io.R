@@ -48,6 +48,14 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE, ...) {
 #' @return Invisibly returns `gtfs_obj`
 #'
 #' @seealso [read_gtfs()]
+#' @examples \dontrun{
+#' local_gtfs_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
+#' gtfs <- read_gtfs(local_gtfs_path)
+#' 
+#' gtfs <- filter_feed_by_date(gtfs, "2018-06-30")
+#' 
+#' write_gtfs(gtfs, "feed_filtered.zip")
+#' }
 #' @importFrom gtfsio export_gtfs
 #' @export
 write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE) {

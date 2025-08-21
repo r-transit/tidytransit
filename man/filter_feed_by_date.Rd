@@ -30,6 +30,5 @@ Only stop_times, stops, routes, services (in calendar and calendar_dates), shape
 frequencies and transfers belonging to one of those trips are kept.
 }
 \seealso{
-\code{\link{filter_stop_times}}, \code{\link{filter_feed_by_trips}},
-\code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_date}}
+\code{\link[=filter_feed_by_area]{filter_feed_by_area()}}, \code{\link[=filter_feed_by_stops]{filter_feed_by_stops()}}, \code{\link[=filter_feed_by_trips]{filter_feed_by_trips()}}
 }

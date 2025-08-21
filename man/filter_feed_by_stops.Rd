@@ -25,5 +25,5 @@ The returned gtfs_obj likely contains more than just the stops given (i.e. all s
 that belong to a trip passing the initial stop).
 }
 \seealso{
-\code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_date}}
+\code{\link[=filter_feed_by_date]{filter_feed_by_date()}}, \code{\link[=filter_feed_by_area]{filter_feed_by_area()}}, \code{\link[=filter_feed_by_trips]{filter_feed_by_trips()}}
 }

@@ -12,6 +12,9 @@
 #'                    hash should be used
 #' @return modified gtfs_obj with added servicepattern list and a table linking 
 #'         trips and pattern (trip_servicepatterns), added to `gtfs_obj$.` sublist.
+#' @examples
+#' gtfs = set_servicepattern(gtfs_duke)
+#' gtfs$.$dates_servicepatterns
 #' 
 #' @importFrom dplyr group_by summarise ungroup left_join
 #' @importFrom digest digest

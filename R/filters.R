@@ -39,7 +39,7 @@ filter_stops <- function(gtfs_obj, service_ids, route_ids) {
 #' @param trip_ids vector with trip_ids
 #' @return tidygtfs object with filtered tables
 #' 
-#' @seealso \code{\link{filter_feed_by_stops}}, \code{\link{filter_feed_by_area}}, \code{\link{filter_feed_by_date}}
+#' @seealso [filter_feed_by_date()], [filter_feed_by_area()], [filter_feed_by_stops()]
 #' @export
 filter_feed_by_trips = function(gtfs_obj, trip_ids) {
   route_ids = gtfs_obj$trips[which(gtfs_obj$trips$trip_id %in% trip_ids),]
@@ -85,7 +85,7 @@ filter_feed_by_trips = function(gtfs_obj, trip_ids) {
 #' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @param area all trips passing through this area are kept. Either a bounding box 
 #'             (numeric vector with xmin, ymin, xmax, ymax) or a sf object.
-#' @seealso \code{\link{filter_feed_by_stops}}, \code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_date}}
+#' @seealso [filter_feed_by_date()], [filter_feed_by_stops()], [filter_feed_by_trips()]
 #' @importFrom sf st_crs st_set_agr st_intersection st_geometry st_transform st_bbox
 #' @export
 filter_feed_by_area <- function(gtfs_obj, area) {
@@ -126,7 +126,7 @@ filter_feed_by_area <- function(gtfs_obj, area) {
 #' @param stop_ids vector with stop_ids. You can either provide stop_ids or stop_names 
 #' @param stop_names vector with stop_names (will be converted to stop_ids)
 #' 
-#' @seealso \code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_date}}
+#' @seealso [filter_feed_by_date()], [filter_feed_by_area()], [filter_feed_by_trips()]
 #' @export
 filter_feed_by_stops = function(gtfs_obj, stop_ids = NULL, stop_names = NULL) {
   if(inherits(stop_ids, "sf")) {
@@ -153,9 +153,8 @@ filter_feed_by_stops = function(gtfs_obj, stop_ids = NULL, stop_names = NULL) {
 #' 
 #' @inheritParams filter_stop_times
 #' 
-#' @seealso \code{\link{filter_stop_times}}, \code{\link{filter_feed_by_trips}}, 
-#'          \code{\link{filter_feed_by_trips}}, \code{\link{filter_feed_by_date}}
-#'
+#' @seealso [filter_feed_by_area()], [filter_feed_by_stops()], [filter_feed_by_trips()]
+#' 
 #' @importFrom dplyr as_tibble
 #' @export
 filter_feed_by_date = function(gtfs_obj, extract_date,
