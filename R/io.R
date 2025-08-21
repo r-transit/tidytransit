@@ -48,7 +48,6 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE, ...) {
 #' @return Invisibly returns `gtfs_obj`
 #'
 #' @seealso [read_gtfs()]
-#'
 #' @importFrom gtfsio export_gtfs
 #' @export
 write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE) {
