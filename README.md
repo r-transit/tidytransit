@@ -15,6 +15,8 @@ frequencies, and validate transit feeds. Tidytransit reads the
 Tidytransit can be used to:
 
 - [read GTFS feeds into R](https://r-transit.github.io/tidytransit/reference/read_gtfs.html)
+
+Note: `read_gtfs()` does not support downloading GTFS files from URLs that require authentication. If you need to read a feed behind authentication, first download the feed to a local file and then pass the local path to `read_gtfs()`.
 - [calculate travel times between transit stops](https://r-transit.github.io/tidytransit/reference/travel_times.html)
 - [convert stops and routes to sf data frames](https://r-transit.github.io/tidytransit/reference/gtfs_as_sf.html)
 - [validate transit feeds and more](https://r-transit.github.io/tidytransit/reference/index.html)
