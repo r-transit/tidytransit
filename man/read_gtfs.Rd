@@ -26,6 +26,12 @@ file. Additional tables are stored in the \code{.} sublist.
 Reads a GTFS feed from either a local \code{.zip} file or an URL and validates them against
 GTFS specifications.
 }
+\note{
+\strong{Limitations:} \code{read_gtfs()} does not support downloading GTFS files from URLs that require
+authentication. If you need to read a feed behind
+authentication, first download the feed to a local file and then pass the local path to
+\code{read_gtfs()}.
+}
 \examples{
 \dontrun{
 local_gtfs_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")

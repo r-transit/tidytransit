@@ -16,6 +16,11 @@
 #'
 #' @seealso [validate_gtfs()], [write_gtfs()]
 #'
+#' @note \strong{Limitations:} `read_gtfs()` does not support downloading GTFS files from URLs that require
+#' authentication. If you need to read a feed behind
+#' authentication, first download the feed to a local file and then pass the local path to
+#' `read_gtfs()`.
+#'
 #' @examples \dontrun{
 #' local_gtfs_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
 #' gtfs <- read_gtfs(local_gtfs_path)
