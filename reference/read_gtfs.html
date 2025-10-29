@@ -81,6 +81,13 @@ all existing files are read.</p></dd>
 file. Additional tables are stored in the <code>.</code> sublist.</p>
     </div>
     <div class="section level2">
+    <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
+    <p><strong>Limitations:</strong> <code>read_gtfs()</code> does not support downloading GTFS files from URLs that require
+authentication. If you need to read a feed behind
+authentication, first download the feed to a local file and then pass the local path to
+<code>read_gtfs()</code>.</p>
+    </div>
+    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="validate_gtfs.html">validate_gtfs()</a></code>, <code><a href="write_gtfs.html">write_gtfs()</a></code></p></div>
     </div>
