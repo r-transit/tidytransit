@@ -108,10 +108,13 @@ test_that("travel_times with arrival=TRUE stop_name", {
 })
 
 test_that("catch invalid params", {
-  expect_error(travel_times(gtfs_routing, stop_name = "One"), "Travel times cannot be calculated with an unfiltered tidygtfs object. Use filter_feed_by_date().")
+  expect_error(travel_times(gtfs_routing, stop_name = "One"), 
+               "Travel times cannot be calculated with an unfiltered tidygtfs object. Use filter_feed_by_date().")
   fst = filter_stop_times(gtfs_routing, "2018-10-01", 7*3600, 24*3600)
-  expect_error(raptor(fst, attributes(fst)$transfers, stop_ids = "stop1a", max_transfers = -1), "max_transfers is less than 0")
-  expect_error(travel_times(fst, stop_name = "One", max_transfers = -1), "max_transfers is less than 0")
+  expect_error(raptor(fst, attributes(fst)$transfers, stop_ids = "stop1a", max_transfers = -1), 
+               "max_transfers must be a number >= 0")
+  expect_error(travel_times(fst, stop_name = "One", max_transfers = -1), 
+               "max_transfers must be a number >= 0")
 })
 
 test_that("travel_times with filtered feed", {
@@ -132,6 +135,11 @@ test_that("time_range param", {
   tt1 = travel_times(st, stop_name = "One", time_range = c("07:09:00", "07:59:00"))
   expect_equal((as.numeric(unique(tt1$journey_departure_time))-7*3600)/60,
                c(9,10,12,17))
+})
+
+test_that("time_range param w/ arrival = TRUE", {
+  st = filter_feed_by_date(gtfs_routing, "2018-10-01")
+  
   tt2 = travel_times(st, stop_name = "Three", time_range = c("07:20:00", "07:20:00"), arrival = TRUE)
   expect_equal(as.numeric(tt2$journey_departure_time), 7*3600+20*60)
   tt3 = travel_times(st, stop_name = "Three", time_range = c("07:20:00", "07:23:00"), arrival = TRUE)
@@ -183,3 +191,6 @@ test_that("nyc feed", {
 
   expect_s3_class(tts, "data.frame")
 })
+
+rm("gtfs_routing", "local_gtfs_path", "stop_times", "stop_times_0710", 
+   "stop_times_0711", "stop_times_0715", "test_from_stop_ids", "transfers")
