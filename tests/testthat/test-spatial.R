@@ -74,8 +74,12 @@ test_that("two shapes are returned even if trips use the same shape_id", {
 })
 
 test_that("plots work with and without shapes", {
-  pl1 = plot(gtfs_duke)
-  pl2 = plot(duke_sf)
+  pdf(tempfile(fileext = ".pdf"))
+  plot(gtfs_duke)
+  dev.off()
+  pdf(tempfile(fileext = ".pdf"))
+  plot(duke_sf)
+  dev.off()
   gtfs_duke_wo_stops <- gtfs_duke
   gtfs_duke_wo_stops$stops <- NULL
   expect_error(plot(gtfs_duke_wo_stops))
