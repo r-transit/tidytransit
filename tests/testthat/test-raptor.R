@@ -338,5 +338,52 @@ test_that("raptor considers each stop_id as a separate starting journey", {
   expect_equal(nrow(missing_routes), 0)
 })
 
+test_that("in-seat transfers", {
+  # split route B at stop 6
+  stop_times_4 = bind_rows(stop_times, stop_times[7,])
+  stop_times_4[c(5:7),"trip_id"] <- "routeB1"
+  stop_times_4[c(8:9, 24),"trip_id"] <- "routeB2"
+  stop_times_4[c(24, 8:9), "stop_sequence"] <- 1:3
+  stop_times_4[c(7,24), c("arrival_time", "departure_time")] <- hms::hms(0, 20, 7)
+  transfers_4 = data.frame(from_stop_id = "stop6", to_stop_id = "stop6",
+                           from_trip_id = "routeB1", to_trip_id = "routeB2",
+                           transfer_type = 4) %>% bind_rows(transfers)
+  
+  # regular
+  r0 = raptor(stop_times, transfers, "stop5")
+  expect_identical(
+    r0$to_stop_id, c("stop5", "stop6", "stop7", "stop3a", "stop3b", "stop8a", "stop8b", "stop4"))
+  
+  r_no_inseat = raptor(stop_times_4, transfers, "stop5")
+  expect_identical(r_no_inseat$to_stop_id, c("stop5", "stop6", "stop7", "stop8a", "stop8b", "stop4"))
+  
+  r_with_inseat = raptor(stop_times_4, transfers_4, "stop5")
+  expect_identical(
+    r_with_inseat$to_stop_id, c("stop5", "stop6", "stop7", "stop3a", "stop3b", "stop8a", "stop8b", "stop4"))
+  
+  # arrival
+  a0 = raptor(stop_times, transfers, "stop3a", arrival = TRUE, time_range = c("07:28:00", "07:28:00"))
+  a_no_inseat = raptor(stop_times_4, transfers, "stop3a", arrival = TRUE, time_range = c("07:28:00", "07:28:00"))
+  a_with_inseat = raptor(stop_times_4, transfers_4, "stop3a", arrival = TRUE, time_range = c("07:28:00", "07:28:00"))
+
+  expect_identical(a0$from_stop_id, c("stop3a", "stop6", "stop5", "stop1a", "stop1b"))
+  expect_identical(a_no_inseat$from_stop_id, c("stop3a", "stop6"))
+  expect_identical(a_with_inseat$from_stop_id, c("stop3a", "stop6", "stop5", "stop1a", "stop1b"))
+  
+  # with stop_id change
+  st_4 = stop_times_4
+  st_4[c(5:7),"trip_id"] <- "routeB1"
+  st_4[c(8:9, 24),"trip_id"] <- "routeB2"
+  st_4[c(24, 8:9), "stop_sequence"] <- 1:3
+  st_4[c(7,24), c("arrival_time", "departure_time")] <- hms::hms(0, 20, 7)
+  st_4[24,"stop_id"] <- "stop6x"
+  tr_4 = transfers_4
+  tr_4[1,"to_stop_id"] <- "stop6x"
+
+  # note that stop6x is not actually "visited" and is missing from the returned table
+  r_with_inseat2 = raptor(st_4, tr_4, "stop5")
+  expect_identical(r_with_inseat2, r_with_inseat)
+})
+
 rm("gtfs_routing", "local_gtfs_path", "raptor.", "stop_times", "transfers",
    "stop_times_0710", "stop_times_0711", "stop_times_0715", "test_from_stop_ids")
