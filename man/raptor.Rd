@@ -11,7 +11,8 @@ raptor(
   arrival = FALSE,
   time_range = 3600,
   max_transfers = NULL,
-  keep = "all"
+  keep = "all",
+  separate_starts = FALSE
 )
 }
 \arguments{
@@ -43,6 +44,11 @@ describes the time window when journeys should end at \code{stop_ids}.}
 between stop_ids are returned. With \code{shortest} only the journey with the
 shortest travel time is returned. With \code{earliest} the journey arriving at a
 stop the earliest is returned, \code{latest} works accordingly.}
+
+\item{separate_starts}{If \code{FALSE} (default) initial transfers among stops in
+\code{stop_ids} are returned. If \code{TRUE} each stop_id is calculated independently. This leads
+leads to slightly faster calculation time and can be used when the resulting times
+between \code{from} and \code{to_stop_ids} are aggregated later (for example by stop_name).}
 }
 \value{
 A data.table with journeys (departure, arrival and travel time) to/from all

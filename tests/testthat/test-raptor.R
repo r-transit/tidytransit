@@ -322,20 +322,57 @@ test_that("routing with missing NA", {
 })
 
 test_that("raptor considers each stop_id as a separate starting journey", {
-  possible_routes = read.csv(test_path("possible_routes.csv"), sep = ";")
-  all_stop_ids = sort(unique(stop_times$stop_id))
+  x1 = bind_rows(
+    raptor(stop_times, transfers, "stop1a", keep = "all"),
+    raptor(stop_times, transfers, "stop4", keep = "all")) %>% 
+    arrange(from_stop_id, to_stop_id, travel_time, journey_departure_time, journey_arrival_time, transfers)
+  
+  x2 = raptor(stop_times, transfers, c("stop1a", "stop4"), keep = "all") %>% 
+    arrange(from_stop_id, to_stop_id, travel_time, journey_departure_time, journey_arrival_time, transfers)
+  
+  expect_identical(x1, x2)
+  
+  y1 = bind_rows(
+    raptor(stop_times, transfers, "stop1a", keep = "all"),
+    raptor(stop_times, transfers, "stop1b", keep = "all")) %>% 
+    arrange(from_stop_id, to_stop_id, travel_time, journey_departure_time, journey_arrival_time, transfers)
+  
+  y2 = raptor(stop_times, transfers, c("stop1a", "stop1b"), keep = "all") %>% 
+    arrange(from_stop_id, to_stop_id, travel_time, journey_departure_time, journey_arrival_time, transfers)
+  
+  expect_identical(y1, y2)
+})
 
-  rptr_all = raptor.(stop_times, transfers, all_stop_ids, keep = "all") %>%
-    arrange(from_stop_id, to_stop_id) %>% dplyr::as_tibble()
+test_that("initial transfers among from_stop_ids exist", {
+  possible_routes = read.csv(test_path("possible_routes.csv"), sep = ";") %>% 
+    filter(connection %in% c("yes", "via_sibling", "to_sibling"))
 
-  rptr_stop_pairs = unique(rptr_all[,c("from_stop_id", "to_stop_id")])
-  rptr_stop_pairs$raptor_route <- TRUE
+  all_stops = raptor.(stop_times, transfers, unique(stop_times$stop_id), keep = "all")
+  
+  stop_pairs = all_stops %>% 
+    dplyr::as_tibble() %>% 
+    dplyr::distinct(from_stop_id, to_stop_id) %>% 
+    dplyr::mutate(raptor_route = TRUE) %>% 
+    dplyr::full_join(possible_routes, c("from_stop_id", "to_stop_id"))
 
-  stop_pairs = dplyr::full_join(rptr_stop_pairs, possible_routes, c("from_stop_id", "to_stop_id")) %>%
-    arrange(from_stop_id, to_stop_id)
+  expect_identical(sort(unique(stop_pairs$connection)), c("to_sibling", "via_sibling", "yes"))
+  expect_true(!anyNA(stop_pairs$raptor_route))
+})
 
-  missing_routes = stop_pairs %>% filter(is.na(raptor_route) & possible == TRUE)
-  expect_equal(nrow(missing_routes), 0)
+test_that("separate_starts=TRUE", {  
+  possible_routes = read.csv(test_path("possible_routes.csv"), sep = ";") %>% 
+        filter(connection %in% c("yes"))
+  
+  separate_starts = raptor(stop_times, transfers, unique(stop_times$stop_id), 
+                           keep = "all", separate_starts = TRUE)
+  stop_pairs = separate_starts %>% 
+    dplyr::as_tibble() %>% 
+    dplyr::distinct(from_stop_id, to_stop_id) %>% 
+    dplyr::mutate(raptor_route = TRUE) %>% 
+    dplyr::full_join(possible_routes, c("from_stop_id", "to_stop_id"))
+  
+  expect_identical(unique(stop_pairs$connection), "yes")
+  expect_true(!anyNA(stop_pairs$raptor_route))
 })
 
 test_that("in-seat transfers", {
