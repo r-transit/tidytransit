@@ -157,7 +157,8 @@ travel_times = function(filtered_stop_times,
                 max_transfers = max_transfers,
                 arrival = arrival,
                 time_range = time_range,
-                keep = "shortest")
+                keep = "shortest",
+                separate_starts = TRUE)
 
   # minimal travel_time by stop_name ####
   .select_stops = function(prefix) {
