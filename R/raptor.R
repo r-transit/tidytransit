@@ -126,13 +126,10 @@ raptor = function(stop_times,
 
   # 4) combine initial journeys with raptor result
   result_cns = c("from_stop_id", "to_stop_id", "travel_time", "journey_departure_time", "journey_arrival_time", "transfers")
-  if(separate_starts) {
-    raptor_result = rptr[, from_stop_id := raptor_departure_stop]
-  } else {
-    raptor_result = merge(journeys_init, rptr, by = "raptor_departure_stop", allow.cartesian = TRUE)
-    raptor_result <- raptor_result[raptor_departure_time >= raptor_min_departure_time & 
-                                     raptor_departure_time <= raptor_max_departure_time,]
-  }
+  raptor_result = merge(journeys_init, rptr, by = "raptor_departure_stop", allow.cartesian = TRUE)
+  raptor_result <- raptor_result[raptor_departure_time >= raptor_min_departure_time & 
+                                   raptor_departure_time <= raptor_max_departure_time,]
+  
   raptor_result[, `:=`(journey_departure_time = raptor_departure_time,
                        journey_arrival_time = raptor_arrival_time)]
   raptor_result[, `:=`(travel_time = raptor_arrival_time - journey_departure_time)]
@@ -206,11 +203,11 @@ find_journeys = function(from_stop_ids, transfers_dt, time_window, arrival, max_
       initial_transfers <- initial_transfers[
         raptor_min_departure_time >= time_window[1] & raptor_max_departure_time <= time_window[2] &
           raptor_min_departure_time <= time_window[2] & raptor_max_departure_time >= time_window[1],]
+      
+      if(separate_starts) {
+        initial_transfers <- initial_transfers[!raptor_departure_stop %in% from_stop_ids,]
+      }
     }
-  }
-
-  if(separate_starts) {
-    initial_transfers <- initial_transfers[!raptor_departure_stop %in% from_stop_ids,]
   }
 
   # combine
@@ -258,7 +255,7 @@ raptor_core = function(journeys_init,
 
   # find initial departures
   rptr = merge(stop_times_dep,
-               journeys_init[, c("raptor_departure_stop", "raptor_min_departure_time", "raptor_max_departure_time")],
+               unique(journeys_init[, c("raptor_departure_stop", "raptor_min_departure_time", "raptor_max_departure_time")]),
                by.x = "to_stop_id", by.y = "raptor_departure_stop", allow.cartesian = TRUE)
   rptr <- rptr[departure_time_num >= raptor_min_departure_time & departure_time_num <= raptor_max_departure_time,]
   
@@ -343,6 +340,11 @@ raptor_core = function(journeys_init,
                              arrival_trip_id = trip_id)]
     arrival_candidates <- arrival_candidates[, rptr_colnames, with = FALSE]
 
+    # pre-optimize arrival_candidates
+    setorder(arrival_candidates, raptor_arrival_time)
+    arrival_candidates <- arrival_candidates[, .SD[1], by = c("to_stop_id", "raptor_departure_stop", "raptor_departure_time")]
+    arrival_candidates <- arrival_candidates[, rptr_colnames, with = FALSE]
+
     # Find all transfers for arrival candidates
     if(k <= max_transfers && nrow(walk_transfers) > 0) {
       transfer_candidates = merge(
@@ -359,6 +361,10 @@ raptor_core = function(journeys_init,
       # arrival_time needs to be calculated
       transfer_candidates[,raptor_arrival_time := (raptor_arrival_time + min_transfer_time)]
       transfer_candidates[,transfers := k]
+      
+      # pre-optimize transfer_candidates
+      setorder(transfer_candidates, raptor_arrival_time)
+      transfer_candidates <- transfer_candidates[, .SD[1], by = c("to_stop_id", "raptor_departure_stop", "raptor_departure_time")]
       transfer_candidates <- transfer_candidates[, rptr_colnames, with = FALSE]
       
       arrival_candidates <- rbindlist(list(arrival_candidates, transfer_candidates))
