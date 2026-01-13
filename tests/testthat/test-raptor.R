@@ -420,6 +420,35 @@ test_that("in-seat transfers", {
   # note that stop6x is not actually "visited" and is missing from the returned table
   r_with_inseat2 = raptor(st_4, tr_4, "stop5")
   expect_identical(r_with_inseat2, r_with_inseat)
+  
+  # transfer type 1
+  tr_1 = tr_4[,c("from_stop_id", "to_stop_id", "transfer_type", "min_transfer_time")]
+  tr_1$transfer_type[1] <- 1L
+  r_with_inseat3 = raptor(st_4, tr_1, "stop5")
+  expect_identical(r_with_inseat3, r_with_inseat)
+})
+
+test_that("pickup_type=1", {
+  st = stop_times
+  st$pickup_type <- 0L
+  st[st$stop_id == "stop2", "pickup_type"] <- c(1L, 0L)
+  r1 = raptor(stop_times, transfers, "stop2") %>% 
+    filter(to_stop_id == "stop3a")
+  expect_identical(nrow(r1), 2L)
+  r2 = raptor(st, transfers, "stop2") %>% 
+    filter(to_stop_id == "stop3a")
+  expect_identical(r2$journey_departure_time, (7*3600 + 10*60))
+})
+
+test_that("drop_off_type=1", {
+  st = stop_times
+  st$drop_off_type <- 0L
+  st[st$stop_id == "stop3b", "drop_off_type"] <- c(1L)
+  r1 = raptor(stop_times, transfers, "stop1b")
+  r2 = raptor(st, transfers, "stop1b")
+  missing_journeys = anti_join(r1, r2, c("from_stop_id", "to_stop_id", "journey_departure_time"))
+  expect_identical(missing_journeys$to_stop_id, c("stop3b", "stop3b", "stop3a", "stop3a"))
+  expect_identical(missing_journeys$journey_arrival_time, 7*3600+c(18*60,23*60,18*60+10,23*60+10))
 })
 
 rm("gtfs_routing", "local_gtfs_path", "raptor.", "stop_times", "transfers",
