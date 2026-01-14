@@ -321,6 +321,12 @@ test_that("routing with missing NA", {
   expect_equal(tts1b, tts2)
 })
 
+test_that("error for missing arrival and departure time", {
+  expect_error(raptor(gtfs_duke$stop_times, gtfs_duke$transfers, "778058"),
+               "Missing arrival and departure times found in stop_times. Consider interpolate_stop_times().",
+               fixed = TRUE)
+})
+
 test_that("raptor considers each stop_id as a separate starting journey", {
   x1 = bind_rows(
     raptor(stop_times, transfers, "stop1a", keep = "all"),

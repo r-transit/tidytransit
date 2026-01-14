@@ -191,7 +191,7 @@ find_journeys = function(from_stop_ids, transfers_dt, time_window, arrival, max_
   # stops reachable via transfer from from_stops
   initial_transfers = initial_stops[FALSE,]
   if(max_transfers > 0 && nrow(transfers_dt) > 0) {
-    walk_transfers = transfers_dt[transfer_type %in% c(0, 2),]
+    walk_transfers = transfers_dt[transfer_type %in% c(0L, 2L),]
     if(nrow(walk_transfers) > 0) {
       cns = setdiff(colnames(initial_stops), "raptor_departure_stop")
       initial_transfers = merge(
@@ -396,6 +396,10 @@ setup_stop_times = function(stop_times, arrival, time_window) {
   pickup_type <- drop_off_type <- NULL
   
   stop_times_dt = as.data.table(replace_NA_times(stop_times))
+  if(nrow(stop_times_dt[is.na(arrival_time) & is.na(departure_time)]) > 0) {
+    stop("Missing arrival and departure times found in stop_times. Consider interpolate_stop_times().")
+  }
+  
   set_num_times(stop_times_dt)
   setnames(x = stop_times_dt, new = "to_stop_id", old = "stop_id")
   if(arrival) {
@@ -424,7 +428,7 @@ setup_transfers = function(transfers, arrival) {
   transfer_type <- min_transfer_time <- from_trip_id <- to_trip_id <- . <- NULL
   
   transfers_dt = as.data.table(transfers)
-  transfers_dt <- transfers_dt[transfer_type != 3,]
+  transfers_dt <- transfers_dt[transfer_type != 3L,]
 
   if(nrow(transfers_dt) == 0) {
     # only check nrow for transfers in raptor
@@ -440,10 +444,17 @@ setup_transfers = function(transfers, arrival) {
   }
 
   # checks for inseat or direct transfers
-  transfers_dt[is.na(transfer_type), transfer_type := 0]
-  if(any(transfers_dt[["transfer_type"]] %in% c(4, 5))) {
+  transfers_dt[is.na(transfer_type), transfer_type := 0L]
+  if(any(transfers_dt[["transfer_type"]] %in% c(0L, 2L))) {
+    if(!"min_transfer_time" %in% colnames(transfers_dt)) {
+      transfers_dt[, min_transfer_time := NA_integer_]
+    }
+    transfers_dt[transfer_type == 0L & is.na(min_transfer_time), min_transfer_time := 0L]
+  }
+  transfers_dt[is.na(transfer_type), transfer_type := 0L]
+  if(any(transfers_dt[["transfer_type"]] %in% c(4L, 5L))) {
     stopifnot(all(c("from_trip_id", "to_trip_id") %in% colnames(transfers_dt)))
-    stopifnot(nrow(transfers_dt[(transfer_type %in% c(4, 5)) & (is.na(from_trip_id) | is.na(to_trip_id))]) == 0)
+    stopifnot(nrow(transfers_dt[(transfer_type %in% c(4L, 5L)) & (is.na(from_trip_id) | is.na(to_trip_id))]) == 0)
   }
   
   # flip arrivals
@@ -451,8 +462,8 @@ setup_transfers = function(transfers, arrival) {
     setnames(transfers_dt,
              old = c("trnsfrs_to_stop_id", "trnsfrs_from_stop_id"),
              new = c("trnsfrs_from_stop_id", "trnsfrs_to_stop_id"))
-    if(any(transfers_dt$transfer_type == 4)) {
-      transfers_dt[transfer_type == 4, c("from_trip_id", "to_trip_id") := .(to_trip_id, from_trip_id)]
+    if(any(transfers_dt$transfer_type == 4L)) {
+      transfers_dt[transfer_type == 4L, c("from_trip_id", "to_trip_id") := .(to_trip_id, from_trip_id)]
     }
   }
   

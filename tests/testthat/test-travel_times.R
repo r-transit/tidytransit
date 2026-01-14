@@ -192,5 +192,19 @@ test_that("nyc feed", {
   expect_s3_class(tts, "data.frame")
 })
 
+test_that("transfer_type 0", {
+  gtfs = interpolate_stop_times(gtfs_duke)
+  tts1 = gtfs %>%
+    filter_feed_by_date("2019-08-26") %>%
+    travel_times(c("Campus Dr at Arts Annex (WB)", "Campus Dr at Arts Annex (EB)"),
+                 time_range = c("14:00:00", "15:30:00"))
+  tts2 = gtfs %>%
+    filter_stop_times("2019-08-26", "14:00:00") %>%
+    travel_times(c("Campus Dr at Arts Annex (WB)", "Campus Dr at Arts Annex (EB)"),
+                 time_range = 1.5*3600)
+  
+  expect_identical(tts1, tts2)
+})
+
 rm("gtfs_routing", "local_gtfs_path", "stop_times", "stop_times_0710", 
    "stop_times_0711", "stop_times_0715", "test_from_stop_ids", "transfers")
