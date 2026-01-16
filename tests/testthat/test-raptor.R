@@ -432,6 +432,15 @@ test_that("in-seat transfers", {
   tr_1$transfer_type[1] <- 1L
   r_with_inseat3 = raptor(st_4, tr_1, "stop5")
   expect_identical(r_with_inseat3, r_with_inseat)
+  
+  # transfer type 0 
+  tr_0 = transfers
+  tr_0$transfer_type <- 0L
+  tr_0$min_transfer_time <- NULL
+  tr0 = transfers
+  tr0$min_transfer_time <- 0L
+  expect_identical(raptor(stop_times, tr_0, "stop5"),
+                   raptor(stop_times, tr0, "stop5"))
 })
 
 test_that("pickup_type=1", {
@@ -455,6 +464,40 @@ test_that("drop_off_type=1", {
   missing_journeys = anti_join(r1, r2, c("from_stop_id", "to_stop_id", "journey_departure_time"))
   expect_identical(missing_journeys$to_stop_id, c("stop3b", "stop3b", "stop3a", "stop3a"))
   expect_identical(missing_journeys$journey_arrival_time, 7*3600+c(18*60,23*60,18*60+10,23*60+10))
+})
+
+test_that("error coverage", {
+  st_NA = stop_times
+  st_NA$arrival_time <- NA
+  st_NA$departure_time <- NA
+  expect_error(raptor(st_NA, transfers, "stop2"),
+               "No arrival and departure times found in `stop_times`")
+  
+  # on-demand feed
+  st_od = stop_times
+  st_od$start_pickup_drop_off_window <- st_od$arrival_time
+  st_od$end_pickup_drop_off_window <- st_od$departure_time
+  st_od$arrival_time <- NA
+  st_od$departure_time <-  NA
+  expect_error(raptor(st_od, transfers, "stop2"),
+               "Feed contains on-demand services which are not supported by tidytransit routing")
+  st_od$arrival_time <- NULL
+  st_od$departure_time <-  NULL
+  expect_error(raptor(st_od, transfers, "stop2"),
+               "`stop_times` must have `arrival_time` and `departure_time` columns for routing")
+  
+  st_od2 = stop_times
+  st_od2$start_pickup_drop_off_window <- NA
+  st_od2$end_pickup_drop_off_window <- NA
+  .index = st_od2$trip_id == "routeB"
+  st_od2$start_pickup_drop_off_window[.index] <- st_od2$arrival_time[.index]
+  st_od2$end_pickup_drop_off_window[.index] <- st_od2$departure_time[.index]
+  expect_warning(raptor(st_od2, transfers, "stop2"),
+                 "Feed contains on-demand services which are not supported by tidytransit routing")
+  g = gtfs_routing
+  g$stop_times <- st_od2
+  expect_warning(travel_times(filter_stop_times(g, "2018-10-18"), "One"),
+                 "Feed contains on-demand services which are not supported by tidytransit routing")
 })
 
 rm("gtfs_routing", "local_gtfs_path", "raptor.", "stop_times", "transfers",

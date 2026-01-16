@@ -39,34 +39,41 @@ test_that("stop_dist warning", {
 })
 
 test_that("stop times are filtered correctly", {
-  expect_error(filter_stop_times(gtfs_routing, "2018-09-28", "07:00:00", "08:00:00"))
-  expect_error(filter_stop_times(gtfs_routing, "2018-10-01", "07:00:00", "06:00:00"))
-  expect_error(filter_stop_times(gtfs_routing, "2018-10-01", "08:00:00", "09:00:00"))
+  expect_error(filter_stop_times(gtfs_routing, "2018-09-28", "07:00:00", "08:00:00"), 
+               "No stop_times on 2018-09-28")
+  expect_error(filter_stop_times(gtfs_routing, "2018-10-01", "07:00:00", "06:00:00"), 
+               "`max_arrival_time` is before `min_departure_time`")
+  expect_error(filter_stop_times(gtfs_routing, "2018-10-01", "08:00:00", "09:00:00"), 
+               "No stop times between `min_departure_time` and `max_arrival_time`")
 
   fst = filter_stop_times(gtfs_routing, "2018-10-01", "07:00:00", "08:00:00")
   expect_true(all(c("transfers", "stops") %in% names(attributes(fst))))
-  expect_error(travel_times(gtfs_routing$stop_times, "One"))
+  expect_error(travel_times(gtfs_routing$stop_times, "One"),
+               "Stops and transfers not found in filtered_stop_times attributes")
   
   g_no_st = gtfs_routing
   g_no_st$stop_times <- g_no_st$stop_times[0,]
-  expect_error(filter_stop_times(g_no_st, "2018-09-28"), "gtfs_obj has no stop_times")
+  expect_error(filter_stop_times(g_no_st, "2018-09-28"), "`gtfs_obj` has no `stop_times`")
   g_no_st$stop_times <- NULL
-  expect_error(filter_stop_times(g_no_st, "2018-09-28"), "gtfs_obj has no stop_times")
+  expect_error(filter_stop_times(g_no_st, "2018-09-28"), "`gtfs_obj` has no `stop_times`")
 })
 
 test_that("travel_time works with different params", {
   fst = filter_stop_times(gtfs_routing, "2018-10-01", 7*3600, 24*3600)
-  expect_warning(travel_times(fst, "One", max_departure_time = 7*3600+5*60), "max_departure_time is deprecated, use time_range")
-  expect_warning(travel_times(fst, "One", max_departure_time = "07:05:00"), "max_departure_time is deprecated, use time_range")
+  expect_warning(travel_times(fst, "One", max_departure_time = 7*3600+5*60), 
+                 "max_departure_time is deprecated, use time_range")
+  expect_warning(travel_times(fst, "One", max_departure_time = "07:05:00"), 
+                 "max_departure_time is deprecated, use time_range")
   expect_warning(
     expect_error(travel_times(fst, "One", time_range = 1800, max_departure_time = "07:45:00")),
     "max_departure_time is deprecated, use time_range")
-  expect_error(travel_times(fst, "unknown stop"))
+  expect_error(travel_times(fst, c("unknown stop", "y")), "Stop name not found in stops table: unknown stop, y")
   expect_warning(
     expect_error(travel_times(fst, "One", max_departure_time = "06:45:00")),
     "max_departure_time is deprecated, use time_range")
   expect_warning(
-    expect_error(travel_times(fst, "One", max_departure_time = "07:50:00", arrival = TRUE), "cannot set max_departure_time and arrival=TRUE"))
+    expect_error(travel_times(fst, "One", max_departure_time = "07:50:00", arrival = TRUE), 
+                 "cannot set max_departure_time and arrival=TRUE"))
 })
 
 test_that("transfers for travel_times", {
@@ -204,6 +211,17 @@ test_that("transfer_type 0", {
                  time_range = 1.5*3600)
   
   expect_identical(tts1, tts2)
+})
+
+test_that("error", {
+  g = gtfs_routing
+  g$.$dates_services <- NULL
+  expect_error(filter_stop_times(g, "2018-10-01"),
+               "No valid dates defined in feed")
+  g = gtfs_routing
+  colnames(g$stops)[1] <- "stop_code"
+  expect_error(filter_stop_times(g, "2018-10-01"),
+               "`stops` and `stop_times` must have a `stop_id` column")
 })
 
 rm("gtfs_routing", "local_gtfs_path", "stop_times", "stop_times_0710", 

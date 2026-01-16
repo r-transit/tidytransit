@@ -108,6 +108,7 @@ raptor = function(stop_times,
   # 1) check and params ####
   # use data.table for faster manipulation
   # copy necessary as we change/rename columns by reference
+  assert_routable_stop_times(stop_times)
   time_window = setup_time_window(time_range, arrival, stop_times)
   keep <- setup_keep(keep)
   max_transfers <- setup_max_transfers(max_transfers)
@@ -298,7 +299,7 @@ raptor_core = function(journeys_init,
         .by.y = "trnsfrs_from_stop_id"
       }
       direct_transf_marked = merge(rptr_marked, direct_transfers, 
-                                   by.x = .by.x, by.y = .by.y)
+                                   by.x = .by.x, by.y = .by.y, allow.cartesian = TRUE)
       direct_transf_marked[, `:=`(to_stop_id = NULL, exact_departure = TRUE)]
       setnames(direct_transf_marked, "trnsfrs_to_stop_id", "to_stop_id")
       direct_transf_marked <- direct_transf_marked[, rptr_colnames, with = FALSE]
@@ -396,7 +397,8 @@ setup_stop_times = function(stop_times, arrival, time_window) {
   pickup_type <- drop_off_type <- NULL
   
   stop_times_dt = as.data.table(replace_NA_times(stop_times))
-  if(nrow(stop_times_dt[is.na(arrival_time) & is.na(departure_time)]) > 0) {
+  .na_check = stop_times_dt[is.na(arrival_time) & is.na(departure_time),]
+  if(nrow(.na_check) > 0) {
     stop("Missing arrival and departure times found in stop_times. Consider interpolate_stop_times().")
   }
   
@@ -426,6 +428,7 @@ setup_stop_times = function(stop_times, arrival, time_window) {
 
 setup_transfers = function(transfers, arrival) {
   transfer_type <- min_transfer_time <- from_trip_id <- to_trip_id <- . <- NULL
+  trnsfrs_from_stop_id <- trnsfrs_to_stop_id <- NULL
   
   transfers_dt = as.data.table(transfers)
   transfers_dt <- transfers_dt[transfer_type != 3L,]
@@ -442,13 +445,16 @@ setup_transfers = function(transfers, arrival) {
   if(!"trnsfrs_to_stop_id" %in% colnames(transfers_dt)) {
     setnames(x = transfers_dt, new = "trnsfrs_to_stop_id", old = "to_stop_id")
   }
+  # remove superfluous transfers to the same stop for walkable transfers
+  transfers_dt <- transfers_dt[!(transfer_type %in% c(0L, 2L) & trnsfrs_from_stop_id == trnsfrs_to_stop_id),]
 
   # checks for inseat or direct transfers
+  if(!"min_transfer_time" %in% colnames(transfers_dt)) {
+    # min_transfer column is subset in raptor_core
+    transfers_dt[, min_transfer_time := NA_integer_]
+  }
   transfers_dt[is.na(transfer_type), transfer_type := 0L]
   if(any(transfers_dt[["transfer_type"]] %in% c(0L, 2L))) {
-    if(!"min_transfer_time" %in% colnames(transfers_dt)) {
-      transfers_dt[, min_transfer_time := NA_integer_]
-    }
     transfers_dt[transfer_type == 0L & is.na(min_transfer_time), min_transfer_time := 0L]
   }
   transfers_dt[is.na(transfer_type), transfer_type := 0L]

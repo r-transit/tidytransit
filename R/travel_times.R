@@ -122,32 +122,19 @@ travel_times = function(filtered_stop_times,
     stops = attributes(filtered_stop_times)$stops
   }
 
-  # TODO remove max_departure_time_check
-  time_range <- check_max_departure_time(max_departure_time, arrival, time_range, missing(time_range), filtered_stop_times)
+  # TODO remove max_departure_time_check (max_departure_time is deprecated)
+  time_range <- check_max_departure_time(max_departure_time, arrival, time_range, 
+                                         missing(time_range), filtered_stop_times)
 
   # get stop_ids of names
   stop_ids = stops$stop_id[which(stops$stop_name %in% stop_names)]
   if(length(stop_ids) == 0) {
-    stop("Stop name '", stop_names, "' not found in stops table")
+    stop("Stop name not found in stops table: ", toString(stop_names))
   }
 
   # Check stop_name integrity
   if(!is.null(stop_dist_check) && !isFALSE(stop_dist_check)) {
-    .time_prev = Sys.time()
-    stop_dists = stop_group_distances(stops, "stop_name", max_only = TRUE)
-    .time_post = Sys.time()
-
-    if(max(stop_dists$dist_max) > stop_dist_check) {
-      stop("Some stops with the same name are more than ", stop_dist_check, " meters apart, see stop_group_distances().\n",
-           "Using travel_times() might lead to unexpected results. Set stop_dist_check=FALSE to ignore this error.",
-           call. = FALSE)
-    }
-  
-    .time_check = as.numeric(difftime(.time_post, .time_prev, units = "secs"))
-    if(.time_check > 1) {
-      message("Stop distance check took longer than 1 second (", round(.time_check, 1), # nocov
-              "s). Set stop_dist_check=FALSE to skip it.") # nocov
-    }
+    check_stop_dists(stops, stop_dist_check)
   }
 
   # raptor in travel_times ####
@@ -192,114 +179,14 @@ travel_times = function(filtered_stop_times,
   return(rptr_names)
 }
 
-#' Filter a `stop_times` table for a given date and timespan.
-#'
-#' @param gtfs_obj gtfs feed (tidygtfs object)
-#' @param extract_date date to extract trips from this day (Date or "YYYY-MM-DD" string)
-#' @param min_departure_time (optional) The earliest departure time. Can be given as "HH:MM:SS",
-#'                           hms object or numeric value in seconds.
-#' @param max_arrival_time (optional) The latest arrival time. Can be given as "HH:MM:SS",
-#'                         hms object or numeric value in seconds.
-#'
-#' @return Filtered `stop_times` data.table for [travel_times()] and [raptor()].
-#'
-#' @export
-#' @examples
-#' feed_path <- system.file("extdata", "routing.zip", package = "tidytransit")
-#' g <- read_gtfs(feed_path)
-#'
-#' # filter the sample feed
-#' stop_times <- filter_stop_times(g, "2018-10-01", "06:00:00", "08:00:00")
-filter_stop_times = function(gtfs_obj,
-                             extract_date,
-                             min_departure_time,
-                             max_arrival_time) {
-  if(!feed_has_non_empty_table(gtfs_obj, "stop_times")) {
-    stop("gtfs_obj has no stop_times")
-  }
-  gtfs_obj$stop_times <- replace_NA_times(gtfs_obj$stop_times)
-
-  departure_time_num <- arrival_time_num <- NULL
-  if(is.character(extract_date)) {
-    extract_date <- as.Date(extract_date)
-  }
-  if(missing(min_departure_time)) {
-    min_departure_time <- 0
-  } else if(is.character(min_departure_time)) {
-    min_departure_time <- hhmmss_to_seconds(min_departure_time)
-  }
-  if(missing(max_arrival_time)) {
-    max_arrival_time <- max(gtfs_obj$stop_times$arrival_time, na.rm = TRUE)+1
-  } else if(is.character(max_arrival_time)) {
-    max_arrival_time <- hhmmss_to_seconds(max_arrival_time)
-  }
-  min_departure_time <- as.numeric(min_departure_time)
-  max_arrival_time <- as.numeric(max_arrival_time)
-
-  if(max_arrival_time <= min_departure_time) {
-    stop("max_arrival_time is before min_departure_time")
-  }
-
-  # check transfers
-  if(feed_contains(gtfs_obj, "transfers")) {
-    transfers <- gtfs_obj[["transfers"]]
-  } else {
-    warning("No transfers found in feed, travel_times() or raptor() might produce unexpected results")
-    transfers <- data.frame()
-  }
-
-  # trips running on day
-  service_ids = filter(gtfs_obj$.$dates_services, date == extract_date)
-  if(nrow(service_ids) == 0) {
-    stop("No stop_times on ", extract_date)
-  }
-  trips = inner_join(gtfs_obj$trips, service_ids, by = "service_id")
-  trips = as.data.table(unique(trips[,c("trip_id")]))
-
-  # prepare stop_times
-  stop_times_dt = as.data.table(gtfs_obj$stop_times)
-  stop_times_dt <- stop_times_dt[trips, on = "trip_id"]
-  set_num_times(stop_times_dt)
-  stop_times_dt <- stop_times_dt[departure_time_num >= min_departure_time &
-                                   arrival_time_num <= max_arrival_time,]
-  setindex(stop_times_dt, "stop_id")
-  if(nrow(stop_times_dt) == 0) {
-    stop("No stop times between min_departure_time and max_arrival_time")
-  }
-
-  # store stops and transfers in attributes
-  attributes(stop_times_dt)$stops <- stops_as_dt(gtfs_obj$stops)
-  attributes(stop_times_dt)$transfers <- transfers
-  attributes(stop_times_dt)$extract_date <- extract_date
-  attributes(stop_times_dt)$min_departure_time <- min_departure_time
-  attributes(stop_times_dt)$max_arrival_time <- max_arrival_time
-
-  return(stop_times_dt)
-}
-
 stops_as_dt = function(gtfs_stops) {
+  cns = intersect(colnames(gtfs_stops), c("stop_id", "stop_name", "stop_lon", "stop_lat"))
+  stopifnot(c("stop_id") %in% colnames(gtfs_stops))
   stops_dt = as.data.table(gtfs_stops)
-  stops_dt <- stops_dt[,c("stop_id", "stop_name", "stop_lon", "stop_lat")]
+  stops_dt <- stops_dt[, cns, with = FALSE]
   setkey(stops_dt, "stop_id")
-  setindex(stops_dt, "stop_name")
-  stops_dt
-}
-
-check_max_departure_time = function(max_departure_time, arrival, time_range, missing_time_range, filtered_stop_times) {
-  if(!is.null(max_departure_time)) {
-    warning("max_departure_time is deprecated, use time_range")
-    if(!missing_time_range) {
-      stop("cannot set max_departure_time and time_range")
-    }
-    if(arrival) {
-      stop("cannot set max_departure_time and arrival=TRUE")
-    }
-    if(is.character(max_departure_time)) {
-      max_departure_time <- hhmmss_to_seconds(max_departure_time)
-    }
-    min_departure_time = min(filtered_stop_times$departure_time_num)
-    stopifnot(max_departure_time > min_departure_time)
-    time_range <- max_departure_time - min_departure_time
+  if("stop_name" %in% colnames(stops_dt)) {
+    setindex(stops_dt, "stop_name")
   }
-  return(time_range)
+  return(stops_dt)
 }
