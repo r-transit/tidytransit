@@ -6,7 +6,7 @@ articles:
   introduction: introduction.html
   servicepatterns: servicepatterns.html
   timetable: timetable.html
-last_built: 2026-01-07T08:20Z
+last_built: 2026-01-21T16:11Z
 urls:
   reference: https://r-transit.github.io/tidytransit/reference
   article: https://r-transit.github.io/tidytransit/articles
