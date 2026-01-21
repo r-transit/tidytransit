@@ -26,7 +26,6 @@
 #' x <- order(stop_frequency$mean_headway)
 #' head(stop_frequency[x,])
 #' @importFrom dplyr %>% filter group_by ungroup summarise left_join arrange desc count
-#' @importFrom rlang .data !! quo enquo
 #' @importFrom stats median sd
 #' @export
 get_stop_frequency <- function(gtfs_obj,
