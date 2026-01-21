@@ -176,6 +176,19 @@ test_that("only max_transfers are used", {
   expect_equal(max(raptor.(stop_times, transfers, test_from_stop_ids, max_transfers = NULL)$transfers), 1)
 })
 
+test_that("initial min_transfer_time travel_time", {
+  tr = transfers %>% 
+    bind_rows(tibble(from_stop_id = "stop1a", to_stop_id = "stop2", transfer_type = 2L, min_transfer_time = 186L))
+  tr$from_trip_id <- NA
+  tr$to_trip_id <- NA
+  
+  rptr = raptor(stop_times, tr, "stop1a", time_range = c("07:00:30", "08:00:00"))
+  to_stop2 = rptr %>% 
+    filter(to_stop_id == "stop2")
+  expect_identical(to_stop2$journey_arrival_time, 7*3600+60*c(3,5,10,9)+c(36,0,0,0))
+  expect_identical(to_stop2$travel_time, c(186, 186, 186, 240))
+})
+
 test_that("raptor from stop without departures", {
   expect_warning(raptor.(stop_times_0711, transfers, "stop2"))
   expect_equal(nrow(raptor.(stop_times_0711, transfers, "stop4")), 1)

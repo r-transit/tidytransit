@@ -89,7 +89,7 @@ raptor = function(stop_times,
                   keep = "all",
                   separate_starts = FALSE) {
   from_stop_id <- to_stop_id <- . <- raptor_departure_stop <- NULL
-  raptor_arrival_time <- raptor_departure_time <- journey_time <- transfer_offset <- NULL
+  raptor_arrival_time <- raptor_departure_time <- journey_time <- initial_transfer_time <- NULL
   raptor_min_departure_time <- raptor_max_departure_time <- NULL
   journey_arrival_time <- journey_departure_time <- travel_time <- NULL
   if(inherits(stop_times, "tidygtfs")) {
@@ -131,15 +131,15 @@ raptor = function(stop_times,
   raptor_result <- raptor_result[raptor_departure_time >= raptor_min_departure_time & 
                                    raptor_departure_time <= raptor_max_departure_time,]
   
-  raptor_result[, `:=`(journey_departure_time = raptor_departure_time,
+  raptor_result[, `:=`(journey_departure_time = raptor_departure_time - initial_transfer_time,
                        journey_arrival_time = raptor_arrival_time)]
   raptor_result[, `:=`(travel_time = raptor_arrival_time - journey_departure_time)]
   raptor_result <- raptor_result[, result_cns, with = FALSE]
 
   journeys_init[, `:=`(to_stop_id = raptor_departure_stop, 
                        journey_departure_time = journey_time,
-                       journey_arrival_time = journey_time,
-                       travel_time = transfer_offset, transfers = 0L)]
+                       journey_arrival_time = journey_time + initial_transfer_time,
+                       travel_time = initial_transfer_time, transfers = 0L)]
   
   raptor_result <- rbindlist(list(raptor_result, 
                                   journeys_init[,colnames(raptor_result), with = FALSE]))
@@ -178,7 +178,7 @@ raptor = function(stop_times,
 
 find_journeys = function(from_stop_ids, transfers_dt, time_window, arrival, max_transfers, separate_starts) {
   raptor_max_departure_time <- raptor_min_departure_time <- raptor_departure_stop <- NULL
-  transfer_type <- min_transfer_time <- transfer_offset <- journey_time <- NULL
+  transfer_type <- min_transfer_time <- initial_transfer_time <- journey_time <- NULL
 
   if(arrival) time_window <- -time_window[2:1]
   
@@ -187,7 +187,7 @@ find_journeys = function(from_stop_ids, transfers_dt, time_window, arrival, max_
                              raptor_departure_stop = from_stop_ids,
                              raptor_min_departure_time = time_window[1],
                              raptor_max_departure_time = time_window[2],
-                             transfer_offset = 0)
+                             initial_transfer_time = 0)
   
   # stops reachable via transfer from from_stops
   initial_transfers = initial_stops[FALSE,]
@@ -200,7 +200,7 @@ find_journeys = function(from_stop_ids, transfers_dt, time_window, arrival, max_
         by.x = "from_stop_id", by.y = "trnsfrs_from_stop_id", allow.cartesian = TRUE)
       setnames(initial_transfers, "trnsfrs_to_stop_id", "raptor_departure_stop")
       initial_transfers[, raptor_min_departure_time := raptor_min_departure_time + min_transfer_time]
-      initial_transfers[, transfer_offset := min_transfer_time]
+      initial_transfers[, initial_transfer_time := min_transfer_time]
       initial_transfers <- initial_transfers[
         raptor_min_departure_time >= time_window[1] & raptor_max_departure_time <= time_window[2] &
           raptor_min_departure_time <= time_window[2] & raptor_max_departure_time >= time_window[1],]
@@ -215,9 +215,9 @@ find_journeys = function(from_stop_ids, transfers_dt, time_window, arrival, max_
   journeys_init = rbindlist(list(initial_stops, initial_transfers[,colnames(initial_stops), with = FALSE]))
 
   if(!arrival) {
-    journeys_init[, `:=`(journey_time = raptor_min_departure_time-transfer_offset)]
+    journeys_init[, `:=`(journey_time = raptor_min_departure_time-initial_transfer_time)]
   } else {
-    journeys_init[, `:=`(journey_time = raptor_max_departure_time-transfer_offset)]
+    journeys_init[, `:=`(journey_time = raptor_max_departure_time-initial_transfer_time)]
   }
 
   return(journeys_init)
