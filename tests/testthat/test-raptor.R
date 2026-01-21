@@ -427,11 +427,18 @@ test_that("in-seat transfers", {
   r_with_inseat2 = raptor(st_4, tr_4, "stop5")
   expect_identical(r_with_inseat2, r_with_inseat)
   
-  # transfer type 1
-  tr_1 = tr_4[,c("from_stop_id", "to_stop_id", "transfer_type", "min_transfer_time")]
+  # transfer type 1 with trips, 
+  tr_1 = tr_4
   tr_1$transfer_type[1] <- 1L
   r_with_inseat3 = raptor(st_4, tr_1, "stop5")
   expect_identical(r_with_inseat3, r_with_inseat)
+  
+  # without trips, transfer to stop6x is possible
+  tr_1 <- tr_1[,c("from_stop_id", "to_stop_id", "transfer_type", "min_transfer_time")]
+  tr_1$transfer_type[1] <- 1L
+  r_with_inseat4 = raptor(st_4, tr_1, "stop5")
+  expect_identical(nrow(r_with_inseat4[to_stop_id == "stop6x"]), 1L)
+  expect_identical(r_with_inseat4[to_stop_id != "stop6x"], r_with_inseat)
   
   # transfer type 0 
   tr_0 = transfers

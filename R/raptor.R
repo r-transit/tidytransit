@@ -125,7 +125,7 @@ raptor = function(stop_times,
   # 3) run raptor ####
   rptr = raptor_core(journeys_init, stop_times_dt, transfers_dt, max_transfers)
 
-  # 4) combine initial journeys with raptor result
+  # 4) combine initial journeys with raptor result ####
   result_cns = c("from_stop_id", "to_stop_id", "travel_time", "journey_departure_time", "journey_arrival_time", "transfers")
   raptor_result = merge(journeys_init, rptr, by = "raptor_departure_stop", allow.cartesian = TRUE)
   raptor_result <- raptor_result[raptor_departure_time >= raptor_min_departure_time & 
@@ -271,13 +271,20 @@ raptor_core = function(journeys_init,
   
   # transfers
   walk_transfers = data.table()
-  direct_transfers = data.table()
+  trip_transfers = data.table()
   if(nrow(transfers_dt) > 0) {
     stopifnot("transfer_type" %in% colnames(transfers_dt))
-    walk_transfers <- transfers_dt[transfer_type %in% c(0L, 2L),
-                                   c("trnsfrs_from_stop_id", "trnsfrs_to_stop_id", "min_transfer_time")]
     .cns = intersect(colnames(transfers_dt), c("trnsfrs_from_stop_id", "trnsfrs_to_stop_id", "from_trip_id", "to_trip_id"))
-    direct_transfers <- transfers_dt[transfer_type %in% c(1L, 4L, 5L), .cns, with = FALSE]
+    if(all(c("from_trip_id", "to_trip_id") %in% colnames(transfers_dt))) {
+      walk_transfers <- transfers_dt[transfer_type %in% c(0L, 1L, 2L) & is.na(from_trip_id) & is.na(to_trip_id),
+                                     c("trnsfrs_from_stop_id", "trnsfrs_to_stop_id", "min_transfer_time")]
+      trip_transfers <- transfers_dt[transfer_type %in% c(4L, 5L) | (!is.na(from_trip_id) & !is.na(to_trip_id)), .cns, with = FALSE]
+    } else {
+      walk_transfers <- transfers_dt[transfer_type %in% c(0L, 1L, 2L),
+                                     c("trnsfrs_from_stop_id", "trnsfrs_to_stop_id", "min_transfer_time")]
+      .cns = intersect(colnames(transfers_dt), c("trnsfrs_from_stop_id", "trnsfrs_to_stop_id", "from_trip_id", "to_trip_id"))
+      trip_transfers <- transfers_dt[transfer_type %in% c(4L, 5L), .cns, with = FALSE]
+    }
   }
   rm(transfers_dt)
 
@@ -290,15 +297,10 @@ raptor_core = function(journeys_init,
     rptr[,marked := FALSE]
     
     # mark departures for in-seat transfers
-    if(nrow(direct_transfers) > 0) {
-      if("from_trip_id" %in% colnames(direct_transfers)) {
-        .by.x = c("to_stop_id", "arrival_trip_id")
-        .by.y = c("trnsfrs_from_stop_id", "from_trip_id")
-      } else {
-        .by.x = "to_stop_id"
-        .by.y = "trnsfrs_from_stop_id"
-      }
-      direct_transf_marked = merge(rptr_marked, direct_transfers, 
+    if(nrow(trip_transfers) > 0) {
+      .by.x = c("to_stop_id", "arrival_trip_id")
+      .by.y = c("trnsfrs_from_stop_id", "from_trip_id")
+      direct_transf_marked = merge(rptr_marked, trip_transfers, 
                                    by.x = .by.x, by.y = .by.y, allow.cartesian = TRUE)
       direct_transf_marked[, `:=`(to_stop_id = NULL, exact_departure = TRUE)]
       setnames(direct_transf_marked, "trnsfrs_to_stop_id", "to_stop_id")
@@ -431,6 +433,7 @@ setup_transfers = function(transfers, arrival) {
   trnsfrs_from_stop_id <- trnsfrs_to_stop_id <- NULL
   
   transfers_dt = as.data.table(transfers)
+  transfers_dt[, transfer_type := as.integer(transfer_type)]
   transfers_dt <- transfers_dt[transfer_type != 3L,]
 
   if(nrow(transfers_dt) == 0) {
@@ -446,16 +449,17 @@ setup_transfers = function(transfers, arrival) {
     setnames(x = transfers_dt, new = "trnsfrs_to_stop_id", old = "to_stop_id")
   }
   # remove superfluous transfers to the same stop for walkable transfers
-  transfers_dt <- transfers_dt[!(transfer_type %in% c(0L, 2L) & trnsfrs_from_stop_id == trnsfrs_to_stop_id),]
+  transfers_dt <- transfers_dt[!(transfer_type %in% c(0L, 1L, 2L) & trnsfrs_from_stop_id == trnsfrs_to_stop_id),]
 
   # checks for inseat or direct transfers
   if(!"min_transfer_time" %in% colnames(transfers_dt)) {
     # min_transfer column is subset in raptor_core
     transfers_dt[, min_transfer_time := NA_integer_]
   }
+  transfers_dt[, min_transfer_time := as.integer(min_transfer_time)]
   transfers_dt[is.na(transfer_type), transfer_type := 0L]
-  if(any(transfers_dt[["transfer_type"]] %in% c(0L, 2L))) {
-    transfers_dt[transfer_type == 0L & is.na(min_transfer_time), min_transfer_time := 0L]
+  if(any(transfers_dt[["transfer_type"]] %in% c(0L, 1L, 2L))) {
+    transfers_dt[is.na(min_transfer_time), min_transfer_time := 0L]
   }
   transfers_dt[is.na(transfer_type), transfer_type := 0L]
   if(any(transfers_dt[["transfer_type"]] %in% c(4L, 5L))) {
