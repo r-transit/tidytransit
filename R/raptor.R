@@ -228,13 +228,13 @@ raptor_core = function(journeys_init,
                        max_transfers) {
   stopifnot(!is.null(journeys_init),
             !is.null(transfers_dt), !is.null(stop_times_dt))
-  raptor_min_departure_time <- raptor_max_departure_time <- exact_departure <- marked <- travel_time <- NULL
+  raptor_min_departure_time <- raptor_max_departure_time <- marked <- travel_time <- NULL
   departure_time_num <- arrival_time_num <- marked_departure_time_num <- from_stop_id <- to_stop_id <- NULL
   raptor_departure_time <- raptor_arrival_time <- transfers <- transfer_type <- min_transfer_time <- NULL
-  arrival_trip_id <- pickup_type <- drop_off_type <- NULL
+  from_trip_id <- to_trip_id <- arrival_trip_id <- pickup_type <- drop_off_type <- NULL
 
   # from_stop_id: input value, rptr_dep...: actual stop_id after initial transfer
-  rptr_colnames = c("to_stop_id", "marked", "exact_departure", "raptor_arrival_time", "arrival_trip_id",
+  rptr_colnames = c("to_stop_id", "marked", "raptor_arrival_time", "arrival_trip_id",
                     "raptor_departure_time", "raptor_departure_stop", "transfers")
 
   # separate stop_times tbl for pickup/dropoff
@@ -263,7 +263,7 @@ raptor_core = function(journeys_init,
   rptr[, `:=`(raptor_departure_time = departure_time_num,
               raptor_arrival_time = departure_time_num, 
               raptor_departure_stop = to_stop_id)]
-  rptr[,`:=`(marked = TRUE, transfers = 0L, arrival_trip_id = NA, exact_departure = TRUE)]
+  rptr[,`:=`(marked = 1L, transfers = 0L, arrival_trip_id = NA)]
   
   rptr <- rptr[, .SD[1], by = c("raptor_departure_stop", "raptor_arrival_time")]
   rptr <- rptr[, rptr_colnames, with = FALSE]
@@ -290,11 +290,12 @@ raptor_core = function(journeys_init,
 
   # raptor loop
   k = 0L
+  # marked: 0 = FALSE, 1: exact departure (==), 2: walk transfer (>=), 3: arrival (>) 
   while(any(rptr$marked)) {
     # select marked stops
-    rptr_marked <- rptr[marked == TRUE]
+    rptr_marked <- rptr[marked > 0L]
     # unmark stops
-    rptr[,marked := FALSE]
+    rptr[,marked := 0L]
     
     # mark departures for in-seat transfers
     if(nrow(trip_transfers) > 0) {
@@ -302,7 +303,7 @@ raptor_core = function(journeys_init,
       .by.y = c("trnsfrs_from_stop_id", "from_trip_id")
       direct_transf_marked = merge(rptr_marked, trip_transfers, 
                                    by.x = .by.x, by.y = .by.y, allow.cartesian = TRUE)
-      direct_transf_marked[, `:=`(to_stop_id = NULL, exact_departure = TRUE)]
+      direct_transf_marked[, `:=`(to_stop_id = NULL, marked = 1L)]
       setnames(direct_transf_marked, "trnsfrs_to_stop_id", "to_stop_id")
       direct_transf_marked <- direct_transf_marked[, rptr_colnames, with = FALSE]
       
@@ -314,8 +315,9 @@ raptor_core = function(journeys_init,
     
     # use trips/departures that happen after the stop's arrival_time 
     # or only the exact departure if it's predefined (journey start or in-seat transfer)
-    departures_marked <- departures_marked[(!exact_departure & departure_time_num > raptor_arrival_time) |
-                                             (exact_departure & departure_time_num == raptor_arrival_time),]
+    departures_marked <- departures_marked[  (marked == 3L & departure_time_num >  raptor_arrival_time) |
+                                             (marked == 2L & departure_time_num >= raptor_arrival_time) |
+                                             (marked == 1L & departure_time_num == raptor_arrival_time),]
     
     # rename
     setnames(departures_marked, "departure_time_num", "marked_departure_time_num")
@@ -338,7 +340,7 @@ raptor_core = function(journeys_init,
     if(nrow(arrival_candidates) == 0) { break }
 
     # arrival candidates are marked for the next loop (if they are actually better)
-    arrival_candidates[,`:=`(marked = TRUE, exact_departure = FALSE,
+    arrival_candidates[,`:=`(marked = 3L,
                              raptor_arrival_time = arrival_time_num,
                              arrival_trip_id = trip_id)]
     arrival_candidates <- arrival_candidates[, rptr_colnames, with = FALSE]
@@ -358,7 +360,7 @@ raptor_core = function(journeys_init,
         allow.cartesian = TRUE
       )
       transfer_candidates[,to_stop_id := NULL]
-      transfer_candidates[,marked := TRUE]
+      transfer_candidates[,marked := 2L]
       setnames(transfer_candidates, old = "trnsfrs_to_stop_id", new = "to_stop_id")
 
       # arrival_time needs to be calculated
@@ -389,7 +391,7 @@ raptor_core = function(journeys_init,
     if(k > max_transfers) { break }
   }
 
-  rptr[,`:=`(exact_departure = NULL, marked = NULL, arrival_trip_id = NULL)]
+  rptr[,`:=`(marked = NULL, arrival_trip_id = NULL)]
 
   return(rptr)
 }
@@ -413,11 +415,13 @@ setup_stop_times = function(stop_times, arrival, time_window) {
   # optional pickup and drop_off types
   if("pickup_type" %in% colnames(stop_times_dt)) {
     stop_times_dt[is.na(pickup_type), pickup_type := 0L]
+    stop_times_dt[, pickup_type := as.integer(pickup_type)]
   }
   if("drop_off_type" %in% colnames(stop_times_dt)) {
     stop_times_dt[is.na(drop_off_type), drop_off_type := 0L]
+    stop_times_dt[, drop_off_type := as.integer(drop_off_type)]
   }
-
+  
   # trim times
   if(arrival) {
     stop_times_dt <- stop_times_dt[arrival_time_num <= time_window[2],]
