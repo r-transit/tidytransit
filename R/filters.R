@@ -18,14 +18,14 @@
 #' }
 filter_stops <- function(gtfs_obj, service_ids, route_ids) {
   some_trips <- filter(gtfs_obj$trips, 
-                       .data$service_id %in% service_ids &
-                         .data$route_id %in% route_ids)
+                       service_id %in% service_ids &
+                         route_id %in% route_ids)
   
   some_stop_times <- filter(gtfs_obj$stop_times,
-                            .data$trip_id %in% some_trips$trip_id) 
+                            trip_id %in% some_trips$trip_id) 
   
   some_stops <- filter(gtfs_obj$stops,
-                       .data$stop_id %in% some_stop_times$stop_id)
+                       stop_id %in% some_stop_times$stop_id)
   
   return(some_stops)
 }

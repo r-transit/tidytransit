@@ -18,7 +18,6 @@
 #' 
 #' @importFrom dplyr group_by summarise ungroup left_join
 #' @importFrom digest digest
-#' @importFrom rlang .data
 #' @export
 set_servicepattern <- function(gtfs_obj, id_prefix = "s_", hash_algo = "md5", hash_length = 7) {
   if(!feed_has_non_empty_table(gtfs_obj, "calendar") && !feed_has_non_empty_table(gtfs_obj, "calendar_dates")) {

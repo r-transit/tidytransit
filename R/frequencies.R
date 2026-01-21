@@ -26,7 +26,6 @@
 #' x <- order(stop_frequency$mean_headway)
 #' head(stop_frequency[x,])
 #' @importFrom dplyr %>% filter group_by ungroup summarise left_join arrange desc count
-#' @importFrom rlang .data !! quo enquo
 #' @importFrom stats median sd
 #' @export
 get_stop_frequency <- function(gtfs_obj,
@@ -110,22 +109,18 @@ get_route_frequency <- function(gtfs_obj,
                                 service_ids = NULL) {
   n_departures <- mean_headway <- NULL
   if(feed_has_non_empty_table(gtfs_obj, "frequencies")) {  
-    message("A pre-calculated frequencies dataframe exists for this feed already, consider using that.") 
+    message("This feed already contains a pre-calculated frequencies data.frame, consider using that.") 
   } 
   departures_per_stop = get_stop_frequency(gtfs_obj, start_time, end_time, 
                                            service_ids, by_route = TRUE)
 
-  if(nrow(departures_per_stop) > 0) {
-    routes_frequency = departures_per_stop %>% 
-      group_by(route_id) %>%
-      summarise(total_departures = sum(n_departures),
-                median_headways = round(median(mean_headway)),
-                mean_headways = round(mean(mean_headway)),
-                st_dev_headways = round(sd(mean_headway), 2),
-                stop_count = n())
-  } else {
-    stop("Failed to calculate frequency, no departures found")
-  }
+  routes_frequency = departures_per_stop %>% 
+    group_by(route_id) %>%
+    summarise(total_departures = sum(n_departures),
+              median_headways = round(median(mean_headway)),
+              mean_headways = round(mean(mean_headway)),
+              st_dev_headways = round(sd(mean_headway), 2),
+              stop_count = n())
   
   return(routes_frequency)
 }
