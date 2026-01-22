@@ -13,7 +13,7 @@ na_to_empty_strings(gtfs_obj)
 a gtfs_obj where all NA strings in tables have been replaced with ""
 }
 \description{
-Convert NA values to empty strings ("")
+\code{\link[=write_gtfs]{write_gtfs()}} converts \code{NA} to empty strings
 }
 \seealso{
 \code{\link[=empty_strings_to_na]{empty_strings_to_na()}}

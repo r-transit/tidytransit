@@ -13,7 +13,7 @@ empty_strings_to_na(gtfs_obj)
 a gtfs_obj where all empty strings in tables have been replaced with NA
 }
 \description{
-Convert empty strings ("") to NA values in all gtfs tables
+\code{\link[=read_gtfs]{read_gtfs()}} converts all empty strings to \code{NA} values
 }
 \seealso{
 \code{\link[=na_to_empty_strings]{na_to_empty_strings()}}

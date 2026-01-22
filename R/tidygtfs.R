@@ -59,6 +59,9 @@ gtfs_to_tidygtfs = function(gtfs_list, files = NULL) {
   x <- convert_list_tables_to_tibbles(x)
   x <- convert_list_json_to_sf(x)
   
+  # convert empty strings "" to NA
+  x <- empty_strings_to_na(x)
+  
   # gtfs class base structure
   x <- gtfsio::new_gtfs(x)
   class(x) <- c("tidygtfs", "gtfs", "list")
@@ -70,6 +73,8 @@ gtfs_to_tidygtfs = function(gtfs_list, files = NULL) {
 prepare_tidygtfs_fields = function(gtfs_obj) {
   gtfs_obj <- convert_char_to_hms(gtfs_obj)
   gtfs_obj <- convert_char_to_date(gtfs_obj)
+  gtfs_obj <- convert_char_to_int(gtfs_obj)
+  gtfs_obj <- convert_char_to_num(gtfs_obj)
   return(gtfs_obj)
 }
 
