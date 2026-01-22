@@ -79,12 +79,12 @@ stops_86_St %>% select(stop_id, stop_name, parent_station, stop_name_cluster) %>
 #> # A tibble: 6 × 4
 #>   stop_id stop_name parent_station stop_name_cluster
 #>   <chr>   <chr>     <chr>          <chr>            
-#> 1 121     86 St     ""             86 St [4]        
-#> 2 121N    86 St     "121"          86 St [4]        
-#> 3 121S    86 St     "121"          86 St [4]        
-#> 4 626     86 St     ""             86 St [3]        
-#> 5 626N    86 St     "626"          86 St [3]        
-#> 6 626S    86 St     "626"          86 St [3]        
+#> 1 121     86 St     NA             86 St [4]        
+#> 2 121N    86 St     121            86 St [4]        
+#> 3 121S    86 St     121            86 St [4]        
+#> 4 626     86 St     NA             86 St [3]        
+#> 5 626N    86 St     626            86 St [3]        
+#> 6 626S    86 St     626            86 St [3]        
 
 library(ggplot2)
 ggplot(stops_86_St) +

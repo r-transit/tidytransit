@@ -1,6 +1,7 @@
 # Convert empty strings ("") to NA values in all gtfs tables
 
-Convert empty strings ("") to NA values in all gtfs tables
+[`read_gtfs()`](https://r-transit.github.io/tidytransit/reference/read_gtfs.md)
+converts all empty strings to `NA` values
 
 ## Usage
 

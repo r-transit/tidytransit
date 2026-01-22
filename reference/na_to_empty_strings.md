@@ -1,6 +1,7 @@
 # Convert NA values to empty strings ("")
 
-Convert NA values to empty strings ("")
+[`write_gtfs()`](https://r-transit.github.io/tidytransit/reference/write_gtfs.md)
+converts `NA` to empty strings
 
 ## Usage
 

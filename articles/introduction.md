@@ -103,12 +103,12 @@ head(nyc$stops)
     ## # A tibble: 6 × 6
     ##   stop_id stop_name               stop_lat stop_lon location_type parent_station
     ##   <chr>   <chr>                      <dbl>    <dbl>         <int> <chr>         
-    ## 1 101     Van Cortlandt Park - 2…     40.9    -73.9             1 ""            
-    ## 2 101N    Van Cortlandt Park - 2…     40.9    -73.9             0 "101"         
-    ## 3 101S    Van Cortlandt Park - 2…     40.9    -73.9             0 "101"         
-    ## 4 103     238 St                      40.9    -73.9             1 ""            
-    ## 5 103N    238 St                      40.9    -73.9             0 "103"         
-    ## 6 103S    238 St                      40.9    -73.9             0 "103"
+    ## 1 101     Van Cortlandt Park - 2…     40.9    -73.9             1 NA            
+    ## 2 101N    Van Cortlandt Park - 2…     40.9    -73.9             0 101           
+    ## 3 101S    Van Cortlandt Park - 2…     40.9    -73.9             0 101           
+    ## 4 103     238 St                      40.9    -73.9             1 NA            
+    ## 5 103N    238 St                      40.9    -73.9             0 103           
+    ## 6 103S    238 St                      40.9    -73.9             0 103
 
 The tables available on each feed may vary. Below we can simply print
 the names of all the tables that were read in for this feed. Each of

@@ -163,12 +163,12 @@ nyc <code>gtfs</code> object. For example, stops:</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 6</span></span></span>
 <span><span class="co">##   stop_id stop_name               stop_lat stop_lon location_type parent_station</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> 101     Van Cortlandt Park - 2…     40.9    -<span style="color: #BB0000;">73.9</span>             1 <span style="color: #949494;">""</span>            </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> 101N    Van Cortlandt Park - 2…     40.9    -<span style="color: #BB0000;">73.9</span>             0 <span style="color: #949494;">"</span>101<span style="color: #949494;">"</span>         </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> 101S    Van Cortlandt Park - 2…     40.9    -<span style="color: #BB0000;">73.9</span>             0 <span style="color: #949494;">"</span>101<span style="color: #949494;">"</span>         </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> 103     238 St                      40.9    -<span style="color: #BB0000;">73.9</span>             1 <span style="color: #949494;">""</span>            </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span> 103N    238 St                      40.9    -<span style="color: #BB0000;">73.9</span>             0 <span style="color: #949494;">"</span>103<span style="color: #949494;">"</span>         </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">6</span> 103S    238 St                      40.9    -<span style="color: #BB0000;">73.9</span>             0 <span style="color: #949494;">"</span>103<span style="color: #949494;">"</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> 101     Van Cortlandt Park - 2…     40.9    -<span style="color: #BB0000;">73.9</span>             1 <span style="color: #BB0000;">NA</span>            </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> 101N    Van Cortlandt Park - 2…     40.9    -<span style="color: #BB0000;">73.9</span>             0 101           </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> 101S    Van Cortlandt Park - 2…     40.9    -<span style="color: #BB0000;">73.9</span>             0 101           </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> 103     238 St                      40.9    -<span style="color: #BB0000;">73.9</span>             1 <span style="color: #BB0000;">NA</span>            </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> 103N    238 St                      40.9    -<span style="color: #BB0000;">73.9</span>             0 103           </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span> 103S    238 St                      40.9    -<span style="color: #BB0000;">73.9</span>             0 103</span></span></code></pre>
 <p>The tables available on each feed may vary. Below we can simply print
 the names of all the tables that were read in for this feed. Each of
 these is a table.</p>
