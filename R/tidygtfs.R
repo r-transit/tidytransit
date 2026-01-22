@@ -59,6 +59,9 @@ gtfs_to_tidygtfs = function(gtfs_list, files = NULL) {
   x <- convert_list_tables_to_tibbles(x)
   x <- convert_list_json_to_sf(x)
   
+  # convert empty strings "" to NA
+  x <- empty_strings_to_na(x)
+  
   # gtfs class base structure
   x <- gtfsio::new_gtfs(x)
   class(x) <- c("tidygtfs", "gtfs", "list")

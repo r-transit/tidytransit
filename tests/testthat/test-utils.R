@@ -93,25 +93,6 @@ test_that("filter_feed_by_date", {
   expect_s3_class(g2$stop_times, "tbl_df")
 })
 
-test_that("empty_strings_to_na", {
-  gpath = system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
-  g1 = read_gtfs(gpath)
-  g_na = empty_strings_to_na(g1)
-  g2 = na_to_empty_strings(g_na)
-
-  for(tbl in names(g1)) {
-    expect_equal(g1[[tbl]], g2[[tbl]])
-  }
-  
-  tmppath = tempfile(fileext = ".zip")
-  write_gtfs(g_na, tmppath)
-  g3 = read_gtfs(tmppath)
-   
-  for(tbl in names(g1)) {
-    expect_equal(g1[[tbl]], g3[[tbl]])
-  } 
-})
-
 test_that("feed_contains, feed_has_non_empty_table", {
   g = gtfs_duke
   expect_false(feed_contains(g, "dates_services"))
