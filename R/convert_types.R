@@ -22,17 +22,31 @@ convert_types <- function(gtfs_list, conversion_table, conversion_function) {
 }
 
 convert_char_to_date <- function(gtfs_list) {
-  convert_types(gtfs_list, gtfs_reference_types$Date, .parse_gtfsio_date)
+  convert_types(gtfs_list, gtfs_reference_types[["Date"]], .parse_gtfsio_date)
 }
 
 convert_date_to_char <- function(gtfs_obj) {
-  convert_types(gtfs_obj, gtfs_reference_types$Date, .date_as_gtfsio_char)
+  convert_types(gtfs_obj, gtfs_reference_types[["Date"]], .date_as_gtfsio_char)
 }
 
 convert_char_to_hms <- function(gtfs_list) {
-  convert_types(gtfs_list, gtfs_reference_types$Time, hhmmss_to_hms)
+  convert_types(gtfs_list, gtfs_reference_types[["Time"]], hhmmss_to_hms)
 }
 
 convert_hms_to_char <- function(gtfs_obj) {
-  convert_types(gtfs_obj, gtfs_reference_types$Time, hms_to_hhmmss)
+  convert_types(gtfs_obj, gtfs_reference_types[["Time"]], hms_to_hhmmss)
+}
+
+# reading only
+convert_char_to_int <- function(gtfs_obj) {
+  int_ref = do.call("rbind", 
+                    gtfs_reference_types[c("Integer", "Non-negative integer", "Non-null integer",
+                                           "Non-zero integer", "Positive integer")])
+  convert_types(gtfs_obj, int_ref, as.integer)
+}
+
+convert_char_to_num <- function(gtfs_obj) {
+  num_ref = do.call("rbind", 
+                    gtfs_reference_types[c("Float", "Positive float", "Non-negative float")])
+  convert_types(gtfs_obj, num_ref, as.double)
 }

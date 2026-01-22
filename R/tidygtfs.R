@@ -73,6 +73,8 @@ gtfs_to_tidygtfs = function(gtfs_list, files = NULL) {
 prepare_tidygtfs_fields = function(gtfs_obj) {
   gtfs_obj <- convert_char_to_hms(gtfs_obj)
   gtfs_obj <- convert_char_to_date(gtfs_obj)
+  gtfs_obj <- convert_char_to_int(gtfs_obj)
+  gtfs_obj <- convert_char_to_num(gtfs_obj)
   return(gtfs_obj)
 }
 
