@@ -14,7 +14,8 @@ raptor(
   arrival = FALSE,
   time_range = 3600,
   max_transfers = NULL,
-  keep = "all"
+  keep = "all",
+  separate_starts = FALSE
 )
 ```
 
@@ -66,6 +67,15 @@ raptor(
   journey with the shortest travel time is returned. With `earliest` the
   journey arriving at a stop the earliest is returned, `latest` works
   accordingly.
+
+- separate_starts:
+
+  If `FALSE` (default), returns all initial transfers among the
+  specified `stop_ids`. If `TRUE` each stop_id is calculated
+  independently. This can lead to faster computation times and is useful
+  when the resulting times between `from` and `to_stop_ids` will be
+  aggregated later (e.g. by `stop_name` in
+  [`travel_times()`](https://r-transit.github.io/tidytransit/reference/travel_times.md)).
 
 ## Value
 

@@ -11,7 +11,7 @@ time_range."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">tidytransit</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.1.900</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,7 +59,8 @@ stops in <code>stop_times</code> with journeys departing from <code>stop_ids</co
 <span>  arrival <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  time_range <span class="op">=</span> <span class="fl">3600</span>,</span>
 <span>  max_transfers <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  keep <span class="op">=</span> <span class="st">"all"</span></span>
+<span>  keep <span class="op">=</span> <span class="st">"all"</span>,</span>
+<span>  separate_starts <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -108,6 +109,14 @@ describes the time window when journeys should end at <code>stop_ids</code>.</p>
 between stop_ids are returned. With <code>shortest</code> only the journey with the
 shortest travel time is returned. With <code>earliest</code> the journey arriving at a
 stop the earliest is returned, <code>latest</code> works accordingly.</p></dd>
+
+
+<dt id="arg-separate-starts">separate_starts<a class="anchor" aria-label="anchor" href="#arg-separate-starts"></a></dt>
+<dd><p>If <code>FALSE</code> (default), returns all initial transfers among the
+specified <code>stop_ids</code>. If <code>TRUE</code> each stop_id is calculated independently. This
+can lead to faster computation times and is useful when the resulting times between
+<code>from</code> and <code>to_stop_ids</code> will be aggregated later (e.g. by <code>stop_name</code>
+in <code><a href="travel_times.html">travel_times()</a></code>).</p></dd>
 
 </dl></div>
     <div class="section level2">
