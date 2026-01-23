@@ -484,7 +484,34 @@ setup_transfers = function(transfers, arrival) {
   }
   if(!"from_trip_id" %in% colnames(transfers_dt)) transfers_dt[, from_trip_id := NA]
   if(!"to_trip_id" %in% colnames(transfers_dt)) transfers_dt[, to_trip_id := NA]
-
+  
+  # check uneven trip pairs
+  .trip_pairs = transfers_dt[(is.na(from_trip_id) & !is.na(to_trip_id)) | (!is.na(from_trip_id) & is.na(to_trip_id)),]
+  if(nrow(.trip_pairs) > 0) {
+    warning("from_trip_id-to_trip_id pairs with one NA value found in transfers (will be ignored)")
+    transfers_dt <- transfers_dt[(is.na(from_trip_id) & is.na(to_trip_id)) | (!is.na(from_trip_id) & !is.na(to_trip_id)),]
+  }
+  
+  # check unsupported route ids without trips
+  from_route_id <- to_route_id <- NULL
+  if("from_route_id" %in% colnames(transfers_dt)) {
+    .from_route = transfers_dt[!is.na(from_route_id) & is.na(from_trip_id),]
+    if(nrow(.from_route) > 0) {
+      transfers_dt <- transfers_dt[!(!is.na(from_route_id) & is.na(from_trip_id)),]
+    }
+  }
+  if("to_route_id" %in% colnames(transfers_dt)) {
+    .to_route = transfers_dt[!is.na(to_route_id) & is.na(to_trip_id),]
+    if(nrow(.to_route) > 0) {
+      transfers_dt <- transfers_dt[!(!is.na(to_route_id) & is.na(to_trip_id)),]
+    }
+  }
+  if((exists(".from_route") && nrow(.from_route) > 0) ||
+     (exists(".to_route") && nrow(.to_route) > 0)) {
+    warning("transfers.txt contains unsupported route-to-route transfers (will be ignored)")
+  }
+  
+  
   # flip arrivals
   if(arrival) {
     setnames(transfers_dt,
