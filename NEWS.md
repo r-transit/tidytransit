@@ -1,4 +1,10 @@
-# tidytransit (1.7.1)
+# tidytransit (dev)
+- Empty strings in txt files are always parsed as `NA` in `read_gtfs()` [#229](https://github.com/r-transit/tidytransit/pull/229)
+- `raptor()` and `travel_times()` now support in-seat transfers [#225](https://github.com/r-transit/tidytransit/pull/225)
+- Updated documentation authenticated downloads [#224](https://github.com/r-transit/tidytransit/pull/224)
+- Improved error handling
+
+# tidytransit 1.7.1
 - update gtfs reference sysdata [#221](https://github.com/r-transit/tidytransit/pull/221)
 - use fallback MobilityData dataset (extdata) in vignette if download fails [9e352eb](https://github.com/r-transit/tidytransit/commit/9e352ebc63adeb5f9bc540e2d56c432ddcb75f57)
 - bugfix: `by` parameter in `stop_group_distances()` is no longer ignored [#222](https://github.com/r-transit/tidytransit/pull/222)
