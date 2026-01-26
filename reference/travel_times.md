@@ -16,10 +16,10 @@ travel_times(
   time_range = 3600,
   arrival = FALSE,
   max_transfers = NULL,
-  max_departure_time = NULL,
   return_coords = FALSE,
   return_DT = FALSE,
-  stop_dist_check = 300
+  stop_dist_check = 300,
+  ...
 )
 ```
 
@@ -47,38 +47,38 @@ travel_times(
 
 - arrival:
 
-  If FALSE (default), all journeys *start* from `stop_name`. If TRUE,
-  all journeys *end* at `stop_name`.
+  If `FALSE` (default), all journeys *start* from `stop_name`. If
+  `TRUE`, all journeys *end* at `stop_name`.
 
 - max_transfers:
 
   The maximum number of transfers. No limit if `NULL`
 
-- max_departure_time:
-
-  Deprecated. Use `time_range` to set the latest possible departure
-  time.
-
 - return_coords:
 
-  Returns stop coordinates (lon/lat) as columns. Default is FALSE.
+  Returns stop coordinates (lon/lat) as columns if `TRUE`. Default is
+  `FALSE`.
 
 - return_DT:
 
-  travel_times() returns a data.table if TRUE. Default is FALSE which
-  returns a `tibble/tbl_df`.
+  travel_times() returns a data.table if `TRUE`. Default is `FALSE`
+  which returns a `tibble/tbl_df`.
 
 - stop_dist_check:
 
   stop_names are not structured identifiers like stop_ids or
-  parent_stations, so it's possible that stops with the same name are
-  far apart. travel_times() errors if the distance among stop_ids with
-  the same name is above this threshold (in meters). Use FALSE to turn
-  check off. However, it is recommended to either use
+  parent_stations, so it is possible that stops with the same name are
+  far apart from each other. travel_times() errors if the distance among
+  stop_ids with the same name is above this threshold (in meters). Use
+  `FALSE` to turn check off. However, it is recommended to either use
   [`raptor()`](https://r-transit.github.io/tidytransit/reference/raptor.md)
   or fix the feed (see
   [`cluster_stops()`](https://r-transit.github.io/tidytransit/reference/cluster_stops.md))
   in case of warnings.
+
+- ...:
+
+  ignored
 
 ## Value
 

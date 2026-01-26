@@ -11,7 +11,7 @@ filter_stop_times() or filter_feed_by_date()."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">tidytransit</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.1.900</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,10 +58,10 @@ to all other stop_names of a feed. <code>filtered_stop_times</code> needs to be 
 <span>  time_range <span class="op">=</span> <span class="fl">3600</span>,</span>
 <span>  arrival <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  max_transfers <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  max_departure_time <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  return_coords <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  return_DT <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  stop_dist_check <span class="op">=</span> <span class="fl">300</span></span>
+<span>  stop_dist_check <span class="op">=</span> <span class="fl">300</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -88,37 +88,36 @@ describes the time window when journeys should end at <code>stop_name</code>.</p
 
 
 <dt id="arg-arrival">arrival<a class="anchor" aria-label="anchor" href="#arg-arrival"></a></dt>
-<dd><p>If FALSE (default), all journeys <em>start</em> from <code>stop_name</code>. If
-TRUE, all journeys <em>end</em> at <code>stop_name</code>.</p></dd>
+<dd><p>If <code>FALSE</code> (default), all journeys <em>start</em> from <code>stop_name</code>. If
+<code>TRUE</code>, all journeys <em>end</em> at <code>stop_name</code>.</p></dd>
 
 
 <dt id="arg-max-transfers">max_transfers<a class="anchor" aria-label="anchor" href="#arg-max-transfers"></a></dt>
 <dd><p>The maximum number of transfers. No limit if <code>NULL</code></p></dd>
 
 
-<dt id="arg-max-departure-time">max_departure_time<a class="anchor" aria-label="anchor" href="#arg-max-departure-time"></a></dt>
-<dd><p>Deprecated. Use <code>time_range</code> to set the latest
-possible departure time.</p></dd>
-
-
 <dt id="arg-return-coords">return_coords<a class="anchor" aria-label="anchor" href="#arg-return-coords"></a></dt>
-<dd><p>Returns stop coordinates (lon/lat) as columns. Default is FALSE.</p></dd>
+<dd><p>Returns stop coordinates (lon/lat) as columns if <code>TRUE</code>. Default is <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-return-dt">return_DT<a class="anchor" aria-label="anchor" href="#arg-return-dt"></a></dt>
-<dd><p>travel_times() returns a data.table if TRUE. Default is FALSE which
+<dd><p>travel_times() returns a data.table if <code>TRUE</code>. Default is <code>FALSE</code> which
 returns a <code>tibble/tbl_df</code>.</p></dd>
 
 
 <dt id="arg-stop-dist-check">stop_dist_check<a class="anchor" aria-label="anchor" href="#arg-stop-dist-check"></a></dt>
-<dd><p>stop_names are not structured identifiers like
-stop_ids or parent_stations, so it's possible that
-stops with the same name are far apart. travel_times()
-errors if the distance among stop_ids with the same name is
-above this threshold (in meters).
-Use FALSE to turn check off. However, it is recommended to
+<dd><p>stop_names are not structured identifiers like stop_ids or
+parent_stations, so it is possible that stops with the same name are
+far apart from each other.
+travel_times() errors if the distance among stop_ids with the same
+name is above this threshold (in meters).
+Use <code>FALSE</code> to turn check off. However, it is recommended to
 either use <code><a href="raptor.html">raptor()</a></code> or fix the feed (see <code><a href="cluster_stops.html">cluster_stops()</a></code>)
 in case of warnings.</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>ignored</p></dd>
 
 </dl></div>
     <div class="section level2">

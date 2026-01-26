@@ -1,5 +1,22 @@
 # Changelog
 
+## tidytransit 1.8.0
+
+- Empty strings in txt files are always parsed as `NA` in
+  [`read_gtfs()`](https://r-transit.github.io/tidytransit/reference/read_gtfs.md)
+  [\#229](https://github.com/r-transit/tidytransit/pull/229)
+- [`raptor()`](https://r-transit.github.io/tidytransit/reference/raptor.md)
+  and
+  [`travel_times()`](https://r-transit.github.io/tidytransit/reference/travel_times.md)
+  now support in-seat transfers
+  [\#225](https://github.com/r-transit/tidytransit/pull/225)
+- Updated documentation on authenticated downloads
+  [\#224](https://github.com/r-transit/tidytransit/pull/224)
+- The parameter `max_departure_time` in
+  [`travel_times()`](https://r-transit.github.io/tidytransit/reference/travel_times.md)
+  is no longer supported
+- Improved error handling
+
 ## tidytransit 1.7.1
 
 CRAN release: 2025-08-21
