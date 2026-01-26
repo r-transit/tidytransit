@@ -44,7 +44,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/r-transit/tidytransit/blob/master/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/r-transit/tidytransit/blob/v1.8.0/DESCRIPTION)
 
 Poletti F, Herszenhut D, Padgham M, Buckley T, Noriega-Goodwin D (2026).
 *tidytransit: Read, Validate, Analyze, and Map GTFS Feeds*. R package
