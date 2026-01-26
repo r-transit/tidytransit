@@ -38,24 +38,11 @@ assert_routable_feed = function(g) {
 }
 
 # travel_times()
-check_max_departure_time = function(max_departure_time, arrival, time_range, 
-                                    missing_time_range, filtered_stop_times) {
-  if(!is.null(max_departure_time)) {
-    warning("max_departure_time is deprecated, use time_range")
-    if(!missing_time_range) {
-      stop("cannot set max_departure_time and time_range")
-    }
-    if(arrival) {
-      stop("cannot set max_departure_time and arrival=TRUE")
-    }
-    if(is.character(max_departure_time)) {
-      max_departure_time <- hhmmss_to_seconds(max_departure_time)
-    }
-    min_departure_time = min(filtered_stop_times$departure_time_num)
-    stopifnot(max_departure_time > min_departure_time)
-    time_range <- max_departure_time - min_departure_time
+catch_deprecated_max_departure_time = function(...) {
+  dots = list(...)
+  if("max_departure_time" %in% names(dots)) {
+    stop("The parameter `max_departure_time` is deprecated, use `time_range`", call. = FALSE)
   }
-  return(time_range)
 }
 
 check_stop_dists = function(stops, stop_dist_check) {
@@ -64,7 +51,7 @@ check_stop_dists = function(stops, stop_dist_check) {
   .time_post = Sys.time()
   
   if(max(stop_dists$dist_max) > stop_dist_check) {
-    stop("Some stops with the same name are more than ", stop_dist_check, " meters apart, see stop_group_distances().\n",
+    stop("Some stops with the same name are more than ", stop_dist_check, " meters apart, see ?stop_group_distances().\n",
          "Using travel_times() might lead to unexpected results. Set stop_dist_check=FALSE to ignore this error.",
          call. = FALSE)
   }

@@ -60,20 +60,11 @@ test_that("stop times are filtered correctly", {
 
 test_that("travel_time works with different params", {
   fst = filter_stop_times(gtfs_routing, "2018-10-01", 7*3600, 24*3600)
-  expect_warning(travel_times(fst, "One", max_departure_time = 7*3600+5*60), 
-                 "max_departure_time is deprecated, use time_range")
-  expect_warning(travel_times(fst, "One", max_departure_time = "07:05:00"), 
-                 "max_departure_time is deprecated, use time_range")
-  expect_warning(
-    expect_error(travel_times(fst, "One", time_range = 1800, max_departure_time = "07:45:00")),
-    "max_departure_time is deprecated, use time_range")
+  expect_error(travel_times(fst, "One", max_departure_time = 7*3600+5*60), 
+               "`max_departure_time` is deprecated, use `time_range`")
+  expect_error(travel_times(fst, "One", time_range = 1800, max_departure_time = "07:45:00"),
+               "`max_departure_time` is deprecated, use `time_range`")
   expect_error(travel_times(fst, c("unknown stop", "y")), "Stop name not found in stops table: unknown stop, y")
-  expect_warning(
-    expect_error(travel_times(fst, "One", max_departure_time = "06:45:00")),
-    "max_departure_time is deprecated, use time_range")
-  expect_warning(
-    expect_error(travel_times(fst, "One", max_departure_time = "07:50:00", arrival = TRUE), 
-                 "cannot set max_departure_time and arrival=TRUE"))
 })
 
 test_that("transfers for travel_times", {

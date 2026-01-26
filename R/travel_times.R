@@ -21,22 +21,21 @@
 #'                   departure time (i.e. earliest and latest possible journey departure time) 
 #'                   as seconds or "HH:MM:SS" character. If `arrival` is TRUE, `time_range` 
 #'                   describes the time window when journeys should end at `stop_name`.
-#' @param arrival If FALSE (default), all journeys _start_ from `stop_name`. If
-#'                TRUE, all journeys _end_ at `stop_name`.
+#' @param arrival If `FALSE` (default), all journeys _start_ from `stop_name`. If
+#'                `TRUE`, all journeys _end_ at `stop_name`.
 #' @param max_transfers The maximum number of transfers. No limit if `NULL`
-#' @param max_departure_time Deprecated. Use `time_range` to set the latest
-#'                           possible departure time.
-#' @param return_coords Returns stop coordinates (lon/lat) as columns. Default is FALSE.
-#' @param return_DT travel_times() returns a data.table if TRUE. Default is FALSE which
+#' @param return_coords Returns stop coordinates (lon/lat) as columns if `TRUE`. Default is `FALSE`.
+#' @param return_DT travel_times() returns a data.table if `TRUE`. Default is `FALSE` which
 #'                  returns a `tibble/tbl_df`.
-#' @param stop_dist_check stop_names are not structured identifiers like
-#'                        stop_ids or parent_stations, so it's possible that
-#'                        stops with the same name are far apart. travel_times()
-#'                        errors if the distance among stop_ids with the same name is
-#'                        above this threshold (in meters).
-#'                        Use FALSE to turn check off. However, it is recommended to
+#' @param stop_dist_check stop_names are not structured identifiers like stop_ids or 
+#'                        parent_stations, so it is possible that stops with the same name are 
+#'                        far apart from each other.
+#'                        travel_times() errors if the distance among stop_ids with the same 
+#'                        name is above this threshold (in meters).
+#'                        Use `FALSE` to turn check off. However, it is recommended to
 #'                        either use [raptor()] or fix the feed (see [cluster_stops()])
 #'                        in case of warnings.
+#' @param ... ignored
 #'
 #' @return A table with travel times to/from all stops reachable by `stop_name` and their
 #'         corresponding journey departure and arrival times.
@@ -98,17 +97,19 @@ travel_times = function(filtered_stop_times,
                         time_range = 3600,
                         arrival = FALSE,
                         max_transfers = NULL,
-                        max_departure_time = NULL,
                         return_coords = FALSE,
                         return_DT = FALSE,
-                        stop_dist_check = 300) {
+                        stop_dist_check = 300,
+                        ...) {
   travel_time <- journey_arrival_time <- journey_departure_time <- NULL
   stop_names = stop_name
   rm(stop_name)
+  catch_deprecated_max_departure_time(...)
   if(inherits(filtered_stop_times, "tidygtfs")) {
     gtfs_obj = filtered_stop_times
     if(is.null(attributes(gtfs_obj$stop_times)$extract_date)) {
-      stop("Travel times cannot be calculated with an unfiltered tidygtfs object. Use filter_feed_by_date().")
+      stop("Travel times cannot be calculated with an unfiltered tidygtfs object. Use filter_feed_by_date().",
+           call. = FALSE)
     }
 
     filtered_stop_times <- gtfs_obj$stop_times
@@ -116,20 +117,17 @@ travel_times = function(filtered_stop_times,
     stops = stops_as_dt(gtfs_obj$stops)
   } else {
     if(!all(c("stops", "transfers") %in% names(attributes(filtered_stop_times)))) {
-      stop("Stops and transfers not found in filtered_stop_times attributes. Use filter_stop_times() to prepare data or use raptor() for lower level access.")
+      stop("Stops and transfers not found in filtered_stop_times attributes. Use filter_stop_times() to prepare data or use raptor() for lower level access.",
+           call. = FALSE)
     }
     transfers = attributes(filtered_stop_times)$transfers
     stops = attributes(filtered_stop_times)$stops
   }
 
-  # TODO remove max_departure_time_check (max_departure_time is deprecated)
-  time_range <- check_max_departure_time(max_departure_time, arrival, time_range, 
-                                         missing(time_range), filtered_stop_times)
-
   # get stop_ids of names
   stop_ids = stops$stop_id[which(stops$stop_name %in% stop_names)]
   if(length(stop_ids) == 0) {
-    stop("Stop name not found in stops table: ", toString(stop_names))
+    stop("Stop name not found in stops table: ", toString(stop_names), call. = FALSE)
   }
 
   # Check stop_name integrity

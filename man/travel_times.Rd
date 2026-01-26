@@ -10,10 +10,10 @@ travel_times(
   time_range = 3600,
   arrival = FALSE,
   max_transfers = NULL,
-  max_departure_time = NULL,
   return_coords = FALSE,
   return_DT = FALSE,
-  stop_dist_check = 300
+  stop_dist_check = 300,
+  ...
 )
 }
 \arguments{
@@ -29,27 +29,26 @@ departure time (i.e. earliest and latest possible journey departure time)
 as seconds or "HH:MM:SS" character. If \code{arrival} is TRUE, \code{time_range}
 describes the time window when journeys should end at \code{stop_name}.}
 
-\item{arrival}{If FALSE (default), all journeys \emph{start} from \code{stop_name}. If
-TRUE, all journeys \emph{end} at \code{stop_name}.}
+\item{arrival}{If \code{FALSE} (default), all journeys \emph{start} from \code{stop_name}. If
+\code{TRUE}, all journeys \emph{end} at \code{stop_name}.}
 
 \item{max_transfers}{The maximum number of transfers. No limit if \code{NULL}}
 
-\item{max_departure_time}{Deprecated. Use \code{time_range} to set the latest
-possible departure time.}
+\item{return_coords}{Returns stop coordinates (lon/lat) as columns if \code{TRUE}. Default is \code{FALSE}.}
 
-\item{return_coords}{Returns stop coordinates (lon/lat) as columns. Default is FALSE.}
-
-\item{return_DT}{travel_times() returns a data.table if TRUE. Default is FALSE which
+\item{return_DT}{travel_times() returns a data.table if \code{TRUE}. Default is \code{FALSE} which
 returns a \code{tibble/tbl_df}.}
 
-\item{stop_dist_check}{stop_names are not structured identifiers like
-stop_ids or parent_stations, so it's possible that
-stops with the same name are far apart. travel_times()
-errors if the distance among stop_ids with the same name is
-above this threshold (in meters).
-Use FALSE to turn check off. However, it is recommended to
+\item{stop_dist_check}{stop_names are not structured identifiers like stop_ids or
+parent_stations, so it is possible that stops with the same name are
+far apart from each other.
+travel_times() errors if the distance among stop_ids with the same
+name is above this threshold (in meters).
+Use \code{FALSE} to turn check off. However, it is recommended to
 either use \code{\link[=raptor]{raptor()}} or fix the feed (see \code{\link[=cluster_stops]{cluster_stops()}})
 in case of warnings.}
+
+\item{...}{ignored}
 }
 \value{
 A table with travel times to/from all stops reachable by \code{stop_name} and their
