@@ -1,4 +1,4 @@
-# tidytransit (dev)
+# tidytransit 1.8.0
 - Empty strings in txt files are always parsed as `NA` in `read_gtfs()` [#229](https://github.com/r-transit/tidytransit/pull/229)
 - `raptor()` and `travel_times()` now support in-seat transfers [#225](https://github.com/r-transit/tidytransit/pull/225)
 - Updated documentation on authenticated downloads [#224](https://github.com/r-transit/tidytransit/pull/224)
