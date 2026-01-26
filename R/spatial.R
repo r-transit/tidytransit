@@ -202,7 +202,7 @@ gtfs_transform = function(gtfs_obj, crs) {
 #' @importFrom dplyr as_tibble
 #' @export
 sf_as_tbl = function(gtfs_obj) {
-  if(inherits(gtfs_obj$stops, "sf")) {
+  if(feed_contains(gtfs_obj, "stops") && inherits(gtfs_obj$stops, "sf")) {
     gtfs_obj$stops <- as_tibble(sf_points_to_df(gtfs_obj$stops))
   }
   if(feed_contains(gtfs_obj, "shapes") && inherits(gtfs_obj$shapes, "sf")) {

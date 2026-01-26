@@ -49,10 +49,8 @@ set_dates_services <- function(gtfs_obj) {
     min_date = min(feed_dates[["calendar"]], na.rm = TRUE)
     max_date = max(feed_dates[["calendar"]], na.rm = TRUE)
     # get first and last date of a feed
-    dates <- tibble(
-      date = seq(min_date, max_date, 1),
-      weekday = weekday(date)
-    )
+    dates = tibble(date = seq(min_date, max_date, 1))
+    dates$weekday <- weekday(dates$date)
     
     # gather services by weekdays
     .availability = NULL
@@ -98,6 +96,10 @@ set_dates_services <- function(gtfs_obj) {
   } else if(has_calendar_dates) { # only calendar_dates.txt
     date_service_df = gtfs_obj[["calendar_dates"]][gtfs_obj$calendar_dates$exception_type != 2, c("date", "service_id")]
     date_service_df <- as_tibble(date_service_df)
+  }
+  
+  if(is.null(gtfs_obj[["."]])) {
+    gtfs_obj[["."]] <- list()
   }
   
   gtfs_obj$.$dates_services <- date_service_df

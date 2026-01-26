@@ -236,7 +236,9 @@ duplicated_primary_keys = function(gtfs_list) {
   names(tbl_has_dupl_keys) <- names(gtfs_list)
   
   for(tbl_name in intersect(names(gtfs_list), names(gtfs_reference))) {
-    id_fields = gtfs_reference[[tbl_name]]$primary_key
+    id_fields = gtfs_reference[[tbl_name]][["primary_key"]]
+    
+    if(is.null(id_fields)) next # geojson files
     
     if(!anyNA(id_fields)) {
       if(length(id_fields) == 1 && id_fields == "*") {

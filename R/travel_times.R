@@ -107,7 +107,7 @@ travel_times = function(filtered_stop_times,
   catch_deprecated_max_departure_time(...)
   if(inherits(filtered_stop_times, "tidygtfs")) {
     gtfs_obj = filtered_stop_times
-    if(is.null(attributes(gtfs_obj$stop_times)$extract_date)) {
+    if(is.null(attributes(gtfs_obj$stop_times)[["extract_date"]])) {
       stop("Travel times cannot be calculated with an unfiltered tidygtfs object. Use filter_feed_by_date().",
            call. = FALSE)
     }

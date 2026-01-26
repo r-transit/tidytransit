@@ -39,8 +39,6 @@ test_that("set_dates_services() uses the right dates", {
     start_date = as.Date("2018-01-01"), # monday
     end_date = as.Date("2018-01-31")) # wednesday
 
-  set_dates_services(gtest)
-  
   date_service <- set_dates_services(gtest)$.$dates_services
   
   expect_true(as.Date("2018-01-01") %in% date_service$date)
