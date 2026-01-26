@@ -1,5 +1,21 @@
 # Changelog
 
+## tidytransit 1.7.1
+
+CRAN release: 2025-08-21
+
+- update gtfs reference sysdata
+  [\#221](https://github.com/r-transit/tidytransit/pull/221)
+- use fallback MobilityData dataset (extdata) in vignette if download
+  fails
+  [9e352eb](https://github.com/r-transit/tidytransit/commit/9e352ebc63adeb5f9bc540e2d56c432ddcb75f57)
+- bugfix: `by` parameter in
+  [`stop_group_distances()`](https://r-transit.github.io/tidytransit/reference/stop_group_distances.md)
+  is no longer ignored
+  [\#222](https://github.com/r-transit/tidytransit/pull/222)
+- bugfix: catch empty/NA parameter values in
+  [`filter_stop_times()`](https://r-transit.github.io/tidytransit/reference/filter_stop_times.md)
+
 ## tidytransit 1.7.0
 
 CRAN release: 2024-10-18
