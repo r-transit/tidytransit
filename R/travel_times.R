@@ -108,20 +108,22 @@ travel_times = function(filtered_stop_times,
   if(inherits(filtered_stop_times, "tidygtfs")) {
     gtfs_obj = filtered_stop_times
     if(is.null(attributes(gtfs_obj$stop_times)[["extract_date"]])) {
-      stop("Travel times cannot be calculated with an unfiltered tidygtfs object. Use filter_feed_by_date().",
+      stop("Travel times cannot be calculated with an unfiltered tidygtfs object. ",
+           "Use filter_feed_by_date().",
            call. = FALSE)
     }
-
+    
     filtered_stop_times <- gtfs_obj$stop_times
     transfers = gtfs_obj$transfers
     stops = stops_as_dt(gtfs_obj$stops)
   } else {
     if(!all(c("stops", "transfers") %in% names(attributes(filtered_stop_times)))) {
-      stop("Stops and transfers not found in filtered_stop_times attributes. Use filter_stop_times() to prepare data or use raptor() for lower level access.",
+      stop("Stops and transfers not found in filtered_stop_times attributes. ",
+           "Use filter_stop_times() to prepare data or use raptor() for lower level access.",
            call. = FALSE)
     }
     transfers = attributes(filtered_stop_times)$transfers
-    stops = attributes(filtered_stop_times)$stops
+    stops = stops_as_dt(attributes(filtered_stop_times)$stops)
   }
 
   # get stop_ids of names

@@ -215,5 +215,20 @@ test_that("error", {
                "`stops` and `stop_times` must have a `stop_id` column")
 })
 
+test_that("non-data.table are handled correctly", {
+    fst = filter_stop_times(gtfs_routing, "2018-10-01", 7*3600, 24*3600)
+    fst2 = as.data.frame(fst)
+    attributes(fst2)$stops <- as.data.frame(attributes(fst2)$stops)
+    attributes(fst2)$transfers <- as.data.frame(attributes(fst2)$transfers)
+    expect_identical(travel_times(fst2, "One"),
+                     travel_times(fst, "One"))
+    
+    fst3 = as_tibble(fst)
+    attributes(fst3)$stops <- as_tibble(attributes(fst2)$stops)
+    attributes(fst3)$transfers <- as_tibble(attributes(fst2)$transfers)
+    expect_identical(travel_times(fst3, "One"),
+                     travel_times(fst, "One"))
+})
+
 rm("gtfs_routing", "local_gtfs_path", "stop_times", "stop_times_0710", 
    "stop_times_0711", "stop_times_0715", "test_from_stop_ids", "transfers")
