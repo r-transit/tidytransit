@@ -44,16 +44,16 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/r-transit/tidytransit/blob/v1.8.0/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/r-transit/tidytransit/blob/master/DESCRIPTION)
 
 Poletti F, Herszenhut D, Padgham M, Buckley T, Noriega-Goodwin D (2026).
 *tidytransit: Read, Validate, Analyze, and Map GTFS Feeds*. R package
-version 1.8.0, <https://github.com/r-transit/tidytransit>.
+version 1.8.0.900, <https://github.com/r-transit/tidytransit>.
 
     @Manual{,
       title = {tidytransit: Read, Validate, Analyze, and Map GTFS Feeds},
       author = {Flavio Poletti and Daniel Herszenhut and Mark Padgham and Tom Buckley and Danton Noriega-Goodwin},
       year = {2026},
-      note = {R package version 1.8.0},
+      note = {R package version 1.8.0.900},
       url = {https://github.com/r-transit/tidytransit},
     }

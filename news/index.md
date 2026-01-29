@@ -2,6 +2,8 @@
 
 ## tidytransit 1.8.0
 
+CRAN release: 2026-01-26
+
 - Empty strings in txt files are always parsed as `NA` in
   [`read_gtfs()`](https://r-transit.github.io/tidytransit/reference/read_gtfs.md)
   [\#229](https://github.com/r-transit/tidytransit/pull/229)
