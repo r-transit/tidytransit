@@ -117,6 +117,11 @@ test_that("parameters are checked", {
 
   # empty results
   expect_equal(nrow(raptor(st, tr, "stop5", time_range = 60)), 1)
+  
+  # logical
+  expect_error(raptor(st, tr, arrival = 1), "arrival must be TRUE or FALSE")
+  expect_error(raptor(st, tr, arrival = NULL), "arrival must be TRUE or FALSE")
+  expect_error(raptor(st, tr, separate_starts = NULL), "separate_starts must be TRUE or FALSE")
 })
 
 test_that("pick transfers from attributes", {

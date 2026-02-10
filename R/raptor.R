@@ -92,6 +92,7 @@ raptor = function(stop_times,
   raptor_arrival_time <- raptor_departure_time <- journey_time <- initial_transfer_time <- NULL
   raptor_min_departure_time <- raptor_max_departure_time <- NULL
   journey_arrival_time <- journey_departure_time <- travel_time <- NULL
+
   if(inherits(stop_times, "tidygtfs")) {
     stop("Travel times cannot be calculated with a tidygtfs object, see filter_stop_times()", call. = FALSE)
   }
@@ -108,6 +109,8 @@ raptor = function(stop_times,
   # 1) check and params ####
   # use data.table for faster manipulation
   # copy necessary as we change/rename columns by reference
+  assert_logical(arrival, "arrival")
+  assert_logical(separate_starts, "separate_starts")
   assert_routable_stop_times(stop_times)
   time_window = setup_time_window(time_range, arrival, stop_times)
   keep <- setup_keep(keep)

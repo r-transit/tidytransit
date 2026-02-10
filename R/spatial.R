@@ -14,6 +14,7 @@
 #' @seealso \code{\link{sf_as_tbl}}, \code{\link{stops_as_sf}}, \code{\link{shapes_as_sf}}
 #' @export
 gtfs_as_sf <- function(gtfs_obj, skip_shapes = FALSE, crs = NULL, quiet = TRUE) {
+  assert_logical(skip_shapes, "skip_shapes")
   if(!quiet) message("Converting stops to simple features")
   if(!feed_contains(gtfs_obj, "stops")) {
     stop("No stops table in feed")

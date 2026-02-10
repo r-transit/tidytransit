@@ -37,6 +37,12 @@ assert_routable_feed = function(g) {
   invisible(TRUE)
 }
 
+assert_logical = function(x, name) {
+  if(!(length(x) == 1 && is.logical(x) && (x %in% c(TRUE, FALSE)))) {
+    stop(name, " must be TRUE or FALSE", call. = FALSE)
+  }
+}
+
 # travel_times()
 catch_deprecated_max_departure_time = function(...) {
   dots = list(...)
@@ -46,6 +52,7 @@ catch_deprecated_max_departure_time = function(...) {
 }
 
 check_stop_dists = function(stops, stop_dist_check) {
+  stopifnot(is.numeric(stop_dist_check) && length(stop_dist_check) == 1)
   .time_prev = Sys.time()
   stop_dists = stop_group_distances(stops, "stop_name", max_only = TRUE)
   .time_post = Sys.time()

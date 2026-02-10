@@ -131,7 +131,7 @@ prep_dist_mtrx = function(dist_list) {
 stop_group_distances = function(gtfs_stops, by = "stop_name", max_only = FALSE) {
   distances <- NULL
   if(!by %in% colnames(gtfs_stops)) {
-    stop("column ", by, " does not exist in ", deparse(substitute(gtfs_stops)))
+    stop("column ", by, " does not exist in ", deparse(substitute(gtfs_stops)), call. = FALSE)
   }
   if(inherits(gtfs_stops, "sf")) {
     gtfs_stops <- sf_points_to_df(gtfs_stops, c("stop_lon", "stop_lat"), TRUE)
@@ -150,9 +150,9 @@ stop_group_distances = function(gtfs_stops, by = "stop_name", max_only = FALSE) 
       group_by_at(by) %>%
       summarise(distances = geodist_list(stop_lon, stop_lat, stop_id), .groups = "keep") %>%
       mutate(n_stop_ids = nrow(distances[[1]]),
-                    dist_mean = median(prep_dist_mtrx(distances)),
-                    dist_median = median(prep_dist_mtrx(distances)),
-                    dist_max = max(prep_dist_mtrx(distances))) %>% ungroup()
+             dist_mean = median(prep_dist_mtrx(distances)),
+             dist_median = median(prep_dist_mtrx(distances)),
+             dist_max = max(prep_dist_mtrx(distances))) %>% ungroup()
   }
 
   gtfs_single_stops <- gtfs_single_stops %>% 

@@ -105,6 +105,7 @@ travel_times = function(filtered_stop_times,
   stop_names = stop_name
   rm(stop_name)
   catch_deprecated_max_departure_time(...)
+  
   if(inherits(filtered_stop_times, "tidygtfs")) {
     gtfs_obj = filtered_stop_times
     if(is.null(attributes(gtfs_obj$stop_times)[["extract_date"]])) {
@@ -125,6 +126,8 @@ travel_times = function(filtered_stop_times,
     transfers = attributes(filtered_stop_times)$transfers
     stops = stops_as_dt(attributes(filtered_stop_times)$stops)
   }
+  assert_logical(return_coords, "return_coords")
+  assert_logical(return_DT, "return_DT")
 
   # get stop_ids of names
   stop_ids = stops$stop_id[which(stops$stop_name %in% stop_names)]
