@@ -57,6 +57,7 @@
 #' validation_result <- validate_gtfs(gtfs)
 #' } 
 #' @importFrom dplyr as_tibble
+#' @importFrom data.table data.table rbindlist
 #' @export
 validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
   
@@ -79,7 +80,7 @@ validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
   # don't validate geojson files
   files_to_validate <- files_to_validate[!is_geojson(files_to_validate)]
   
-  if(length(files_to_validate) == 0) return(data.table::data.table(
+  if(length(files_to_validate) == 0) return(data.table(
     file = character(), file_spec = character(), file_provided_status = logical(),
     field = character(), field_spec = character(), field_provided_status = logical()
   ))
@@ -120,7 +121,7 @@ validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
       
     }
     
-    data.table::data.table(
+    data.table(
       file,
       file_spec,
       file_provided_status,
@@ -130,7 +131,7 @@ validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
     )
   })
 
-  validation_result <- data.table::rbindlist(validation_result)
+  validation_result <- rbindlist(validation_result)
   
   # checks if calendar.txt is missing. if it is then it becomes optional and
   # calendar_dates.txt becomes required

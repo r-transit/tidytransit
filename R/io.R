@@ -29,10 +29,11 @@
 #' gtfs <- read_gtfs(local_gtfs_path, files = c("trips", "stop_times"))
 #' names(gtfs)
 #' }
-#' @importFrom gtfsio import_gtfs new_gtfs
+#' @importFrom gtfsio import_gtfs 
+#'
 #' @export
 read_gtfs <- function(path, files = NULL, quiet = TRUE, ...) {
-  g = gtfsio::import_gtfs(path, files = files, quiet = quiet, ...)
+  g = import_gtfs(path, files = files, quiet = quiet, ...)
   
   tidygtfs = gtfs_to_tidygtfs(g, files = files)
   
@@ -69,9 +70,9 @@ write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE)
   gtfs_out = tidygtfs_to_gtfs(gtfs_obj)
   
   # export with gtfsio
-  gtfsio::export_gtfs(gtfs_out, zipfile, 
-                      standard_only = FALSE,
-                      compression_level = compression_level, 
-                      as_dir = as_dir, overwrite = TRUE)
+  export_gtfs(gtfs_out, zipfile, 
+              standard_only = FALSE,
+              compression_level = compression_level, 
+              as_dir = as_dir, overwrite = TRUE)
   invisible(gtfs_obj)
 }

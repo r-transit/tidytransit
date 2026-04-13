@@ -35,6 +35,7 @@ as_tidygtfs.tidygtfs = function(x, ...) {
 #' 
 #' @param gtfs_list list of tables
 #' @param files subset of files to validate
+#' @importFrom gtfsio new_gtfs
 #' @keywords internal
 gtfs_to_tidygtfs = function(gtfs_list, files = NULL) {
   # validate files and fields
@@ -63,7 +64,7 @@ gtfs_to_tidygtfs = function(gtfs_list, files = NULL) {
   x <- empty_strings_to_na(x)
   
   # gtfs class base structure
-  x <- gtfsio::new_gtfs(x)
+  x <- new_gtfs(x)
   class(x) <- c("tidygtfs", "gtfs", "list")
   attributes(x)$validation_result <- validation_result
   
@@ -85,12 +86,15 @@ prepare_tidygtfs_tables = function(gtfs_obj) {
 }
 
 # convert tables ####
+
+#' @importFrom dplyr as_tibble
 convert_list_tables_to_tibbles = function(gtfs_list) {
   table_index = .is_table(gtfs_list)
   gtfs_list[table_index] <- lapply(gtfs_list[table_index], dplyr::as_tibble)
   return(gtfs_list)
 }
 
+#' @importFrom data.table as.data.table
 convert_list_tables_to_data.tables = function(gtfs_list) {
   table_index = .is_table(gtfs_list)
   gtfs_list[table_index] <- lapply(gtfs_list[table_index], data.table::as.data.table)

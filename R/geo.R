@@ -67,17 +67,19 @@ stop_distances = function(gtfs_stops) {
   as_tibble(dists)
 }
 
+#' @importFrom geodist geodist
 geodist_list = function(lon, lat, names = NULL) {
   # second fastest measure after cheap
-  dists = geodist::geodist(data.frame(lon, lat), measure = "haversine")
+  dists = geodist(data.frame(lon, lat), measure = "haversine")
   if(!is.null(names)) {
     colnames(dists) <- rownames(dists) <- names
   }
   list(dists)
 }
 
+#' @importFrom sf st_distance
 geodist_list_sf = function(pts) {
-  dists = sf::st_distance(pts)
+  dists = st_distance(pts)
   dists <- matrix(as.numeric(dists), nrow = nrow(dists), ncol = ncol(dists))
   colnames(dists) <- rownames(dists) <- NULL
   list(dists)
@@ -163,6 +165,8 @@ stop_group_distances = function(gtfs_stops, by = "stop_name", max_only = FALSE) 
   dists[order(dists$dist_max, dists$n_stop_ids, dists[[by]], decreasing = TRUE),]
 }
 
+#' @importFrom geodist geodist
+#' @importFrom dplyr as_tibble bind_rows
 stop_group_dists_max_only = function(gtfs_single_stops, gtfs_multip_stops, BY) {
   gtfs_single_stops$dist_max <- 0
   gtfs_multip_stops$dist_max <- 0
@@ -170,10 +174,10 @@ stop_group_dists_max_only = function(gtfs_single_stops, gtfs_multip_stops, BY) {
   if(nrow(gtfs_multip_stops) > 0) {
     dist_max <- NULL
     gtfs_multip_stops <- as.data.table(gtfs_multip_stops)
-    gtfs_multip_stops[, dist_max := max(geodist::geodist(data.frame(stop_lon, stop_lat), measure = "cheap")), by = BY]
+    gtfs_multip_stops[, dist_max := max(geodist(data.frame(stop_lon, stop_lat), measure = "cheap")), by = BY]
   }
   
-  dists = dplyr::as_tibble(dplyr::bind_rows(gtfs_single_stops, gtfs_multip_stops))
+  dists = as_tibble(bind_rows(gtfs_single_stops, gtfs_multip_stops))
   dists[order(dists$dist_max, decreasing = TRUE),]
 }
 
@@ -198,6 +202,8 @@ stop_group_dists_max_only = function(gtfs_single_stops, gtfs_multip_stops, BY) {
 #'         modified tidygtfs object is return
 #' 
 #' @importFrom stats kmeans
+#' @importFrom dplyr bind_rows
+#' @importFrom sf st_geometry
 #' @examples \donttest{
 #' library(dplyr)
 #' nyc_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
@@ -236,7 +242,7 @@ cluster_stops = function(gtfs_stops,
     dists = stop_distances(stop_name_set)
     if(max(dists$distance) > max_dist) {
       if(is_sf) {
-        stop_name_lonlat = do.call(rbind, sf::st_geometry(stop_name_set))
+        stop_name_lonlat = do.call(rbind, st_geometry(stop_name_set))
       } else {
         stop_name_lonlat = stop_name_set[,c("stop_lon", "stop_lat")]
       }
@@ -251,7 +257,7 @@ cluster_stops = function(gtfs_stops,
     }
     stop_name_set
   })
-  stops_clusters = dplyr::bind_rows(stops_clusters)
+  stops_clusters = bind_rows(stops_clusters)
   
   if(inherits(gtfs_stops, "tidygtfs")) {
     gtfs_stops$stops <- stops_clusters
