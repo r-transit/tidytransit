@@ -62,6 +62,7 @@ summary.tidygtfs <- function(object, ...) {
   }
 
   # files provided
+  file_spec <- file_provided_status <- NULL
   validation_result <- attributes(object)$validation_result
   files <- unique(validation_result[c("file", "file_spec", "file_provided_status")])
   files <- arrange(files, desc(file_spec))

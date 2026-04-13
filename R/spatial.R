@@ -99,6 +99,7 @@ shapes_as_sf <- function(gtfs_shapes, crs = NULL) {
 #' routes_sf <- get_route_geometry(gtfs_duke_sf)
 #' plot(routes_sf[c(1,1350),])
 get_route_geometry <- function(gtfs_sf_obj, route_ids = NULL, service_ids = NULL) {
+  route_id <- service_id <- shape_id <- NULL
   if(!inherits(gtfs_sf_obj$shapes, "sf")) {
     stop("shapes not converted to sf, use gtfs_obj <- gtfs_as_sf(gtfs_obj)")
   }
@@ -149,10 +150,10 @@ get_trip_geometry <- function(gtfs_sf_obj, trip_ids) {
     warning('"', paste(id_diff, collapse=", "), '" not found in trips data frame')
   }
 
-  trips = gtfs_sf_obj$trips %>% filter(trip_id %in% trip_ids)
+  trips = gtfs_sf_obj$trips[which(gtfs_sf_obj$trips$trip_id %in% trip_ids),]
   
   trips_shapes = inner_join(gtfs_sf_obj$shapes, trips, by = "shape_id")
-
+  
   return(trips_shapes)
 }
 

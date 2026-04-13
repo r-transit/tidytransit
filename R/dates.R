@@ -18,6 +18,7 @@
 #' @importFrom stats reshape
 #' @keywords internal
 set_dates_services <- function(gtfs_obj) {
+  service_id <- start_date <- end_date <- exception_type <- NULL
   has_calendar = feed_has_non_empty_table(gtfs_obj, "calendar")
   has_calendar_dates = feed_has_non_empty_table(gtfs_obj, "calendar_dates")
   

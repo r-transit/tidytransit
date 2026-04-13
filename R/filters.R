@@ -17,6 +17,7 @@
 #' filtered_stops_df <- filter_stops(nyc, select_service_id, select_route_id)
 #' }
 filter_stops <- function(gtfs_obj, service_ids, route_ids) {
+  service_id <- route_id <- stop_id <- trip_id <- NULL
   some_trips <- filter(gtfs_obj$trips, 
                        service_id %in% service_ids &
                          route_id %in% route_ids)
@@ -55,7 +56,7 @@ filter_feed_by_trips = function(gtfs_obj, trip_ids) {
   service_ids = unique(gtfs_obj$trips$service_id)
   gtfs_obj$stops <- gtfs_obj$stops[which(gtfs_obj$stops$stop_id %in% trip_stop_ids),]
   
-  gtfs_obj$.$dates_services <- filter(gtfs_obj$.$dates_services, service_id %in% service_ids)
+  gtfs_obj$.$dates_services <- gtfs_obj$.$dates_services[which(gtfs_obj$.$dates_services$service_id %in% service_ids),]
   if(feed_contains(gtfs_obj, "calendar")) {
     gtfs_obj$calendar <- gtfs_obj$calendar[which(gtfs_obj$calendar$service_id %in% service_ids),]
   }
@@ -76,7 +77,6 @@ filter_feed_by_trips = function(gtfs_obj, trip_ids) {
   
   gtfs_obj
 }
-
 
 #' Filter a gtfs feed so that it only contains trips that pass a given area
 #' 

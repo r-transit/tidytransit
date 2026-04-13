@@ -60,7 +60,8 @@
 #' @importFrom data.table data.table rbindlist
 #' @export
 validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
-  
+  file_spec <- field_spec <- file_provided_status <- field_provided_status <- validation_details <- NULL
+
   # input checking
   if(!inherits(gtfs_obj, "gtfs") && !inherits(gtfs_obj, "list")) {
     stop("gtfs_obj must be a gtfs or list object")

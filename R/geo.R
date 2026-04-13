@@ -131,7 +131,7 @@ prep_dist_mtrx = function(dist_list) {
 #' @importFrom dplyr filter as_tibble summarise mutate bind_rows group_by_at
 #' @export
 stop_group_distances = function(gtfs_stops, by = "stop_name", max_only = FALSE) {
-  distances <- NULL
+  distances <- stop_lon <- stop_lat <- stop_id <- NULL
   if(!by %in% colnames(gtfs_stops)) {
     stop("column ", by, " does not exist in ", deparse(substitute(gtfs_stops)), call. = FALSE)
   }
@@ -168,6 +168,7 @@ stop_group_distances = function(gtfs_stops, by = "stop_name", max_only = FALSE) 
 #' @importFrom geodist geodist
 #' @importFrom dplyr as_tibble bind_rows
 stop_group_dists_max_only = function(gtfs_single_stops, gtfs_multip_stops, BY) {
+  stop_lon <- stop_lat <- NULL
   gtfs_single_stops$dist_max <- 0
   gtfs_multip_stops$dist_max <- 0
   

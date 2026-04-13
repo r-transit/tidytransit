@@ -234,7 +234,7 @@ raptor_core = function(journeys_init,
   raptor_min_departure_time <- raptor_max_departure_time <- marked <- travel_time <- NULL
   departure_time_num <- arrival_time_num <- marked_departure_time_num <- from_stop_id <- to_stop_id <- NULL
   raptor_departure_time <- raptor_arrival_time <- transfers <- transfer_type <- min_transfer_time <- NULL
-  from_trip_id <- to_trip_id <- arrival_trip_id <- pickup_type <- drop_off_type <- NULL
+  from_trip_id <- to_trip_id <- arrival_trip_id <- pickup_type <- drop_off_type <- trip_id <- NULL
 
   # from_stop_id: input value, rptr_dep...: actual stop_id after initial transfer
   rptr_colnames = c("to_stop_id", "marked", "raptor_arrival_time", "arrival_trip_id",
@@ -415,7 +415,7 @@ raptor_core = function(journeys_init,
 }
 
 setup_stop_times = function(stop_times, arrival, time_window) {
-  arrival_time_num <- departure_time_num <- . <- NULL
+  arrival_time <- departure_time <- arrival_time_num <- departure_time_num <- . <- NULL
   pickup_type <- drop_off_type <- NULL
   
   stop_times_dt = as.data.table(replace_NA_times(stop_times))

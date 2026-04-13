@@ -27,7 +27,7 @@ set_servicepattern <- function(gtfs_obj, id_prefix = "s_", hash_algo = "md5", ha
   stopifnot(is.numeric(hash_length), length(hash_length) == 1)
   
   # find servicepattern_ids for all services
-  servicepattern_id <- NULL # prevents CMD check note on non-visible binding
+  servicepattern_id <- service_id <- NULL # prevents CMD check note on non-visible binding
   service_patterns <- gtfs_obj$.$dates_services %>% 
     group_by(service_id) %>%
     summarise(

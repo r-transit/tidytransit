@@ -33,7 +33,7 @@ get_stop_frequency <- function(gtfs_obj,
                                end_time = "22:00:00",
                                service_ids = NULL,
                                by_route = TRUE) {
-  n_deps <- direction_id <- NULL
+  n_deps <- direction_id <- trip_id <- service_id <- departure_time <- arrival_time <- stop_id <- route_id <- NULL
   
   if(is.character(start_time)) start_time <- hhmmss_to_seconds(start_time)
   if(is.character(end_time)) end_time <- hhmmss_to_seconds(end_time)
@@ -107,7 +107,7 @@ get_route_frequency <- function(gtfs_obj,
                                 start_time = "06:00:00",
                                 end_time = "22:00:00",
                                 service_ids = NULL) {
-  n_departures <- mean_headway <- NULL
+  n_departures <- mean_headway <- route_id <- NULL
   if(feed_has_non_empty_table(gtfs_obj, "frequencies")) {  
     message("This feed already contains a pre-calculated frequencies data.frame, consider using that.") 
   } 
