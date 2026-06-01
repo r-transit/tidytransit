@@ -8,7 +8,8 @@ filter_feed_by_date(
   gtfs_obj,
   extract_date,
   min_departure_time,
-  max_arrival_time
+  max_arrival_time,
+  include_parent_stations = TRUE
 )
 }
 \arguments{
