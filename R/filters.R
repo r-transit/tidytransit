@@ -70,7 +70,7 @@ filter_feed_by_trips = function(gtfs_obj, trip_ids, include_parent_stations = TR
   if (include_parent_stations) {
     some_stops <- some_stops |> bind_rows(gtfs_obj$stops |> filter(stop_id %in% some_stops$parent_station & !(stop_id %in% some_stops$stop_id)))
   }
-  gtfs_obj $ stops <- some_stops
+  gtfs_obj$stops <- some_stops
   
   gtfs_obj$.$dates_services <- gtfs_obj$.$dates_services[which(gtfs_obj$.$dates_services$service_id %in% service_ids),]
   if(feed_contains(gtfs_obj, "calendar")) {
