@@ -17,7 +17,7 @@
 #' select_route_id <- sample_n(nyc$routes, 1) %>% pull(route_id)
 #' filtered_stops_df <- filter_stops(nyc, select_service_id, select_route_id)
 #' }
-filter_stops <- function(gtfs_obj, service_ids, route_ids, include_parent_stations = TRUE) {
+filter_stops <- function(gtfs_obj, service_ids, route_ids, include_parent_stations = FALSE) {
   service_id <- route_id <- stop_id <- trip_id <- NULL
   some_trips <- filter(gtfs_obj$trips, 
                        service_id %in% service_ids &
@@ -54,7 +54,7 @@ filter_stops <- function(gtfs_obj, service_ids, route_ids, include_parent_statio
 #' 
 #' @seealso [filter_feed_by_date()], [filter_feed_by_area()], [filter_feed_by_stops()]
 #' @export
-filter_feed_by_trips = function(gtfs_obj, trip_ids, include_parent_stations = TRUE) {
+filter_feed_by_trips = function(gtfs_obj, trip_ids, include_parent_stations = FALSE) {
   route_ids = gtfs_obj$trips[which(gtfs_obj$trips$trip_id %in% trip_ids),]
   route_ids <- unique(route_ids$route_id)
   
@@ -105,7 +105,7 @@ filter_feed_by_trips = function(gtfs_obj, trip_ids, include_parent_stations = TR
 #' @seealso [filter_feed_by_date()], [filter_feed_by_stops()], [filter_feed_by_trips()]
 #' @importFrom sf st_crs st_set_agr st_intersection st_geometry st_transform st_bbox
 #' @export
-filter_feed_by_area <- function(gtfs_obj, area, include_parent_stations = TRUE) {
+filter_feed_by_area <- function(gtfs_obj, area, include_parent_stations = FALSE) {
   if(inherits(gtfs_obj$stops, "sf") && inherits(area, "sf")) {
     if(st_crs(gtfs_obj$stops) != st_crs(area)) {
       stop("feed and area are not in the same coordinate reference system")
@@ -146,7 +146,7 @@ filter_feed_by_area <- function(gtfs_obj, area, include_parent_stations = TRUE) 
 #' 
 #' @seealso [filter_feed_by_date()], [filter_feed_by_area()], [filter_feed_by_trips()]
 #' @export
-filter_feed_by_stops = function(gtfs_obj, stop_ids = NULL, stop_names = NULL, include_parent_stations = TRUE) {
+filter_feed_by_stops = function(gtfs_obj, stop_ids = NULL, stop_names = NULL, include_parent_stations = FALSE) {
   if(inherits(stop_ids, "sf")) {
     stop("Please use filter_feed_by_area with sf objects")
   }
@@ -176,7 +176,7 @@ filter_feed_by_stops = function(gtfs_obj, stop_ids = NULL, stop_names = NULL, in
 #' @importFrom dplyr as_tibble
 #' @export
 filter_feed_by_date = function(gtfs_obj, extract_date,
-                               min_departure_time, max_arrival_time, include_parent_stations = TRUE) {
+                               min_departure_time, max_arrival_time, include_parent_stations = FALSE) {
   st = filter_stop_times(gtfs_obj, extract_date, min_departure_time, max_arrival_time)
   st <- as_tibble(st)
   attributes(st)$stops <- NULL

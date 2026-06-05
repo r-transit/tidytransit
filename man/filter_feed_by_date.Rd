@@ -9,7 +9,7 @@ filter_feed_by_date(
   extract_date,
   min_departure_time,
   max_arrival_time,
-  include_parent_stations = TRUE
+  include_parent_stations = FALSE
 )
 }
 \arguments{

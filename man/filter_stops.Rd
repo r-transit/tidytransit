@@ -4,7 +4,7 @@
 \alias{filter_stops}
 \title{Get a set of stops for a given set of service ids and route ids}
 \usage{
-filter_stops(gtfs_obj, service_ids, route_ids, include_parent_stations = TRUE)
+filter_stops(gtfs_obj, service_ids, route_ids, include_parent_stations = FALSE)
 }
 \arguments{
 \item{gtfs_obj}{gtfs feed (tidygtfs object)}

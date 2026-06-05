@@ -8,7 +8,7 @@ filter_feed_by_stops(
   gtfs_obj,
   stop_ids = NULL,
   stop_names = NULL,
-  include_parent_stations = TRUE
+  include_parent_stations = FALSE
 )
 }
 \arguments{

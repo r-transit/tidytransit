@@ -4,7 +4,7 @@
 \alias{filter_feed_by_trips}
 \title{Filter a gtfs feed so that it only contains a given set of trips}
 \usage{
-filter_feed_by_trips(gtfs_obj, trip_ids, include_parent_stations = TRUE)
+filter_feed_by_trips(gtfs_obj, trip_ids, include_parent_stations = FALSE)
 }
 \arguments{
 \item{gtfs_obj}{gtfs feed (tidygtfs object)}
