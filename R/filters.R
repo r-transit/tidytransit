@@ -26,18 +26,11 @@ filter_stops <- function(gtfs_obj, service_ids, route_ids, include_parent_statio
   some_stop_times <- filter(gtfs_obj$stop_times,
                             trip_id %in% some_trips$trip_id) 
   
-  some_stops <- filter(gtfs_obj$stops,
-                       stop_id %in% some_stop_times$stop_id)
-  if(include_parent_stations) {
-    some_stops <- some_stops |> 
-      bind_rows(
-        gtfs$stops |> 
-          filter(
-            stop_id %in% some_stops$parent_station 
-            & !(stop_id %in% some_stops$stop_id)
-          )
-      )
-  }
+  some_stops <- filter(
+    gtfs_obj$stops,
+    stop_id %in% some_stop_times$stop_id | 
+    (include_parent_stations & stop_id %in% gtfs_obj$stops$parent_station[gtfs_obj$stops$stop_id %in% some_stop_times$stop_id])
+  )
   
   return(some_stops)
 }
@@ -66,10 +59,11 @@ filter_feed_by_trips = function(gtfs_obj, trip_ids, include_parent_stations = FA
   # other
   trip_stop_ids = gtfs_obj$stop_times$stop_id
   service_ids = unique(gtfs_obj$trips$service_id)
-  some_stops <- gtfs_obj$stops[which(gtfs_obj$stops$stop_id %in% trip_stop_ids),]
-  if (include_parent_stations) {
-    some_stops <- some_stops |> bind_rows(gtfs_obj$stops |> filter(stop_id %in% some_stops$parent_station & !(stop_id %in% some_stops$stop_id)))
-  }
+  some_stops <- filter(
+    gtfs_obj$stops,
+    stop_id %in% trip_stop_ids | 
+    (include_parent_stations & stop_id %in% gtfs_obj$stops$parent_station[gtfs_obj$stops$stop_id %in% trip_stop_ids])
+  )
   gtfs_obj$stops <- some_stops
   
   gtfs_obj$.$dates_services <- gtfs_obj$.$dates_services[which(gtfs_obj$.$dates_services$service_id %in% service_ids),]
