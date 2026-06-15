@@ -164,6 +164,7 @@ filter_feed_by_stops = function(gtfs_obj, stop_ids = NULL, stop_names = NULL, in
 #' @inherit filter_feed_by_trips description return
 #' 
 #' @inheritParams filter_stop_times
+#' @param include_parent_stations whether to include stops refered in the parent_station column or not
 #' 
 #' @seealso [filter_feed_by_area()], [filter_feed_by_stops()], [filter_feed_by_trips()]
 #' 
