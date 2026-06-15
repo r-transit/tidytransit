@@ -15,7 +15,7 @@ A data frame with 136 rows and 2 variables:
 \url{https://gist.github.com/derhuerst/b0243339e22c310bee2386388151e11e}
 }
 \usage{
-route_type_names
+data(route_type_names)
 }
 \description{
 Extended GTFS Route Types: https://developers.google.com/transit/gtfs/reference/extended-route-types

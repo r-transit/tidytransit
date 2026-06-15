@@ -8,7 +8,7 @@
 An object of class \code{tidygtfs} (inherits from \code{gtfs}) of length 18.
 }
 \usage{
-gtfs_duke
+data(gtfs_duke)
 }
 \description{
 Data obtained from
