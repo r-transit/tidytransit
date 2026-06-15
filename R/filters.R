@@ -122,7 +122,7 @@ filter_feed_by_area <- function(gtfs_obj, area, include_parent_stations = FALSE)
     stop_ids <- unique(stop_ids$stop_id)
   }
   
-  filter_feed_by_stops(gtfs_obj, stop_ids, include_parent_stations)
+  filter_feed_by_stops(gtfs_obj, stop_ids = stop_ids, include_parent_stations = include_parent_stations)
 }
 
 #' Filter a gtfs feed so that it only contains trips that pass the given stops
