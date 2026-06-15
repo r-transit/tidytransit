@@ -200,6 +200,19 @@ test_that("stops cluster", {
   expect_s3_class(g_nyc2, "tidygtfs")
 })
 
+test_that("stops cluster test include_parent_stations", {
+  skip_on_cran()
+  
+  g_nyc = read_gtfs(system.file("extdata", "nyc_subway.zip", package = "tidytransit"))
+  g_nyc2_no_parent <- filter_feed_by_area(g_nyc, c(-74.0144, 40.7402, -73.9581, 40.7696), include_parent_stations = FALSE)
+  expect_true("101N" %in% g_nyc2_no_parent$stops$stop_id)
+  expect_false("101" %in% g_nyc2_no_parent$stops$stop_id)
+
+  g_nyc2_with_parent <- filter_feed_by_area(g_nyc, c(-74.0144, 40.7402, -73.9581, 40.7696), include_parent_stations = TRUE)
+  expect_true("101N" %in% g_nyc2_with_parent$stops$stop_id)
+  expect_true("101" %in% g_nyc2_with_parent$stops$stop_id)
+})
+
 test_that("handle feeds with geojson",{
   locations_path = system.file("extdata", "locations_feed.zip", package = "tidytransit")
   gtfsio_tmpdir = tempfile("gtfsio")

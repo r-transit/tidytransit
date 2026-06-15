@@ -30,6 +30,18 @@ test_that("filter_stops", {
   expect_equal(nrow(fs2), 0)
 })
 
+test_that("filter_stops_include_parent_stations", {
+  g = read_gtfs(system.file("extdata", "routing.zip", package = "tidytransit"))
+
+  fs1_no_parent = filter_stops(g, service_ids = "WEEK", route_ids = c("lineA", "lineD"), include_parent_stations = FALSE)
+  expect_true("stop1a" %in% fs1_no_parent$stop_id)
+  expect_false("stop1" %in% fs1_no_parent$stop_id)
+
+  fs1_with_parent = filter_stops(g, service_ids = "WEEK", route_ids = c("lineA", "lineD"), include_parent_stations = TRUE)
+  expect_true("stop1a" %in% fs1_with_parent$stop_id)
+  expect_true("stop1" %in% fs1_with_parent$stop_id)
+})
+
 test_that("filter_feed_by_stops", {
   g = read_gtfs(system.file("extdata", "routing.zip", package = "tidytransit"))
   g_sf = gtfs_as_sf(g)
@@ -50,6 +62,18 @@ test_that("filter_feed_by_stops", {
   expect_error(filter_feed_by_stops(g, "xyz"), "stop_ids found in stops table: xyz")
   expect_error(filter_feed_by_stops(g, "xyz", "XYZ"), "Please provide either stop_ids or stop_names")
   expect_error(filter_feed_by_stops(g), "Please provide either stop_ids or stop_names")
+})
+
+test_that("filter_feed_by_stops_include_parent_stations", {
+  g = read_gtfs(system.file("extdata", "routing.zip", package = "tidytransit"))
+  
+  f1_no_parent = filter_feed_by_stops(g, stop_ids = c("stop1a"), include_parent_stations = FALSE)
+  expect_true("stop1a" %in% f1_no_parent$stops$stop_id)
+  expect_false("stop1" %in% f1_no_parent$stops$stop_id)
+  
+  f1_with_parent = filter_feed_by_stops(g, stop_ids = c("stop1a"), include_parent_stations = TRUE)
+  expect_true("stop1a" %in% f1_with_parent$stops$stop_id)
+  expect_true("stop1" %in% f1_with_parent$stops$stop_id)
 })
 
 test_that("filter_feed with shapes", {
@@ -93,6 +117,20 @@ test_that("filter_feed_by_date", {
   expect_s3_class(g2$stop_times, "tbl_df")
 })
 
+test_that("filter_feed_by_date_include_parent_stations", {
+  skip_on_cran()
+  g0 = read_gtfs(system.file("extdata", "nyc_subway.zip",
+                             package = "tidytransit"))
+  
+  f1_no_parent = filter_feed_by_date(g0, "2018-06-28", include_parent_stations = FALSE)
+  expect_true("101N" %in% f1_no_parent$stops$stop_id)
+  expect_false("101" %in% f1_no_parent$stops$stop_id)
+  
+  f1_with_parent = filter_feed_by_date(g0, "2018-06-28", include_parent_stations = TRUE)
+  expect_true("101N" %in% f1_with_parent$stops$stop_id)
+  expect_true("101" %in% f1_with_parent$stops$stop_id)
+})
+
 test_that("feed_contains, feed_has_non_empty_table", {
   g = gtfs_duke
   expect_false(feed_contains(g, "dates_services"))
@@ -111,3 +149,24 @@ test_that("feed_contains, feed_has_non_empty_table", {
   g <- set_servicepattern(g)
   expect_true(feed_contains.(g, "servicepatterns"))
 })
+
+test_that("filter_feed_by_trips", {
+  g = read_gtfs(system.file("extdata", "routing.zip", package = "tidytransit"))
+  some_trips = c("routeA1", "routeD1")
+  f1 = filter_feed_by_trips(g, some_trips)
+  expect_equal(sort(unique(f1$trips$trip_id)), sort(some_trips))
+})
+
+test_that("filter_feed_by_trips_include_parent_stations", {
+  g = read_gtfs(system.file("extdata", "routing.zip", package = "tidytransit"))
+  some_trips = c("routeA1")
+  f1_no_transfers = filter_feed_by_trips(g, some_trips, include_parent_stations = FALSE)
+  expect_true("stop1a" %in% f1_no_transfers$stops$stop_id)
+  expect_false("stop1" %in% f1_no_transfers$stops$stop_id)
+
+  f1_transfers = filter_feed_by_trips(g, some_trips, include_parent_stations = TRUE)
+  expect_true("stop1a" %in% f1_transfers$stops$stop_id)
+  expect_true("stop1" %in% f1_transfers$stops$stop_id)
+})
+
+
