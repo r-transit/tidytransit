@@ -7,7 +7,7 @@ those trips are kept.
 ## Usage
 
 ``` r
-filter_feed_by_area(gtfs_obj, area)
+filter_feed_by_area(gtfs_obj, area, include_parent_stations = FALSE)
 ```
 
 ## Arguments
@@ -20,6 +20,10 @@ filter_feed_by_area(gtfs_obj, area)
 
   all trips passing through this area are kept. Either a bounding box
   (numeric vector with xmin, ymin, xmax, ymax) or a sf object.
+
+- include_parent_stations:
+
+  whether to include stops refered in the parent_station column or not
 
 ## Value
 

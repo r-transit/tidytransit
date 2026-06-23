@@ -139,6 +139,9 @@ library(data.table)
 #> The following objects are masked from ‘package:dplyr’:
 #> 
 #>     between, first, last
+#> The following object is masked from ‘package:base’:
+#> 
+#>     %notin%
 shortest_travel_times <- setDT(rptr)[order(travel_time_incl_walk)][, .SD[1], by = "to_stop_id"]
 hist(shortest_travel_times$travel_time, breaks = seq(0,2*60)*60)
 

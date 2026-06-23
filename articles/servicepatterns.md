@@ -25,6 +25,7 @@ directly from the MTA’s website. Note that some routes and services have
 been removed from the feed to reduce package size.
 
 ``` r
+
 local_gtfs_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
 gtfs <- read_gtfs(local_gtfs_path)
 # gtfs <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
@@ -35,6 +36,7 @@ indicates which `service_id` runs on which date. This is later useful
 for linking dates and trips via `service_id`.
 
 ``` r
+
 head(gtfs$.$dates_services)
 ```
 
@@ -53,6 +55,7 @@ and holidays. With a calendar table we know the weekday and possible
 holidays for each date. We’ll use a minimal example with two holidays.
 
 ``` r
+
 holidays = tribble(~date, ~holiday,
   ymd("2018-07-04"), "Independence Day",
   ymd("2018-09-03"), "Labor Day")
@@ -91,6 +94,7 @@ usability of service patterns depends largely on the feed and its
 complexity.
 
 ``` r
+
 gtfs <- set_servicepattern(gtfs)
 ```
 
@@ -99,6 +103,7 @@ each `servicepattern_id` to an existing `service_id` (and by extension
 `trip_id`).
 
 ``` r
+
 head(gtfs$.$servicepatterns)
 ```
 
@@ -117,6 +122,7 @@ connects dates and service patterns (like `dates_services`). We can
 compare the number of service patterns to the number of services.
 
 ``` r
+
 head(gtfs$.$dates_servicepatterns)
 ```
 
@@ -131,6 +137,7 @@ head(gtfs$.$dates_servicepatterns)
     ## 6 2018-06-29 s_e25d6ca
 
 ``` r
+
 # number of service ids used
 n_services <- length(unique(gtfs$trips$service_id)) # 52
 
@@ -152,6 +159,7 @@ We’ll now try to figure out usable names for those patterns. A good way
 to start is visualising the data.
 
 ``` r
+
 date_servicepattern_table <- gtfs$.$dates_servicepatterns %>% left_join(calendar, by = "date")
 
 ggplot(date_servicepattern_table) + theme_bw() + 
@@ -173,6 +181,7 @@ heuristics. However, the workflow depends largely on the feed and its
 structure. You might also consider setting names completely manually.
 
 ``` r
+
 suggest_servicepattern_name = function(dates, calendar) {
   servicepattern_calendar = tibble(date = dates) %>% left_join(calendar, by = "date")
   
@@ -238,6 +247,7 @@ We’ll apply this function to our service patterns and create a table
 with ids and names.
 
 ``` r
+
 servicepattern_names = gtfs$.$dates_servicepatterns %>% 
   group_by(servicepattern_id) %>% 
   summarise(
@@ -263,6 +273,7 @@ different patterns. The original services can be plotted similarly
 (given it’s not too many) by using `dates_services` and `service_id`.
 
 ``` r
+
 dates = gtfs$.$dates_servicepatterns
 dates$wday <- lubridate::wday(dates$date, label = TRUE, abbr = TRUE, week_start = 7)
 dates$week_nr <- lubridate::week(dates$date)
@@ -289,6 +300,7 @@ ggplot(dates) + theme_bw() +
 We can plot the number of trips for each day as a calendar heat map.
 
 ``` r
+
 trips_servicepattern = left_join(select(gtfs$trips, trip_id, service_id), gtfs$.$servicepatterns, by = "service_id")
 trip_dates = left_join(gtfs$.$dates_servicepatterns, trips_servicepattern, by = "servicepattern_id", relationship = "many-to-many")
 

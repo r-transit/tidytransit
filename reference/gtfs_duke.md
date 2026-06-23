@@ -6,7 +6,7 @@ Data obtained from
 ## Usage
 
 ``` r
-gtfs_duke
+data(gtfs_duke)
 ```
 
 ## Format

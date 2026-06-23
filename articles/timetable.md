@@ -12,6 +12,7 @@ It is provided as a sample feed with tidytransit but you can read it
 directly from the MTA’s website.
 
 ``` r
+
 local_gtfs_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
 gtfs <- read_gtfs(local_gtfs_path)
 # gtfs <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
@@ -26,6 +27,7 @@ display where a vehicle comes from on the timetable we need to create a
 new column in `gtfs$trips` which we’ll call `trip_origin`.
 
 ``` r
+
 # get the id of the first stop in the trip's stop sequence
 first_stop_id <- gtfs$stop_times %>% 
   group_by(trip_id) %>% 
@@ -42,6 +44,7 @@ gtfs$trips <- left_join(gtfs$trips, trip_origins, by = "trip_id")
 ```
 
 ``` r
+
 gtfs$trips %>%
   select(route_id, trip_origin) %>%
   head()
@@ -61,6 +64,7 @@ In case `trip_headsign` does not exist in the feed it can be generated
 similarly to `trip_origin`:
 
 ``` r
+
 if(!exists("trip_headsign", where = gtfs$trips)) {
   # get the last id of the trip's stop sequence
   trip_headsigns <- gtfs$stop_times %>% 
@@ -82,6 +86,7 @@ cover different platforms and thus have multiple stop_ids in the stops
 table.
 
 ``` r
+
 stop_ids <- gtfs$stops %>% 
   filter(stop_name == "Times Sq - 42 St") %>% 
   select(stop_id)
@@ -100,6 +105,7 @@ this by joining the stop_ids we’ve selected to the stop_times data frame
 and then to the trips data frame.
 
 ``` r
+
 departures <- stop_ids %>% 
   inner_join(gtfs$stop_times %>% 
                select(trip_id, arrival_time, 
@@ -120,6 +126,7 @@ Each trip belongs to a route, and the route short name can be added to
 the departures by joining the trips data frame with `gtfs$routes`.
 
 ``` r
+
 departures <- departures %>% 
   left_join(gtfs$routes %>% 
               select(route_id, 
@@ -132,6 +139,7 @@ and time at which each train departs from Times Square for every
 possible schedule of service.
 
 ``` r
+
 departures %>% 
   select(arrival_time,
          departure_time,
@@ -156,6 +164,7 @@ calculated `dates_services` data frame, we can filter trips to a given
 date of interest.
 
 ``` r
+
 head(gtfs$.$dates_services)
 ```
 
@@ -181,6 +190,7 @@ For example, for August 23rd 2018, a typical weekday, we can filter as
 follows:
 
 ``` r
+
 services_on_180823 <- gtfs$.$dates_services %>% 
   filter(date == "2018-08-23") %>% 
   select(service_id)
@@ -194,6 +204,7 @@ idea how to handle other dates and questions about schedules have a look
 at the `servicepatterns` vignette.
 
 ``` r
+
 departures_180823 %>%
   arrange(departure_time, stop_id, route_short_name) %>% 
   select(departure_time, stop_id, route_short_name, trip_headsign) %>% 
@@ -240,6 +251,7 @@ trip_headsign and route. We can use the route colors provided in the
 feed.
 
 ``` r
+
 route_colors <- gtfs$routes %>% select(route_id, route_short_name, route_color)
 route_colors$route_color[which(route_colors$route_color == "")] <- "454545"
 route_colors <- setNames(paste0("#", route_colors$route_color), route_colors$route_short_name)
@@ -261,6 +273,7 @@ separate for different stop_ids. The following plot shows all departures
 for stop_ids 127N and 127S from 7 to 8 AM.
 
 ``` r
+
 departures_180823_sub_7to8 <- departures_180823 %>% 
   filter(stop_id %in% c("127N", "127S")) %>% 
   filter(departure_time >= hms::hms(hours = 7) & departure_time <= hms::hms(hours = 8))

@@ -11,7 +11,8 @@ filter_feed_by_date(
   gtfs_obj,
   extract_date,
   min_departure_time,
-  max_arrival_time
+  max_arrival_time,
+  include_parent_stations = FALSE
 )
 ```
 
@@ -34,6 +35,10 @@ filter_feed_by_date(
 
   (optional) The latest arrival time. Can be given as "HH:MM:SS", hms
   object or numeric value in seconds.
+
+- include_parent_stations:
+
+  whether to include stops refered in the parent_station column or not
 
 ## Value
 

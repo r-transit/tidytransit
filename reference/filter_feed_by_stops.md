@@ -7,7 +7,12 @@ those trips are kept.
 ## Usage
 
 ``` r
-filter_feed_by_stops(gtfs_obj, stop_ids = NULL, stop_names = NULL)
+filter_feed_by_stops(
+  gtfs_obj,
+  stop_ids = NULL,
+  stop_names = NULL,
+  include_parent_stations = FALSE
+)
 ```
 
 ## Arguments
@@ -23,6 +28,10 @@ filter_feed_by_stops(gtfs_obj, stop_ids = NULL, stop_names = NULL)
 - stop_names:
 
   vector with stop_names (will be converted to stop_ids)
+
+- include_parent_stations:
+
+  whether to include stops refered in the parent_station column or not
 
 ## Value
 

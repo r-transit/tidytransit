@@ -6,7 +6,7 @@ https://developers.google.com/transit/gtfs/reference/extended-route-types
 ## Usage
 
 ``` r
-route_type_names
+data(route_type_names)
 ```
 
 ## Format

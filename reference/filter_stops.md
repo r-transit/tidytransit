@@ -5,7 +5,7 @@ Get a set of stops for a given set of service ids and route ids
 ## Usage
 
 ``` r
-filter_stops(gtfs_obj, service_ids, route_ids)
+filter_stops(gtfs_obj, service_ids, route_ids, include_parent_stations = FALSE)
 ```
 
 ## Arguments
@@ -21,6 +21,10 @@ filter_stops(gtfs_obj, service_ids, route_ids)
 - route_ids:
 
   the route_ids for which to get stops
+
+- include_parent_stations:
+
+  whether to include stops refered in the parent_station column or not
 
 ## Value
 

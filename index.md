@@ -35,12 +35,14 @@ This package requires a working installation of
 Install tidytransit from CRAN:
 
 ``` r
+
 install.packages('tidytransit')
 ```
 
 For the development version from Github:
 
 ``` r
+
 # install.packages("remotes")
 remotes::install_github("r-transit/tidytransit")
 ```
