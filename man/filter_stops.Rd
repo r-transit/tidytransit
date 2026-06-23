@@ -4,7 +4,7 @@
 \alias{filter_stops}
 \title{Get a set of stops for a given set of service ids and route ids}
 \usage{
-filter_stops(gtfs_obj, service_ids, route_ids)
+filter_stops(gtfs_obj, service_ids, route_ids, include_parent_stations = FALSE)
 }
 \arguments{
 \item{gtfs_obj}{gtfs feed (tidygtfs object)}
@@ -12,6 +12,8 @@ filter_stops(gtfs_obj, service_ids, route_ids)
 \item{service_ids}{the service for which to get stops}
 
 \item{route_ids}{the route_ids for which to get stops}
+
+\item{include_parent_stations}{whether to include stops refered in the parent_station column or not}
 }
 \value{
 stops table for a given service or route

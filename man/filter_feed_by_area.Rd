@@ -4,13 +4,15 @@
 \alias{filter_feed_by_area}
 \title{Filter a gtfs feed so that it only contains trips that pass a given area}
 \usage{
-filter_feed_by_area(gtfs_obj, area)
+filter_feed_by_area(gtfs_obj, area, include_parent_stations = FALSE)
 }
 \arguments{
 \item{gtfs_obj}{gtfs feed (tidygtfs object)}
 
 \item{area}{all trips passing through this area are kept. Either a bounding box
 (numeric vector with xmin, ymin, xmax, ymax) or a sf object.}
+
+\item{include_parent_stations}{whether to include stops refered in the parent_station column or not}
 }
 \value{
 tidygtfs object with filtered tables

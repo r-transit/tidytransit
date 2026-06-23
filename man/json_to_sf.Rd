@@ -13,6 +13,6 @@ json_to_sf(json_list)
 sf object
 }
 \description{
-The json object is written to a temporary file and re-read with \code{\link[sf:st_read]{sf::read_sf()}}.
+The json object is written to a temporary file and re-read with \code{\link[sf:read_sf]{sf::read_sf()}}.
 }
 \keyword{internal}

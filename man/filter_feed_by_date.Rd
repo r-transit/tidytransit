@@ -8,7 +8,8 @@ filter_feed_by_date(
   gtfs_obj,
   extract_date,
   min_departure_time,
-  max_arrival_time
+  max_arrival_time,
+  include_parent_stations = FALSE
 )
 }
 \arguments{
@@ -21,6 +22,8 @@ hms object or numeric value in seconds.}
 
 \item{max_arrival_time}{(optional) The latest arrival time. Can be given as "HH:MM:SS",
 hms object or numeric value in seconds.}
+
+\item{include_parent_stations}{whether to include stops refered in the parent_station column or not}
 }
 \value{
 tidygtfs object with filtered tables

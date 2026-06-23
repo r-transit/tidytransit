@@ -4,12 +4,14 @@
 \alias{filter_feed_by_trips}
 \title{Filter a gtfs feed so that it only contains a given set of trips}
 \usage{
-filter_feed_by_trips(gtfs_obj, trip_ids)
+filter_feed_by_trips(gtfs_obj, trip_ids, include_parent_stations = FALSE)
 }
 \arguments{
 \item{gtfs_obj}{gtfs feed (tidygtfs object)}
 
 \item{trip_ids}{vector with trip_ids}
+
+\item{include_parent_stations}{whether to include stops refered in the parent_station column or not}
 }
 \value{
 tidygtfs object with filtered tables
