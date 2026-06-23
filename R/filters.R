@@ -3,7 +3,8 @@
 #' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @param service_ids the service for which to get stops 
 #' @param route_ids the route_ids for which to get stops 
-#' @param include_parent_stations whether to include stops refered in the parent_station column or not
+#' @inheritParams filter_feed_by_trips
+#'
 #' @return stops table for a given service or route
 #' 
 #' @importFrom dplyr filter
@@ -59,12 +60,14 @@ filter_feed_by_trips = function(gtfs_obj, trip_ids, include_parent_stations = FA
   # other
   trip_stop_ids = gtfs_obj$stop_times$stop_id
   service_ids = unique(gtfs_obj$trips$service_id)
-  some_stops <- filter(
-    gtfs_obj$stops,
-    stop_id %in% trip_stop_ids | 
-    (include_parent_stations & stop_id %in% gtfs_obj$stops$parent_station[gtfs_obj$stops$stop_id %in% trip_stop_ids])
-  )
-  gtfs_obj$stops <- some_stops
+  .stop_index = gtfs_obj$stops$stop_id %in% trip_stop_ids 
+  
+  # include_parent_stations
+  if(include_parent_stations) {
+    parent_station_ids = gtfs_obj$stops$parent_station[gtfs_obj$stops$stop_id %in% trip_stop_ids]
+    .stop_index <- .stop_index | (gtfs_obj$stops$stop_id %in% parent_station_ids)
+  }
+  gtfs_obj$stops <- gtfs_obj$stops[.stop_index,]
   
   gtfs_obj$.$dates_services <- gtfs_obj$.$dates_services[which(gtfs_obj$.$dates_services$service_id %in% service_ids),]
   if(feed_contains(gtfs_obj, "calendar")) {
@@ -95,7 +98,8 @@ filter_feed_by_trips = function(gtfs_obj, trip_ids, include_parent_stations = FA
 #' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @param area all trips passing through this area are kept. Either a bounding box 
 #'             (numeric vector with xmin, ymin, xmax, ymax) or a sf object.
-#' @param include_parent_stations whether to include stops refered in the parent_station column or not
+#' @inheritParams filter_feed_by_trips
+#' 
 #' @seealso [filter_feed_by_date()], [filter_feed_by_stops()], [filter_feed_by_trips()]
 #' @importFrom sf st_crs st_set_agr st_intersection st_geometry st_transform st_bbox
 #' @export
@@ -136,7 +140,7 @@ filter_feed_by_area <- function(gtfs_obj, area, include_parent_stations = FALSE)
 #' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @param stop_ids vector with stop_ids. You can either provide stop_ids or stop_names 
 #' @param stop_names vector with stop_names (will be converted to stop_ids)
-#' @param include_parent_stations whether to include stops refered in the parent_station column or not
+#' @inheritParams filter_feed_by_trips
 #' 
 #' @seealso [filter_feed_by_date()], [filter_feed_by_area()], [filter_feed_by_trips()]
 #' @export
@@ -164,7 +168,7 @@ filter_feed_by_stops = function(gtfs_obj, stop_ids = NULL, stop_names = NULL, in
 #' @inherit filter_feed_by_trips description return
 #' 
 #' @inheritParams filter_stop_times
-#' @param include_parent_stations whether to include stops refered in the parent_station column or not
+#' @inheritParams filter_feed_by_trips
 #' 
 #' @seealso [filter_feed_by_area()], [filter_feed_by_stops()], [filter_feed_by_trips()]
 #' 
