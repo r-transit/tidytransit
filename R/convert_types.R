@@ -8,16 +8,23 @@
 #' @return gtfs_list with converted (overwritten) columns in tables
 #' @keywords internal
 convert_types <- function(gtfs_list, conversion_table, conversion_function) {
+  issues = NULL
   for(i in seq_len(nrow(conversion_table))) {
     file = conversion_table$file[i]
     field_name = conversion_table$Field_Name[i]
     if(feed_contains(gtfs_list, file)) {
       if(!is.null(gtfs_list[[file]][[field_name]])) {
         stopifnot(inherits(gtfs_list[[file]], "data.table"))
-        gtfs_list[[file]][, c(field_name) := conversion_function(get(field_name))]
+        withCallingHandlers({
+          gtfs_list[[file]][, c(field_name) := conversion_function(get(field_name))]
+        }, warning = function(w) {
+          issues <<- c(issues, paste0(w$message, "\n(in file ", file, ", field ", field_name, ")"))
+          invokeRestart("muffleWarning")
+        })
       }
     }
   }
+  gtfs_list <- add_tidygtfs_issue(gtfs_list, issues)
   return(gtfs_list)
 }
 

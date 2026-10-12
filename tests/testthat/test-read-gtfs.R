@@ -108,6 +108,12 @@ test_that("NA times", {
   expect_equal(g$stop_times$departure_time[c(23,19,4)], rep(hms::hms(NA), 3))
 })
 
+test_that("non-standard times", {
+  expect_warning(
+    read_gtfs(system.file("extdata", "routing-nonstandard-times.zip", package = "tidytransit")),
+    "Cannot parse times like: 07:10 AM, 07:15 AM, XYZ, 07:28 AM, 07:37 AM\n(in file stop_times, field arrival_time)", fixed = TRUE)
+})
+
 test_that("non-unique stop_ids", {
   g1 = read_gtfs(system.file("extdata", "routing.zip", package = "tidytransit"))
   g1$stops$stop_id[1] <- "stop1a"

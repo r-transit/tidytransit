@@ -57,7 +57,7 @@ gtfs_to_tidygtfs = function(gtfs_list, files = NULL) {
   # gtfs class base structure
   if(!is.null(attr(x, "tidygtfs_issues"))) {
     for(msg in attr(x, "tidygtfs_issues")) {
-      warning(msg)
+      warning(msg, call. = FALSE)
     }
     message("The returned object is not a tidygtfs object, you can use as_tidygtfs() after fixing the issue.")
     attributes(x)$tidygtfs_issues <- NULL
@@ -132,6 +132,7 @@ is_geojson = function(gtfs_table_name) {
 }
 
 add_tidygtfs_issue = function(x, msg) {
+  if(is.null(msg)) return(x)
   stopifnot(is.character(msg))
   attr(x, "tidygtfs_issues") <- c(attr(x, "tidygtfs_issues"), msg)
   x

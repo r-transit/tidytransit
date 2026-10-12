@@ -11,7 +11,17 @@ hhmmss_to_hms <- function(time_strings) {
   
   if(any(is.na(time_seconds) & !empty_strings)) {
     # strings are not in HH:MM:SS format
-    time_seconds = hhmmss_to_sec_split(time_strings)
+    time_seconds = suppressWarnings(hhmmss_to_sec_split(time_strings))
+    if(any(is.na(time_seconds) & !empty_strings)) {
+      time_seconds = suppressWarnings(hhmmss_to_sec_split_2(time_strings))
+    }
+  }
+  if(any(is.na(time_seconds) & !empty_strings)) {
+    ex = unique(time_strings[is.na(time_seconds) & !empty_strings])
+    if(length(ex) > 5) ex <- c(ex[1:5], "...")
+    warning("Cannot parse times like: ", toString(ex[1:min(5, length(ex))]), 
+            call. = FALSE)
+    return(time_strings) 
   }
   time_seconds[empty_strings] <- NA
   
@@ -38,6 +48,15 @@ hhmmss_to_sec_split <- function(hhmmss_str) {
   })
   seconds[nchar(hhmmss_str) == 0] <- NA_real_
   return(seconds)  
+}
+
+# Fallback function to convert strings like 5:02
+hhmmss_to_sec_split_2 <- function(hhmmss_str) {
+  seconds = sapply(strsplit(hhmmss_str, ":"), function(Y) {
+    sum(as.numeric(Y) * c(3600, 60))
+  })
+  seconds[nchar(hhmmss_str) == 0] <- NA_real_
+  return(seconds)
 }
 
 hms_to_hhmmss = function(vec) {
