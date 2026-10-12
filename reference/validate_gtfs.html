@@ -90,7 +90,7 @@ calendar covering a reasonable period).</p>
 as documented in <a href="https://gtfs.org/documentation/schedule/reference/" class="external-link">
 GTFS Schedule Reference</a>:</p><ul><li><p>GTFS feeds are considered valid if they include all required files
 and fields. If a required file/field is missing the function (optionally)
-raises a warning.</p></li>
+raises a warning. A file without any data or only a header row is considered missing.</p></li>
 <li><p>Optional files/fields are listed in the reference above but are not
 required, thus no warning is raised if they are missing.</p></li>
 <li><p>Extra files/fields are those who are not listed in the reference
@@ -146,7 +146,7 @@ present, however, it becomes optional and <code>calendar_dates.txt</code>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

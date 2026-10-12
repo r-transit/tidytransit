@@ -48,7 +48,8 @@ Reference](https://gtfs.org/documentation/schedule/reference/):
 
 - GTFS feeds are considered valid if they include all required files and
   fields. If a required file/field is missing the function (optionally)
-  raises a warning.
+  raises a warning. A file without any data or only a header row is
+  considered missing.
 
 - Optional files/fields are listed in the reference above but are not
   required, thus no warning is raised if they are missing.

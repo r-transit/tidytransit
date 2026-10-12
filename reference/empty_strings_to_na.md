@@ -17,7 +17,8 @@ empty_strings_to_na(gtfs_obj)
 
 ## Value
 
-a gtfs_obj where all empty strings in tables have been replaced with NA
+a gtfs_obj where all empty strings in tables have been replaced with
+`NA`
 
 ## See also
 

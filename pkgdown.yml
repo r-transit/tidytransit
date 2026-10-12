@@ -1,12 +1,12 @@
 pandoc: 3.8.3
-pkgdown: 2.2.0
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   frequency: frequency.html
   introduction: introduction.html
   servicepatterns: servicepatterns.html
   timetable: timetable.html
-last_built: 2026-06-23T08:34Z
+last_built: 2026-10-12T12:39Z
 urls:
   reference: https://r-transit.github.io/tidytransit/reference
   article: https://r-transit.github.io/tidytransit/articles
