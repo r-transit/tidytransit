@@ -24,7 +24,7 @@
 #' \itemize{
 #'   \item GTFS feeds are considered valid if they include all required files
 #'     and fields. If a required file/field is missing the function (optionally)
-#'     raises a warning.
+#'     raises a warning. A file without any data or only a header row is considered missing. 
 #'   \item Optional files/fields are listed in the reference above but are not
 #'     required, thus no warning is raised if they are missing.
 #'   \item Extra files/fields are those who are not listed in the reference
@@ -105,7 +105,8 @@ validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
 
       documented_fields <- file_metadata$fields$Field_Name
       
-      file_provided_status  <- file %in% names(gtfs_obj)
+      # file_provided=TRUE only if there's data present
+      file_provided_status  <- file %in% names(gtfs_obj) && nrow(gtfs_obj[[file]]) > 0
       file_spec             <- file_metadata$File_Presence
       field                 <- c(
         documented_fields,
@@ -190,7 +191,6 @@ validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
   files_problems <- validation_result[validation_details == "missing_req_file"]
   
   if(nrow(files_problems) >= 1 && warnings) {
-    
     warning(
       paste0(
         "Invalid feed. Missing required file(s): ",
@@ -198,9 +198,8 @@ validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
         # currently only txt files required
       )
     )
-    
   }
-
+  
   fields_problems <- validation_result[validation_details == "missing_req_field"]
   
   if(nrow(fields_problems) >= 1 && warnings) {

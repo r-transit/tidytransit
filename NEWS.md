@@ -1,6 +1,7 @@
 # tidytransit (dev)
 
 - add `include_parent_stations` to `filter_feed` functions [#231](https://github.com/r-transit/tidytransit/pull/231)
+- `validate_gtfs()` only considers files as "provided" if there is at least one data row
 
 
 # tidytransit 1.8.0
