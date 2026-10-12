@@ -20,7 +20,7 @@ test_that("warning for duplicated primary key", {
   g3$stops$stop_id[1] <- "stop1"
   g3$routes$route_id[1] <- "lineA"
   
-  g4 = as_tidygtfs(g3)  
+  g4 = as_tidygtfs(g3)
   expect_s3_class(g4, "tidygtfs")  
 })
 

@@ -29,13 +29,21 @@ set_dates_services <- function(gtfs_obj) {
   
   feed_dates = list()
   if(has_calendar) {
-    feed_dates[["calendar"]] <- c(gtfs_obj[["calendar"]]$start_date, gtfs_obj$calendar$end_date)
+    if(all(is.na(gtfs_obj[["calendar"]]$start_date))) {
+      gtfs_obj <- add_tidygtfs_issue(gtfs_obj, "No valid start_date found in calendar.txt")
+      return(gtfs_obj)
+    }
+    if(all(is.na(gtfs_obj[["calendar"]]$end_date))) {
+      gtfs_obj <- add_tidygtfs_issue(gtfs_obj, "No valid end_date found in calendar.txt")
+      return(gtfs_obj)
+    }
+    feed_dates[["calendar"]] <- unique(c(gtfs_obj[["calendar"]]$start_date, gtfs_obj$calendar$end_date))
   }
   if(has_calendar_dates) {
     feed_dates[["calendar_dates"]] <- gtfs_obj[["calendar_dates"]]$date[which(gtfs_obj$calendar_dates$exception_type != 2)]
   }
   if(length(feed_dates[["calendar"]]) == 0 && length(feed_dates[["calendar_dates"]]) == 0) {
-    warning("No valid dates defined in feed")
+    gtfs_obj <- add_tidygtfs_issue(gtfs_obj, "No valid dates defined in feed")
     return(gtfs_obj)
   }
   
@@ -46,7 +54,7 @@ set_dates_services <- function(gtfs_obj) {
         "wednesday", "thursday", "friday", 
         "saturday")[as.POSIXlt(date)$wday + 1]
     }
-    
+
     min_date = min(feed_dates[["calendar"]], na.rm = TRUE)
     max_date = max(feed_dates[["calendar"]], na.rm = TRUE)
     # get first and last date of a feed
@@ -57,8 +65,9 @@ set_dates_services <- function(gtfs_obj) {
     .availability = NULL
     .days = c("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday") 
     .cns_nondays = colnames(gtfs_obj[["calendar"]])[which(!colnames(gtfs_obj[["calendar"]]) %in% .days)]
+
     service_ids_weekdays = gtfs_obj[["calendar"]] %>% 
-      reshape(gc, direction = "long", idvar = .cns_nondays, varying = .days, 
+      reshape(direction = "long", idvar = .cns_nondays, varying = .days, 
               v.names = ".availability", timevar = "weekday_num") %>% 
       left_join(data.frame(weekday_num = 1:7, weekday = .days), "weekday_num") %>% 
       filter(.availability == 1) %>% 
@@ -76,22 +85,22 @@ set_dates_services <- function(gtfs_obj) {
     if(has_calendar_dates) {
       # add calendar_dates additions (1)
       additions = gtfs_obj[["calendar_dates"]] %>% 
-        filter(exception_type == 1) %>% 
+        filter(exception_type %in% 1) %>% # %in% prevents NA collision with ==
         select(-exception_type)
       if(nrow(additions) > 0) {
         date_service_df <- full_join(date_service_df, 
-                                            additions, 
-                                            by=c("date", "service_id"))
+                                     additions, 
+                                     by=c("date", "service_id"))
       }
       
       # remove calendar_dates exceptions (2) 
       exceptions = gtfs_obj[["calendar_dates"]] %>% 
-        filter(exception_type == 2) %>% 
+        filter(exception_type %in% 2) %>% 
         select(-exception_type)
       if(nrow(exceptions) > 0) {
         date_service_df <- anti_join(date_service_df, 
-                                            exceptions, 
-                                            by=c("date", "service_id"))
+                                     exceptions, 
+                                     by=c("date", "service_id"))
       }
     }
   } else if(has_calendar_dates) { # only calendar_dates.txt

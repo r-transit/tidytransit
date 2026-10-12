@@ -123,3 +123,19 @@ test_that("non-unique stop_ids", {
   expect_s3_class(g2, "gtfs")
   expect_false(inherits(g2, "tidygtfs"))
 })
+
+test_that("missing start_date/end_date", {
+  g0 = read_gtfs(system.file("extdata", "routing.zip", package = "tidytransit"))
+  
+  g1 = g0
+  g1$calendar$start_date <- NA
+  tmppath = tempfile(fileext = ".zip")
+  write_gtfs(g1, tmppath)
+  expect_warning(read_gtfs(tmppath), "No valid start_date found in calendar.txt")
+
+  g2 = g0
+  g2$calendar$end_date <- NA
+  tmppath = tempfile(fileext = ".zip")
+  write_gtfs(g2, tmppath)
+  expect_warning(read_gtfs(tmppath), "No valid end_date found in calendar.txt")
+})

@@ -40,16 +40,7 @@ as_tidygtfs.tidygtfs = function(x, ...) {
 gtfs_to_tidygtfs = function(gtfs_list, files = NULL) {
   # validate files and fields
   validation_result = validate_gtfs(gtfs_list, files = files)
-  
-  # check unique ids
-  tbl_with_duplicated_ids = duplicated_primary_keys(gtfs_list)
-  if(any(tbl_with_duplicated_ids)) {
-    warning("Duplicated ids found in: ", 
-            paste(names(tbl_with_duplicated_ids[tbl_with_duplicated_ids]), collapse = ", "), "\n",
-            "The returned object is not a tidygtfs object, you can use as_tidygtfs() after fixing the issue.")
-    return(gtfs_list)
-  }
-  
+
   # prep tidygtfs columns
   x = prepare_tidygtfs_fields(gtfs_list)
   
@@ -64,9 +55,19 @@ gtfs_to_tidygtfs = function(gtfs_list, files = NULL) {
   x <- empty_strings_to_na(x)
   
   # gtfs class base structure
-  x <- new_gtfs(x)
-  class(x) <- c("tidygtfs", "gtfs", "list")
-  attributes(x)$validation_result <- validation_result
+  if(!is.null(attr(x, "tidygtfs_issues"))) {
+    for(msg in attr(x, "tidygtfs_issues")) {
+      warning(msg)
+    }
+    message("The returned object is not a tidygtfs object, you can use as_tidygtfs() after fixing the issue.",
+            call. = FALSE)
+    attributes(x)$tidygtfs_issues <- NULL
+    return(x)
+  } else {
+    x <- new_gtfs(x)
+    class(x) <- c("tidygtfs", "gtfs", "list")
+    attributes(x)$validation_result <- validation_result
+  }
   
   return(x)
 }
@@ -76,6 +77,7 @@ prepare_tidygtfs_fields = function(gtfs_obj) {
   gtfs_obj <- convert_char_to_date(gtfs_obj)
   gtfs_obj <- convert_char_to_int(gtfs_obj)
   gtfs_obj <- convert_char_to_num(gtfs_obj)
+  gtfs_obj <- check_duplicated_primary_kes(gtfs_obj)
   return(gtfs_obj)
 }
 
@@ -83,6 +85,16 @@ prepare_tidygtfs_tables = function(gtfs_obj) {
   gtfs_obj$. <- list()
   gtfs_obj <- set_dates_services(gtfs_obj)
   return(gtfs_obj)
+}
+
+check_duplicated_primary_kes = function(gtfs_obj) {
+  tbl_with_duplicated_ids = duplicated_primary_keys(gtfs_obj)
+  if(any(tbl_with_duplicated_ids)) {
+    msg = paste0("Duplicated ids found in: ", 
+                 paste(names(tbl_with_duplicated_ids[tbl_with_duplicated_ids]), collapse = ", "))
+    gtfs_obj <- add_tidygtfs_issue(gtfs_obj, msg)
+  }
+  gtfs_obj
 }
 
 # convert tables ####
@@ -118,4 +130,10 @@ is_geojson = function(gtfs_table_name) {
   isjson = (gtfs_reference_filetype[gtfs_table_name] == "geojson") %in% TRUE
   names(isjson) <- gtfs_table_name
   return(isjson)
+}
+
+add_tidygtfs_issue = function(x, msg) {
+  stopifnot(is.character(msg))
+  attr(x, "tidygtfs_issues") <- c(attr(x, "tidygtfs_issues"), msg)
+  x
 }
