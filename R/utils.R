@@ -26,7 +26,7 @@ feed_has_non_empty_table <- function(gtfs_obj, table_name) {
 #' 
 #' @param gtfs_obj gtfs feed (tidygtfs object)
 #'  
-#' @return a gtfs_obj where all empty strings in tables have been replaced with NA
+#' @return a gtfs_obj where all empty strings in tables have been replaced with `NA`
 #' @seealso [na_to_empty_strings()]
 #' @export
 empty_strings_to_na = function(gtfs_obj) {
@@ -35,10 +35,15 @@ empty_strings_to_na = function(gtfs_obj) {
   tbl_names <- setdiff(tbl_names, c(".", non_txt))
   for(tbl in tbl_names) {
     if(inherits(gtfs_obj[[tbl]], "data.frame")) {
-      gtfs_obj[[tbl]][gtfs_obj[[tbl]] == ""] <- NA
+      for(i in seq_len(ncol(gtfs_obj[[tbl]]))) {
+        obj_col = gtfs_obj[[tbl]][[i]]
+        if(is.character(obj_col)) {
+          gtfs_obj[[tbl]][!is.na(obj_col) & obj_col == "", i] <- NA
+        }
+      }
     }
   }
-  gtfs_obj
+  return(gtfs_obj)
 }
 
 #' Convert NA values to empty strings ("")

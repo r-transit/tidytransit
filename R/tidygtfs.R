@@ -59,8 +59,7 @@ gtfs_to_tidygtfs = function(gtfs_list, files = NULL) {
     for(msg in attr(x, "tidygtfs_issues")) {
       warning(msg)
     }
-    message("The returned object is not a tidygtfs object, you can use as_tidygtfs() after fixing the issue.",
-            call. = FALSE)
+    message("The returned object is not a tidygtfs object, you can use as_tidygtfs() after fixing the issue.")
     attributes(x)$tidygtfs_issues <- NULL
     return(x)
   } else {

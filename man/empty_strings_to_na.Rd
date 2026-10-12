@@ -10,7 +10,7 @@ empty_strings_to_na(gtfs_obj)
 \item{gtfs_obj}{gtfs feed (tidygtfs object)}
 }
 \value{
-a gtfs_obj where all empty strings in tables have been replaced with NA
+a gtfs_obj where all empty strings in tables have been replaced with \code{NA}
 }
 \description{
 \code{\link[=read_gtfs]{read_gtfs()}} converts all empty strings to \code{NA} values
