@@ -126,8 +126,8 @@ travel_times = function(filtered_stop_times,
     transfers = attributes(filtered_stop_times)$transfers
     stops = stops_as_dt(attributes(filtered_stop_times)$stops)
   }
-  assert_logical(return_coords, "return_coords")
-  assert_logical(return_DT, "return_DT")
+  assert_logical1(return_coords, "return_coords")
+  assert_logical1(return_DT, "return_DT")
 
   # get stop_ids of names
   stop_ids = stops$stop_id[which(stops$stop_name %in% stop_names)]

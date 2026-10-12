@@ -20,7 +20,6 @@ feed_has_non_empty_table <- function(gtfs_obj, table_name) {
   return(FALSE)
 }
 
-
 #' Convert empty strings ("") to NA values in all gtfs tables
 #' 
 #' [read_gtfs()] converts all empty strings to `NA` values
@@ -85,4 +84,10 @@ spread_dt = function(df_long, key_colname, value_colname) {
   dt = as.data.table(df_long)
   setnames(dt, key_colname, "....key....")
   dcast(dt, ... ~ ....key...., value.var = value_colname)
+}
+
+assert_logical1 = function(x, name) {
+  if(!(length(x) == 1 && is.logical(x) && (x %in% c(TRUE, FALSE)))) {
+    stop(name, " must be TRUE or FALSE", call. = FALSE)
+  }
 }

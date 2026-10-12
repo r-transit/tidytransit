@@ -37,12 +37,6 @@ assert_routable_feed = function(g) {
   invisible(TRUE)
 }
 
-assert_logical = function(x, name) {
-  if(!(length(x) == 1 && is.logical(x) && (x %in% c(TRUE, FALSE)))) {
-    stop(name, " must be TRUE or FALSE", call. = FALSE)
-  }
-}
-
 # travel_times()
 catch_deprecated_max_departure_time = function(...) {
   dots = list(...)

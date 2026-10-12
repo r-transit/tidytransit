@@ -58,10 +58,11 @@ test_that("filter_feed_by_stops", {
   expect_equal(f1$trips, f2$trips)
   expect_equal(f1$trips, f3$trips)
   
-  expect_error(filter_feed_by_area(g, 1:3), "bbox_area must be a numeric vector of length four, with xmin, ymin, xmax and ymax values")
-  expect_error(filter_feed_by_stops(g, "xyz"), "stop_ids found in stops table: xyz")
-  expect_error(filter_feed_by_stops(g, "xyz", "XYZ"), "Please provide either stop_ids or stop_names")
-  expect_error(filter_feed_by_stops(g), "Please provide either stop_ids or stop_names")
+  expect_error(filter_feed_by_area(g, 1:3), 
+               "`area` bounding box must be a numeric vector of length four, with xmin, ymin, xmax and ymax values")
+  expect_error(filter_feed_by_stops(g, "xyz"), "stop_ids not found in stops table: xyz")
+  expect_error(filter_feed_by_stops(g, "xyz", "XYZ"), "Please provide either `stop_ids` or `stop_names`")
+  expect_error(filter_feed_by_stops(g), "Please provide either `stop_ids` or `stop_names`")
 })
 
 test_that("filter_feed_by_stops_include_parent_stations", {
@@ -86,9 +87,9 @@ test_that("filter_feed with shapes", {
   area_wgs84 = sf::st_transform(area_epsg, 4326)
   
   expect_error(filter_feed_by_stops(gtfs_duke, area_wgs84), 
-               "Please use filter_feed_by_area with sf objects")
+               "Please use `filter_feed_by_area()` with a georeferenced gtfs feed", fixed = TRUE)
   expect_error(filter_feed_by_area(duke_wgs84, area_epsg), 
-               "feed and area are not in the same coordinate reference system")
+               "gtfs stops and `area` are not in the same coordinate reference system")
   duke_0_0 = filter_feed_by_stops(gtfs_duke, "2382815")
   
   duke_0_1 = filter_feed_by_area(gtfs_duke, area_wgs84)
@@ -168,5 +169,3 @@ test_that("filter_feed_by_trips_include_parent_stations", {
   expect_true("stop1a" %in% f1_transfers$stops$stop_id)
   expect_true("stop1" %in% f1_transfers$stops$stop_id)
 })
-
-

@@ -109,8 +109,8 @@ raptor = function(stop_times,
   # 1) check and params ####
   # use data.table for faster manipulation
   # copy necessary as we change/rename columns by reference
-  assert_logical(arrival, "arrival")
-  assert_logical(separate_starts, "separate_starts")
+  assert_logical1(arrival, "arrival")
+  assert_logical1(separate_starts, "separate_starts")
   assert_routable_stop_times(stop_times)
   time_window = setup_time_window(time_range, arrival, stop_times)
   keep <- setup_keep(keep)
