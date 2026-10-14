@@ -59,14 +59,12 @@ gtfs_to_tidygtfs = function(gtfs_list, files = NULL) {
     for(msg in attr(x, "tidygtfs_issues")) {
       warning(msg, call. = FALSE)
     }
-    message("The returned object is not a tidygtfs object, you can use as_tidygtfs() after fixing the issue.")
     attributes(x)$tidygtfs_issues <- NULL
-    return(x)
-  } else {
-    x <- new_gtfs(x)
-    class(x) <- c("tidygtfs", "gtfs", "list")
-    attributes(x)$validation_result <- validation_result
   }
+
+  x <- new_gtfs(x)
+  class(x) <- c("tidygtfs", "gtfs", "list")
+  attributes(x)$validation_result <- validation_result
 
   return(x)
 }

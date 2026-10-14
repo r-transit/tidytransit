@@ -122,9 +122,8 @@ test_that("non-unique stop_ids", {
   expect_warning(read_gtfs(tmppath), "Duplicated ids found in: stops, trips")
 
   g2 = suppressWarnings(read_gtfs(tmppath))
-
   expect_s3_class(g2, "gtfs")
-  expect_false(inherits(g2, "tidygtfs"))
+  expect_s3_class(g2, "tidygtfs")
 })
 
 test_that("missing start_date/end_date", {
