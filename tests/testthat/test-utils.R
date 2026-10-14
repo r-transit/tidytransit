@@ -5,10 +5,10 @@ test_that("summary.tidygtfs", {
   g2 <- set_servicepattern(g1)
   x2 = capture.output(summary(g2))
   expect_true(all(x1 == x2))
-  
+
   gag = list(agency = data.frame(agency_id = 1:10, agency_name = LETTERS[1:10]))
   expect_equal(agency_info(gag), "A, B, C ... 7 more")
-  
+
   g2 = gtfs_duke
   g2$frequencies <- data.frame(trip_id = "x", start_time = "x", end_time = "x", headway_secs = 0, exact_times = 0)
   expect_equal(capture.output(summary(g2))[5], "uses         stop_times and frequencies")
@@ -45,20 +45,20 @@ test_that("filter_stops_include_parent_stations", {
 test_that("filter_feed_by_stops", {
   g = read_gtfs(system.file("extdata", "routing.zip", package = "tidytransit"))
   g_sf = gtfs_as_sf(g)
-  
+
   bbox = c(7.4077, 46.9534, 7.40924, 46.95466)
   bbox_sf = sf::st_sf(geometry = sf::st_sfc(
-    sf::st_polygon(list(matrix(c(7.4077, 7.40783, 7.40924, 7.40906, 7.4077, 46.95457, 46.9534, 
-                 46.9535, 46.95466, 46.95457), nrow = 5)))), crs = 4326)
-  
+    sf::st_polygon(list(matrix(c(7.4077, 7.40783, 7.40924, 7.40906, 7.4077, 46.95457, 46.9534,
+                                 46.9535, 46.95466, 46.95457), nrow = 5)))), crs = 4326)
+
   f1 = suppressMessages(filter_feed_by_area(g_sf, bbox_sf))
   f2 = filter_feed_by_area(g, bbox)
-  f3 = filter_feed_by_stops(g, stop_names = "Six") 
+  f3 = filter_feed_by_stops(g, stop_names = "Six")
   expect_equal(f1$stop_times, f2$stop_times)
   expect_equal(f1$trips, f2$trips)
   expect_equal(f1$trips, f3$trips)
-  
-  expect_error(filter_feed_by_area(g, 1:3), 
+
+  expect_error(filter_feed_by_area(g, 1:3),
                "`area` bounding box must be a numeric vector of length four, with xmin, ymin, xmax and ymax values")
   expect_error(filter_feed_by_stops(g, "xyz"), "stop_ids not found in stops table: xyz")
   expect_error(filter_feed_by_stops(g, "xyz", "XYZ"), "Please provide either `stop_ids` or `stop_names`")
@@ -67,11 +67,11 @@ test_that("filter_feed_by_stops", {
 
 test_that("filter_feed_by_stops_include_parent_stations", {
   g = read_gtfs(system.file("extdata", "routing.zip", package = "tidytransit"))
-  
+
   f1_no_parent = filter_feed_by_stops(g, stop_ids = c("stop1a"), include_parent_stations = FALSE)
   expect_true("stop1a" %in% f1_no_parent$stops$stop_id)
   expect_false("stop1" %in% f1_no_parent$stops$stop_id)
-  
+
   f1_with_parent = filter_feed_by_stops(g, stop_ids = c("stop1a"), include_parent_stations = TRUE)
   expect_true("stop1a" %in% f1_with_parent$stops$stop_id)
   expect_true("stop1" %in% f1_with_parent$stops$stop_id)
@@ -80,23 +80,23 @@ test_that("filter_feed_by_stops_include_parent_stations", {
 test_that("filter_feed with shapes", {
   duke_wgs84 = gtfs_as_sf(gtfs_duke)
   duke_epsg = gtfs_as_sf(gtfs_duke, crs = 32119)
-  
-  area_epsg = duke_epsg$stops %>% 
+
+  area_epsg = duke_epsg$stops %>%
     filter(stop_id == "2382815") %>%
     sf::st_buffer(30)
   area_wgs84 = sf::st_transform(area_epsg, 4326)
-  
-  expect_error(filter_feed_by_stops(gtfs_duke, area_wgs84), 
+
+  expect_error(filter_feed_by_stops(gtfs_duke, area_wgs84),
                "Please use `filter_feed_by_area()` with a georeferenced gtfs feed", fixed = TRUE)
-  expect_error(filter_feed_by_area(duke_wgs84, area_epsg), 
+  expect_error(filter_feed_by_area(duke_wgs84, area_epsg),
                "gtfs stops and `area` are not in the same coordinate reference system")
   duke_0_0 = filter_feed_by_stops(gtfs_duke, "2382815")
-  
+
   duke_0_1 = filter_feed_by_area(gtfs_duke, area_wgs84)
   duke_0_2 = filter_feed_by_area(gtfs_duke, area_epsg)
   duke_1_1 = suppressMessages(filter_feed_by_area(duke_wgs84, area_wgs84))
   duke_2_2 = filter_feed_by_area(duke_epsg, area_epsg)
-  
+
   expect_equal(duke_0_1$trips, duke_0_0$trips)
   expect_equal(duke_0_2$trips, duke_0_0$trips)
   expect_equal(duke_1_1$trips, duke_0_0$trips)
@@ -113,7 +113,7 @@ test_that("filter_feed_by_date", {
 
   expect_lt(nrow(g1$stops), nrow(g0$stops))
   expect_lt(nrow(g2$stops), nrow(g0$stops))
-  
+
   expect_s3_class(g1$stop_times, "tbl_df")
   expect_s3_class(g2$stop_times, "tbl_df")
 })
@@ -122,11 +122,11 @@ test_that("filter_feed_by_date_include_parent_stations", {
   skip_on_cran()
   g0 = read_gtfs(system.file("extdata", "nyc_subway.zip",
                              package = "tidytransit"))
-  
+
   f1_no_parent = filter_feed_by_date(g0, "2018-06-28", include_parent_stations = FALSE)
   expect_true("101N" %in% f1_no_parent$stops$stop_id)
   expect_false("101" %in% f1_no_parent$stops$stop_id)
-  
+
   f1_with_parent = filter_feed_by_date(g0, "2018-06-28", include_parent_stations = TRUE)
   expect_true("101N" %in% f1_with_parent$stops$stop_id)
   expect_true("101" %in% f1_with_parent$stops$stop_id)
@@ -137,7 +137,7 @@ test_that("feed_contains, feed_has_non_empty_table", {
   expect_false(feed_contains(g, "dates_services"))
   expect_false(feed_has_non_empty_table(g, "dates_services"))
   expect_true(feed_contains.(g, "dates_services"))
-  
+
   expect_true(feed_contains(g, "calendar_dates"))
   expect_false(feed_contains.(g, "calendar_dates"))
   expect_false(feed_has_non_empty_table(g, "calendar_dates"))
@@ -145,7 +145,7 @@ test_that("feed_contains, feed_has_non_empty_table", {
   expect_true(feed_contains(g, "calendar"))
   expect_false(feed_contains.(g, "calendar"))
   expect_true(feed_has_non_empty_table(g, "calendar"))
-  
+
   expect_false(feed_contains.(g, "servicepatterns"))
   g <- set_servicepattern(g)
   expect_true(feed_contains.(g, "servicepatterns"))

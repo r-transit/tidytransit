@@ -14,13 +14,13 @@ test_that("convert_char_to_hms() works with valid data", {
   )
 
   gtest <- convert_char_to_hms(gtest)
-  
+
   expect_s3_class(gtest$stop_times$arrival_time, "hms")
   expect_s3_class(gtest$stop_times$departure_time, "hms")
   expect_false(is.na(gtest$stop_times$arrival_time[3]))
-  expect_equal(gtest$stop_times$departure_time[3], 
+  expect_equal(gtest$stop_times$departure_time[3],
                hms::hms(26 * 3600 + 10 * 60 + 30))
-  
+
   expect_s3_class(gtest$frequencies$start_time, "hms")
   expect_s3_class(gtest$frequencies$end_time, "hms")
 })
@@ -40,13 +40,13 @@ test_that("set_dates_services() uses the right dates", {
     end_date = as.Date("2018-01-31")) # wednesday
 
   date_service <- set_dates_services(gtest)$.$dates_services
-  
+
   expect_true(as.Date("2018-01-01") %in% date_service$date)
   expect_false(as.Date("2018-01-02") %in% date_service$date)
   expect_true(as.Date("2018-01-31") %in% date_service$date)
 })
 
-test_that("set_dates_services() works with additions and exceptions", { 
+test_that("set_dates_services() works with additions and exceptions", {
   gtest <- create_empty_gtfs_obj()
   gtest$calendar <- dplyr::tibble(
     service_id = c("wdays", "wend"),
@@ -57,49 +57,49 @@ test_that("set_dates_services() works with additions and exceptions", {
     friday = c(1, 1),
     saturday = c(0, 1),
     sunday = c(0, 1),
-    start_date = c(as.Date("2018-02-01"), 
+    start_date = c(as.Date("2018-02-01"),
                    as.Date("2018-04-01")),
-    end_date = c(as.Date("2018-04-30"), 
+    end_date = c(as.Date("2018-04-30"),
                  as.Date("2018-04-30")))
   gtest$calendar_dates <- dplyr::tibble(
     service_id = c("wdays", "wend"),
     date = c(as.Date("2018-03-14"), as.Date("2018-02-26")),
     exception_type = c(2, 1)
   )
-  
+
   date_service <- set_dates_services(gtest)$.$dates_services
-  
+
   # exception
   mar14 <- date_service[
     date_service$date == as.Date("2018-06-13"),]
   expect_equal(nrow(mar14), 0)
-  
+
   # addition
   feb26 <- date_service[
     date_service$date == as.Date("2018-02-26"),] # monday
   expect_equal(nrow(feb26), 2)
-  
+
   # overlaps
   apr05 <- date_service[
     date_service$date == as.Date("2018-04-05"), ]
-  expect_equal(apr05 %>% dplyr::group_by(date) %>% 
-                 dplyr::count() %>% 
+  expect_equal(apr05 %>% dplyr::group_by(date) %>%
+                 dplyr::count() %>%
                  dplyr::pull(n), 1)
   apr06 <- date_service[
     date_service$date == as.Date("2018-04-06"), ] # friday
-  expect_equal(apr06 %>% 
-               dplyr::group_by(date) %>% 
-               dplyr::count() %>% 
-               dplyr::pull(n), 2)
-  
-  range <- date_service %>% 
-    dplyr::group_by(service_id) %>% 
+  expect_equal(apr06 %>%
+                 dplyr::group_by(date) %>%
+                 dplyr::count() %>%
+                 dplyr::pull(n), 2)
+
+  range <- date_service %>%
+    dplyr::group_by(service_id) %>%
     dplyr::summarise(min = min(date), max = max(date))
   expect_equal(range[
-    range$service_id == "wdays", "min"], 
+    range$service_id == "wdays", "min"],
     dplyr::tibble(min = as.Date("2018-02-01")))
   expect_equal(
-    range[range$service_id == "wend", "max"], 
+    range[range$service_id == "wend", "max"],
     dplyr::tibble(max = as.Date("2018-04-29")))
 })
 
@@ -118,20 +118,20 @@ test_that("set_dates_services w/o calendar", {
 
 test_that("interpolate stop_times", {
   st_seq = dplyr::as_tibble(rbind(
-    data.frame(trip_id = "A", stop_sequence = 1:4, 
+    data.frame(trip_id = "A", stop_sequence = 1:4,
                arrival_time = hms::hms(c(NA,2,NA,10)*60),
                departure_time = hms::hms(c(0,2,NA,NA)*60)
-               ),
-    data.frame(trip_id = "B", stop_sequence = 1:3, 
+    ),
+    data.frame(trip_id = "B", stop_sequence = 1:3,
                arrival_time = hms::hms(c(10,NA,20)*60),
                departure_time = hms::hms(c(10,NA,20)*60)
     ),
-    data.frame(trip_id = "C", stop_sequence = 1:3, 
+    data.frame(trip_id = "C", stop_sequence = 1:3,
                arrival_time = hms::hms(c(0,1,2)*60),
                departure_time = hms::hms(c(0,1,2)*60)
     )
   ))
-  
+
   st_shapes = st_seq
   st_shapes$shape_dist_traveled <- c(0,2,9,10, 0,0.1,3, 0,1,2)
   seq1 = interpolate_stop_times(st_seq)
@@ -141,10 +141,10 @@ test_that("interpolate stop_times", {
   expect_equal(as.numeric(shapes1$departure_time[c(3,6)]), 60*c(9, 10+0.1*((20-10)/3)))
   noshapes1 = interpolate_stop_times(st_shapes, use_shape_dist = FALSE)
   expect_equal(noshapes1$arrival_time, seq1$arrival_time)
-  
+
   .index = !is.na(st_seq$arrival_time) & !is.na(st_seq$departure_time)
-  expect_true(all(as.data.frame(st_seq)[.index,] == as.data.frame(seq1)[.index,]))  
-  
+  expect_true(all(as.data.frame(st_seq)[.index,] == as.data.frame(seq1)[.index,]))
+
   gtfs_duke2 = interpolate_stop_times(gtfs_duke)
   expect_equal(class(gtfs_duke2$stop_times), class(gtfs_duke$stop_times))
   expect_false(anyNA(gtfs_duke2$stop_times$arrival_time))

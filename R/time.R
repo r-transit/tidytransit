@@ -6,9 +6,9 @@
 hhmmss_to_hms <- function(time_strings) {
   if(inherits(time_strings, "hms")) { return(time_strings) }
   empty_strings = nchar(time_strings) == 0
-  
+
   time_seconds = suppressWarnings(hhmmss_to_seconds(time_strings))
-  
+
   if(any(is.na(time_seconds) & !empty_strings)) {
     # strings are not in HH:MM:SS format
     time_seconds = suppressWarnings(hhmmss_to_sec_split(time_strings))
@@ -19,12 +19,12 @@ hhmmss_to_hms <- function(time_strings) {
   if(any(is.na(time_seconds) & !empty_strings)) {
     ex = unique(time_strings[is.na(time_seconds) & !empty_strings])
     if(length(ex) > 5) ex <- c(ex[1:5], "...")
-    warning("Cannot parse times like: ", toString(ex[1:min(5, length(ex))]), 
+    warning("Cannot parse times like: ", toString(ex[1:min(5, length(ex))]),
             call. = FALSE)
-    return(time_strings) 
+    return(time_strings)
   }
   time_seconds[empty_strings] <- NA
-  
+
   return(new_hms(time_seconds))
 }
 
@@ -47,7 +47,7 @@ hhmmss_to_sec_split <- function(hhmmss_str) {
     sum(as.numeric(Y) * c(3600, 60, 1))
   })
   seconds[nchar(hhmmss_str) == 0] <- NA_real_
-  return(seconds)  
+  return(seconds)
 }
 
 # Fallback function to convert strings like 5:02
@@ -76,21 +76,21 @@ replace_NA_times = function(stop_times) {
 # interpolate stop_times ####
 
 #' Interpolate missing stop_times linearly
-#' 
+#'
 #' @param x tidygtfs object or stop_times table
-#' @param use_shape_dist If TRUE, use `shape_dist_traveled` column from the shapes table for 
-#'                       time interpolation (if that column is available). If FALSE or 
-#'                       `shape_dist_traveled` is missing, times are interpolated equally 
-#'                       between stops. 
+#' @param use_shape_dist If TRUE, use `shape_dist_traveled` column from the shapes table for
+#'                       time interpolation (if that column is available). If FALSE or
+#'                       `shape_dist_traveled` is missing, times are interpolated equally
+#'                       between stops.
 #' @return tidygtfs or stop_times with interpolated arrival and departure times
 #' @examples
 #' \dontrun{
 #' data(gtfs_duke)
 #' print(gtfs_duke$stop_times[1:5, 1:5])
-#' 
+#'
 #' gtfs_duke_2 = interpolate_stop_times(gtfs_duke)
 #' print(gtfs_duke_2$stop_times[1:5, 1:5])
-#' 
+#'
 #' gtfs_duke_3 = interpolate_stop_times(gtfs_duke, FALSE)
 #' print(gtfs_duke_3$stop_times[1:5, 1:5])
 #' }
@@ -104,7 +104,7 @@ interpolate_stop_times = function(x, use_shape_dist = TRUE) {
   } else {
     stoptimes = x
   }
-  
+
   stoptimes$....rowindex <- seq_len(nrow(stoptimes))
   if(!use_shape_dist || !("shape_dist_traveled" %in% colnames(stoptimes))) {
     stoptimes$....shape_dist_traveled <- stoptimes$stop_sequence
@@ -115,15 +115,15 @@ interpolate_stop_times = function(x, use_shape_dist = TRUE) {
   # bring times in long format
   times_interpolated = gather_dt(stoptimes, "....event_type", "....event_time", c("arrival_time", "departure_time"))
   setorder(times_interpolated, "trip_id", "stop_sequence", "....event_type")
-  
+
   # interpolate times
-  times_interpolated[, ....event_time := ceiling(approx_NA(as.numeric(....event_time), ....shape_dist_traveled)), 
+  times_interpolated[, ....event_time := ceiling(approx_NA(as.numeric(....event_time), ....shape_dist_traveled)),
                      by = "trip_id"]
 
   times_wide = times_interpolated %>%
     spread_dt("....event_type", "....event_time")
   setorder(times_wide, "....rowindex")
-  
+
   # return
   stoptimes <- as_tibble(times_wide)[,colnames(stoptimes)]
   attributes(stoptimes)$sorted <- NULL
@@ -143,9 +143,9 @@ approx_NA = function(values, x = NULL) {
   if(is.null(x)) {
     x <- seq_len(length(values))
   }
-  
+
   values_approx = stats::approx(x, values, x[is.na(values)], ties = "ordered")$y
   values[is.na(values)] <- values_approx
-  
+
   return(values)
 }

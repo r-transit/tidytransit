@@ -1,21 +1,21 @@
 #' Calculate distances between a given set of stops
-#' 
-#' @param gtfs_stops gtfs stops table either as data frame (with at least `stop_id`, 
+#'
+#' @param gtfs_stops gtfs stops table either as data frame (with at least `stop_id`,
 #'                   `stop_lon` and `stop_lat` columns) or as `sf` object.
-#' 
+#'
 #' @return Returns a data.frame with each row containing a pair of stop_ids (columns
 #'         `from_stop_id` and `to_stop_id`) and the `distance` between them (in meters)
-#'        
-#' @note The resulting data.frame has `nrow(gtfs_stops)^2` rows, distances calculations 
+#'
+#' @note The resulting data.frame has `nrow(gtfs_stops)^2` rows, distances calculations
 #'       among all stops for large feeds should be avoided.
-#'       
+#'
 #' @examples
 #' \dontrun{
 #' library(dplyr)
-#' 
+#'
 #' nyc_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
 #' nyc <- read_gtfs(nyc_path)
-#' 
+#'
 #' nyc$stops %>%
 #'   filter(stop_name == "Borough Hall") %>%
 #'   stop_distances() %>%
@@ -50,17 +50,17 @@ stop_distances = function(gtfs_stops) {
   } else {
     dist_matrix = geodist(gtfs_stops[,c("stop_id", "stop_lon", "stop_lat")])
   }
-  
+
   rownames(dist_matrix) <- gtfs_stops$stop_id
   colnames(dist_matrix) <- gtfs_stops$stop_id
   dist_matrix_df = as_tibble(dist_matrix, rownames = "from_stop_id")
-  
+
   # replace gather (no dependency on tidyr)
   # dists_gathered = gather(as_tibble(dist_matrix_df), "to_stop_id", "dist", -from_stop_id)
   dists = reshape(as.data.frame(dist_matrix_df), direction = "long",
-          idvar = "from_stop_id", timevar = "to_stop_id", v.names = "distance",
-          varying = dist_matrix_df$from_stop_id)
-  
+                  idvar = "from_stop_id", timevar = "to_stop_id", v.names = "distance",
+                  varying = dist_matrix_df$from_stop_id)
+
   dists$to_stop_id <- rep(dist_matrix_df[["from_stop_id"]], each = length(dist_matrix_df[["from_stop_id"]]))
   dists$distance <- as.numeric(dists[["distance"]])
 
@@ -93,25 +93,25 @@ prep_dist_mtrx = function(dist_list) {
 }
 
 #' Calculates distances among stop within the same group column
-#' 
+#'
 #' By default calculates distances among stop_ids with the same stop_name.
-#' 
+#'
 #' @inheritParams stop_distances
 #' @param by group column, default: "stop_name"
 #' @param max_only only return max distance among stops? (default `FALSE`). `TRUE` allows a
 #'   slightly faster calculation.
-#' 
+#'
 #' @returns data.frame with one row per group containing a distance matrix (distances),
-#'          number of stop ids within that group (n_stop_ids) and distance summary values 
+#'          number of stop ids within that group (n_stop_ids) and distance summary values
 #'          (dist_mean, dist_median and dist_max).
-#'          
-#' @examples 
+#'
+#' @examples
 #' \dontrun{
 #' library(dplyr)
-#' 
+#'
 #' nyc_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
 #' nyc <- read_gtfs(nyc_path)
-#' 
+#'
 #' stop_group_distances(nyc$stops)
 #' #> # A tibble: 380 × 6
 #' #>    stop_name   distances       n_stop_ids dist_mean dist_median dist_max
@@ -139,14 +139,14 @@ stop_group_distances = function(gtfs_stops, by = "stop_name", max_only = FALSE) 
     gtfs_stops <- sf_points_to_df(gtfs_stops, c("stop_lon", "stop_lat"), TRUE)
   }
   n_stops = table(gtfs_stops[[by]])
-  
+
   gtfs_single_stops = gtfs_stops[gtfs_stops[[by]] %in% names(n_stops)[n_stops == 1],]
   gtfs_multip_stops = gtfs_stops[gtfs_stops[[by]] %in% names(n_stops)[n_stops != 1],]
-  
+
   if(max_only) {
     return(stop_group_dists_max_only(gtfs_single_stops, gtfs_multip_stops, by))
   }
-  
+
   if(nrow(gtfs_multip_stops) > 0) {
     gtfs_multip_stops <- gtfs_multip_stops %>%
       group_by_at(by) %>%
@@ -157,8 +157,8 @@ stop_group_distances = function(gtfs_stops, by = "stop_name", max_only = FALSE) 
              dist_max = max(prep_dist_mtrx(distances))) %>% ungroup()
   }
 
-  gtfs_single_stops <- gtfs_single_stops %>% 
-    select(!!by) %>% 
+  gtfs_single_stops <- gtfs_single_stops %>%
+    select(!!by) %>%
     mutate(distances = list(matrix(0)), n_stop_ids = 1, dist_mean = 0, dist_median = 0, dist_max = 0)
 
   dists = as_tibble(bind_rows(gtfs_single_stops, gtfs_multip_stops))
@@ -171,37 +171,37 @@ stop_group_dists_max_only = function(gtfs_single_stops, gtfs_multip_stops, BY) {
   stop_lon <- stop_lat <- NULL
   gtfs_single_stops$dist_max <- 0
   gtfs_multip_stops$dist_max <- 0
-  
+
   if(nrow(gtfs_multip_stops) > 0) {
     dist_max <- NULL
     gtfs_multip_stops <- as.data.table(gtfs_multip_stops)
     gtfs_multip_stops[, dist_max := max(geodist(data.frame(stop_lon, stop_lat), measure = "cheap")), by = BY]
   }
-  
+
   dists = as_tibble(bind_rows(gtfs_single_stops, gtfs_multip_stops))
   dists[order(dists$dist_max, decreasing = TRUE),]
 }
 
 #' Cluster nearby stops within a group
-#' 
-#' Finds clusters of stops for each unique value in `group_col` (e.g. stop_name). Can 
+#'
+#' Finds clusters of stops for each unique value in `group_col` (e.g. stop_name). Can
 #' be used to find different groups of stops that share the same name but are located more
-#' than `max_dist` apart. `gtfs_stops` is assigned a new column (named `cluster_colname`) 
+#' than `max_dist` apart. `gtfs_stops` is assigned a new column (named `cluster_colname`)
 #' which contains the `group_col` value and the cluster number.
-#' 
+#'
 #' [stats::kmeans()] is used for clustering.
-#' 
-#' @param gtfs_stops Stops table of a gtfs object. It is also possible to pass a 
+#'
+#' @param gtfs_stops Stops table of a gtfs object. It is also possible to pass a
 #'                   tidygtfs object to enable piping.
 #' @param max_dist Only stop groups that have a maximum distance among them above this
 #'                 threshold (in meters) are clustered.
 #' @param group_col Clusters for are calculated for each set of stops with the same value
-#'                  in this column (default: stop_name) 
-#' @param cluster_colname Name of the new column name. Can be the same as group_col to overwrite. 
-#' 
-#' @return Returns a stops table with an added cluster column. If `gtfs_stops` is a tidygtfs object, a 
+#'                  in this column (default: stop_name)
+#' @param cluster_colname Name of the new column name. Can be the same as group_col to overwrite.
+#'
+#' @return Returns a stops table with an added cluster column. If `gtfs_stops` is a tidygtfs object, a
 #'         modified tidygtfs object is return
-#' 
+#'
 #' @importFrom stats kmeans
 #' @importFrom dplyr bind_rows
 #' @importFrom sf st_geometry
@@ -210,15 +210,15 @@ stop_group_dists_max_only = function(gtfs_single_stops, gtfs_multip_stops, BY) {
 #' nyc_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
 #' nyc <- read_gtfs(nyc_path)
 #' nyc <- cluster_stops(nyc)
-#' 
+#'
 #' # There are 6 stops with the name "86 St" that are far apart
-#' stops_86_St = nyc$stops %>% 
+#' stops_86_St = nyc$stops %>%
 #'   filter(stop_name == "86 St")
 #'
 #' table(stops_86_St$stop_name_cluster)
 #'
 #' stops_86_St %>% select(stop_id, stop_name, parent_station, stop_name_cluster) %>% head()
-#' 
+#'
 #' library(ggplot2)
 #' ggplot(stops_86_St) +
 #'   geom_point(aes(stop_lon, stop_lat, color = stop_name_cluster))
@@ -231,15 +231,15 @@ cluster_stops = function(gtfs_stops,
   if(inherits(gtfs_stops, "tidygtfs")) {
     gstops = gtfs_stops$stops
   } else {
-    gstops = gtfs_stops 
+    gstops = gtfs_stops
   }
-  
+
   is_sf = inherits(gstops, "sf")
   stops_clusters = lapply(unique(gstops[[group_col]]), function(sn) {
     stop_name_set = gstops[gstops[[group_col]] == sn,]
     stop_name_set[[cluster_colname]] <- sn
     if(nrow(stop_name_set) == 1) return(stop_name_set)
-    
+
     dists = stop_distances(stop_name_set)
     if(max(dists$distance) > max_dist) {
       if(is_sf) {
@@ -247,19 +247,19 @@ cluster_stops = function(gtfs_stops,
       } else {
         stop_name_lonlat = stop_name_set[,c("stop_lon", "stop_lat")]
       }
-      
+
       stops_unique_coords = unique(stop_name_lonlat)
       n_dists = min(length(unique(dists$distance)), nrow(stops_unique_coords))
       n_clusters = min(n_dists, nrow(stop_name_set)-1)
-      
+
       kms = kmeans(stop_name_lonlat, n_clusters)
-      
+
       stop_name_set[[cluster_colname]] <- paste0(sn, " [", kms$cluster, "]")
     }
     stop_name_set
   })
   stops_clusters = bind_rows(stops_clusters)
-  
+
   if(inherits(gtfs_stops, "tidygtfs")) {
     gtfs_stops$stops <- stops_clusters
     return(gtfs_stops)

@@ -11,7 +11,7 @@
 #' nyc <- read_gtfs(local_gtfs_path)
 #' plot(nyc)
 #' }
-#' 
+#'
 #' @importFrom graphics plot
 #' @export
 plot.tidygtfs <- function(x, ...) {
@@ -19,7 +19,7 @@ plot.tidygtfs <- function(x, ...) {
   if(!feed_contains(x, "stops")) {
     stop("Feed doesn't contain a stops table")
   }
-  x_stops <- x$stops 
+  x_stops <- x$stops
   if(!inherits(x$stops, "sf"))  x_stops <- stops_as_sf(x$stops)
 
   if(inherits(x$shapes, "sf")) {

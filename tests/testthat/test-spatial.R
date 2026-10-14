@@ -34,12 +34,12 @@ test_that("get_route_geometry", {
 
 test_that("route_geometry behaves as before", {
   route_geom <- get_route_geometry(duke_sf)
-  expect_equal(nrow(route_geom), 
+  expect_equal(nrow(route_geom),
                length(unique(duke_sf$routes$route_id)))
-  expect_equal(sort(route_geom$route_id), 
+  expect_equal(sort(route_geom$route_id),
                sort(duke_sf$routes$route_id))
   expect_length(unique(as.character(sf::st_geometry_type(route_geom$geometry))), 1)
-  expect_equal(as.character(sf::st_geometry_type(route_geom$geometry[1])), 
+  expect_equal(as.character(sf::st_geometry_type(route_geom$geometry[1])),
                "MULTILINESTRING")
 })
 
@@ -53,7 +53,7 @@ test_that("one shape per trip is returned", {
 test_that("crs is used", {
   duke_sf = gtfs_as_sf(gtfs_duke)
   expect_equal(st_crs(duke_sf$stops)$input, "EPSG:4326")
-  
+
   duke_sf_crs = gtfs_as_sf(gtfs_duke, crs = 3358)
   expect_equal(st_crs(duke_sf_crs$stops)$input, "EPSG:3358")
   expect_equal(st_crs(duke_sf_crs$shapes)$input, "EPSG:3358")
@@ -66,7 +66,7 @@ test_that("two shapes are returned even if trips use the same shape_id", {
   route_id = "12945"
   trip_ids = c("t_726295_b_19493_tn_37", "t_726295_b_19493_tn_39")
   shape_id = "p_531836"
-  
+
   trip_geom = get_trip_geometry(duke_sf, trip_ids)
   expect_equal(nrow(trip_geom), length(trip_ids))
   route_geom = get_route_geometry(duke_sf, route_ids = route_id)
@@ -88,7 +88,7 @@ test_that("plots work with and without shapes", {
 test_that("meaningful errors", {
   expect_error(get_route_geometry(gtfs_duke), "shapes not converted to sf, use gtfs_obj <- gtfs_as_sf(gtfs_obj)", fixed = TRUE)
   expect_error(get_trip_geometry(gtfs_duke), "shapes not converted to sf, use gtfs_obj <- gtfs_as_sf(gtfs_obj)", fixed = TRUE)
-  
+
   gtfs_as_sf(gtfs_duke, quiet = FALSE)
 })
 
@@ -98,10 +98,10 @@ test_that("sf_as_tbl", {
   duke_df = sf_as_tbl(duke_sf)
 
   expect_equal(duke_df$stops[colnames(gtfs_duke$stops)], gtfs_duke$stops, tolerance = 0.0001, check.attributes = FALSE)
-  
+
   x = duke_df$shapes[colnames(duke_00$shapes)] %>% arrange(shape_id, shape_pt_sequence)
   y = duke_00$shapes %>% arrange(shape_id, shape_pt_sequence)
-  
+
   expect_equal(x, y, tolerance = 0.001, check.attributes = FALSE)
 })
 
@@ -117,7 +117,7 @@ test_that("stop_distances", {
   dist_df = stop_distances(stopdist_df)
   stopdist_sf = stops_as_sf(stopdist_df)
   dist_sf = stop_distances(stopdist_sf)
-  
+
   expect_equal(colnames(dist_df), c("from_stop_id", "to_stop_id", "distance"))
   expect_equal(dist_df[,c("from_stop_id", "to_stop_id")], dist_sf[,c("from_stop_id", "to_stop_id")])
   diff = dist_df$distance - dist_sf$distance
@@ -130,7 +130,7 @@ test_that("geodist", {
   dist1 = geodist_list(xlon, xlat)
   expect_type(dist1, "list")
   expect_equal(length(dist1), 1)
-  
+
   x_sf = sf::st_as_sf(data.frame(lon = xlon, lat = xlat), coords = c("lon", "lat"), crs = 4326)
   dist2 = geodist_list_sf(x_sf)
   diff = dist1[[1]]-dist2[[1]]
@@ -143,24 +143,24 @@ test_that("stop_group_distances", {
   expect_equal(colnames(x), c("stop_name", "distances", "n_stop_ids", "dist_mean", "dist_median", "dist_max"))
   expect_true(is.matrix(x$distances[1][[1]]))
   expect_equal(x$n_stop_ids, c(3,2))
-  
+
   stopdist_df2 = stopdist_df
   colnames(stopdist_df2)[2] <- "stop_name_2"
   x2 = stop_group_distances(stopdist_df2, "stop_name_2")
   colnames(x2) <- colnames(x)
   expect_equal(x2, x)
-  
+
   stopdist_sf = stops_as_sf(stopdist_df)
   y = stop_group_distances(stopdist_sf)
   expect_equal(x,y)
-  expect_error(stop_group_distances(stopdist_sf, "stop_group"), 
+  expect_error(stop_group_distances(stopdist_sf, "stop_group"),
                "column stop_group does not exist in stopdist_sf")
 })
 
 test_that("stop_group_distances real feed", {
   skip_on_cran()
   g_nyc = read_gtfs(system.file("extdata", "nyc_subway.zip", package = "tidytransit"))
-  
+
   x1 = stop_group_distances(g_nyc$stops)
 
   g_nyc_sf = gtfs_as_sf(g_nyc)
@@ -172,14 +172,14 @@ test_that("stop_group_distances real feed", {
     expect_equal(x1[[col]], x2[[col]])
   }
   expect_error(stop_group_distances(g_nyc_sf, "unknown"), "column unknown does not exist in g_nyc_sf")
-  
+
   x3 = stop_group_distances(g_nyc$stops[c(1,4),], "stop_id")
-  expect_equal(nrow(x3), 2)  
+  expect_equal(nrow(x3), 2)
 })
 
 test_that("stops cluster", {
   skip_on_cran()
-  
+
   g_nyc = read_gtfs(system.file("extdata", "nyc_subway.zip", package = "tidytransit"))
   g_nyc2 <- filter_feed_by_area(g_nyc, c(-74.0144, 40.7402, -73.9581, 40.7696))
 
@@ -194,7 +194,7 @@ test_that("stops cluster", {
   g_nyc_sf <- gtfs_as_sf(g_nyc2)
   x4 = cluster_stops(g_nyc_sf$stops)
   expect_equal(length(unique(x1$stop_name_cluster)), length(unique(x4$stop_name_cluster)))
-  
+
   # piping gtfs_obj
   g_nyc2 = cluster_stops(g_nyc2)
   expect_s3_class(g_nyc2, "tidygtfs")
@@ -202,7 +202,7 @@ test_that("stops cluster", {
 
 test_that("stops cluster test include_parent_stations", {
   skip_on_cran()
-  
+
   g_nyc = read_gtfs(system.file("extdata", "nyc_subway.zip", package = "tidytransit"))
   g_nyc2_no_parent <- filter_feed_by_area(g_nyc, c(-74.0144, 40.7402, -73.9581, 40.7696), include_parent_stations = FALSE)
   expect_true("101N" %in% g_nyc2_no_parent$stops$stop_id)
@@ -220,39 +220,39 @@ test_that("handle feeds with geojson",{
   expect_true(feed_contains(gtfsio0, "locations"))
   expect_false(feed_has_non_empty_table(gtfsio0, "locations"))
   gtfsio::export_gtfs(gtfsio0, gtfsio_tmpdir, as_dir = TRUE)
-  
+
   # convert json/sf
   locations.geojson = file.path(gtfsio_tmpdir, "locations.geojson")
   sf_expected = sf::read_sf(locations.geojson)
   json_expected = jsonlite::read_json(locations.geojson)
-  
+
   sf_actual = json_to_sf(json_expected)
   expect_equal(sf_actual, sf_expected)
-  
+
   json_actual = sf_to_json(sf_actual, "locations")
   expect_equal(json_actual, json_expected)
   expect_equal(gtfsio0$locations, json_expected)
-  
+
   # read feed
   tidygtfs1 = read_gtfs(locations_path)
   expect_is(tidygtfs1[["locations"]], "sf")
   expect_equal(nrow(tidygtfs1[["locations"]]), 2)
-  
+
   tidygtfs2 = read_gtfs(locations_path, files = "locations")
   expect_equal(tidygtfs2$locations, tidygtfs1$locations)
-  
+
   # transform
   tidygtfs3 <- gtfs_transform(tidygtfs1, 2232)
   expect_equal(sf::st_crs(tidygtfs3$stops)$input, "EPSG:2232")
   expect_equal(sf::st_crs(tidygtfs3$shapes)$input, "EPSG:2232")
   expect_equal(sf::st_crs(tidygtfs3$locations)$input, "EPSG:2232")
-  
+
   # write and re-read feed
   tidygtfs_zip1 = tempfile("tidygtfs", fileext = ".zip")
   write_gtfs(tidygtfs1, tidygtfs_zip1)
   tidygtfs_zip2 = tempfile("tidygtfs", fileext = ".zip")
   write_gtfs(tidygtfs2, tidygtfs_zip2)
-  
+
   reread1 = read_gtfs(tidygtfs_zip1)
   expect_equal(reread1$locations, tidygtfs1$locations)
   reread2 = read_gtfs(tidygtfs_zip2, files = "locations")

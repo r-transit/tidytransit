@@ -17,9 +17,9 @@
 #'                            departure or arrival time has been set.
 #' @param stop_name Stop name for which travel times should be calculated. A vector with
 #'                  multiple names can be used.
-#' @param time_range Either a range in seconds or a vector containing the minimal and maximal 
-#'                   departure time (i.e. earliest and latest possible journey departure time) 
-#'                   as seconds or "HH:MM:SS" character. If `arrival` is TRUE, `time_range` 
+#' @param time_range Either a range in seconds or a vector containing the minimal and maximal
+#'                   departure time (i.e. earliest and latest possible journey departure time)
+#'                   as seconds or "HH:MM:SS" character. If `arrival` is TRUE, `time_range`
 #'                   describes the time window when journeys should end at `stop_name`.
 #' @param arrival If `FALSE` (default), all journeys _start_ from `stop_name`. If
 #'                `TRUE`, all journeys _end_ at `stop_name`.
@@ -27,10 +27,10 @@
 #' @param return_coords Returns stop coordinates (lon/lat) as columns if `TRUE`. Default is `FALSE`.
 #' @param return_DT travel_times() returns a data.table if `TRUE`. Default is `FALSE` which
 #'                  returns a `tibble/tbl_df`.
-#' @param stop_dist_check stop_names are not structured identifiers like stop_ids or 
-#'                        parent_stations, so it is possible that stops with the same name are 
+#' @param stop_dist_check stop_names are not structured identifiers like stop_ids or
+#'                        parent_stations, so it is possible that stops with the same name are
 #'                        far apart from each other.
-#'                        travel_times() errors if the distance among stop_ids with the same 
+#'                        travel_times() errors if the distance among stop_ids with the same
 #'                        name is above this threshold (in meters).
 #'                        Use `FALSE` to turn check off. However, it is recommended to
 #'                        either use [raptor()] or fix the feed (see [cluster_stops()])
@@ -45,7 +45,7 @@
 #' @export
 #' @examples \donttest{
 #' library(dplyr)
-#' 
+#'
 #' # 1) Calculate travel times from two closely related stops
 #' # The example dataset gtfs_duke has missing times (allowed in gtfs) which is
 #' # why we run interpolate_stop_times beforehand
@@ -72,21 +72,21 @@
 #' nyc_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
 #' nyc <- read_gtfs(nyc_path)
 #' nyc <- cluster_stops(nyc, group_col = "stop_name", cluster_colname = "stop_name")
-#' 
+#'
 #' # Use journeys departing after 7 AM with arrival time before 9 AM on 26th June
 #' stop_times <- filter_stop_times(nyc, "2018-06-26", 7*3600, 9*3600)
-#' 
+#'
 #' # Calculate travel times from "34 St - Herald Sq"
 #' tts <- travel_times(stop_times, "34 St - Herald Sq", return_coords = TRUE)
-#' 
+#'
 #' # only keep journeys under one hour for plotting
 #' tts <- tts %>% filter(travel_time <= 3600)
-#' 
+#'
 #' # travel time to Queensboro Plaza is 810 seconds, 13:30 minutes
 #' tts %>%
 #'   filter(to_stop_name == "Queensboro Plaza") %>%
 #'   mutate(travel_time = hms::hms(travel_time))
-#' 
+#'
 #' # plot a simple map showing travel times to all reachable stops
 #' # this can be expanded to isochron maps
 #' library(ggplot2)
@@ -105,7 +105,7 @@ travel_times = function(filtered_stop_times,
   stop_names = stop_name
   rm(stop_name)
   catch_deprecated_max_departure_time(...)
-  
+
   if(inherits(filtered_stop_times, "tidygtfs")) {
     gtfs_obj = filtered_stop_times
     if(is.null(attributes(gtfs_obj$stop_times)[["extract_date"]])) {
@@ -113,7 +113,7 @@ travel_times = function(filtered_stop_times,
            "Use filter_feed_by_date().",
            call. = FALSE)
     }
-    
+
     filtered_stop_times <- gtfs_obj$stop_times
     transfers = gtfs_obj$transfers
     stops = stops_as_dt(gtfs_obj$stops)

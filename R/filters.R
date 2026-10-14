@@ -23,16 +23,16 @@ filter_stops <- function(gtfs_obj, service_ids, route_ids, include_parent_statio
   some_trips <- filter(gtfs_obj$trips,
                        service_id %in% service_ids &
                          route_id %in% route_ids)
-  
+
   some_stop_times <- filter(gtfs_obj$stop_times,
                             trip_id %in% some_trips$trip_id)
-  
+
   some_stops <- filter(
     gtfs_obj$stops,
     stop_id %in% some_stop_times$stop_id |
       (include_parent_stations & stop_id %in% gtfs_obj$stops$parent_station[gtfs_obj$stops$stop_id %in% some_stop_times$stop_id])
   )
-  
+
   return(some_stops)
 }
 
@@ -51,24 +51,24 @@ filter_stops <- function(gtfs_obj, service_ids, route_ids, include_parent_statio
 filter_feed_by_trips = function(gtfs_obj, trip_ids, include_parent_stations = FALSE) {
   route_ids = gtfs_obj$trips[which(gtfs_obj$trips$trip_id %in% trip_ids), ]
   route_ids <- unique(route_ids$route_id)
-  
+
   # first batch via trip_ids
   gtfs_obj$stop_times <- gtfs_obj$stop_times[which(gtfs_obj$stop_times$trip_id %in% trip_ids), ]
   gtfs_obj$routes <- gtfs_obj$routes[which(gtfs_obj$routes$route_id %in% route_ids), ]
   gtfs_obj$trips <- gtfs_obj$trips[which(gtfs_obj$trips$trip_id %in% trip_ids), ]
-  
+
   # other
   trip_stop_ids = gtfs_obj$stop_times$stop_id
   service_ids = unique(gtfs_obj$trips$service_id)
   .stop_index = gtfs_obj$stops$stop_id %in% trip_stop_ids
-  
+
   # include_parent_stations
   if(include_parent_stations) {
     parent_station_ids = gtfs_obj$stops$parent_station[gtfs_obj$stops$stop_id %in% trip_stop_ids]
     .stop_index <- .stop_index | (gtfs_obj$stops$stop_id %in% parent_station_ids)
   }
   gtfs_obj$stops <- gtfs_obj$stops[.stop_index, ]
-  
+
   gtfs_obj$.$dates_services <- gtfs_obj$.$dates_services[which(gtfs_obj$.$dates_services$service_id %in% service_ids), ]
   if(feed_contains(gtfs_obj, "calendar")) {
     gtfs_obj$calendar <- gtfs_obj$calendar[which(gtfs_obj$calendar$service_id %in% service_ids), ]
@@ -87,7 +87,7 @@ filter_feed_by_trips = function(gtfs_obj, trip_ids, include_parent_stations = FA
       gtfs_obj$transfers$from_stop_id %in% trip_stop_ids &
         gtfs_obj$transfers$to_stop_id %in% trip_stop_ids), ]
   }
-  
+
   gtfs_obj
 }
 
@@ -126,7 +126,7 @@ filter_feed_by_area <- function(gtfs_obj, area, include_parent_stations = FALSE)
     stop_ids = gtfs_obj$stops %>% filter_bbox(area)
     stop_ids <- unique(stop_ids$stop_id)
   }
-  
+
   filter_feed_by_stops(gtfs_obj, stop_ids = stop_ids, include_parent_stations = include_parent_stations)
 }
 
@@ -156,12 +156,12 @@ filter_feed_by_stops = function(gtfs_obj, stop_ids = NULL, stop_names = NULL, in
   if(is.null(stop_ids) && is.null(stop_names)) {
     stop("Please provide either `stop_ids` or `stop_names`", call. = FALSE)
   }
-  
+
   missing_ids = setdiff(stop_ids, gtfs_obj$stops$stop_id)
   if(length(missing_ids) > 0) {
     stop("stop_ids not found in stops table: ", paste(missing_ids, collapse = ", "))
   }
-  
+
   trip_ids = gtfs_obj$stop_times[which(gtfs_obj$stop_times$stop_id %in% stop_ids), ]
   trip_ids <- unique(trip_ids$trip_id)
   filter_feed_by_trips(gtfs_obj, trip_ids, include_parent_stations)
@@ -187,7 +187,7 @@ filter_feed_by_date = function(gtfs_obj, extract_date,
   attributes(st)$sorted <- NULL
   attributes(st)$index <- NULL
   gtfs_obj$stop_times <- st[colnames(gtfs_obj$stop_times)]
-  
+
   trip_ids <- unique(gtfs_obj$stop_times$trip_id)
   gtfs_obj$.$dates_services <- filter(gtfs_obj$.$dates_services, date == extract_date)
   filter_feed_by_trips(gtfs_obj, trip_ids, include_parent_stations)
@@ -198,7 +198,7 @@ filter_bbox <- function(data, bbox, coord_cols = c("stop_lon", "stop_lat")) {
   if(is.null(names(bbox))) {
     names(bbox) <- c("xmin", "ymin", "xmax", "ymax")
   }
-  
+
   data[which(data[[coord_cols[1]]] >= bbox["xmin"] &
                data[[coord_cols[2]]] >= bbox["ymin"] &
                data[[coord_cols[1]]] <= bbox["xmax"] &

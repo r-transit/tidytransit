@@ -23,17 +23,17 @@ has_on_demand = function(stop_times) {
 # filter_stop_times()
 assert_routable_feed = function(g) {
   assert_routable_stop_times(g$stop_times, FALSE)
-  
+
   # missing dates
   if(is.null(g[["."]][["dates_services"]])) {
     stop("No valid dates defined in feed", call. = FALSE)
   }
-  
+
   # stops
   if(is.null(g[["stops"]][["stop_id"]]) || is.null(g[["stop_times"]][["stop_id"]])) {
     stop("`stops` and `stop_times` must have a `stop_id` column", call. = FALSE)
   }
-  
+
   invisible(TRUE)
 }
 
@@ -50,13 +50,13 @@ check_stop_dists = function(stops, stop_dist_check) {
   .time_prev = Sys.time()
   stop_dists = stop_group_distances(stops, "stop_name", max_only = TRUE)
   .time_post = Sys.time()
-  
+
   if(max(stop_dists$dist_max) > stop_dist_check) {
     stop("Some stops with the same name are more than ", stop_dist_check, " meters apart, see ?stop_group_distances().\n",
          "Using travel_times() might lead to unexpected results. Set stop_dist_check=FALSE to ignore this error.",
          call. = FALSE)
   }
-  
+
   .time_check = as.numeric(difftime(.time_post, .time_prev, units = "secs"))
   if(.time_check > 1) {
     message("Stop distance check took longer than 1 second (", round(.time_check, 1), # nocov

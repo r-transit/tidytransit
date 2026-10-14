@@ -30,9 +30,9 @@ as_tidygtfs.tidygtfs = function(x, ...) {
 }
 
 #' Convert an object created by gtfsio::import_gtfs to a tidygtfs object
-#' 
+#'
 #' Some basic validation is done to ensure the feed works in tidytransit
-#' 
+#'
 #' @param gtfs_list list of tables
 #' @param files subset of files to validate
 #' @importFrom gtfsio new_gtfs
@@ -43,17 +43,17 @@ gtfs_to_tidygtfs = function(gtfs_list, files = NULL) {
 
   # prep tidygtfs columns
   x = prepare_tidygtfs_fields(gtfs_list)
-  
+
   # add tidygtfs tables
   x <- prepare_tidygtfs_tables(x)
-  
+
   # convert to tibbles/geojson
   x <- convert_list_tables_to_tibbles(x)
   x <- convert_list_json_to_sf(x)
-  
+
   # convert empty strings "" to NA
   x <- empty_strings_to_na(x)
-  
+
   # gtfs class base structure
   if(!is.null(attr(x, "tidygtfs_issues"))) {
     for(msg in attr(x, "tidygtfs_issues")) {
@@ -67,7 +67,7 @@ gtfs_to_tidygtfs = function(gtfs_list, files = NULL) {
     class(x) <- c("tidygtfs", "gtfs", "list")
     attributes(x)$validation_result <- validation_result
   }
-  
+
   return(x)
 }
 
@@ -89,7 +89,7 @@ prepare_tidygtfs_tables = function(gtfs_obj) {
 check_duplicated_primary_kes = function(gtfs_obj) {
   tbl_with_duplicated_ids = duplicated_primary_keys(gtfs_obj)
   if(any(tbl_with_duplicated_ids)) {
-    msg = paste0("Duplicated ids found in: ", 
+    msg = paste0("Duplicated ids found in: ",
                  paste(names(tbl_with_duplicated_ids[tbl_with_duplicated_ids]), collapse = ", "))
     gtfs_obj <- add_tidygtfs_issue(gtfs_obj, msg)
   }

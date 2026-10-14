@@ -39,18 +39,18 @@ test_that("stop_dist warning", {
 })
 
 test_that("stop times are filtered correctly", {
-  expect_error(filter_stop_times(gtfs_routing, "2018-09-28", "07:00:00", "08:00:00"), 
+  expect_error(filter_stop_times(gtfs_routing, "2018-09-28", "07:00:00", "08:00:00"),
                "No stop_times on 2018-09-28")
-  expect_error(filter_stop_times(gtfs_routing, "2018-10-01", "07:00:00", "06:00:00"), 
+  expect_error(filter_stop_times(gtfs_routing, "2018-10-01", "07:00:00", "06:00:00"),
                "`max_arrival_time` is before `min_departure_time`")
-  expect_error(filter_stop_times(gtfs_routing, "2018-10-01", "08:00:00", "09:00:00"), 
+  expect_error(filter_stop_times(gtfs_routing, "2018-10-01", "08:00:00", "09:00:00"),
                "No stop times between `min_departure_time` and `max_arrival_time`")
 
   fst = filter_stop_times(gtfs_routing, "2018-10-01", "07:00:00", "08:00:00")
   expect_true(all(c("transfers", "stops") %in% names(attributes(fst))))
   expect_error(travel_times(gtfs_routing$stop_times, "One"),
                "Stops and transfers not found in filtered_stop_times attributes")
-  
+
   g_no_st = gtfs_routing
   g_no_st$stop_times <- g_no_st$stop_times[0,]
   expect_error(filter_stop_times(g_no_st, "2018-09-28"), "`gtfs_obj` has no `stop_times`")
@@ -60,7 +60,7 @@ test_that("stop times are filtered correctly", {
 
 test_that("travel_time works with different params", {
   fst = filter_stop_times(gtfs_routing, "2018-10-01", 7*3600, 24*3600)
-  expect_error(travel_times(fst, "One", max_departure_time = 7*3600+5*60), 
+  expect_error(travel_times(fst, "One", max_departure_time = 7*3600+5*60),
                "`max_departure_time` is deprecated, use `time_range`")
   expect_error(travel_times(fst, "One", time_range = 1800, max_departure_time = "07:45:00"),
                "`max_departure_time` is deprecated, use `time_range`")
@@ -106,12 +106,12 @@ test_that("travel_times with arrival=TRUE stop_name", {
 })
 
 test_that("catch invalid params", {
-  expect_error(travel_times(gtfs_routing, stop_name = "One"), 
+  expect_error(travel_times(gtfs_routing, stop_name = "One"),
                "Travel times cannot be calculated with an unfiltered tidygtfs object. Use filter_feed_by_date().")
   fst = filter_stop_times(gtfs_routing, "2018-10-01", 7*3600, 24*3600)
-  expect_error(raptor(fst, attributes(fst)$transfers, stop_ids = "stop1a", max_transfers = -1), 
+  expect_error(raptor(fst, attributes(fst)$transfers, stop_ids = "stop1a", max_transfers = -1),
                "max_transfers must be a number >= 0")
-  expect_error(travel_times(fst, stop_name = "One", max_transfers = -1), 
+  expect_error(travel_times(fst, stop_name = "One", max_transfers = -1),
                "max_transfers must be a number >= 0")
 })
 
@@ -137,7 +137,7 @@ test_that("time_range param", {
 
 test_that("time_range param w/ arrival = TRUE", {
   st = filter_feed_by_date(gtfs_routing, "2018-10-01")
-  
+
   tt2 = travel_times(st, stop_name = "Three", time_range = c("07:20:00", "07:20:00"), arrival = TRUE)
   expect_equal(as.numeric(tt2$journey_departure_time), 7*3600+20*60)
   tt3 = travel_times(st, stop_name = "Three", time_range = c("07:20:00", "07:23:00"), arrival = TRUE)
@@ -200,7 +200,7 @@ test_that("transfer_type 0", {
     filter_stop_times("2019-08-26", "14:00:00") %>%
     travel_times(c("Campus Dr at Arts Annex (WB)", "Campus Dr at Arts Annex (EB)"),
                  time_range = 1.5*3600)
-  
+
   expect_identical(tts1, tts2)
 })
 
@@ -216,19 +216,19 @@ test_that("error", {
 })
 
 test_that("non-data.table are handled correctly", {
-    fst = filter_stop_times(gtfs_routing, "2018-10-01", 7*3600, 24*3600)
-    fst2 = as.data.frame(fst)
-    attributes(fst2)$stops <- as.data.frame(attributes(fst2)$stops)
-    attributes(fst2)$transfers <- as.data.frame(attributes(fst2)$transfers)
-    expect_identical(travel_times(fst2, "One"),
-                     travel_times(fst, "One"))
-    
-    fst3 = as_tibble(fst)
-    attributes(fst3)$stops <- as_tibble(attributes(fst2)$stops)
-    attributes(fst3)$transfers <- as_tibble(attributes(fst2)$transfers)
-    expect_identical(travel_times(fst3, "One"),
-                     travel_times(fst, "One"))
+  fst = filter_stop_times(gtfs_routing, "2018-10-01", 7*3600, 24*3600)
+  fst2 = as.data.frame(fst)
+  attributes(fst2)$stops <- as.data.frame(attributes(fst2)$stops)
+  attributes(fst2)$transfers <- as.data.frame(attributes(fst2)$transfers)
+  expect_identical(travel_times(fst2, "One"),
+                   travel_times(fst, "One"))
+
+  fst3 = as_tibble(fst)
+  attributes(fst3)$stops <- as_tibble(attributes(fst2)$stops)
+  attributes(fst3)$transfers <- as_tibble(attributes(fst2)$transfers)
+  expect_identical(travel_times(fst3, "One"),
+                   travel_times(fst, "One"))
 })
 
-rm("gtfs_routing", "local_gtfs_path", "stop_times", "stop_times_0710", 
+rm("gtfs_routing", "local_gtfs_path", "stop_times", "stop_times_0710",
    "stop_times_0711", "stop_times_0715", "test_from_stop_ids", "transfers")

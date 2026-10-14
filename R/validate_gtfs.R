@@ -2,9 +2,9 @@
 #'
 #' Validates the GTFS object against GTFS specifications and raises warnings if
 #' required files/fields are not found. This function is called in [read_gtfs()].
-#' 
+#'
 #' Note that this function just checks if required files or fields are missing. There's no
-#' validation for internal consistency (e.g. no departure times before arrival times or 
+#' validation for internal consistency (e.g. no departure times before arrival times or
 #' calendar covering a reasonable period).
 #'
 #' @param gtfs_obj gtfs object (i.e. a list of tables, not necessary a tidygtfs object)
@@ -24,7 +24,7 @@
 #' \itemize{
 #'   \item GTFS feeds are considered valid if they include all required files
 #'     and fields. If a required file/field is missing the function (optionally)
-#'     raises a warning. A file without any data or only a header row is considered missing. 
+#'     raises a warning. A file without any data or only a header row is considered missing.
 #'   \item Optional files/fields are listed in the reference above but are not
 #'     required, thus no warning is raised if they are missing.
 #'   \item Extra files/fields are those who are not listed in the reference
@@ -40,10 +40,10 @@
 #'   \item \code{feed_info.txt} is initially set as an optional file. If
 #'     \code{translations.txt} is present, however, it becomes required.
 #' }
-#' 
+#'
 #' @examples
 #' validate_gtfs(gtfs_duke)
-#' 
+#'
 #' \dontrun{
 #' local_gtfs_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
 #' gtfs <- read_gtfs(local_gtfs_path)
@@ -55,7 +55,7 @@
 #' # should raise a warning
 #' gtfs$stop_times <- NULL
 #' validation_result <- validate_gtfs(gtfs)
-#' } 
+#' }
 #' @importFrom dplyr as_tibble
 #' @importFrom data.table data.table rbindlist
 #' @export
@@ -66,7 +66,7 @@ validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
   if(!inherits(gtfs_obj, "gtfs") && !inherits(gtfs_obj, "list")) {
     stop("gtfs_obj must be a gtfs or list object")
   }
-  
+
   # if any files have been specified in read_gtfs, only validate those
 
   if(is.null(files)) {
@@ -77,10 +77,10 @@ validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
     }
     files_to_validate <- files
   }
-  
+
   # don't validate geojson files
   files_to_validate <- files_to_validate[!is_geojson(files_to_validate)]
-  
+
   if(length(files_to_validate) == 0) return(data.table(
     file = character(), file_spec = character(), file_provided_status = logical(),
     field = character(), field_spec = character(), field_provided_status = logical()
@@ -99,12 +99,12 @@ validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
       field                 <- names(gtfs_obj[[file]])
       if(is.null(field)) field <- NA # file is not a dataframe
     } else {
-      
+
       # undocumented fields are labeled as "extra" fields
       provided_fields   <- names(gtfs_obj[[file]])
 
       documented_fields <- file_metadata$fields$Field_Name
-      
+
       # file_provided=TRUE only if there's data present
       file_provided_status  <- file %in% names(gtfs_obj) && nrow(gtfs_obj[[file]]) > 0
       file_spec             <- file_metadata$File_Presence
@@ -120,9 +120,9 @@ validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
         "Extra"
       )
       field_provided_status <- field %in% provided_fields
-      
+
     }
-    
+
     data.table(
       file,
       file_spec,
@@ -134,7 +134,7 @@ validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
   })
 
   validation_result <- rbindlist(validation_result)
-  
+
   # checks if calendar.txt is missing. if it is then it becomes optional and
   # calendar_dates.txt becomes required
 
@@ -142,54 +142,54 @@ validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
     validation_result[file == "calendar", file_spec := "Optional"]
     validation_result[file == "calendar_dates", file_spec := "Required"]
   }
-  
+
   # checks if translations.txt is provided. if it is, feed_info.txt becomes required
   if("translations" %in% names(gtfs_obj)) {
     validation_result[file == "feed_info", file_spec := "Required"]
   }
-  
+
   # checks for validation status and details
   validation_result[, `:=`(validation_status = "ok", validation_details = NA_character_)]
-  
+
   # if file is not provided and is required, mark as a problem
   validation_result[
     !file_provided_status & file_spec == "Required",
     `:=`(validation_status = "problem", validation_details = "missing_req_file")
   ]
-  
+
   # if file is not provided and is optional, mark as a info
   validation_result[
     !file_provided_status & file_spec == "Optional",
     `:=`(validation_status = "info", validation_details = "missing_opt_file")
   ]
-  
+
   # if file is provided but misses a required field, mark as a problem
   validation_result[
     file_provided_status & !field_provided_status & field_spec == "Required",
     `:=`(validation_status = "problem", validation_details = "missing_req_field")
   ]
-  
+
   # if file is provided but misses a optional field, mark as a info
   validation_result[
     file_provided_status & !field_provided_status & field_spec == "Optional",
     `:=`(validation_status = "info", validation_details = "missing_opt_field")
   ]
-  
+
   # if file is provided but undocumented in gtfs specifications, mark as a info
   validation_result[
     file_spec == "Extra",
     `:=`(validation_status = "info", validation_details = "undocumented_file")
   ]
-  
+
   # if field is provided but undocumented in gtfs specifications, mark as a info
   validation_result[
     file_spec != "Extra" & field_spec == "Extra",
     `:=`(validation_status = "info", validation_details = "undocumented_field")
   ]
-  
+
   # raises warnings if problems are found
   files_problems <- validation_result[validation_details == "missing_req_file"]
-  
+
   if(nrow(files_problems) >= 1 && warnings) {
     warning(
       paste0(
@@ -199,19 +199,19 @@ validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
       )
     )
   }
-  
+
   fields_problems <- validation_result[validation_details == "missing_req_field"]
-  
+
   if(nrow(fields_problems) >= 1 && warnings) {
     problematic_files <- unique(fields_problems$file)
-    
+
     problematic_fields <- unlist(
       lapply(
         problematic_files,
         function(i) paste(fields_problems[file == i]$field, collapse = ", ")
       )
     )
-    
+
     warning(
       paste0(
         "Invalid feed. ",
@@ -221,7 +221,7 @@ validate_gtfs <- function(gtfs_obj, files = NULL, warnings = TRUE) {
         )
       )
     )
-    
+
   }
 
   as_tibble(validation_result)
@@ -235,17 +235,17 @@ duplicated_primary_keys = function(gtfs_list) {
 
   tbl_has_dupl_keys = rep(FALSE, length(gtfs_list))
   names(tbl_has_dupl_keys) <- names(gtfs_list)
-  
+
   for(tbl_name in intersect(names(gtfs_list), names(gtfs_reference))) {
     id_fields = gtfs_reference[[tbl_name]][["primary_key"]]
-    
+
     if(is.null(id_fields)) next # geojson files
-    
+
     if(!anyNA(id_fields)) {
       if(length(id_fields) == 1 && id_fields == "*") {
         id_fields <- colnames(gtfs_list[[tbl_name]])
       }
-      
+
       # required fields have already been checked in validate_gtfs
       id_fields = intersect(colnames(gtfs_list[[tbl_name]]), id_fields)
       if(length(id_fields) > 0) {

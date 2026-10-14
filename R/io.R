@@ -1,6 +1,6 @@
 #' Read and validate GTFS files
 #'
-#' Reads a GTFS feed from either a local `.zip` file or an URL and validates them against 
+#' Reads a GTFS feed from either a local `.zip` file or an URL and validates them against
 #' GTFS specifications.
 #'
 #' @param path The path to a GTFS \code{.zip} file.
@@ -29,14 +29,14 @@
 #' gtfs <- read_gtfs(local_gtfs_path, files = c("trips", "stop_times"))
 #' names(gtfs)
 #' }
-#' @importFrom gtfsio import_gtfs 
+#' @importFrom gtfsio import_gtfs
 #'
 #' @export
 read_gtfs <- function(path, files = NULL, quiet = TRUE, ...) {
   g = import_gtfs(path, files = files, quiet = quiet, ...)
-  
+
   tidygtfs = gtfs_to_tidygtfs(g, files = files)
-  
+
   return(tidygtfs)
 }
 
@@ -49,7 +49,7 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE, ...) {
 #' @param zipfile path to the zip file the feed should be written to. The file is overwritten
 #'   if it already exists.
 #' @param compression_level a number between 1 and 9, defaults to 9 (best compression).
-#' @param as_dir if `TRUE`, the feed is not zipped and zipfile is used as a directory path. 
+#' @param as_dir if `TRUE`, the feed is not zipped and zipfile is used as a directory path.
 #'   The directory will be overwritten if it already exists.
 #' @return Invisibly returns `gtfs_obj`
 #'
@@ -57,9 +57,9 @@ read_gtfs <- function(path, files = NULL, quiet = TRUE, ...) {
 #' @examples \dontrun{
 #' local_gtfs_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
 #' gtfs <- read_gtfs(local_gtfs_path)
-#' 
+#'
 #' gtfs <- filter_feed_by_date(gtfs, "2018-06-30")
-#' 
+#'
 #' write_gtfs(gtfs, "feed_filtered.zip")
 #' }
 #' @importFrom gtfsio export_gtfs
@@ -68,11 +68,11 @@ write_gtfs <- function(gtfs_obj, zipfile, compression_level = 9, as_dir = FALSE)
   stopifnot(inherits(gtfs_obj, "tidygtfs"))
 
   gtfs_out = tidygtfs_to_gtfs(gtfs_obj)
-  
+
   # export with gtfsio
-  export_gtfs(gtfs_out, zipfile, 
+  export_gtfs(gtfs_out, zipfile,
               standard_only = FALSE,
-              compression_level = compression_level, 
+              compression_level = compression_level,
               as_dir = as_dir, overwrite = TRUE)
   invisible(gtfs_obj)
 }

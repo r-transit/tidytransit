@@ -1,7 +1,7 @@
 #' Print a GTFS object
 #'
-#' Prints a GTFS object suppressing the \code{class} attribute and hiding the 
-#' validation_result attribute, created with [validate_gtfs()]. 
+#' Prints a GTFS object suppressing the \code{class} attribute and hiding the
+#' validation_result attribute, created with [validate_gtfs()].
 #'
 #' @param x a tidygtfs object as read by [read_gtfs()]
 #' @param ... Optional arguments ultimately passed to \code{format}.
@@ -9,9 +9,9 @@
 #' @return The GTFS object that was printed, invisibly
 #'
 #' @examples  \dontrun{
-#' path = system.file("extdata", 
-#'            "nyc_subway.zip", 
-#'            package = "tidytransit")
+#' path = system.file("extdata",
+#'                    "nyc_subway.zip",
+#'                     package = "tidytransit")
 #'
 #' g = read_gtfs(path)
 #' print(g)
@@ -23,23 +23,22 @@ print.tidygtfs = function(x, ...) {
   invisible(x)
 }
 
-
 #' GTFS feed summary
 #'
 #' @param object a tidygtfs object as read by [read_gtfs()]
 #' @export
-#' 
+#'
 #' @return the tidygtfs object, invisibly
-#' 
+#'
 #' @param ... ignored for tidygtfs
 #' @importFrom dplyr select arrange filter desc
 summary.tidygtfs <- function(object, ...) {
   dots <- list(...)
-  
+
   # agency info
   agencies_info <- agency_info(object, 3)
   agency_sing_plur <- ifelse(nrow(object$agency) == 1, "agency       ", "agencies     ")
-                             
+
   # counts
   n_stop_ids <- length(unique(object$stops$stop_id))
   n_stop_names <- length(unique(object$stops$stop_name))
@@ -47,7 +46,7 @@ summary.tidygtfs <- function(object, ...) {
   n_routes <- length(unique(object$routes$route_id))
   n_shapes <- length(unique(object$shapes$shape_id))
   w <- ceiling(log(max(n_stop_ids, n_stop_names, n_trips, n_routes, n_shapes), 10))
-  
+
   # stop_times or frequency based
   n_st <- ifelse(is.null(nrow(object$stop_times)), 0 , nrow(object$stop_times))
   n_freq <- ifelse(is.null(nrow(object$frequencies)), 0 , nrow(object$frequencies))
@@ -58,7 +57,7 @@ summary.tidygtfs <- function(object, ...) {
       st_freq_info <- "stop_times (no frequencies)"
     }
   } else {
-      st_freq_info <- "frequencies (no stop_times)"
+    st_freq_info <- "frequencies (no stop_times)"
   }
 
   # files provided
@@ -71,7 +70,7 @@ summary.tidygtfs <- function(object, ...) {
   # date info
   date_min <- min(object$.$dates_services$date)
   date_max <- max(object$.$dates_services$date)
-  
+
   cat(paste0("tidygtfs object\n"))
   cat(paste0("files        ", paste(files$file, collapse=", "), "\n"))
   cat(paste0(agency_sing_plur, agencies_info, "\n"))
@@ -82,7 +81,7 @@ summary.tidygtfs <- function(object, ...) {
   cat(paste0("# stop_ids   ", format(n_stop_ids, width = w), "\n"))
   cat(paste0("# stop_names ", format(n_stop_names, width = w), "\n"))
   cat(paste0("# shapes     ", format(n_shapes, width = w), "\n"))
-  
+
   invisible(object)
 }
 

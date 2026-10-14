@@ -1,7 +1,7 @@
 #' Convert columns between gtfsio types to tidytransit types according to GTFS reference
-#' 
+#'
 #' @param gtfs_list gtfs object
-#' @param conversion_table data.frame containing a column `file` and `Field_Name`, generally 
+#' @param conversion_table data.frame containing a column `file` and `Field_Name`, generally
 #'                         from internal `gtfs_reference_types` dataset
 #' @param conversion_function function to convert columns
 #'
@@ -46,14 +46,14 @@ convert_hms_to_char <- function(gtfs_obj) {
 
 # reading only
 convert_char_to_int <- function(gtfs_obj) {
-  int_ref = do.call("rbind", 
+  int_ref = do.call("rbind",
                     gtfs_reference_types[c("Integer", "Non-negative integer", "Non-null integer",
                                            "Non-zero integer", "Positive integer")])
   convert_types(gtfs_obj, int_ref, as.integer)
 }
 
 convert_char_to_num <- function(gtfs_obj) {
-  num_ref = do.call("rbind", 
+  num_ref = do.call("rbind",
                     gtfs_reference_types[c("Float", "Positive float", "Non-negative float")])
   convert_types(gtfs_obj, num_ref, as.double)
 }

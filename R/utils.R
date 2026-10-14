@@ -1,10 +1,10 @@
-#' Returns TRUE if the given gtfs_obj contains the table in tidytransit's "calculated 
+#' Returns TRUE if the given gtfs_obj contains the table in tidytransit's "calculated
 #' tables sublist" (\code{gtfs_obj$.})
 #' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @param table_name name of the table to look for, as string
 #' @keywords internal
 feed_contains. <- function(gtfs_obj, table_name) {
-    (exists(".", where = gtfs_obj) && exists(table_name, where = gtfs_obj$.))
+  (exists(".", where = gtfs_obj) && exists(table_name, where = gtfs_obj$.))
 }
 
 feed_contains <- function(gtfs_obj, table_name) {
@@ -21,11 +21,11 @@ feed_has_non_empty_table <- function(gtfs_obj, table_name) {
 }
 
 #' Convert empty strings ("") to NA values in all gtfs tables
-#' 
+#'
 #' [read_gtfs()] converts all empty strings to `NA` values
-#' 
+#'
 #' @param gtfs_obj gtfs feed (tidygtfs object)
-#'  
+#'
 #' @return a gtfs_obj where all empty strings in tables have been replaced with `NA`
 #' @seealso [na_to_empty_strings()]
 #' @export
@@ -47,9 +47,9 @@ empty_strings_to_na = function(gtfs_obj) {
 }
 
 #' Convert NA values to empty strings ("")
-#' 
+#'
 #' [write_gtfs()] converts `NA` to empty strings
-#'  
+#'
 #' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @return a gtfs_obj where all NA strings in tables have been replaced with ""
 #' @seealso [empty_strings_to_na()]
