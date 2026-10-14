@@ -29,12 +29,12 @@ test_that("validate non gtfs object", {
 })
 
 test_that("validation", {
-  g_invalid_path = system.file("extdata","sample-feed-invalid.zip", package = "tidytransit")
+  g_invalid_path = test_path("data/sample-feed-invalid.zip")
   expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required file(s): stop_times.txt", fixed = TRUE)
   expect_warning(read_gtfs(g_invalid_path), "Invalid feed. Missing required field(s) in stops: stop_id", fixed = TRUE)
   
   # extra table
-  g = read_gtfs(system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit"))
+  g = read_gtfs(test_path("data/sample-feed-fixed.zip"))
   g$extra <- "not_a_dataframe"
   vd = validate_gtfs(g)
   expect_true(is.na(vd[vd$file == "extra","field"]))

@@ -68,21 +68,18 @@ test_that("the read_gtfs function fails gracefully on bad urls", {
 
 test_that("Files with BOM can be read", {
   skip_on_cran()
-  bom_path <- system.file("extdata", 
-              "sample-feed-bom.zip", 
-              package = "tidytransit")
-  g <- read_gtfs(bom_path)
+  g <- read_gtfs(test_path("data/sample-feed-bom.zip"))
   expect_s3_class(g, "tidygtfs")
 })
 
 test_that("Feed with additional data can be read", {
-  g_plus_path <- system.file("extdata", "sample-feed-plus.zip", package = "tidytransit")
+  g_plus_path <- test_path("data/sample-feed-plus.zip")
   expect_warning(read_gtfs(g_plus_path), "gtfsio/empty_file.txt' has size 0. Returning a NULL data.table.")
   expect_warning(read_gtfs(g_plus_path), "No valid dates defined in feed")
 })
 
 test_that("files parameter", {
-  path = system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
+  path = test_path("data/sample-feed-fixed.zip")
 
   file_status = unlist(lapply(gtfs_reference, `[[`, "File_Presence"))
 
@@ -102,7 +99,7 @@ test_that("files parameter", {
 })
 
 test_that("NA times", {
-  g = read_gtfs(system.file("extdata", "routing-NA-times.zip", package = "tidytransit"))
+  g = read_gtfs(test_path("data/routing-NA-times.zip"))
   
   expect_equal(g$stop_times$arrival_time[c(15,16,18)], rep(hms::hms(NA), 3))
   expect_equal(g$stop_times$departure_time[c(23,19,4)], rep(hms::hms(NA), 3))
@@ -110,7 +107,7 @@ test_that("NA times", {
 
 test_that("non-standard times", {
   expect_warning(
-    read_gtfs(system.file("extdata", "routing-nonstandard-times.zip", package = "tidytransit")),
+    read_gtfs(test_path("data/routing-nonstandard-times.zip")),
     "Cannot parse times like: 07:10 AM, 07:15 AM, XYZ, 07:28 AM, 07:37 AM\n(in file stop_times, field arrival_time)", fixed = TRUE)
 })
 

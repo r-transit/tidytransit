@@ -214,7 +214,7 @@ test_that("stops cluster test include_parent_stations", {
 })
 
 test_that("handle feeds with geojson",{
-  locations_path = system.file("extdata", "locations_feed.zip", package = "tidytransit")
+  locations_path = test_path("data/locations_feed.zip")
   gtfsio_tmpdir = tempfile("gtfsio")
   gtfsio0 = gtfsio::import_gtfs(locations_path)
   expect_true(feed_contains(gtfsio0, "locations"))

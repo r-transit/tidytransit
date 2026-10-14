@@ -112,8 +112,7 @@ test_that("parse dates", {
 })
 
 test_that("set_dates_services w/o calendar", {
-  gpath = system.file("extdata", "sample-feed-calendar_dates.zip", package = "tidytransit")
-  gcal = read_gtfs(gpath)
+  gcal = read_gtfs(test_path("data/sample-feed-calendar_dates.zip"))
   expect_equal(gcal$.$dates_services$date, as.Date(c("2007-01-01", "2007-06-06")))
 })
 

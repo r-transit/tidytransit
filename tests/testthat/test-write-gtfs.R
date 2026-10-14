@@ -1,6 +1,6 @@
 test_that("write_gtfs creates the same feed as read by read_gtfs", {
   skip_on_cran()
-  path1 <- system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
+  path1 <- test_path("data/sample-feed-fixed.zip")
   path2 <- tempfile(fileext = ".zip")
   g1 <- read_gtfs(path1)
   write_gtfs(g1, path2)
@@ -11,7 +11,7 @@ test_that("write_gtfs creates the same feed as read by read_gtfs", {
 
 test_that("write_gtfs as_dir", {
   skip_on_cran()
-  path1 <- system.file("extdata", "sample-feed-fixed.zip", package = "tidytransit")
+  path1 <- test_path("data/sample-feed-fixed.zip")
   path2 <- tempfile()
   g1 <- read_gtfs(path1)
   write_gtfs(g1, path2, as_dir = TRUE)

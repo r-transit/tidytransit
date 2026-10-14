@@ -2,7 +2,7 @@ routing.zip = system.file("extdata", "routing.zip", package = "tidytransit")
 tidygtfs = read_gtfs(routing.zip)
 
 test_that("as_tidygtfs w/ gtfstools", {
-  dt_gtfs = readRDS(system.file("extdata", "routing.zip_gtfstools.rds", package = "tidytransit"))
+  dt_gtfs = readRDS(test_path("data/routing.zip_gtfstools.rds"))
   expect_equal(class(dt_gtfs), c("dt_gtfs", "gtfs", "list"))
   
   dt_gtfs.tidygtfs = as_tidygtfs(dt_gtfs)

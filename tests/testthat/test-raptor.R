@@ -327,7 +327,7 @@ test_that("filter feed without min/max time", {
 })
 
 test_that("routing with missing NA", {
-  gtfs_routing2 = read_gtfs(system.file("extdata", "routing-NA-times.zip", package = "tidytransit"))
+  gtfs_routing2 = read_gtfs(test_path("data/routing-NA-times.zip"))
   fst1 = filter_stop_times(gtfs_routing, "2018-10-01", 7*3600, 24*3600)
   fst2 = filter_stop_times(gtfs_routing2, "2018-10-01", 7*3600, 24*3600)
 
