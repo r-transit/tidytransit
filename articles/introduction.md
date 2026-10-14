@@ -159,7 +159,7 @@ head(validation_result)
 
 You can find more feeds on the following sites
 
-- <https://database.mobilitydata.org/>
+- <https://mobilitydatabase.org/>
 - <https://www.transit.land/>
 
 There might be other feed registries available, depending on your area

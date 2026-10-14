@@ -51,11 +51,11 @@ remotes::install_github("r-transit/tidytransit")
 
 - [`gtfsio`](https://github.com/r-transit/gtfsio) R package to read and
   write gtfs feeds, tidytransit uses gtfsio for reading/writing feeds
-- [`gtfstools`](https://github.com/ipeaGIT/gtfstools) Tools for editing
-  and analysing transit feeds
+- [`gtfstools`](https://github.com/ipea/gtfstools) Tools for editing and
+  analysing transit feeds
 - [`gtfsrouter`](https://github.com/UrbanAnalyst/gtfsrouter) Package for
   public transport routing
-- [`gtfs2gps`](https://github.com/ipeaGIT/gtfs2gps) Converting public
+- [`gtfs2gps`](https://github.com/ipea/gtfs2gps) Converting public
   transport data from GTFS format to GPS-like records
 - [`GTFSwizard`](https://github.com/nelsonquesado/GTFSwizard) Set of
   tools for exploring and manipulating, builds on tidytransit
