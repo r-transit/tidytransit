@@ -47,7 +47,7 @@ test_that("tidygtfs class inheritance list", {
 test_that("the read_gtfs function works with urls", {
   skip_on_cran()
   gtfs_example_url <-
-    "https://github.com/r-transit/tidytransit/raw/master/inst/extdata/sample-feed-fixed.zip"
+    "https://github.com/r-transit/tidytransit/raw/master/tests/testthat/data/sample-feed-fixed.zip"
 
   x <- read_gtfs(gtfs_example_url, quiet=TRUE)
   expect_type(x, "list")
