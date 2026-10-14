@@ -95,6 +95,7 @@ replace_NA_times = function(stop_times) {
 #' print(gtfs_duke_3$stop_times[1:5, 1:5])
 #' }
 #' @importFrom dplyr as_tibble
+#' @importFrom data.table :=
 #' @export
 interpolate_stop_times = function(x, use_shape_dist = TRUE) {
   ....event_time <- ....shape_dist_traveled <- NULL

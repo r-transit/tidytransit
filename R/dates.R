@@ -14,7 +14,7 @@
 #' @param gtfs_obj gtfs feed (tidygtfs object)
 #' @return a date_service data frame
 #' 
-#' @importFrom dplyr filter select inner_join full_join anti_join join_by as_tibble tibble
+#' @importFrom dplyr filter select inner_join full_join anti_join join_by as_tibble tibble between
 #' @importFrom stats reshape
 #' @keywords internal
 set_dates_services <- function(gtfs_obj) {

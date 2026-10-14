@@ -77,14 +77,12 @@ na_to_empty_strings = function(gtfs_obj) {
 gather_dt = function(df_wide, new_key_colname, new_val_colname,
                      value_colnames) {
   dt = as.data.table(df_wide)
-  dt_melted = melt(dt, measure.vars = value_colnames,
-                   variable.name = new_key_colname, value.name = new_val_colname)
-  
-  return(dt_melted)
+  melt(dt, measure.vars = value_colnames,
+       variable.name = new_key_colname, value.name = new_val_colname)
 }
 
 # 5x faster than tidyr::spread for special usage in interpolate_stop_times
-#' @importFrom data.table as.data.table
+#' @importFrom data.table as.data.table setnames dcast
 spread_dt = function(df_long, key_colname, value_colname) {
   dt = as.data.table(df_long)
   setnames(dt, key_colname, "....key....")

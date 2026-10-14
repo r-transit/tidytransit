@@ -52,7 +52,7 @@
 #'
 #' @seealso [travel_times()] for an easier access to travel time calculations via stop_names.
 #'
-#' @import data.table
+#' @importFrom data.table := setDT setnames setkey setkeyv setindex setindexv setorder
 #' @export
 #' @examples \donttest{
 #' nyc_path <- system.file("extdata", "nyc_subway.zip", package = "tidytransit")
@@ -88,7 +88,7 @@ raptor = function(stop_times,
                   max_transfers = NULL,
                   keep = "all",
                   separate_starts = FALSE) {
-  from_stop_id <- to_stop_id <- . <- raptor_departure_stop <- NULL
+  .SD <- from_stop_id <- to_stop_id <- . <- raptor_departure_stop <- NULL
   raptor_arrival_time <- raptor_departure_time <- journey_time <- initial_transfer_time <- NULL
   raptor_min_departure_time <- raptor_max_departure_time <- NULL
   journey_arrival_time <- journey_departure_time <- travel_time <- NULL
@@ -229,9 +229,8 @@ find_journeys = function(from_stop_ids, transfers_dt, time_window, arrival, max_
 raptor_core = function(journeys_init, 
                        stop_times_dt, transfers_dt,
                        max_transfers) {
-  stopifnot(!is.null(journeys_init),
-            !is.null(transfers_dt), !is.null(stop_times_dt))
-  raptor_min_departure_time <- raptor_max_departure_time <- marked <- travel_time <- NULL
+  stopifnot(!is.null(journeys_init), !is.null(transfers_dt), !is.null(stop_times_dt))
+  .SD <- raptor_min_departure_time <- raptor_max_departure_time <- marked <- travel_time <- NULL
   departure_time_num <- arrival_time_num <- marked_departure_time_num <- from_stop_id <- to_stop_id <- NULL
   raptor_departure_time <- raptor_arrival_time <- transfers <- transfer_type <- min_transfer_time <- NULL
   from_trip_id <- to_trip_id <- arrival_trip_id <- pickup_type <- drop_off_type <- trip_id <- NULL
@@ -610,7 +609,7 @@ setup_separate_starts = function(separate_starts) {
   return(separate_starts)
 }
 
-#' @import data.table
+#' @importFrom data.table is.data.table :=
 set_num_times = function(stop_times_dt) {
   arrival_time <- arrival_time_num <- departure_time <- departure_time_num <- NULL
   stopifnot(is.data.table(stop_times_dt))
