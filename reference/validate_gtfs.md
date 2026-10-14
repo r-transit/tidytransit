@@ -72,7 +72,7 @@ Note that some files (`calendar.txt`, `calendar_dates.txt` and
 
 ``` r
 validate_gtfs(gtfs_duke)
-#> # A tibble: 254 × 8
+#> # A tibble: 259 × 8
 #>    file   file_spec file_provided_status field  field_spec field_provided_status
 #>    <chr>  <chr>     <lgl>                <chr>  <chr>      <lgl>                
 #>  1 agency Required  TRUE                 agenc… Condition… TRUE                 
@@ -83,9 +83,9 @@ validate_gtfs(gtfs_duke)
 #>  6 agency Required  TRUE                 agenc… Optional   TRUE                 
 #>  7 agency Required  TRUE                 agenc… Optional   TRUE                 
 #>  8 agency Required  TRUE                 agenc… Optional   FALSE                
-#>  9 areas  Optional  FALSE                area_… Required   FALSE                
-#> 10 areas  Optional  FALSE                area_… Optional   FALSE                
-#> # ℹ 244 more rows
+#>  9 agency Required  TRUE                 cemv_… Optional   FALSE                
+#> 10 areas  Optional  FALSE                area_… Required   FALSE                
+#> # ℹ 249 more rows
 #> # ℹ 2 more variables: validation_status <chr>, validation_details <chr>
 
 if (FALSE) { # \dontrun{
