@@ -1,5 +1,18 @@
 # Changelog
 
+## tidytransit 1.8.1
+
+- add `include_parent_stations` to `filter_feed` functions
+  [\#231](https://github.com/r-transit/tidytransit/pull/231)
+- [`validate_gtfs()`](https://r-transit.github.io/tidytransit/reference/validate_gtfs.md)
+  only considers files as “provided” if there is at least one data row
+- [`read_gtfs()`](https://r-transit.github.io/tidytransit/reference/read_gtfs.md)
+  issues a warning if it’s unable to parse time strings
+- [`as_tidygtfs()`](https://r-transit.github.io/tidytransit/reference/as_tidygtfs.md)
+  (and by extension
+  [`read_gtfs()`](https://r-transit.github.io/tidytransit/reference/read_gtfs.md))
+  now always returns a `tidygtfs` object even after warnings
+
 ## tidytransit 1.8.0
 
 CRAN release: 2026-01-26

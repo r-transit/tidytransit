@@ -67,7 +67,7 @@ nyc <- read_gtfs(nyc_path)
 nyc <- cluster_stops(nyc)
 
 # There are 6 stops with the name "86 St" that are far apart
-stops_86_St = nyc$stops %>% 
+stops_86_St = nyc$stops %>%
   filter(stop_name == "86 St")
 
 table(stops_86_St$stop_name_cluster)

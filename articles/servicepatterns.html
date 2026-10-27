@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tidytransit</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.0.900</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -191,7 +191,7 @@ patterns to the number of services.</p>
 <span><span class="va">n_servicepatterns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">gtfs</span><span class="op">$</span><span class="va">.</span><span class="op">$</span><span class="va">servicepatterns</span><span class="op">$</span><span class="va">servicepattern_id</span><span class="op">)</span><span class="op">)</span> <span class="co"># 3</span></span></code></pre></div>
 <p>The example feed uses 52 service_ids but there are actually only 3
 different date patterns. Other feeds might not have such low numbers,
-for example the <a href="https://data.opentransportdata.swiss/dataset/timetable-2025-gtfs2020" class="external-link">Swiss
+for example the <a href="https://data.opentransportdata.swiss/dataset/?q=GTFS2020" class="external-link">Swiss
 GTFS feed</a> uses around 15’600 service_ids which all identify unique
 date patterns.</p>
 </div>

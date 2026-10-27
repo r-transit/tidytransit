@@ -13,7 +13,7 @@ which contains the group_col value and the cluster number."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">tidytransit</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.0.900</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -113,7 +113,7 @@ modified tidygtfs object is return</p>
 <span class="r-in"><span><span class="va">nyc</span> <span class="op">&lt;-</span> <span class="fu">cluster_stops</span><span class="op">(</span><span class="va">nyc</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># There are 6 stops with the name "86 St" that are far apart</span></span></span>
-<span class="r-in"><span><span class="va">stops_86_St</span> <span class="op">=</span> <span class="va">nyc</span><span class="op">$</span><span class="va">stops</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
+<span class="r-in"><span><span class="va">stops_86_St</span> <span class="op">=</span> <span class="va">nyc</span><span class="op">$</span><span class="va">stops</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">stop_name</span> <span class="op">==</span> <span class="st">"86 St"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">stops_86_St</span><span class="op">$</span><span class="va">stop_name_cluster</span><span class="op">)</span></span></span>

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tidytransit</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.0.900</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,6 +39,17 @@
       <small>Source: <a href="https://github.com/r-transit/tidytransit/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.8.1" id="tidytransit-181">tidytransit 1.8.1<a class="anchor" aria-label="anchor" href="#tidytransit-181"></a></h2>
+<ul><li>add <code>include_parent_stations</code> to <code>filter_feed</code> functions <a href="https://github.com/r-transit/tidytransit/pull/231" class="external-link">#231</a>
+</li>
+<li>
+<code><a href="../reference/validate_gtfs.html">validate_gtfs()</a></code> only considers files as “provided” if there is at least one data row</li>
+<li>
+<code><a href="../reference/read_gtfs.html">read_gtfs()</a></code> issues a warning if it’s unable to parse time strings</li>
+<li>
+<code><a href="../reference/as_tidygtfs.html">as_tidygtfs()</a></code> (and by extension <code><a href="../reference/read_gtfs.html">read_gtfs()</a></code>) now always returns a <code>tidygtfs</code> object even after warnings</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.8.0" id="tidytransit-180">tidytransit 1.8.0<a class="anchor" aria-label="anchor" href="#tidytransit-180"></a></h2><p class="text-muted">CRAN release: 2026-01-26</p>
 <ul><li>Empty strings in txt files are always parsed as <code>NA</code> in <code><a href="../reference/read_gtfs.html">read_gtfs()</a></code> <a href="https://github.com/r-transit/tidytransit/pull/229" class="external-link">#229</a>

@@ -148,8 +148,8 @@ n_servicepatterns <- length(unique(gtfs$.$servicepatterns$servicepattern_id)) # 
 The example feed uses 52 service_ids but there are actually only 3
 different date patterns. Other feeds might not have such low numbers,
 for example the [Swiss GTFS
-feed](https://data.opentransportdata.swiss/dataset/timetable-2025-gtfs2020)
-uses around 15’600 service_ids which all identify unique date patterns.
+feed](https://data.opentransportdata.swiss/dataset/?q=GTFS2020) uses
+around 15’600 service_ids which all identify unique date patterns.
 
 ## Analyse Data
 
